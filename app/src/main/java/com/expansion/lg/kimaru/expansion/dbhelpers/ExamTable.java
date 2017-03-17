@@ -47,8 +47,7 @@ public class ExamTable extends SQLiteOpenHelper {
             + ADDED_BY + integer_field + ", "
             + COMMENT + text_field + ", "
             + DATE_ADDED + integer_field + ", "
-            + SYNCED + integer_field + ", "
-            + ")";
+            + SYNCED + integer_field + "); ";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
 

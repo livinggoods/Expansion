@@ -28,9 +28,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.dbhelpers.Recruitment;
 import com.expansion.lg.kimaru.expansion.fragment.HomeFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewExamFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRegistrationFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RegistrationsFragment;
-import com.expansion.lg.kimaru.expansion.fragment.NotificationsFragment;
+import com.expansion.lg.kimaru.expansion.fragment.ExamsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.SettingsFragment;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_HOME = "home";
     private static final String TAG_RECRUITMENTS = "recruitments";
     private static final String TAG_REGISTRATIONS = "registrations";
-    private static final String TAG_NOTIFICATIONS = "notifications";
+    private static final String TAG_EXAMS = "exams";
     private static final String TAG_SETTINGS = "settings";
     public static String CURRENT_TAG = TAG_HOME;
 
@@ -179,9 +180,25 @@ public class MainActivity extends AppCompatActivity {
                     mHandler.post(mPendingRunnable);
                 }
                 break;
-            case TAG_NOTIFICATIONS:
-                Snackbar.make(view, "Please set fragment for " + CURRENT_TAG, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            case TAG_EXAMS:
+                mPendingRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        // update the main content by replacing fragments
+                        NewExamFragment newExamFragment = new NewExamFragment();
+                        Fragment fragment = newExamFragment;
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                android.R.anim.fade_out);
+                        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+
+                        fragmentTransaction.commitAllowingStateLoss();
+                    }
+                };
+                // If mPendingRunnable is not null, then add to the message queue
+                if (mPendingRunnable != null) {
+                    mHandler.post(mPendingRunnable);
+                }
                 break;
             case TAG_SETTINGS:
                 Snackbar.make(view, "Please set fragment for " + CURRENT_TAG, Snackbar.LENGTH_LONG)
@@ -298,8 +315,8 @@ public class MainActivity extends AppCompatActivity {
                 return registrationsFragment;
             case 3:
                 // notifications fragment
-                NotificationsFragment notificationsFragment = new NotificationsFragment();
-                return notificationsFragment;
+                ExamsFragment examsFragment = new ExamsFragment();
+                return examsFragment;
 
             case 4:
                 // settings fragment
@@ -343,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_notifications:
                         navItemIndex = 3;
-                        CURRENT_TAG = TAG_NOTIFICATIONS;
+                        CURRENT_TAG = TAG_EXAMS;
                         break;
                     case R.id.nav_settings:
                         navItemIndex = 4;

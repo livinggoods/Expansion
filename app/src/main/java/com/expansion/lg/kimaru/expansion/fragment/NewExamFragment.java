@@ -177,7 +177,7 @@ public class NewExamFragment extends Fragment implements OnClickListener {
                     long id = examTable.addData(exam);
 
                     if (id ==-1){
-                        Toast.makeText(getContext(), "Could not save registration", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Could not save the results", Toast.LENGTH_SHORT).show();
                     }
                     else{
                         Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
@@ -186,7 +186,6 @@ public class NewExamFragment extends Fragment implements OnClickListener {
                         mMaths.setText("");
                         mEnglish.setText("");
                         mSelfAssessment.setText("");
-                        //editText.requestFocus();
                         mMaths.requestFocus();
                     }
 

@@ -17,12 +17,12 @@ import com.expansion.lg.kimaru.expansion.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link NotificationsFragment.OnFragmentInteractionListener} interface
+ * {@link ExamsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link NotificationsFragment#newInstance} factory method to
+ * Use the {@link ExamsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NotificationsFragment extends Fragment {
+public class ExamsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -34,7 +34,7 @@ public class NotificationsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public NotificationsFragment() {
+    public ExamsFragment() {
         // Required empty public constructor
     }
 
@@ -44,11 +44,11 @@ public class NotificationsFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment NotificationsFragment.
+     * @return A new instance of fragment ExamsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NotificationsFragment newInstance(String param1, String param2) {
-        NotificationsFragment fragment = new NotificationsFragment();
+    public static ExamsFragment newInstance(String param1, String param2) {
+        ExamsFragment fragment = new ExamsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
