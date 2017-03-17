@@ -6,8 +6,11 @@ package com.expansion.lg.kimaru.expansion.dbhelpers;
 
 public class Exam {
 
-    Integer applicant, recruitment, math, english, personality, addedBy, dateAdded, synced;
+    Integer Id, applicant, recruitment, math, english, personality, addedBy, dateAdded, synced;
     String comment;
+    String picture="";
+    int color = -1;
+    Boolean read = false;
 
     public Exam(){
 
@@ -54,6 +57,25 @@ public class Exam {
     public String getComment() {
         return comment;
     }
+
+
+    public Integer getId() {
+        return Id;
+    }
+
+
+    public String getPicture() {
+        return "";
+    }
+    public int getColor() {
+        return 1;
+    }
+    public boolean isImportant() {
+        return true;
+    }
+    public boolean isRead() {
+        return read;
+    }
     //Set Methods
 
     public void setApplicant(Integer applicant) {
@@ -90,5 +112,19 @@ public class Exam {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public void setPicture(String picture){ this.picture = picture;}
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
+    }
+
+    public void setId(Integer Id) {
+        this.Id = Id;
     }
 }
