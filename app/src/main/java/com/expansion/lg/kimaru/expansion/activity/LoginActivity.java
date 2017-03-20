@@ -73,7 +73,7 @@ public class LoginActivity extends Activity {
                 String password = txtPassword.getText().toString();
                 if (username.trim().length() > 0 && password.trim().length() > 0) {
                     if (username.equals("kimaru") && password.equals("kimaru")){
-                        session.createLoginSesstion("David Kimaru", "kimarudg@ooo.com");
+                        session.createLoginSesstion("David Kimaru", "kimarudg@ooo.com", 1);
                         Intent i = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(i);
                         finish();
