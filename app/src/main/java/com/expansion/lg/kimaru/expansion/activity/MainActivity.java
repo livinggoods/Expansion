@@ -26,14 +26,15 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import com.expansion.lg.kimaru.expansion.R;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Recruitment;
 import com.expansion.lg.kimaru.expansion.fragment.HomeFragment;
+import com.expansion.lg.kimaru.expansion.fragment.InterviewsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewExamFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewInterviewFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewRecruitmentFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRegistrationFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RegistrationsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.ExamsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
-import com.expansion.lg.kimaru.expansion.fragment.SettingsFragment;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
 
 import java.io.File;
@@ -44,7 +45,7 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    private NavigationView navigationView;
+    public NavigationView navigationView;
     private DrawerLayout drawer;
     private View navHeader;
     private ImageView imgNavHeaderBg, imgProfile;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_RECRUITMENTS = "recruitments";
     private static final String TAG_REGISTRATIONS = "registrations";
     private static final String TAG_EXAMS = "exams";
-    private static final String TAG_SETTINGS = "settings";
+    private static final String TAG_INTERVIEWS = "interviews";
     public static String CURRENT_TAG = TAG_HOME;
 
     // toolbar titles respected to selected nav menu item
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
     //We add the Session Manager
     SessionManagement session;
+    String name, email;
 
 
     @Override
@@ -99,10 +101,10 @@ public class MainActivity extends AppCompatActivity {
         HashMap<String, String> user = session.getUserDetails();
 
         //name
-        String name = user.get(SessionManagement.KEY_NAME);
+        name = user.get(SessionManagement.KEY_NAME);
 
         //Emails
-        String email = user.get(SessionManagement.KEY_EMAIL);
+        email = user.get(SessionManagement.KEY_EMAIL);
 
 
         setSupportActionBar(toolbar);
@@ -157,8 +159,24 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                 break;
             case TAG_RECRUITMENTS:
-                Snackbar.make(view, "Please set fragment for " + CURRENT_TAG, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                mPendingRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        // update the main content by replacing fragments
+                        NewRecruitmentFragment newRecruitmentFragment = new NewRecruitmentFragment();
+                        Fragment fragment = newRecruitmentFragment;
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                android.R.anim.fade_out);
+                        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+
+                        fragmentTransaction.commitAllowingStateLoss();
+                    }
+                };
+                // If mPendingRunnable is not null, then add to the message queue
+                if (mPendingRunnable != null) {
+                    mHandler.post(mPendingRunnable);
+                }
                 break;
             case TAG_REGISTRATIONS:
                 mPendingRunnable = new Runnable() {
@@ -181,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case TAG_EXAMS:
+
                 mPendingRunnable = new Runnable() {
                     @Override
                     public void run() {
@@ -200,9 +219,25 @@ public class MainActivity extends AppCompatActivity {
                     mHandler.post(mPendingRunnable);
                 }
                 break;
-            case TAG_SETTINGS:
-                Snackbar.make(view, "Please set fragment for " + CURRENT_TAG, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            case TAG_INTERVIEWS:
+                mPendingRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        // update the main content by replacing fragments
+                        NewInterviewFragment newInterviewFragment = new NewInterviewFragment();
+                        Fragment fragment = newInterviewFragment;
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                android.R.anim.fade_out);
+                        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+
+                        fragmentTransaction.commitAllowingStateLoss();
+                    }
+                };
+                // If mPendingRunnable is not null, then add to the message queue
+                if (mPendingRunnable != null) {
+                    mHandler.post(mPendingRunnable);
+                }
                 break;
 
         }
@@ -224,8 +259,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void loadNavHeader() {
         // name, website
-        txtName.setText("David Kimaru");
-        txtWebsite.setText("www.livinggoods.org");
+        txtName.setText(name);
+        txtWebsite.setText(email);
 
         // loading header background image
         Glide.with(this).load(urlNavHeaderBg)
@@ -311,17 +346,42 @@ public class MainActivity extends AppCompatActivity {
                 return recruitmentsFragment;
             case 2:
                 // registrations fragment
-                RegistrationsFragment registrationsFragment = new RegistrationsFragment();
-                return registrationsFragment;
+                // Before loading the Registrations, ensure that the user has already set the recruitment\
+                if (session.isRecruitmentSet()){
+                    RegistrationsFragment registrationsFragment = new RegistrationsFragment();
+                    return registrationsFragment;
+                } else {
+                    Toast.makeText(this, "Please set the recruitment by long pressing the recruitment", Toast.LENGTH_SHORT).show();
+                    navItemIndex = 1;
+                    CURRENT_TAG = TAG_RECRUITMENTS;
+                    return new RecruitmentsFragment();
+                }
+
             case 3:
-                // notifications fragment
-                ExamsFragment examsFragment = new ExamsFragment();
-                return examsFragment;
+                // exams fragment
+                // Before loading the Exams, ensure that the user has already set the recruitment
+                if (session.isRecruitmentSet()){
+                    ExamsFragment examsFragment = new ExamsFragment();
+                    return examsFragment;
+                } else {
+                    Toast.makeText(this, "Long press on Recruitment before administering an exam", Toast.LENGTH_SHORT).show();
+                    navItemIndex = 1;
+                    CURRENT_TAG = TAG_RECRUITMENTS;
+                    return new RecruitmentsFragment();
+                }
 
             case 4:
-                // settings fragment
-                SettingsFragment settingsFragment = new SettingsFragment();
-                return settingsFragment;
+                // interviews fragment
+                // Before loading the Interviews, ensure that the user has already set the recruitment
+                if (session.isRecruitmentSet()){
+                    InterviewsFragment interviewsFragment = new InterviewsFragment();
+                    return interviewsFragment;
+                } else {
+                    Toast.makeText(this, "Long press on Recruitment before conducting an interview", Toast.LENGTH_SHORT).show();
+                    navItemIndex = 1;
+                    CURRENT_TAG = TAG_RECRUITMENTS;
+                    return new RecruitmentsFragment();
+                }
             default:
                 return new HomeFragment();
         }
@@ -331,8 +391,18 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(activityTitles[navItemIndex]);
     }
 
+    public void setSelectedNavMenu(int navItemIndex){
+        navigationView.getMenu().getItem(navItemIndex).setChecked(true);
+    }
+
     private void selectNavMenu() {
         navigationView.getMenu().getItem(navItemIndex).setChecked(true);
+    }
+
+    public void setUpMenus(int itemIndex, String tag){
+        navItemIndex = itemIndex;
+        CURRENT_TAG = tag;
+        setUpNavigationView();
     }
 
     private void setUpNavigationView() {
@@ -355,16 +425,34 @@ public class MainActivity extends AppCompatActivity {
                         CURRENT_TAG = TAG_RECRUITMENTS;
                         break;
                     case R.id.nav_registrations:
-                        navItemIndex = 2;
-                        CURRENT_TAG = TAG_REGISTRATIONS;
+                        if (session.isRecruitmentSet()){
+                            navItemIndex = 2;
+                            CURRENT_TAG = TAG_REGISTRATIONS;
+                        }else {
+                            Toast.makeText(getBaseContext(), "Long press on Recruitment before creating a registration", Toast.LENGTH_LONG).show();
+                            navItemIndex = 1;
+                            CURRENT_TAG = TAG_RECRUITMENTS;
+                        }
                         break;
                     case R.id.nav_notifications:
-                        navItemIndex = 3;
-                        CURRENT_TAG = TAG_EXAMS;
+                        if (session.isRecruitmentSet()){
+                            navItemIndex = 3;
+                            CURRENT_TAG = TAG_EXAMS;
+                        }else {
+                            Toast.makeText(getBaseContext(), "Long press on Recruitment before conducting an exam", Toast.LENGTH_SHORT).show();
+                            navItemIndex = 1;
+                            CURRENT_TAG = TAG_RECRUITMENTS;
+                        }
                         break;
                     case R.id.nav_settings:
-                        navItemIndex = 4;
-                        CURRENT_TAG = TAG_SETTINGS;
+                        if (session.isRecruitmentSet()){
+                            navItemIndex = 4;
+                            CURRENT_TAG = TAG_INTERVIEWS;
+                        }else {
+                            Toast.makeText(getBaseContext(), "Long press on Recruitment before conducting an interview", Toast.LENGTH_SHORT).show();
+                            navItemIndex = 1;
+                            CURRENT_TAG = TAG_RECRUITMENTS;
+                        }
                         break;
                     case R.id.nav_about_us:
                         // launch new intent instead of loading fragment
@@ -374,6 +462,10 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_privacy_policy:
                         // launch new intent instead of loading fragment
                         startActivity(new Intent(MainActivity.this, PrivacyPolicyActivity.class));
+                        drawer.closeDrawers();
+                        return true;
+                    case R.id.nav_http_server:
+                        startActivity(new Intent(MainActivity.this, HttpServerActivity.class));
                         drawer.closeDrawers();
                         return true;
                     default:
@@ -518,9 +610,9 @@ public class MainActivity extends AppCompatActivity {
 
     // show or hide the fab
     private void toggleFab() {
-//        if (navItemIndex == 0)
-//            fab.show();
-//        else
-//            fab.hide();
+        if (navItemIndex == 0)
+            fab.hide();
+        else
+            fab.show();
     }
 }
