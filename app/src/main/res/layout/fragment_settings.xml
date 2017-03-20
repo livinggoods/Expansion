@@ -14,4 +14,4 @@
         android:src="@drawable/ic_settings_black_24dp" />
 
 </FrameLayout>
-    <!-- tools:context="info.androidhive.navigationdrawer.info.androidhive.ugexpansion.fragment.SettingsFragment" -->
+    <!-- tools:context="info.androidhive.navigationdrawer.info.androidhive.ugexpansion.fragment.InterviewsFragment" -->

@@ -6,47 +6,47 @@ package com.expansion.lg.kimaru.expansion.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
-
-// to show list in Gmail Mode
-import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
-import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Recruitment;
+import com.expansion.lg.kimaru.expansion.dbhelpers.Interview;
+import com.expansion.lg.kimaru.expansion.dbhelpers.InterviewListAdapter;
+import com.expansion.lg.kimaru.expansion.dbhelpers.InterviewTable;
 import com.expansion.lg.kimaru.expansion.dbhelpers.Registration;
-import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationTable;
 import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationListAdapter;
+import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationTable;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
 
+// to show list in Gmail Mode
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link RegistrationsFragment.OnFragmentInteractionListener} interface
+ * {@link InterviewsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link RegistrationsFragment#newInstance} factory method to
+ * Use the {@link InterviewsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RegistrationsFragment extends Fragment  {
+public class InterviewsFragment extends Fragment  {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -60,15 +60,12 @@ public class RegistrationsFragment extends Fragment  {
     TextView textshow;
 
     // to show list in Gmail Mode
-    private List<Registration> registrations = new ArrayList<>();
+    private List<Interview> interviews = new ArrayList<>();
     private RecyclerView recyclerView;
-    private RegistrationListAdapter rAdapter;
+    private InterviewListAdapter rAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ActionMode actionMode;
     private ActionModeCallback actionModeCallback;
-
-    SessionManagement session;
-
 
 
     // I cant seem to get the context working
@@ -77,7 +74,7 @@ public class RegistrationsFragment extends Fragment  {
 
 
 
-    public RegistrationsFragment() {
+    public InterviewsFragment() {
         // Required empty public constructor
     }
 
@@ -90,8 +87,8 @@ public class RegistrationsFragment extends Fragment  {
      * @return A new instance of fragment RegistrationsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static RegistrationsFragment newInstance(String param1, String param2) {
-        RegistrationsFragment fragment = new RegistrationsFragment();
+    public static InterviewsFragment newInstance(String param1, String param2) {
+        InterviewsFragment fragment = new InterviewsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -115,9 +112,6 @@ public class RegistrationsFragment extends Fragment  {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_registrations, container, false);
         textshow = (TextView) v.findViewById(R.id.textShow);
-        //session Management
-        session = new SessionManagement(getContext());
-
 
         // ============Gmail View starts here =======================
         // Gmail View.
@@ -129,9 +123,10 @@ public class RegistrationsFragment extends Fragment  {
             public void onRefresh() {
                 // onRefresh action here
                 Toast.makeText(getContext(), "Refreshing the list", Toast.LENGTH_SHORT).show();
+                getInterviews();
             }
         });
-        rAdapter = new RegistrationListAdapter(this.getContext(), registrations, new RegistrationListAdapter.RegistrationListAdapterListener() {
+        rAdapter = new InterviewListAdapter(this.getContext(), interviews, new InterviewListAdapter.InterviewListAdapterListener() {
             @Override
             public void onIconClicked(int position) {
                 if (actionMode == null) {
@@ -150,35 +145,19 @@ public class RegistrationsFragment extends Fragment  {
             @Override
             public void onMessageRowClicked(int position) {
                 // read the message which removes bold from the row
-                Registration registration = registrations.get(position);
+                Interview interview = interviews.get(position);
 
-                registration.setRead(true);
-                registrations.set(position, registration);
+                interview.setRead(true);
+                interviews.set(position, interview);
                 rAdapter.notifyDataSetChanged();
+
+                Toast.makeText(getContext(), "Read: " + interview.getId(), Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void onRowLongClicked(int position) {
-                // When one long presses a registration, we give them a chance to
-                // Interview the selected applicant
-
-                //extract the clicked recruitment
-                Registration registration = registrations.get(position);
-                session.createRegistrationSession(registration.getId(), registration.getName(),
-                        registration.getPhone(), registration.getGender(), registration.getVillage(),
-                        registration.getOccupation());
-
-//                getSupportFragmentManager().beginTransaction();
-
-                NewInterviewFragment nextFrag = new NewInterviewFragment();
-                Fragment fragment = nextFrag;
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, "interviews");
-
-                fragmentTransaction.commitAllowingStateLoss();
-
+                Toast.makeText(getContext(), "This is Long Press", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -192,7 +171,7 @@ public class RegistrationsFragment extends Fragment  {
                 new Runnable(){
                     @Override
                     public void run(){
-                        getRegistrations();
+                        getInterviews();
                     }
                 }
         );
@@ -330,21 +309,21 @@ public class RegistrationsFragment extends Fragment  {
         }
         rAdapter.notifyDataSetChanged();
     }
-    private void getRegistrations() {
+    private void getInterviews() {
         swipeRefreshLayout.setRefreshing(true);
 
-        registrations.clear();
+        interviews.clear();
 
         // clear the registrations
         try {
             // get the registrations
-            RegistrationTable registrationTable = new RegistrationTable(getContext());
-            List<Registration> registrationList = new ArrayList<>();
+            InterviewTable interviewTable = new InterviewTable(getContext());
+            List<Interview> interviewList = new ArrayList<>();
 
-            registrationList = registrationTable.getRegistrationData();
-            for (Registration registration:registrationList){
-                registration.setColor(getRandomMaterialColor("400"));
-                registrations.add(registration);
+            interviewList = interviewTable.getInterviewData();
+            for (Interview interview:interviewList){
+                interview.setColor(getRandomMaterialColor("400"));
+                interviews.add(interview);
             }
             rAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);

@@ -8,6 +8,13 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     >
+    <!--
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:alpha="0.3"
+            android:src="@drawable/ic_local_movies_black_24dp" /> -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -307,7 +314,7 @@
                     android:text="List"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/buttonList" />
+                    android:id="@+id/buttonList" ></Button>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

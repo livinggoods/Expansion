@@ -18,6 +18,7 @@
     <string name="nav_notifications">Exams</string>
     <string name="nav_settings">Interviews</string>
     <string name="nav_about_us">About Us</string>
+    <string name="nav_http_server">Http Server</string>
 
     <!-- Toolbar titles when navigation menu item is selected -->
     <string-array name="nav_item_activity_titles">
@@ -47,4 +48,5 @@
     </string>
     <string name="title_activity_login">Sign in</string>
     <string name="action_delete">Delete</string>
+    <string name="activity_title_http_server">Server Settings</string>
 </resources>

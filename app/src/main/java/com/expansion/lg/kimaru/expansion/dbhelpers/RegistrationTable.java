@@ -137,8 +137,9 @@ public class RegistrationTable extends SQLiteOpenHelper {
         String [] columns=new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
                 VILLAGE, MARK, READ_ENGLISH, DATE_MOVED, LANGS, BRAC, BRAC_CHP, EDUCATION, OCCUPATION,
                 COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED};
+        String orderBy = "id desc";
 
-        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,orderBy,null);
 
         List<Registration> registrationList=new ArrayList<>();
 

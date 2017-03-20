@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.app.Dialog;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.dbhelpers.Registration;
 import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationTable;
 
@@ -33,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -91,6 +93,10 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
 
     Integer loggedInUser = 1;
 
+    SessionManagement session;
+    String userName, userEmail;
+    Integer userId;
+    Integer recruitmentId;
 
 
     public NewRegistrationFragment() {
@@ -130,30 +136,36 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_new_registration, container, false);
+
+        //check if Recruitment is set
+        session = new SessionManagement(getContext());
+        session.checkRecruitment();
+
+        //we can now extract User details
+        HashMap<String, String> user = session.getUserDetails();
+        //name
+        userName = user.get(SessionManagement.KEY_NAME);
+        //Emails
+        userEmail = user.get(SessionManagement.KEY_EMAIL);
+        userId = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
+        HashMap<String, String> recruitment = session.getRecruitmentSession();
+        recruitmentId = Integer.parseInt(recruitment.get(SessionManagement.RECRUITMENT_ID));
+
         //Initialize the UI Components
         mName = (EditText) v.findViewById(R.id.editName);
         mPhone = (EditText) v.findViewById(R.id.editPhone);
         mGender = (RadioGroup) v.findViewById(R.id.editGender);
-//        mDistrict = (EditText) v.findViewById(R.id.);
-//        mSubcounty = (EditText) v.findViewById(R.id.);
-//        mDivision = (EditText) v.findViewById(R.id.);
         mVillage = (EditText) v.findViewById(R.id.editVillage);
         mMark = (EditText) v.findViewById(R.id.editLandmark);
         mLangs = (EditText) v.findViewById(R.id.editOtherlanguages);
         mEducation = (EditText) v.findViewById(R.id.editEducation);
         mOccupation = (EditText) v.findViewById(R.id.editOccupation);
-//        mComment = (EditText) v.findViewById(R.id.editComment);
         mDob = (EditText) v.findViewById(R.id.editDob);
         mReadEnglish = (RadioGroup) v.findViewById(R.id.editReadEnglish);
-//        mRecruitment = (EditText) v.findViewById(R.id.editRelocated);
         mDateMoved = (EditText) v.findViewById(R.id.editRelocated);
         mBrac = (RadioGroup) v.findViewById(R.id.editWorkedWithBrac);
         mBracChp = (RadioGroup) v.findViewById(R.id.editBracChp);
         mCommunity = (RadioGroup) v.findViewById(R.id.editCommunityMembership);
-//        mAddedBy = (EditText) v.findViewById(R.id.);
-//        mProceed = (EditText) v.findViewById(R.id.);
-//        mDateAdded = (EditText) v.findViewById(R.id.);
-//        mSync = (EditText) v.findViewById(R.id.);
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
@@ -193,7 +205,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 // set date as integers
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
-                Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Validating and saving.", Toast.LENGTH_SHORT).show();
                 Integer currentDate =  (int) (new Date().getTime()/1000);
 
                 String applicantName = mName.getText().toString();
@@ -252,11 +264,11 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 String hasApplicantCommunityParticipation = hasCommunityParticipation.getText().toString();
                 Integer applicantCommunity = hasApplicantCommunityParticipation == "yes" ? 1 : 0;
 
-                Integer applicantAddedBy = loggedInUser;
+                Integer applicantAddedBy = userId;
                 Integer applicantProceed = 0;
                 Integer applicantDateAdded = currentDate;
                 Integer applicantSync = 0;
-                Integer applicantRecruitment = 1;
+                Integer applicantRecruitment = recruitmentId;
 
 
                 // Do some validations
