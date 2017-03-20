@@ -22,7 +22,9 @@ import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
 import com.expansion.lg.kimaru.expansion.other.FlipAnimator;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -98,7 +100,9 @@ public class ExamListAdapter extends RecyclerView.Adapter<ExamListAdapter.ListHo
         holder.from.setText("English: "+ exam.getEnglish());
         holder.subject.setText("Maths: "+ exam.getMath());
         holder.message.setText("Self assessment: "+ exam.getPersonality());
-        holder.timestamp.setText(exam.getDateAdded());
+        Date dateAdded = new Date(exam.getDateAdded() * 1000);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy' ' HH:mm:ss:S");
+        holder.timestamp.setText(simpleDateFormat.format(dateAdded));
 
         // displaying the first letter of From in icon text
         holder.iconText.setText(String.valueOf(exam.getMath()).substring(0,1));
