@@ -6,8 +6,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 
 /**
@@ -49,8 +54,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
             + ADDED_BY + integer_field + ", "
             + COMMENT + text_field + ", "
             + DATE_ADDED + integer_field + ", "
-            + SYNCED + integer_field + ", "
-            + ")";
+            + SYNCED + integer_field + ");";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
 
@@ -99,7 +103,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
 
         SQLiteDatabase db=getReadableDatabase();
 
-        String [] columns=new String[]{NAME, DISTRICT, SUB_COUNTY, DIVISION,ADDED_BY, COMMENT, DATE_ADDED, SYNCED};
+        String [] columns=new String[]{ID, NAME, DISTRICT, SUB_COUNTY, DIVISION, LAT, LON, ADDED_BY, COMMENT, DATE_ADDED, SYNCED};
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
@@ -111,16 +115,17 @@ public class RecruitmentTable extends SQLiteOpenHelper {
 
             Recruitment recruitment=new Recruitment();
 
-            recruitment.setName(cursor.getString(0));
+            recruitment.setId(cursor.getInt(0));
+            recruitment.setName(cursor.getString(1));
             recruitment.setDistrict(cursor.getString(2));
-            recruitment.setSubcounty(cursor.getString(2));
-            recruitment.setDivision(cursor.getString(2));
-            recruitment.setLat(cursor.getString(2));
-            recruitment.setLon(cursor.getString(2));
-            recruitment.setAddedBy(cursor.getInt(2));
-            recruitment.setComment(cursor.getString(2));
-            recruitment.setDateAdded(cursor.getInt(2));
-            recruitment.setSynced(cursor.getInt(2));
+            recruitment.setSubcounty(cursor.getString(3));
+            recruitment.setDivision(cursor.getString(4));
+            recruitment.setLat(cursor.getString(5));
+            recruitment.setLon(cursor.getString(6));
+            recruitment.setAddedBy(cursor.getInt(7));
+            recruitment.setComment(cursor.getString(8));
+            recruitment.setDateAdded(cursor.getInt(9));
+            recruitment.setSynced(cursor.getInt(10));
 
             recruitmentList.add(recruitment);
         }
@@ -128,6 +133,45 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         db.close();
 
         return recruitmentList;
+    }
+    public JSONObject getRecruitmentJson() {
+
+        SQLiteDatabase db=getReadableDatabase();
+
+        String [] columns=new String[]{ID, NAME, DISTRICT, SUB_COUNTY, DIVISION, LAT, LON, ADDED_BY, COMMENT, DATE_ADDED, SYNCED};
+
+        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+
+        JSONObject results = new JSONObject();
+
+        JSONArray resultSet = new JSONArray();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put("recruitments", resultSet);
+            } catch (JSONException e) {
+
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
     }
 }
 

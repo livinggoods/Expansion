@@ -17,7 +17,7 @@ public class Recruitment {
     }
 
     public Recruitment(String name, String district, String subcounty, String division, String lat, String lon,
-                       String comment, Integer addedBy, Integer dateAdded, Integer synced, Integer id, boolean isRead, boolean isImportant) {
+                       String comment, Integer addedBy, Integer dateAdded, Integer synced) {
         this.name = name;
         this.district = district;
         this.subcounty = subcounty;
@@ -28,9 +28,6 @@ public class Recruitment {
         this.synced = synced;
         this.lat = lat;
         this.lon = lon;
-        this.id = id;
-        this.isRead = isRead;
-        this.isImportant = isImportant;
     }
 
 
@@ -127,4 +124,15 @@ public class Recruitment {
         this.color = color;
     }
 
+    public void setImportant(boolean important) {
+        isImportant = important;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
+    }
 }

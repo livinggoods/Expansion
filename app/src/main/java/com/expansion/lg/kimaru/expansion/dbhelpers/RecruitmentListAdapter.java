@@ -95,10 +95,10 @@ public class RecruitmentListAdapter extends RecyclerView.Adapter<RecruitmentList
         Recruitment recruitment = recruitments.get(position);
 
         //// displaying text view data
-        holder.from.setText(recruitment.getDateAdded());
-        holder.subject.setText(recruitment.getName());
-        holder.message.setText(recruitment.getDistrict());
-        holder.timestamp.setText(recruitment.getDivision());
+        holder.from.setText(recruitment.getName());
+        holder.subject.setText(recruitment.getDistrict());
+        holder.message.setText(recruitment.getDivision());
+        holder.timestamp.setText(recruitment.getSubcounty());
 
         // displaying the first letter of From in icon text
         holder.iconText.setText(recruitment.getName().substring(0,1));
