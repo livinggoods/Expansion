@@ -13,6 +13,7 @@ import com.expansion.lg.kimaru.expansion.dbhelpers.RecruitmentTable;
 import com.expansion.lg.kimaru.expansion.dbhelpers.Registration;
 import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationTable;
 
+import com.expansion.lg.kimaru.expansion.sync.JSONParser;
 import com.koushikdutta.async.AsyncServer;
 import com.koushikdutta.async.http.server.AsyncHttpServer;
 import com.koushikdutta.async.http.server.AsyncHttpServerRequest;
@@ -20,6 +21,8 @@ import com.koushikdutta.async.http.server.AsyncHttpServerResponse;
 import com.koushikdutta.async.http.server.HttpServerRequestCallback;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,6 +34,8 @@ public class HttpServerActivity extends AppCompatActivity {
     private AsyncServer asyncServer = new AsyncServer();
     Button enableServer;
     Button stopServer;
+
+    private static String serverUrl = "192.168.43.1";
 
     //
 
@@ -68,8 +73,9 @@ public class HttpServerActivity extends AppCompatActivity {
     @Override
     public void onResume (){
         super.onResume();
+        startServer();
         pollNewRecords();
-        //startServer();
+
     }
 //
 //    private void setRepeatingAsyncTask() {
@@ -108,7 +114,7 @@ public class HttpServerActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             // get new records
-                            Toast.makeText(getBaseContext(), "Fetching new Records", Toast.LENGTH_SHORT).show();
+                            syncRecords();
                         } catch (Exception e){
                             //Error in fetching records
                         }
@@ -139,6 +145,32 @@ public class HttpServerActivity extends AppCompatActivity {
 
     public void syncRecords(){
         // open the server URL for recruitments
+        JSONParser jp = new JSONParser();
+        String recs = jp.getJsonFromUrl(serverUrl+"/recruitments", "GET");
+        if (recs != null){
+            // we have the records
+            try {
+                JSONObject jsonObject = new JSONObject(recs);
+                JSONArray records = jsonObject.getJSONArray("recruitments");
+                for (int i = 0; i < records.length(); i++){
+                    JSONObject recruitment = records.getJSONObject(i);
+                    String id = recruitment.getString("id");
+                    String title = recruitment.getString("title");
+                    String district = recruitment.getString("district");
+                    String subcounty = recruitment.getString("subcounty");
+                    String division = recruitment.getString("division");
+                    String lat = recruitment.getString("lat");
+                    String lon = recruitment.getString("lon");
+                    String added_by = recruitment.getString("added_by");
+                    String comment = recruitment.getString("comment");
+                    String date_added = recruitment.getString("date_added");
+                    String synced = recruitment.getString("synced");
+                    Toast.makeText(getBaseContext(), "Recruitment is + " + title, Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e){
 
+            }
+
+        }
     }
 }
