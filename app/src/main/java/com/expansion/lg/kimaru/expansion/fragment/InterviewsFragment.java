@@ -25,12 +25,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Interview;
+import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.dbhelpers.InterviewListAdapter;
-import com.expansion.lg.kimaru.expansion.dbhelpers.InterviewTable;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Registration;
-import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationListAdapter;
-import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationTable;
+import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 
 import java.util.ArrayList;

@@ -17,10 +17,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Exam;
-import com.expansion.lg.kimaru.expansion.dbhelpers.ExamTable;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Interview;
-import com.expansion.lg.kimaru.expansion.dbhelpers.InterviewTable;
+import com.expansion.lg.kimaru.expansion.mzigos.Interview;
+import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

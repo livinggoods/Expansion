@@ -36,6 +36,7 @@ import com.expansion.lg.kimaru.expansion.fragment.RegistrationsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.ExamsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
+import com.expansion.lg.kimaru.expansion.other.SetUpApp;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -95,7 +96,13 @@ public class MainActivity extends AppCompatActivity {
         //since we want login to be the first thing
         session = new SessionManagement(getBaseContext());
         //we cannow check login
-        session.checkLogin();
+
+        if (session.isInitialRun()){
+            SetUpApp setUpApp = new SetUpApp();
+            setUpApp.setUpEducation(getBaseContext());
+        }
+
+    session.checkLogin();
 
         //we can now extract User details
         HashMap<String, String> user = session.getUserDetails();

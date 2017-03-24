@@ -3,7 +3,6 @@ package com.expansion.lg.kimaru.expansion.dbhelpers;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
-import android.net.nsd.NsdManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -23,7 +22,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.other.FlipAnimator;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Registration;
+import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 
 
 import java.util.ArrayList;

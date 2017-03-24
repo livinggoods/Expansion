@@ -1,4 +1,4 @@
-package com.expansion.lg.kimaru.expansion.dbhelpers;
+package com.expansion.lg.kimaru.expansion.mzigos;
 
 /**
  * Created by kimaru on 3/2/17.

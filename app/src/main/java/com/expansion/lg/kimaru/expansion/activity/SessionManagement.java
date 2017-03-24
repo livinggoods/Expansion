@@ -63,6 +63,8 @@ public class SessionManagement {
 
     public static final String KEY_APPLICANT = "applicant";
 
+    public static final String IS_INITIAL_RUN = "initialRun";
+
 
     //constructor
     public SessionManagement (Context context){
@@ -330,5 +332,11 @@ public class SessionManagement {
 
     public boolean isInterviewSet(){
         return pref.getBoolean(IS_INTERVIEW, false);
+    }
+
+    public boolean isInitialRun() {return pref.getBoolean(IS_INITIAL_RUN, true);}
+    public void setInitialRun(boolean status) {
+        editor.putBoolean(IS_INITIAL_RUN, status);
+        editor.commit();
     }
 }

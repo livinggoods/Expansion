@@ -1,4 +1,4 @@
-package com.expansion.lg.kimaru.expansion.dbhelpers;
+package com.expansion.lg.kimaru.expansion.tables;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +24,11 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION=1;
 
     public static String varchar_field = " varchar(512) ";
-    public static String primary_field = " id INTEGER PRIMARY KEY AUTOINCREMENT ";
+    public static String primary_field = " _id INTEGER PRIMARY KEY AUTOINCREMENT ";
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
-    public static final String ID = "id";
+    public static final String ID = "_id";
     public static final String NAME= "name";
     public static final String PHONE = "phone";
     public static final String GENDER = "gender";
@@ -128,6 +130,18 @@ public class RegistrationTable extends SQLiteOpenHelper {
         db.close();
         return id;
 
+    }
+    public Cursor getRegistrationDataCursor() {
+
+        SQLiteDatabase db=getReadableDatabase();
+        String [] columns=new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
+                VILLAGE, MARK, READ_ENGLISH, DATE_MOVED, LANGS, BRAC, BRAC_CHP, EDUCATION, OCCUPATION,
+                COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED};
+        String orderBy = "id desc";
+
+        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,orderBy,null);
+        db.close();
+        return cursor;
     }
 
     public List<Registration> getRegistrationData() {

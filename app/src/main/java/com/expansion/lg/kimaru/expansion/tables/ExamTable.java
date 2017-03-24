@@ -1,10 +1,12 @@
-package com.expansion.lg.kimaru.expansion.dbhelpers;
+package com.expansion.lg.kimaru.expansion.tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +25,11 @@ public class ExamTable extends SQLiteOpenHelper {
 
 
     public static String varchar_field = " varchar(512) ";
-    public static String primary_field = " id INTEGER PRIMARY KEY AUTOINCREMENT ";
+    public static String primary_field = " _id INTEGER PRIMARY KEY AUTOINCREMENT ";
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
-    public static final String ID= "id";
+    public static final String ID= "_id";
     public static final String APPLICANT= "applicant";
     public static final String RECRUITMENT = "recruitment";
     public static final String MATH = "math";
@@ -122,6 +124,17 @@ public class ExamTable extends SQLiteOpenHelper {
         db.close();
 
         return examList;
+    }
+
+    public Cursor getExamDataCursor() {
+
+        SQLiteDatabase db=getReadableDatabase();
+
+        String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MATH, PERSONALITY, ENGLISH, ADDED_BY, COMMENT, DATE_ADDED, SYNCED};
+
+        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+
+        return cursor;
     }
 }
 

@@ -2,40 +2,33 @@ package com.expansion.lg.kimaru.expansion.fragment;
 /**
  * Created by kimaru on 3/11/17.
  */
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.app.DialogFragment;
-import android.app.Activity;
-import android.app.Dialog;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Registration;
-import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationTable;
+import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.other.SpinnersCursorAdapter;
+import com.expansion.lg.kimaru.expansion.tables.EducationTable;
+import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 
 /**
@@ -69,7 +62,6 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     EditText mVillage;
     EditText mMark;
     EditText mLangs;
-    EditText mEducation;
     EditText mOccupation;
     EditText mComment;
     EditText mDob;
@@ -83,6 +75,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     EditText mProceed;
     EditText mDateAdded;
     EditText mSync;
+    Spinner educationLevel;
 
     Button buttonSave, buttonList;
 
@@ -158,7 +151,6 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         mVillage = (EditText) v.findViewById(R.id.editVillage);
         mMark = (EditText) v.findViewById(R.id.editLandmark);
         mLangs = (EditText) v.findViewById(R.id.editOtherlanguages);
-        mEducation = (EditText) v.findViewById(R.id.editEducation);
         mOccupation = (EditText) v.findViewById(R.id.editOccupation);
         mDob = (EditText) v.findViewById(R.id.editDob);
         mReadEnglish = (RadioGroup) v.findViewById(R.id.editReadEnglish);
@@ -166,6 +158,23 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         mBrac = (RadioGroup) v.findViewById(R.id.editWorkedWithBrac);
         mBracChp = (RadioGroup) v.findViewById(R.id.editBracChp);
         mCommunity = (RadioGroup) v.findViewById(R.id.editCommunityMembership);
+        educationLevel = (Spinner) v.findViewById(R.id.selectEdducation);
+
+
+
+        addEducationSelectList();
+
+        /*
+        Th
+        mySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Object item = parent.getItemAtPosition(position);
+    }
+    public void onNothingSelected(AdapterView<?> parent) {
+    }
+});
+         */
+
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
@@ -201,7 +210,6 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
 //                    mComment, mDob, mReadEnglish, mRecruitment, mDateMoved,
 //                    mBrac, mBracChp, mCommunity, mAddedBy, mProceed, mDateAdded, mSynced
             case R.id.buttonSave:
-
                 // set date as integers
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
@@ -221,7 +229,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 String applicantVillage = mVillage.getText().toString();
                 String applicantMark = mMark.getText().toString();
                 String applicantLangs = mLangs.getText().toString();
-                String applicantEducation = mEducation.getText().toString();
+                String applicantEducation = String.valueOf(educationLevel.getSelectedItemId());
                 String applicantOccupation = mOccupation.getText().toString();
                 String applicantComment = "";
                 String aDob = mDob.getText().toString();
@@ -307,7 +315,6 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                         mVillage.setText("");
                         mMark.setText("");
                         mLangs.setText("");
-                        mEducation.setText("");
                         mOccupation.setText("");
                         //mComment.setText("");
                         mDob.setText("");
@@ -350,5 +357,12 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void addEducationSelectList() {
+        EducationTable educationTable = new EducationTable(getContext());
+        SpinnersCursorAdapter cursorAdapter = new SpinnersCursorAdapter(getContext(), educationTable.getEducationDataCursor());
+        educationLevel.setAdapter(cursorAdapter);
+
     }
 }

@@ -14,16 +14,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Registration;
-import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationTable;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Exam;
-import com.expansion.lg.kimaru.expansion.dbhelpers.ExamTable;
+import com.expansion.lg.kimaru.expansion.mzigos.Exam;
+import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

@@ -29,9 +29,8 @@ import android.view.MenuItem;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Recruitment;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Registration;
-import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationTable;
+import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationListAdapter;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 

@@ -1,4 +1,4 @@
-package com.expansion.lg.kimaru.expansion.dbhelpers;
+package com.expansion.lg.kimaru.expansion.tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -6,13 +6,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 
 /**
@@ -27,12 +28,12 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION=1;
 
     public static String varchar_field = " varchar(512) ";
-    public static String primary_field = " id INTEGER PRIMARY KEY AUTOINCREMENT ";
+    public static String primary_field = " _id INTEGER PRIMARY KEY AUTOINCREMENT ";
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
-    public static final String ID = "id";
-    public static final String NAME= "title";
+    public static final String ID = "_id";
+    public static final String NAME= "name";
     public static final String LON = "lon";
     public static final String LAT = "lat";
     public static final String DISTRICT = "district";
@@ -134,6 +135,50 @@ public class RecruitmentTable extends SQLiteOpenHelper {
 
         return recruitmentList;
     }
+
+    public void syncRecruitment(Recruitment recruitment){
+        //In order to make it unique, we shall be checking the recruitments as follows
+        // a) The recruitment must be created by someone else (addedby != currentUserID)
+        // b) Recruitment Name is not the same as the one we have in the DB
+        // c) Recruitment added_date should not be the same
+
+
+    }
+
+    public List<Recruitment> getRecruitmentbyQuery(String whereClause){
+
+        List<Recruitment> recruitments = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+
+
+        String queryString = "SELECT * FROM  " + TABLE_NAME + " WHERE " + whereClause;
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+
+
+            Recruitment recruitment=new Recruitment();
+
+            recruitment.setId(cursor.getInt(0));
+            recruitment.setName(cursor.getString(1));
+            recruitment.setDistrict(cursor.getString(2));
+            recruitment.setSubcounty(cursor.getString(3));
+            recruitment.setDivision(cursor.getString(4));
+            recruitment.setLat(cursor.getString(5));
+            recruitment.setLon(cursor.getString(6));
+            recruitment.setAddedBy(cursor.getInt(7));
+            recruitment.setComment(cursor.getString(8));
+            recruitment.setDateAdded(cursor.getInt(9));
+            recruitment.setSynced(cursor.getInt(10));
+
+            recruitments.add(recruitment);
+        }
+
+        db.close();
+
+        return recruitments;
+    }
     public JSONObject getRecruitmentJson() {
 
         SQLiteDatabase db=getReadableDatabase();
@@ -172,6 +217,15 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return results;
+    }
+    public Cursor getRecruitmentDataCursor() {
+
+        SQLiteDatabase db=getReadableDatabase();
+
+        String [] columns=new String[]{ID, NAME, DISTRICT, SUB_COUNTY, DIVISION, LAT, LON, ADDED_BY, COMMENT, DATE_ADDED, SYNCED};
+
+        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+        return  cursor;
     }
 }
 

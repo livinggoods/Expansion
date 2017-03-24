@@ -6,7 +6,6 @@ package com.expansion.lg.kimaru.expansion.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,14 +13,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Recruitment;
-import com.expansion.lg.kimaru.expansion.dbhelpers.RecruitmentTable;
+import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
+import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

@@ -27,17 +27,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
-import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Exam;
+import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.dbhelpers.ExamListAdapter;
-import com.expansion.lg.kimaru.expansion.dbhelpers.ExamTable;
+import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.expansion.lg.kimaru.expansion.activity.MainActivity.navItemIndex;
 
 // to show list in Gmail Mode
 

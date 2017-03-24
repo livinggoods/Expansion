@@ -1,5 +1,6 @@
 package com.expansion.lg.kimaru.expansion.activity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -8,34 +9,31 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Recruitment;
-import com.expansion.lg.kimaru.expansion.dbhelpers.RecruitmentTable;
-import com.expansion.lg.kimaru.expansion.dbhelpers.Registration;
-import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationTable;
-
-import com.expansion.lg.kimaru.expansion.sync.JSONParser;
-import com.koushikdutta.async.AsyncServer;
-import com.koushikdutta.async.http.server.AsyncHttpServer;
-import com.koushikdutta.async.http.server.AsyncHttpServerRequest;
-import com.koushikdutta.async.http.server.AsyncHttpServerResponse;
-import com.koushikdutta.async.http.server.HttpServerRequestCallback;
+import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
+import com.expansion.lg.kimaru.expansion.sync.ApiClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutionException;
+
 
 public class HttpServerActivity extends AppCompatActivity {
 
-    private AsyncHttpServer server = new AsyncHttpServer();
-    private AsyncServer asyncServer = new AsyncServer();
+
+
+
     Button enableServer;
     Button stopServer;
 
-    private static String serverUrl = "192.168.43.1";
+    final String SERVER_URL = "http://192.168.43.1";
+    final int SERVER_PORT = 8090;
+    final String RECRUIRMENT_URL = "recruitments";
+    private static String url;
 
     //
 
@@ -73,35 +71,8 @@ public class HttpServerActivity extends AppCompatActivity {
     @Override
     public void onResume (){
         super.onResume();
-        startServer();
         pollNewRecords();
-
     }
-//
-//    private void setRepeatingAsyncTask() {
-//
-//        final Handler handler = new Handler();
-//        Timer timer = new Timer();
-//
-//        TimerTask task = new TimerTask() {
-//            @Override
-//            public void run() {
-//                handler.post(new Runnable() {
-//                    public void run() {
-//                        try {
-//                            AsyncTaskParseJson jsonTask = new AsyncTaskParseJson();
-//                            jsonTask.execute();
-//                        } catch (Exception e) {
-//                            // error, do something
-//                        }
-//                    }
-//                });
-//            }
-//        };
-//
-//        timer.schedule(task, 0, 60*1000);  // interval of one minute
-//
-//    }
 
     private void pollNewRecords(){
         final Handler handler = new Handler();
@@ -112,65 +83,83 @@ public class HttpServerActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        try {
-                            // get new records
-                            syncRecords();
-                        } catch (Exception e){
-                            //Error in fetching records
-                        }
+//                        syncRecords();
+                        url = SERVER_URL+":"+SERVER_PORT+"/"+RECRUIRMENT_URL;
+                        new ProcessJSON().execute(url);
                     }
                 });
             }
         };
-        timer.schedule(task, 0, 60*1000 /2);
+        timer.schedule(task, 0, 60*1000 /4);
     }
 
-    private void startServer(){
-        server.get("/recruitments", new HttpServerRequestCallback() {
-            @Override
-            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
-                RecruitmentTable recruitmentData = new RecruitmentTable(getBaseContext());
-                response.send(recruitmentData.getRecruitmentJson());
-            }
-        });
-        server.post("/reruitments", new HttpServerRequestCallback() {
-            @Override
-            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
-                response.send("Details saved");
-            }
-        });
+    private class ProcessJSON extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
 
-        server.listen(asyncServer, 8090);
-    }
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
 
-    public void syncRecords(){
-        // open the server URL for recruitments
-        JSONParser jp = new JSONParser();
-        String recs = jp.getJsonFromUrl(serverUrl+"/recruitments", "GET");
-        if (recs != null){
-            // we have the records
-            try {
-                JSONObject jsonObject = new JSONObject(recs);
-                JSONArray records = jsonObject.getJSONArray("recruitments");
-                for (int i = 0; i < records.length(); i++){
-                    JSONObject recruitment = records.getJSONObject(i);
-                    String id = recruitment.getString("id");
-                    String title = recruitment.getString("title");
-                    String district = recruitment.getString("district");
-                    String subcounty = recruitment.getString("subcounty");
-                    String division = recruitment.getString("division");
-                    String lat = recruitment.getString("lat");
-                    String lon = recruitment.getString("lon");
-                    String added_by = recruitment.getString("added_by");
-                    String comment = recruitment.getString("comment");
-                    String date_added = recruitment.getString("date_added");
-                    String synced = recruitment.getString("synced");
-                    Toast.makeText(getBaseContext(), "Recruitment is + " + title, Toast.LENGTH_SHORT).show();
-                }
-            } catch (JSONException e){
-
-            }
-
+            // Return the data from specified url
+            return stream;
         }
-    }
+
+        protected void onPostExecute(String stream){
+            Toast.makeText(getBaseContext(), "Start Syncing", Toast.LENGTH_SHORT).show();
+
+            /*
+                Important in JSON DATA
+                -------------------------
+                * Square bracket ([) represents a JSON array
+                * Curly bracket ({) represents a JSON object
+                * JSON object contains key/value pairs
+                * Each key is a String and value may be different data types
+             */
+
+            //..........Process JSON DATA................
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+
+                    // Get the JSONObject "recruitments"...........................
+//                    JSONObject coord = reader.getJSONObject("recruitments");
+
+                    // Get the JSONArray recruitments
+                    JSONArray recs = reader.getJSONArray("recruitments");
+                    // Get the array first JSONObject
+                    List<Recruitment> recruitmentList = new ArrayList<Recruitment>();
+
+
+                    for (int x = 0; x < recs.length(); x++){
+                        Recruitment recruitment = new Recruitment();
+
+                        recruitment.setId(Integer.parseInt(recs.getJSONObject(x).getString("_id")));
+                        recruitment.setName(recs.getJSONObject(x).getString("title"));
+                        recruitment.setDistrict(recs.getJSONObject(x).getString("district"));
+                        recruitment.setSubcounty(recs.getJSONObject(x).getString("subcounty"));
+                        recruitment.setDivision(recs.getJSONObject(x).getString("division"));
+                        recruitment.setLat(recs.getJSONObject(x).getString("lat"));
+                        recruitment.setLon(recs.getJSONObject(x).getString("lon"));
+                        recruitment.setAddedBy(Integer.parseInt(recs.getJSONObject(x).getString("added_by")));
+                        recruitment.setComment(recs.getJSONObject(x).getString("comment"));
+                        recruitment.setDateAdded(Integer.parseInt(recs.getJSONObject(x).getString("date_added")));
+                        recruitment.setSynced(Integer.parseInt(recs.getJSONObject(x).getString("synced")));
+
+                    }
+
+
+
+                    // process other data as this way..............
+
+                }catch(JSONException e){
+                    Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+
+            } // if statement end
+        } // onPostExecute() end
+    } // ProcessJSON class end
+
 }

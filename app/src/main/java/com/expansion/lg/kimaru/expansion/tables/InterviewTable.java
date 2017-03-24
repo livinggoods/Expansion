@@ -1,10 +1,12 @@
-package com.expansion.lg.kimaru.expansion.dbhelpers;
+package com.expansion.lg.kimaru.expansion.tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,7 @@ public class InterviewTable extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION=1;
 
     public static String varchar_field = " varchar(512) ";
-    public static String primary_field = " id INTEGER PRIMARY KEY AUTOINCREMENT ";
+    public static String primary_field = " _id INTEGER PRIMARY KEY AUTOINCREMENT ";
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
@@ -159,6 +161,18 @@ public class InterviewTable extends SQLiteOpenHelper {
         db.close();
 
         return interviewList;
+    }
+    public Cursor getInterviewDataCursor() {
+
+        SQLiteDatabase db=getReadableDatabase();
+
+        String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MOTIVATION, COMMUNITY,MENTALITY,
+                SELLING, HEALTH, INVESTMENT, INTERPERSONAL, TOTAL, SELECTED, ADDED_BY, COMMENT,
+                COMMITMENT, DATE_ADDED, SYNCED};
+
+        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+
+        return cursor;
     }
 }
 
