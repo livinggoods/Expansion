@@ -36,6 +36,7 @@ import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -349,7 +350,8 @@ public class RegistrationsFragment extends Fragment  {
             swipeRefreshLayout.setRefreshing(false);
         } catch (Exception error){
             Toast.makeText(getContext(), "No Registrations", Toast.LENGTH_SHORT).show();
-            textshow.setText("No registrations added. Please create one");
+
+            textshow.setText(" No registration recorded");
         }
         swipeRefreshLayout.setRefreshing(false);
     }
