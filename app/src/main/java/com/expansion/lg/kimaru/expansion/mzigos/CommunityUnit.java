@@ -36,6 +36,10 @@ public class CommunityUnit {
     boolean chvsTrained, presenceOfEstates, presenceOfFactories, presenceOfHostels, traderMarket, largeSupermarket, ngosGivingFreeDrugs;
     boolean ngoDoingIccm, ngoDoingMhealth;
 
+    boolean isRead, isImportant;
+    int color = -1;
+    String picture =  "";
+
 
 
     public CommunityUnit(){
@@ -432,5 +436,42 @@ public class CommunityUnit {
 
     public void setPrivateFacilityForAct(String privateFacilityForAct) {
         this.privateFacilityForAct = privateFacilityForAct;
+    }
+
+    public String getPicture() {
+        return "";
+    }
+    public int getColor() {
+        return 1;
+    }
+    public boolean isImportant() {
+        return true;
+    }
+    public boolean isRead() {
+        return isRead;
+    }
+
+
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
+    }
+    public void setIsImportant(boolean isImportant) {
+        this.isImportant = isImportant;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public void setImportant(boolean important) {
+        isImportant = important;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
     }
 }
