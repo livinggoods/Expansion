@@ -6,26 +6,86 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 
 public class SubCounty {
 
-    String id, subCountyName, country, mappingId, lat, lon, contactPerson, contactPersonPhone;
-    Integer dateAdded, addedBy;
+    String id;
+    String subCountyName;
+    String countyID;
+    String country;
+    String mappingId;
+    String lat;
+    String lon;
+    String contactPerson;
+    String contactPersonPhone;
+    String mainTown;
+    String countySupport;
+    String subcountySupport;
+    String chvActivity;
+    String countyPopulation;
+    String subCountyPopulation;
+    String noOfVillages;
+    String mainTownPopulation;
+    String servicePopulation;
+    String populationDensity;
+    String transportCost;
+    String majorRoads;
+    String healtFacilities;
+    String privateClinicsInTown;
+    String privateClinicsInRadius;
+    String communityUnits;
+    String mainSupermarkets;
+    String mainBanks;
+    String anyMajorBusiness;
+    String comments;
+    String recommendation;
+    Integer dateAdded;
+    Integer addedBy;
 
     public SubCounty(){
 
     }
 
-    public SubCounty(String id, String subCountyName, String country, String mappingId,
-                     String contactPerson, String contactPersonPhone,
-                     String lat, String lon, Integer dateAdded, Integer addedBy) {
+    public SubCounty(String id, String subCountyName, String countyID, String country,
+                     String mappingId, String lat, String lon, String contactPerson,
+                     String contactPersonPhone, String mainTown, String countySupport,
+                     String subcountySupport, String chvActivity,
+                     String countyPopulation, String subCountyPopulation, String noOfVillages,
+                     String mainTownPopulation, String servicePopulation, String populationDensity,
+                     String transportCost, String majorRoads, String healtFacilities,
+                     String privateClinicsInTown, String privateClinicsInRadius, String communityUnits,
+                     String mainSupermarkets, String mainBanks, String anyMajorBusiness,
+                     String comments, String recommendation, Integer dateAdded, Integer addedBy) {
+
         this.id = id;
         this.subCountyName = subCountyName;
+        this.countyID = countyID;
         this.country = country;
         this.mappingId = mappingId;
         this.lat = lat;
         this.lon = lon;
-        this.dateAdded = dateAdded;
-        this.addedBy = addedBy;
         this.contactPerson = contactPerson;
         this.contactPersonPhone = contactPersonPhone;
+        this.mainTown = mainTown;
+        this.countySupport = countySupport;
+        this.subcountySupport = subcountySupport;
+        this.chvActivity = chvActivity;
+        this.countyPopulation = countyPopulation;
+        this.subCountyPopulation = subCountyPopulation;
+        this.noOfVillages = noOfVillages;
+        this.mainTownPopulation = mainTownPopulation;
+        this.servicePopulation = servicePopulation;
+        this.populationDensity = populationDensity;
+        this.transportCost = transportCost;
+        this.majorRoads = majorRoads;
+        this.healtFacilities = healtFacilities;
+        this.privateClinicsInTown = privateClinicsInTown;
+        this.privateClinicsInRadius = privateClinicsInRadius;
+        this.communityUnits = communityUnits;
+        this.mainSupermarkets = mainSupermarkets;
+        this.mainBanks = mainBanks;
+        this.anyMajorBusiness = anyMajorBusiness;
+        this.comments = comments;
+        this.recommendation = recommendation;
+        this.dateAdded = dateAdded;
+        this.addedBy = addedBy;
     }
 
     // Get Methods
@@ -108,5 +168,182 @@ public class SubCounty {
 
     public String getContactPerson() {
         return contactPerson;
+    }
+
+    public String getMainBanks() {
+        return mainBanks;
+    }
+
+    public String getAnyMajorBusiness() {
+        return anyMajorBusiness;
+    }
+
+    public String getChvActivity() {
+        return chvActivity;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public String getCommunityUnits() {
+        return communityUnits;
+    }
+
+    public String getCountyID() {
+        return countyID;
+    }
+
+    public String getCountyPopulation() {
+        return countyPopulation;
+    }
+
+    public String getCountySupport() {
+        return countySupport;
+    }
+
+    public String getHealtFacilities() {
+        return healtFacilities;
+    }
+
+    public String getMainSupermarkets() {
+        return mainSupermarkets;
+    }
+
+    public String getMainTown() {
+        return mainTown;
+    }
+
+    public String getMajorRoads() {
+        return majorRoads;
+    }
+
+    public String getMainTownPopulation() {
+        return mainTownPopulation;
+    }
+
+    public String getNoOfVillages() {
+        return noOfVillages;
+    }
+
+
+    public String getPopulationDensity() {
+        return populationDensity;
+    }
+
+    public String getPrivateClinicsInRadius() {
+        return privateClinicsInRadius;
+    }
+
+    public String getPrivateClinicsInTown() {
+        return privateClinicsInTown;
+    }
+
+    public String getRecommendation() {
+        return recommendation;
+    }
+
+    public String getServicePopulation() {
+        return servicePopulation;
+    }
+
+    public String getSubCountyPopulation() {
+        return subCountyPopulation;
+    }
+
+    public String getSubcountySupport() {
+        return subcountySupport;
+    }
+
+    public String getTransportCost() {
+        return transportCost;
+    }
+
+    public void setChvActivity(String chvActivity) {
+        this.chvActivity = chvActivity;
+    }
+
+    public void setAnyMajorBusiness(String anyMajorBusiness) {
+        this.anyMajorBusiness = anyMajorBusiness;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public void setCommunityUnits(String communityUnits) {
+        this.communityUnits = communityUnits;
+    }
+
+    public void setCountyID(String countyID) {
+        this.countyID = countyID;
+    }
+
+    public void setPrivateClinicsInRadius(String privateClinicsInRadius) {
+        this.privateClinicsInRadius = privateClinicsInRadius;
+    }
+
+    public void setCountyPopulation(String countyPopulation) {
+        this.countyPopulation = countyPopulation;
+    }
+
+    public void setCountySupport(String countySupport) {
+        this.countySupport = countySupport;
+    }
+
+    public void setMainTown(String mainTown) {
+        this.mainTown = mainTown;
+    }
+
+    public void setHealtFacilities(String healtFacilities) {
+        this.healtFacilities = healtFacilities;
+    }
+
+    public void setMainBanks(String mainBanks) {
+        this.mainBanks = mainBanks;
+    }
+
+    public void setMainSupermarkets(String mainSupermarkets) {
+        this.mainSupermarkets = mainSupermarkets;
+    }
+
+    public void setMainTownPopulation(String mainTownPopulation) {
+        this.mainTownPopulation = mainTownPopulation;
+    }
+
+    public void setMajorRoads(String majorRoads) {
+        this.majorRoads = majorRoads;
+    }
+
+    public void setNoOfVillages(String noOfVillages) {
+        this.noOfVillages = noOfVillages;
+    }
+
+    public void setPopulationDensity(String populationDensity) {
+        this.populationDensity = populationDensity;
+    }
+
+    public void setPrivateClinicsInTown(String privateClinicsInTown) {
+        this.privateClinicsInTown = privateClinicsInTown;
+    }
+
+    public void setRecommendation(String recommendation) {
+        this.recommendation = recommendation;
+    }
+
+    public void setServicePopulation(String servicePopulation) {
+        this.servicePopulation = servicePopulation;
+    }
+
+    public void setSubCountyPopulation(String subCountyPopulation) {
+        this.subCountyPopulation = subCountyPopulation;
+    }
+
+    public void setSubcountySupport(String subcountySupport) {
+        this.subcountySupport = subcountySupport;
+    }
+
+    public void setTransportCost(String transportCost) {
+        this.transportCost = transportCost;
     }
 }

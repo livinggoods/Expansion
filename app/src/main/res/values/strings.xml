@@ -19,6 +19,7 @@
     <string name="nav_settings">Interviews</string>
     <string name="nav_about_us">About Us</string>
     <string name="nav_http_server">Http Server</string>
+    <string name="nav_mapping">Mapping</string>
 
     <!-- Toolbar titles when navigation menu item is selected -->
     <string-array name="nav_item_activity_titles">
@@ -27,6 +28,7 @@
         <item>Registrations</item>
         <item>Exams</item>
         <item>Interviews</item>
+        <item>Mapping</item>
     </string-array>
 
     <string name="activity_title_about_us">About Us</string>

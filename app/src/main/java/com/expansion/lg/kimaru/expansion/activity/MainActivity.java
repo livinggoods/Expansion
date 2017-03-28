@@ -28,13 +28,16 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.fragment.HomeFragment;
 import com.expansion.lg.kimaru.expansion.fragment.InterviewsFragment;
+import com.expansion.lg.kimaru.expansion.fragment.MappingFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewExamFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewInterviewFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewMappingFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRecruitmentFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRegistrationFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RegistrationsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.ExamsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
+import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
 import com.expansion.lg.kimaru.expansion.other.SetUpApp;
 
@@ -69,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_REGISTRATIONS = "registrations";
     private static final String TAG_EXAMS = "exams";
     private static final String TAG_INTERVIEWS = "interviews";
+    private static final String TAG_MAPPING = "mappings";
     public static String CURRENT_TAG = TAG_HOME;
 
     // toolbar titles respected to selected nav menu item
@@ -206,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case TAG_EXAMS:
-
                 mPendingRunnable = new Runnable() {
                     @Override
                     public void run() {
@@ -247,6 +250,26 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
 
+            case TAG_MAPPING:
+                mPendingRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        // update the main content by replacing fragments
+                        NewMappingFragment newMappingFragment = new NewMappingFragment();
+                        Fragment fragment = newMappingFragment;
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                android.R.anim.fade_out);
+                        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+
+                        fragmentTransaction.commitAllowingStateLoss();
+                    }
+                };
+                // If mPendingRunnable is not null, then add to the message queue
+                if (mPendingRunnable != null) {
+                    mHandler.post(mPendingRunnable);
+                }
+                break;
         }
 
         // show or hide the fab button
@@ -389,6 +412,12 @@ public class MainActivity extends AppCompatActivity {
                     CURRENT_TAG = TAG_RECRUITMENTS;
                     return new RecruitmentsFragment();
                 }
+            case 5:
+                navItemIndex = 5;
+                CURRENT_TAG = TAG_MAPPING;
+                MappingFragment mappingFragment = new MappingFragment();
+                return mappingFragment;
+
             default:
                 return new HomeFragment();
         }
@@ -461,6 +490,13 @@ public class MainActivity extends AppCompatActivity {
                             CURRENT_TAG = TAG_RECRUITMENTS;
                         }
                         break;
+
+                    case R.id.nav_mapping:
+                        navItemIndex = 5;
+                        CURRENT_TAG = TAG_MAPPING;
+                        break;
+
+
                     case R.id.nav_about_us:
                         // launch new intent instead of loading fragment
                         startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
@@ -475,6 +511,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(new Intent(MainActivity.this, HttpServerActivity.class));
                         drawer.closeDrawers();
                         return true;
+
                     default:
                         navItemIndex = 0;
                 }
@@ -583,14 +620,15 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, backupDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
 
                     if (currentDB.exists()) {
-                        Toast.makeText(this, "File is found...", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "DB file is found...", Toast.LENGTH_LONG).show();
                         FileChannel src = new FileInputStream(currentDB).getChannel();
                         FileChannel dst = new FileOutputStream(backupDB).getChannel();
                         dst.transferFrom(src, 0, src.size());
                         src.close();
                         dst.close();
                     }else{
-                        Toast.makeText(this, "file not founf", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Unable to backup. File not found", Toast.LENGTH_LONG).show();
+                        return true;
                     }
                 }
             } catch (Exception e) {

@@ -13,7 +13,7 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 
 
 
-public class CommunityUnit {
+public class Village {
 
     /*
     * Representation of the community Unit
@@ -24,10 +24,7 @@ public class CommunityUnit {
      * traderMarket, largeSupermarket, ngosFreeDrugs, ngosICCM, ngoMHealth, connectivity
      */
 
-
-    // Some community units are split into 2 and they share some data
-
-    String id, communityUnitName, mappingId, lat, lon, country, subCountyId, linkFacilityId, areaChiefName;
+    String id, villageName, mappingId, lat, lon, country, subCountyId, linkFacilityId, areaChiefName;
     String ward;
     long dateAdded, addedBy, numberOfChvs, householdPerChv, numberOfVillages, distanceToBranch, transportCost;
     long distanceTOMainRoad, noOfHouseholds, mohPoplationDensity, estimatedPopulationDensity;
@@ -45,25 +42,25 @@ public class CommunityUnit {
 
 
 
-    public CommunityUnit(){
+    public Village(){
 
     }
 
-    public CommunityUnit(String id, String communityUnitName, String mappingId, String lat, String lon,
-                         String country, String subCountyId, String linkFacilityId, String areaChiefName,
-                         String ward, String economicStatus, String privateFacilityForAct,
-                         String privateFacilityForMrdt,
-                         String nameOfNgoDoingIccm, String nameOfNgoDoingMhealth, long dateAdded, long addedBy,
-                         long numberOfChvs, long householdPerChv, long numberOfVillages,
-                         long distanceToBranch, long transportCost, long distanceToMainRoad,
-                         long noOfHouseholds, long mohPoplationDensity, long estimatedPopulationDensity,
-                         long distanceTONearestHealthFacility, long actLevels, long actPrice,
-                         long mrdtLevels, long mrdtPrice, long noOfDistibutors, boolean chvsTrained,
-                         boolean presenceOfEstates, boolean presenceOfFactories,
-                         boolean presenceOfHostels, boolean traderMarket, boolean largeSupermarket,
-                         boolean ngosGivingFreeDrugs, boolean ngoDoingIccm, boolean ngoDoingMhealth) {
+    public Village(String id, String villageName, String mappingId, String lat, String lon,
+                   String country, String subCountyId, String linkFacilityId, String areaChiefName,
+                   String ward, String economicStatus, String privateFacilityForAct,
+                   String privateFacilityForMrdt,
+                   String nameOfNgoDoingIccm, String nameOfNgoDoingMhealth, long dateAdded, long addedBy,
+                   long numberOfChvs, long householdPerChv, long numberOfVillages,
+                   long distanceToBranch, long transportCost, long distanceToMainRoad,
+                   long noOfHouseholds, long mohPoplationDensity, long estimatedPopulationDensity,
+                   long distanceTONearestHealthFacility, long actLevels, long actPrice,
+                   long mrdtLevels, long mrdtPrice, long noOfDistibutors, boolean chvsTrained,
+                   boolean presenceOfEstates, boolean presenceOfFactories,
+                   boolean presenceOfHostels, boolean traderMarket, boolean largeSupermarket,
+                   boolean ngosGivingFreeDrugs, boolean ngoDoingIccm, boolean ngoDoingMhealth) {
         this.id = id;
-        this.communityUnitName = communityUnitName;
+        this.villageName = villageName;
         this.mappingId = mappingId;
         this.lat = lat;
         this.lon = lon;
@@ -117,14 +114,13 @@ public class CommunityUnit {
     }
 
 
-    public String getCommunityUnitName() {
-        return communityUnitName;
+    public String getVillageName() {
+        return villageName;
     }
 
-    public void setCommunityUnitName(String communityUnitName) {
-        this.communityUnitName = communityUnitName;
+    public void setVillageName(String villageName) {
+        this.villageName = villageName;
     }
-
     public String getMappingId() {
         return mappingId;
     }
