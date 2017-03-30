@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private View navHeader;
     private ImageView imgNavHeaderBg, imgProfile;
     private TextView txtName, txtWebsite;
-    private Toolbar toolbar;
+    public Toolbar toolbar;
     public FloatingActionButton fab;
 
     // urls to load navigation header background image

@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -27,10 +26,10 @@ import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
-import com.expansion.lg.kimaru.expansion.dbhelpers.MappingListAdapter;
-import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
+import com.expansion.lg.kimaru.expansion.dbhelpers.VillageListAdapter;
+import com.expansion.lg.kimaru.expansion.mzigos.Village;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
-import com.expansion.lg.kimaru.expansion.tables.MappingTable;
+import com.expansion.lg.kimaru.expansion.tables.VillageTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +39,12 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MappingFragment.OnFragmentInteractionListener} interface
+ * {@link SubCountyFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MappingFragment#newInstance} factory method to
+ * Use the {@link SubCountyFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MappingFragment extends Fragment  {
+public class SubCountyFragment extends Fragment  {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -59,14 +58,15 @@ public class MappingFragment extends Fragment  {
     TextView textshow;
 
     // to show list in Gmail Mode
-    private List<Mapping> mappings = new ArrayList<>();
+    private List<Village> villages = new ArrayList<>();
     private RecyclerView recyclerView;
-    private MappingListAdapter rAdapter;
+    private VillageListAdapter rAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ActionMode actionMode;
     private ActionModeCallback actionModeCallback;
 
     SessionManagement session;
+
 
 
     // I cant seem to get the context working
@@ -75,7 +75,7 @@ public class MappingFragment extends Fragment  {
 
 
 
-    public MappingFragment() {
+    public SubCountyFragment() {
         // Required empty public constructor
     }
 
@@ -88,8 +88,8 @@ public class MappingFragment extends Fragment  {
      * @return A new instance of fragment RegistrationsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MappingFragment newInstance(String param1, String param2) {
-        MappingFragment fragment = new MappingFragment();
+    public static SubCountyFragment newInstance(String param1, String param2) {
+        SubCountyFragment fragment = new SubCountyFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -111,13 +111,14 @@ public class MappingFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_mapping, container, false);
-        // //add session
-        session = new SessionManagement(getContext());
+        View v =  inflater.inflate(R.layout.fragment_communityunits, container, false);
         textshow = (TextView) v.findViewById(R.id.textShow);
+        //session Management
+        session = new SessionManagement(getContext());
 
-        // ============Gmail View starts here =======================
-        // Gmail View.
+
+        // ============RecyclerView View starts here =======================
+        // RecyclerView View.
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
@@ -126,10 +127,10 @@ public class MappingFragment extends Fragment  {
             public void onRefresh() {
                 // onRefresh action here
                 Toast.makeText(getContext(), "Refreshing the list", Toast.LENGTH_SHORT).show();
-                getInterviews();
             }
         });
-        rAdapter = new MappingListAdapter(this.getContext(), mappings, new MappingListAdapter.MappingListAdapterListener() {
+
+        rAdapter = new VillageListAdapter(this.getContext(), villages, new VillageListAdapter.VillageListAdapterListener() {
             @Override
             public void onIconClicked(int position) {
                 if (actionMode == null) {
@@ -148,32 +149,22 @@ public class MappingFragment extends Fragment  {
             @Override
             public void onMessageRowClicked(int position) {
                 // read the message which removes bold from the row
-                Mapping mapping = mappings.get(position);
-                session.saveMapping(mapping);
-                mapping.setRead(true);
-                mappings.set(position, mapping);
+                Village village = villages.get(position);
+
+                village.setRead(true);
+                villages.set(position, village);
                 rAdapter.notifyDataSetChanged();
-
-                MapViewFragment mappingViewFragment = new MapViewFragment();
-                Fragment fragment = mappingViewFragment;
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, "mappingsview");
-
-                fragmentTransaction.commitAllowingStateLoss();
-
             }
 
             @Override
             public void onRowLongClicked(int position) {
+                // When one long presses a registration, we give them a chance to
+                // Interview the selected applicant
 
-                //getMapping
-                Mapping mapping = mappings.get(position);
-                Toast.makeText(getContext(), mapping.getCounty(), Toast.LENGTH_SHORT).show();
+                //extract the clicked recruitment
 
 
-//                mapping = mappingTable.getMapping(position.get())
+
             }
 
         });
@@ -187,7 +178,7 @@ public class MappingFragment extends Fragment  {
                 new Runnable(){
                     @Override
                     public void run(){
-                        getInterviews();
+                        getVillages();
                     }
                 }
         );
@@ -325,27 +316,27 @@ public class MappingFragment extends Fragment  {
         }
         rAdapter.notifyDataSetChanged();
     }
-    private void getInterviews() {
+    private void getVillages() {
         swipeRefreshLayout.setRefreshing(true);
 
-        mappings.clear();
+        villages.clear();
 
-        // clear the registrations
         try {
-            // get the registrations
-            MappingTable mappingTable = new MappingTable(getContext());
-            List<Mapping> mappingList = new ArrayList<>();
+            // get CUs
+            VillageTable villageTable = new VillageTable(getContext());
+            List<Village> villageList = new ArrayList<>();
 
-            mappingList = mappingTable.getMappingData();
-            for (Mapping mapping:mappingList){
-                mapping.setColor(getRandomMaterialColor("400"));
-                mappings.add(mapping);
+            villageList = villageTable.getVillageData();
+            for (Village village:villageList){
+                village.setColor(getRandomMaterialColor("400"));
+                villages.add(village);
             }
             rAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
         } catch (Exception error){
-            Toast.makeText(getContext(), "No Mappings", Toast.LENGTH_SHORT).show();
-            textshow.setText("No mappings found");
+            Toast.makeText(getContext(), "No Village unit  found", Toast.LENGTH_SHORT).show();
+
+            textshow.setText(" No village unit recorded ");
         }
         swipeRefreshLayout.setRefreshing(false);
     }

@@ -18,7 +18,7 @@ public class SubCounty {
     String mainTown;
     String countySupport;
     String subcountySupport;
-    String chvActivity;
+    boolean chvActivity;
     String countyPopulation;
     String subCountyPopulation;
     String noOfVillages;
@@ -35,9 +35,13 @@ public class SubCounty {
     String mainBanks;
     String anyMajorBusiness;
     String comments;
-    String recommendation;
+    boolean recommended;
     Integer dateAdded;
     Integer addedBy;
+
+    //boolean isRead, isImportant;
+    int color = -1;
+    String picture =  "";
 
     public SubCounty(){
 
@@ -46,13 +50,13 @@ public class SubCounty {
     public SubCounty(String id, String subCountyName, String countyID, String country,
                      String mappingId, String lat, String lon, String contactPerson,
                      String contactPersonPhone, String mainTown, String countySupport,
-                     String subcountySupport, String chvActivity,
+                     String subcountySupport, boolean chvActivity,
                      String countyPopulation, String subCountyPopulation, String noOfVillages,
                      String mainTownPopulation, String servicePopulation, String populationDensity,
                      String transportCost, String majorRoads, String healtFacilities,
                      String privateClinicsInTown, String privateClinicsInRadius, String communityUnits,
                      String mainSupermarkets, String mainBanks, String anyMajorBusiness,
-                     String comments, String recommendation, Integer dateAdded, Integer addedBy) {
+                     String comments, boolean recommended, Integer dateAdded, Integer addedBy) {
 
         this.id = id;
         this.subCountyName = subCountyName;
@@ -83,7 +87,7 @@ public class SubCounty {
         this.mainBanks = mainBanks;
         this.anyMajorBusiness = anyMajorBusiness;
         this.comments = comments;
-        this.recommendation = recommendation;
+        this.recommended = recommended;
         this.dateAdded = dateAdded;
         this.addedBy = addedBy;
     }
@@ -178,8 +182,12 @@ public class SubCounty {
         return anyMajorBusiness;
     }
 
-    public String getChvActivity() {
+    public boolean isChvActivity() {
         return chvActivity;
+    }
+
+    public void setChvActivity(boolean chvActivity) {
+        this.chvActivity = chvActivity;
     }
 
     public String getComments() {
@@ -239,8 +247,8 @@ public class SubCounty {
         return privateClinicsInTown;
     }
 
-    public String getRecommendation() {
-        return recommendation;
+    public boolean isRecommended() {
+        return recommended;
     }
 
     public String getServicePopulation() {
@@ -259,9 +267,6 @@ public class SubCounty {
         return transportCost;
     }
 
-    public void setChvActivity(String chvActivity) {
-        this.chvActivity = chvActivity;
-    }
 
     public void setAnyMajorBusiness(String anyMajorBusiness) {
         this.anyMajorBusiness = anyMajorBusiness;
@@ -327,8 +332,8 @@ public class SubCounty {
         this.privateClinicsInTown = privateClinicsInTown;
     }
 
-    public void setRecommendation(String recommendation) {
-        this.recommendation = recommendation;
+    public void setRecommended(boolean recommended) {
+        this.recommended = recommended;
     }
 
     public void setServicePopulation(String servicePopulation) {
@@ -345,5 +350,25 @@ public class SubCounty {
 
     public void setTransportCost(String transportCost) {
         this.transportCost = transportCost;
+    }
+
+
+
+    ///
+    public String getPicture() {
+        return "";
+    }
+    public int getColor() {
+        return 1;
+    }
+
+
+     public void setColor(int color) {
+        this.color = color;
+    }
+
+
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 }

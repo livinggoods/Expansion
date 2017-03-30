@@ -18,6 +18,15 @@ android {
         }
     }
 }
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+
+    maven {
+        url "https://jitpack.io"
+    }
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -40,5 +49,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+
+    //parallax
+    compile 'com.github.kanytu:android-parallax-recyclerview:v1.2'
 
 }
