@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -21,11 +22,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.dbhelpers.MappingListAdapter;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
@@ -64,6 +65,8 @@ public class MappingFragment extends Fragment  {
     private SwipeRefreshLayout swipeRefreshLayout;
     private ActionMode actionMode;
     private ActionModeCallback actionModeCallback;
+
+    SessionManagement session;
 
 
     // I cant seem to get the context working
@@ -109,6 +112,8 @@ public class MappingFragment extends Fragment  {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_mapping, container, false);
+        // //add session
+        session = new SessionManagement(getContext());
         textshow = (TextView) v.findViewById(R.id.textShow);
 
         // ============Gmail View starts here =======================
@@ -144,12 +149,19 @@ public class MappingFragment extends Fragment  {
             public void onMessageRowClicked(int position) {
                 // read the message which removes bold from the row
                 Mapping mapping = mappings.get(position);
-
+                session.saveMapping(mapping);
                 mapping.setRead(true);
                 mappings.set(position, mapping);
                 rAdapter.notifyDataSetChanged();
 
-                Toast.makeText(getContext(), "Read: " + mapping.getId(), Toast.LENGTH_SHORT).show();
+                MappingViewFragment mappingViewFragment = new MappingViewFragment();
+                Fragment fragment = mappingViewFragment;
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                        android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "mappingsview");
+
+                fragmentTransaction.commitAllowingStateLoss();
 
             }
 

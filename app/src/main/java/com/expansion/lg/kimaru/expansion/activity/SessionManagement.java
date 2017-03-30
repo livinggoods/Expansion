@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
+import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 
@@ -55,6 +57,9 @@ public class SessionManagement {
     public static final String EXAM_ENGLISH = "examEnglish";
     private static final String IS_EXAM = "IsExamSet";
 
+    //Need to save the selected Mapping
+    public static final String MAPPING = "mapping";
+
 
     //interview Details
     private static final String IS_INTERVIEW = "IsInterviewSet";
@@ -72,6 +77,28 @@ public class SessionManagement {
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
     }
+
+    public void saveMapping(Mapping mapping){
+        Gson gson = new Gson();
+        String mappingObject = gson.toJson(mapping);
+        editor.putString(MAPPING, mappingObject);
+        editor.commit();
+    }
+    /**
+     *
+     * Get the stored Mapping
+     *
+     * */
+    public Mapping getSavedMapping (){
+
+        Mapping mapping;
+        Gson gson = new Gson();
+        String mappingDetails = pref.getString(MAPPING, "");
+        mapping = gson.fromJson(mappingDetails, Mapping.class);
+
+        return mapping;
+    }
+
 
     public void createLoginSesstion (String name, String email, Integer userId){
         //storing login values as TRUE
