@@ -8,7 +8,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.other.FileUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +25,7 @@ import java.util.List;
 public class RegistrationTable extends SQLiteOpenHelper {
 
     public static final String TABLE_NAME="registration";
-    public static final String DATABASE_NAME="expansion.db";
+    public static final String DATABASE_NAME="expansion";
     public static final int DATABASE_VERSION=1;
 
     public static String varchar_field = " varchar(512) ";

@@ -19,6 +19,7 @@ public class SubCounty {
     String countySupport;
     String subcountySupport;
     boolean chvActivity;
+    String chvActivityLevel;
     String countyPopulation;
     String subCountyPopulation;
     String noOfVillages;
@@ -50,7 +51,7 @@ public class SubCounty {
     public SubCounty(String id, String subCountyName, String countyID, String country,
                      String mappingId, String lat, String lon, String contactPerson,
                      String contactPersonPhone, String mainTown, String countySupport,
-                     String subcountySupport, boolean chvActivity,
+                     String subcountySupport, String chvActivityLevel,
                      String countyPopulation, String subCountyPopulation, String noOfVillages,
                      String mainTownPopulation, String servicePopulation, String populationDensity,
                      String transportCost, String majorRoads, String healtFacilities,
@@ -70,7 +71,8 @@ public class SubCounty {
         this.mainTown = mainTown;
         this.countySupport = countySupport;
         this.subcountySupport = subcountySupport;
-        this.chvActivity = chvActivity;
+        this.chvActivityLevel = chvActivityLevel;
+        this.chvActivity = chvActivityLevel != "0";
         this.countyPopulation = countyPopulation;
         this.subCountyPopulation = subCountyPopulation;
         this.noOfVillages = noOfVillages;
@@ -186,8 +188,12 @@ public class SubCounty {
         return chvActivity;
     }
 
-    public void setChvActivity(boolean chvActivity) {
-        this.chvActivity = chvActivity;
+    public String getChvActivityLevel() {
+        return chvActivityLevel;
+    }
+
+    public void setChvActivityLevel(String chvActivityLevel) {
+        this.chvActivityLevel = chvActivityLevel;
     }
 
     public String getComments() {

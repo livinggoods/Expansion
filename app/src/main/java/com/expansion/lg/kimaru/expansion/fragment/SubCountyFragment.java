@@ -29,6 +29,7 @@ import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.dbhelpers.VillageListAdapter;
 import com.expansion.lg.kimaru.expansion.mzigos.Village;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
+import com.expansion.lg.kimaru.expansion.other.GpsTracker;
 import com.expansion.lg.kimaru.expansion.tables.VillageTable;
 
 import java.util.ArrayList;
@@ -65,8 +66,8 @@ public class SubCountyFragment extends Fragment  {
     private ActionMode actionMode;
     private ActionModeCallback actionModeCallback;
 
-    SessionManagement session;
 
+    SessionManagement session;
 
 
     // I cant seem to get the context working
@@ -115,6 +116,7 @@ public class SubCountyFragment extends Fragment  {
         textshow = (TextView) v.findViewById(R.id.textShow);
         //session Management
         session = new SessionManagement(getContext());
+
 
 
         // ============RecyclerView View starts here =======================

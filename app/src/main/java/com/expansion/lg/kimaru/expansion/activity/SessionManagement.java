@@ -7,6 +7,8 @@ import android.content.SharedPreferences.Editor;
 
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
+import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
+import com.expansion.lg.kimaru.expansion.mzigos.Village;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -60,6 +62,12 @@ public class SessionManagement {
     //Need to save the selected Mapping
     public static final String MAPPING = "mapping";
 
+    //Need to save the selected SubCounty
+    public static final String SUBCOUNTY = "subcounty";
+
+    //Need to save the selected Village
+    public static final String VILLAGE = "village";
+
 
     //interview Details
     private static final String IS_INTERVIEW = "IsInterviewSet";
@@ -97,6 +105,47 @@ public class SessionManagement {
         mapping = gson.fromJson(mappingDetails, Mapping.class);
 
         return mapping;
+    }
+
+
+    public void saveSubCounty(SubCounty subCounty){
+        Gson gson = new Gson();
+        String mappingObject = gson.toJson(subCounty);
+        editor.putString(SUBCOUNTY, mappingObject);
+        editor.commit();
+    }
+    /**
+     *
+     * Get the stored Subcounty
+     *
+     * */
+    public SubCounty getSavedSubCounty (){
+
+        SubCounty subCounty;
+        Gson gson = new Gson();
+        String subCountyDetails = pref.getString(SUBCOUNTY, "");
+        subCounty = gson.fromJson(subCountyDetails, SubCounty.class);
+
+        return subCounty;
+    }
+    public void saveVillage(Village village){
+        Gson gson = new Gson();
+        String villageObject = gson.toJson(village);
+        editor.putString(VILLAGE, villageObject);
+        editor.commit();
+    }
+    /**
+     *
+     * Get the stored Viilage
+     *
+     * */
+    public Village getSavedVillage (){
+
+        Village village;
+        Gson gson = new Gson();
+        String villageDetails = pref.getString(VILLAGE, "");
+        village = gson.fromJson(villageDetails, Village.class);
+        return village;
     }
 
 

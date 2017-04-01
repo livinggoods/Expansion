@@ -34,18 +34,24 @@ import com.expansion.lg.kimaru.expansion.fragment.NewInterviewFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewMappingFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRecruitmentFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRegistrationFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewSubCountyFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RegistrationsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.ExamsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
 import com.expansion.lg.kimaru.expansion.other.SetUpApp;
+import com.expansion.lg.kimaru.expansion.tables.MappingTable;
+import com.expansion.lg.kimaru.expansion.other.FileUtils;
+
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -73,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_EXAMS = "exams";
     private static final String TAG_INTERVIEWS = "interviews";
     private static final String TAG_MAPPING = "mappings";
+    private static final String TAG_COUNTY = "county";
     public static String CURRENT_TAG = TAG_HOME;
 
     // toolbar titles respected to selected nav menu item
@@ -257,6 +264,27 @@ public class MainActivity extends AppCompatActivity {
                         // update the main content by replacing fragments
                         NewMappingFragment newMappingFragment = new NewMappingFragment();
                         Fragment fragment = newMappingFragment;
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                android.R.anim.fade_out);
+                        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+
+                        fragmentTransaction.commitAllowingStateLoss();
+                    }
+                };
+                // If mPendingRunnable is not null, then add to the message queue
+                if (mPendingRunnable != null) {
+                    mHandler.post(mPendingRunnable);
+                }
+                break;
+
+            case TAG_COUNTY:
+                mPendingRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        // update the main content by replacing fragments
+                        NewSubCountyFragment newSubCountyFragment = new NewSubCountyFragment();
+                        Fragment fragment = newSubCountyFragment;
                         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                                 android.R.anim.fade_out);
@@ -608,33 +636,43 @@ public class MainActivity extends AppCompatActivity {
         }
         if (id == R.id.backup_db) {
             Toast.makeText(getApplicationContext(), "Backing up the DB!", Toast.LENGTH_LONG).show();
-            try {
-                File sd = Environment.getExternalStorageDirectory();
-                File data = Environment.getDataDirectory();
+            exportDB();
 
-                if (sd.canWrite()) {
-                    String currentDBPath = "/data/data/" + getPackageName() + "/databases/expansion.db";
-                    String backupDBPath = "expansiondb.db";
-                    File currentDB = new File(currentDBPath);
-                    File backupDB = new File(sd, backupDBPath);
-                    Toast.makeText(this, backupDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
 
-                    if (currentDB.exists()) {
-                        Toast.makeText(this, "DB file is found...", Toast.LENGTH_LONG).show();
-                        FileChannel src = new FileInputStream(currentDB).getChannel();
-                        FileChannel dst = new FileOutputStream(backupDB).getChannel();
-                        dst.transferFrom(src, 0, src.size());
-                        src.close();
-                        dst.close();
-                    }else{
-                        Toast.makeText(this, "Unable to backup. File not found", Toast.LENGTH_LONG).show();
-                        return true;
-                    }
-                }
-            } catch (Exception e) {
-
-            }
-            Toast.makeText(this, "BCK Complete", Toast.LENGTH_LONG).show();
+//            try {
+//                File sd = Environment.getExternalStorageDirectory();
+//                File data = Environment.getDataDirectory();
+//
+//                if (sd.canWrite()) {
+//                    String currentDBPath = "//data//data//" + getPackageName() + "//databases//expansion.db";
+//                    String backupDBPath = "expansiondb.db";
+////                    File currentDB = new File(data, currentDBPath);
+//                    File currentDB = getDatabasePath(MappingTable.DATABASE_NAME);
+//                    File backupDB = new File(sd, backupDBPath);
+//                    Toast.makeText(this, getPackageName(), Toast.LENGTH_LONG).show();
+//                    Toast.makeText(this, currentDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
+//                    FileChannel src = new FileInputStream(currentDB).getChannel();
+//                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+//                    dst.transferFrom(src, 0, src.size());
+//                    src.close();
+//                    dst.close();
+//
+//                    if (currentDB.exists()) {
+//                        Toast.makeText(this, "DB file is found...", Toast.LENGTH_LONG).show();
+//                        FileChannel srcs = new FileInputStream(currentDB).getChannel();
+//                        FileChannel dsts = new FileOutputStream(backupDB).getChannel();
+//                        dst.transferFrom(srcs, 0, srcs.size());
+//                        srcs.close();
+//                        dsts.close();
+//                        Toast.makeText(this, "BCK Completed successfully", Toast.LENGTH_LONG).show();
+//                    }else{
+//                        Toast.makeText(this, "Unable to backup. File not found", Toast.LENGTH_LONG).show();
+//                        return true;
+//                    }
+//                }
+//            } catch (Exception e) {
+//                Toast.makeText(this, "Error \n"+e.getMessage(), Toast.LENGTH_LONG).show();
+//            }
             return true;
         }
 
@@ -659,5 +697,29 @@ public class MainActivity extends AppCompatActivity {
             fab.hide();
         else
             fab.show();
+    }
+
+    private void exportDB(){
+        File sd = Environment.getExternalStorageDirectory();
+        File data = Environment.getDataDirectory();
+        FileChannel source=null;
+        FileChannel destination=null;
+        String currentDBPath = "/data/"+ getPackageName() +"/databases/"+MappingTable.DATABASE_NAME;
+        String backupDBPath = MappingTable.DATABASE_NAME;
+        File currentDB = new File(data, currentDBPath);
+        //File backupDB = new File(sd, backupDBPath);
+        File backupDB = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "expansion_backup.db");
+        Toast.makeText(this, backupDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        try {
+            source = new FileInputStream(currentDB).getChannel();
+            destination = new FileOutputStream(backupDB).getChannel();
+            destination.transferFrom(source, 0, source.size());
+            source.close();
+            destination.close();
+            Toast.makeText(this, "DB Exported!", Toast.LENGTH_LONG).show();
+        } catch(IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error in backing up the db!\n"+e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }

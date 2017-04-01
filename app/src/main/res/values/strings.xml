@@ -31,6 +31,14 @@
         <item>Mapping</item>
     </string-array>
 
+
+    <string-array name="population_density_types">
+        <item>Urban / Upper Income</item>
+        <item>Urban/informal</item>
+        <item>Rural</item>
+    </string-array>
+    <string name="select_prompt">Choose one</string>
+
     <string name="activity_title_about_us">About Us</string>
     <string name="activity_title_privacy_policy">Privacy Policy</string>
     <string name="action_clear_all">Clear All</string>

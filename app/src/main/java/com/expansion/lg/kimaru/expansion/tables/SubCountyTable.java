@@ -40,7 +40,7 @@ public class SubCountyTable extends SQLiteOpenHelper {
     public static final String MAINTOWN = "mainTown";
     public static final String COUNTYSUPPORT = "countySupport";
     public static final String SUBCOUNTYSUPPORT = "subcountySupport";
-    public static final String CHVACTIVITY = "chvActivity";
+    public static final String CHVACTIVITYLEVEL = "chv_activity_level";
     public static final String COUNTYPOPULATION = "countyPopulation";
     public static final String SUBCOUNTYPOPULATION = "subCountyPopulation";
     public static final String NOOFVILLAGES = "noOfVillages";
@@ -74,7 +74,7 @@ public class SubCountyTable extends SQLiteOpenHelper {
             + MAINTOWN + varchar_field + ","
             + COUNTYSUPPORT + varchar_field + ","
             + SUBCOUNTYSUPPORT + varchar_field + ","
-            + CHVACTIVITY + varchar_field + ","
+            + CHVACTIVITYLEVEL + varchar_field + ","
             + COUNTYPOPULATION + varchar_field + ","
             + SUBCOUNTYPOPULATION + varchar_field + ","
             + NOOFVILLAGES + varchar_field + ","
@@ -131,7 +131,7 @@ public class SubCountyTable extends SQLiteOpenHelper {
         cv.put(MAINTOWN, subCounty.getMainTown());
         cv.put(COUNTYSUPPORT, subCounty.getCountySupport());
         cv.put(SUBCOUNTYSUPPORT, subCounty.getSubcountySupport());
-        cv.put(CHVACTIVITY, subCounty.isChvActivity() ? 1 : 0);
+        cv.put(CHVACTIVITYLEVEL, subCounty.getChvActivityLevel());
         cv.put(COUNTYPOPULATION, subCounty.getCountyPopulation());
         cv.put(SUBCOUNTYPOPULATION, subCounty.getSubCountyPopulation());
         cv.put(NOOFVILLAGES, subCounty.getNoOfVillages());
@@ -165,7 +165,7 @@ public class SubCountyTable extends SQLiteOpenHelper {
 
         String [] columns=new String[]{ID, SUBCOUNTYNAME, COUNTYID, COUNTRY, MAPPINGID, LAT, LON,
                 CONTACTPERSON, CONTACTPERSONPHONE, MAINTOWN, COUNTYSUPPORT, SUBCOUNTYSUPPORT,
-                CHVACTIVITY, COUNTYPOPULATION, SUBCOUNTYPOPULATION, NOOFVILLAGES,
+                CHVACTIVITYLEVEL, COUNTYPOPULATION, SUBCOUNTYPOPULATION, NOOFVILLAGES,
                 MAINTOWNPOPULATION, SERVICEPOPULATION, POPULATIONDENSITY, TRANSPORTCOST, MAJORROADS,
                 HEALTFACILITIES, PRIVATECLINICSINTOWN, PRIVATECLINICSINRADIUS, COMMUNITYUNITS,
                 MAINSUPERMARKETS, MAINBANKS, ANYMAJORBUSINESS, COMMENTS,
@@ -191,8 +191,7 @@ public class SubCountyTable extends SQLiteOpenHelper {
             subCounty.setMainTown(cursor.getString(9));
             subCounty.setCountySupport(cursor.getString(10));
             subCounty.setSubcountySupport(cursor.getString(11));
-            subCounty.setChvActivity((cursor.getInt(12) == 1));
-
+            subCounty.setChvActivityLevel(cursor.getString(12));
             subCounty.setCountyPopulation(cursor.getString(13));
             subCounty.setSubCountyPopulation(cursor.getString(14));
             subCounty.setNoOfVillages(cursor.getString(15));
@@ -225,7 +224,7 @@ public class SubCountyTable extends SQLiteOpenHelper {
         SQLiteDatabase db=getReadableDatabase();
         String [] columns=new String[]{ID, SUBCOUNTYNAME, COUNTYID, COUNTRY, MAPPINGID, LAT, LON,
                 CONTACTPERSON, CONTACTPERSONPHONE, MAINTOWN, COUNTYSUPPORT, SUBCOUNTYSUPPORT,
-                CHVACTIVITY, COUNTYPOPULATION, SUBCOUNTYPOPULATION, NOOFVILLAGES,
+                CHVACTIVITYLEVEL, COUNTYPOPULATION, SUBCOUNTYPOPULATION, NOOFVILLAGES,
                 MAINTOWNPOPULATION, SERVICEPOPULATION, POPULATIONDENSITY, TRANSPORTCOST, MAJORROADS,
                 HEALTFACILITIES, PRIVATECLINICSINTOWN, PRIVATECLINICSINRADIUS, COMMUNITYUNITS,
                 MAINSUPERMARKETS, MAINBANKS, ANYMAJORBUSINESS, COMMENTS,

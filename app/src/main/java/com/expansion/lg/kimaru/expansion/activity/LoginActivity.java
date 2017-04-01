@@ -55,11 +55,11 @@ public class LoginActivity extends Activity {
                         startActivity(i);
                         finish();
                     } else {
-                        alert.showAlertDialog(LoginActivity.this, "Wrong Credentials", "Email / password combination", true);
+                        alert.showAlertDialog(LoginActivity.this, "Wrong Credentials", "Email / password combination", true, null, null);
                     }
 
                 }else{
-                    alert.showAlertDialog(LoginActivity.this, "Login failed..", "Please enter both the Email and password", true);
+                    alert.showAlertDialog(LoginActivity.this, "Login failed..", "Please enter both the Email and password", true, null, null);
                 }
             }
         });

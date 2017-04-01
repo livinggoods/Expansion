@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -115,8 +116,9 @@ public class SubCountiesFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_registrations, container, false);
+        View v =  inflater.inflate(R.layout.fragment_subcounties, container, false);
         textshow = (TextView) v.findViewById(R.id.textShow);
+        MainActivity.CURRENT_TAG = "county";
 
         sessionManagement = new SessionManagement(getContext());
         mapping = sessionManagement.getSavedMapping();
@@ -159,7 +161,19 @@ public class SubCountiesFragment extends Fragment  {
                 subCounties.set(position, subCounty);
                 rAdapter.notifyDataSetChanged();
 
-                Toast.makeText(getContext(), "Read: " + subCounty.getId(), Toast.LENGTH_SHORT).show();
+                //lets save teh subcounty
+                sessionManagement.saveSubCounty(subCounty);
+
+                //show the next screen for Subcounty details
+
+                SubCountyViewFragment subCountyViewFragment = new SubCountyViewFragment();
+                Fragment fragment = subCountyViewFragment;
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                        android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "mappingsview");
+                fragmentTransaction.commitAllowingStateLoss();
+
 
             }
 
@@ -219,6 +233,7 @@ public class SubCountiesFragment extends Fragment  {
         String county = mapping.getCounty();
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(county + " - Sub Counties ");
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -342,7 +357,7 @@ public class SubCountiesFragment extends Fragment  {
             subCountyList = subCountyTable.getSubCountyData();
             for (SubCounty subCounty:subCountyList){
                 subCounty.setColor(getRandomMaterialColor("400"));
-                subCountyList.add(subCounty);
+                subCounties.add(subCounty);
             }
             rAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
