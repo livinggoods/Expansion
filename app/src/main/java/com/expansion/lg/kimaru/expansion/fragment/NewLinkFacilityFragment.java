@@ -14,21 +14,30 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.text.InputFilter;
+import android.text.InputType;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -45,8 +54,10 @@ import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -66,11 +77,13 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private LinearLayout parentLayout;
     private OnFragmentInteractionListener mListener;
+    List<EditText> communityUnitsCreated = new ArrayList<EditText>();
 
     Button buttonSave, buttonList;
 
-
+    ImageView addNewIcon;
     EditText editFacilityName, editActLevels, editMrdtLevels;
 
     private int mYear, mMonth, mDay;
@@ -89,6 +102,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     boolean isNetworkEnabled = false;
 
     boolean canGetLocation = false;
+    private int id = 0;
 
     Location location; //location
     // Due to Runtime Perms, let us declare some constants for the permissions
@@ -150,6 +164,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 //get the current user
         session = new SessionManagement(getContext());
         user = session.getUserDetails();
+//        parentLayout = (LinearLayout)findViewById(R.id.parentLayout);
+        parentLayout = (LinearLayout) v.findViewById(R.id.editCuLayout);
 
         //get the location
         try {
@@ -257,12 +273,14 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         //editMrdtLevels = (EditText) v.findViewById(R.id.editMrdtLevels);
         //editActLevels = (EditText) v.findViewById(R.id.editActLevels);
 
-
+        addNewIcon = (ImageView) v.findViewById(R.id.add_new_icon);
+        addNewIcon.setImageResource(R.drawable.ic_add_box_black_24dp);
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
 
         buttonSave = (Button) v.findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(this);
+        addNewIcon.setOnClickListener(this);
 
         return v;
     }
@@ -281,9 +299,51 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 newFragment.show(getFragmentManager(), "DatePicker");
                 break;
 
-            case R.id.editRelocated:
-                DialogFragment dateMovedFragment = new DatePickerFragment().newInstance(R.id.editRelocated);
-                dateMovedFragment.show(getFragmentManager(), "Datepicker");
+            case R.id.add_new_icon:
+                //editCuLayout
+//                LinearLayout linearLayout = (LinearLayout) getActivity().findViewById(R.id.editCuLayout);
+//                EditText editText = new EditText(getContext());
+//                editText.setId(id+1);
+//                id+=1;
+//                editText.setLayoutParams(new LinearLayout.LayoutParams(
+//                        LinearLayout.LayoutParams.MATCH_PARENT,
+//                        LinearLayout.LayoutParams.WRAP_CONTENT));
+//                editText.setText("Niko " + id);
+//                linearLayout.addView(editText);
+//                Toast.makeText(getContext(), "Adding "+id, Toast.LENGTH_SHORT).show();
+
+//                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams (
+//                        RelativeLayout.LayoutParams.WRAP_CONTENT,
+//                        RelativeLayout.LayoutParams.WRAP_CONTENT);
+//                params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                // params.setMargins(0,10,0,10);
+                TextInputLayout textInputLayout = new TextInputLayout(getContext());
+                textInputLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                EditText edittTxt = new EditText(getContext());
+                communityUnitsCreated.add(edittTxt);
+                id++;
+                if (id > 1) {
+                    edittTxt.setHint("Add another Community Unit");
+                }else{
+                    edittTxt.setHint("Add Community Unit");
+                }
+                edittTxt.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT));
+//                edittTxt.setLayoutParams(params);
+                // edtTxt.setBackgroundColor(Color.WHITE);
+//                edittTxt.setInputType(InputType.TYPE_CLASS_TEXT);
+//                edittTxt.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
+                edittTxt.setId(id);
+//                InputFilter[] fArray = new InputFilter[1];
+//                fArray[0] = new InputFilter.LengthFilter(maxLength);
+//                edittTxt.setFilters(fArray);
+                textInputLayout.addView(edittTxt);
+                parentLayout.addView(textInputLayout);
+
                 break;
             case R.id.buttonList:
                 //when user clicks this button, we will show the list
@@ -320,7 +380,16 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 Long actLevels = 0L; //Long.valueOf(editActLevels.getText().toString());
 
 
+                // retrieve all Cus Created
+                int cuSize = communityUnitsCreated.size();
+                String[] strings = new String[cuSize];
 
+
+                for(int i=0; i < communityUnitsCreated.size(); i++){
+                    //strings[i] = communityUnitsCreated.get(i).getText().toString();
+                    String cuNamme = communityUnitsCreated.get(i).getText().toString();
+                    Toast.makeText(getContext(), cuNamme, Toast.LENGTH_SHORT).show();
+                }
 
 
                 // Do some validations
@@ -342,8 +411,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                         // Clear boxes
                         editFacilityName.setText("");
                         editFacilityName.requestFocus();
-                        editMrdtLevels.setText("");
-                        editActLevels.setText("");
+                        //editMrdtLevels.setText("");
+                        //editActLevels.setText("");
                     }
 
                 }

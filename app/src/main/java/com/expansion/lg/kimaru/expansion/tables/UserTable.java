@@ -174,6 +174,5 @@ public class UserTable extends SQLiteOpenHelper {
         db.close();
         return results;
     }
-
 }
 

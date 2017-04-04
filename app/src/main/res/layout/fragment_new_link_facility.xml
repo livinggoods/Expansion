@@ -61,6 +61,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/darker_gray"
+                android:imeActionId="@+id/login"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified"
+                android:textStyle="bold"
+                android:text="Community Units"/>
+
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/addedCus"
+                >
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/editCuLayout"
+                        >
+                    </LinearLayout>
+                </ScrollView>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_new_icon"
+                />
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
