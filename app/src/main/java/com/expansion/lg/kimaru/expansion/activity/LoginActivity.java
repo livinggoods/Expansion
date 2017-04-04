@@ -70,7 +70,7 @@ public class LoginActivity extends Activity {
         Cursor user = userTable.fetchUser(userName, passWord);
         if (user != null){
             if (user.getCount() > 0){
-                session.createLoginSesstion(user.getString(4), user.getString(1), user.getInt(0));
+                session.createLoginSesstion(user.getString(4), user.getString(1), user.getInt(0), user.getString(5));
                 return true;
             }
         }

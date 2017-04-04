@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
@@ -106,9 +107,10 @@ public class MappingViewFragment extends Fragment implements OnClickListener {
         //get the saved mapping
         session = new SessionManagement(getContext());
         mapping = session.getSavedMapping();
+        MainActivity.CURRENT_TAG = MainActivity.TAG_MAPPING_VIEW;
+        MainActivity.backFragment = new MappingFragment();
 
-
-        View v =  inflater.inflate(R.layout.fragment_mapping_view, container, false);
+                View v =  inflater.inflate(R.layout.fragment_mapping_view, container, false);
         //Initialize the UI Components
         String [] countyParams = new String[] {
                 "Sub Counties",

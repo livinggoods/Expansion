@@ -25,11 +25,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.dbhelpers.CommunityUnitListAdapter;
+import com.expansion.lg.kimaru.expansion.dbhelpers.LinkFacilityListAdapter;
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
+import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
+import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,9 +62,9 @@ public class LinkFacilitiesFragment extends Fragment  {
     TextView textshow;
 
     // to show list in Gmail Mode
-    private List<CommunityUnit> communityUnits = new ArrayList<>();
+    private List<LinkFacility> linkFacilities = new ArrayList<>();
     private RecyclerView recyclerView;
-    private CommunityUnitListAdapter rAdapter;
+    private LinkFacilityListAdapter rAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ActionMode actionMode;
     private ActionModeCallback actionModeCallback;
@@ -115,9 +119,11 @@ public class LinkFacilitiesFragment extends Fragment  {
         textshow = (TextView) v.findViewById(R.id.textShow);
         //session Management
         session = new SessionManagement(getContext());
+        MainActivity.CURRENT_TAG = MainActivity.TAG_LINK_FACILITIES;
+        MainActivity.backFragment = new SubCountyFragment();
 
 
-        // ============Gmail View starts here =======================
+                // ============Gmail View starts here =======================
         // Gmail View.
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
@@ -130,7 +136,7 @@ public class LinkFacilitiesFragment extends Fragment  {
             }
         });
 
-        rAdapter = new CommunityUnitListAdapter(this.getContext(), communityUnits, new CommunityUnitListAdapter.CommunityUnitListAdapterListener() {
+        rAdapter = new LinkFacilityListAdapter(this.getContext(), linkFacilities, new LinkFacilityListAdapter.LinkFacilityListAdapterListener() {
             @Override
             public void onIconClicked(int position) {
                 if (actionMode == null) {
@@ -149,10 +155,10 @@ public class LinkFacilitiesFragment extends Fragment  {
             @Override
             public void onMessageRowClicked(int position) {
                 // read the message which removes bold from the row
-                CommunityUnit communityUnit = communityUnits.get(position);
+                LinkFacility linkFacility = linkFacilities.get(position);
 
-                communityUnit.setRead(true);
-                communityUnits.set(position, communityUnit);
+                linkFacility.setRead(true);
+                linkFacilities.set(position, linkFacility);
                 rAdapter.notifyDataSetChanged();
             }
 
@@ -178,7 +184,7 @@ public class LinkFacilitiesFragment extends Fragment  {
                 new Runnable(){
                     @Override
                     public void run(){
-                        getCommunityUnits();
+                        getLinkFacilities();
                     }
                 }
         );
@@ -316,27 +322,27 @@ public class LinkFacilitiesFragment extends Fragment  {
         }
         rAdapter.notifyDataSetChanged();
     }
-    private void getCommunityUnits() {
+    private void getLinkFacilities() {
         swipeRefreshLayout.setRefreshing(true);
 
-        communityUnits.clear();
+        linkFacilities.clear();
 
         try {
             // get CUs
-            CommunityUnitTable communityUnitTable = new CommunityUnitTable(getContext());
-            List<CommunityUnit> communityUnitList = new ArrayList<>();
+            LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
+            List<LinkFacility> linkFacilityList = new ArrayList<>();
 
-            communityUnitList = communityUnitTable.getCommunityUnitData();
-            for (CommunityUnit communityUnit:communityUnitList){
-                communityUnit.setColor(getRandomMaterialColor("400"));
-                communityUnits.add(communityUnit);
+            linkFacilityList = linkFacilityTable.getLinkFacilityData();
+            for (LinkFacility linkFacility:linkFacilityList){
+                linkFacility.setColor(getRandomMaterialColor("400"));
+                linkFacilities.add(linkFacility);
             }
             rAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
         } catch (Exception error){
-            Toast.makeText(getContext(), "No Community unit  found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "No Link facility found ", Toast.LENGTH_SHORT).show();
 
-            textshow.setText(" No Community unit recorded ");
+            textshow.setText(" No  Link facility recorded ");
         }
         swipeRefreshLayout.setRefreshing(false);
     }

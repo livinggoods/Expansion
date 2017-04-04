@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,8 +26,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.dbhelpers.VillageListAdapter;
+import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
+import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.mzigos.Village;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 import com.expansion.lg.kimaru.expansion.other.GpsTracker;
@@ -68,6 +72,8 @@ public class SubCountyFragment extends Fragment  {
 
 
     SessionManagement session;
+    Mapping mapping;
+    SubCounty subCounty;
 
 
     // I cant seem to get the context working
@@ -116,6 +122,10 @@ public class SubCountyFragment extends Fragment  {
         textshow = (TextView) v.findViewById(R.id.textShow);
         //session Management
         session = new SessionManagement(getContext());
+        mapping = session.getSavedMapping();
+        subCounty = session.getSavedSubCounty();
+        MainActivity.CURRENT_TAG =MainActivity.TAG_SUBCOUNTY;
+        MainActivity.backFragment = new MapViewFragment();
 
 
 
@@ -208,6 +218,13 @@ public class SubCountyFragment extends Fragment  {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        String county = mapping.getCounty();
+        String subCountyName = subCounty.getSubCountyName();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(county + " - "+ subCountyName + " Sub County");
     }
 
     /**

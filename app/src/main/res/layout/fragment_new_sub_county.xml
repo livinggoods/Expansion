@@ -17,6 +17,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:weightSum="1">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/darker_gray"
+                android:imeActionId="@+id/login"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified"
+                android:textStyle="bold"
+                android:text="BASIC SUBCOUNTY DATA"/>
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -30,7 +40,6 @@
                     android:imeOptions="actionUnspecified"
                     android:inputType="textCapWords"
                     android:maxLines="1" />
-
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -57,7 +66,7 @@
                     android:imeOptions="actionUnspecified"
                     android:inputType="phone"
                     android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+            </android.support.design.widget.TextInputLayout>  <!-- pull from the contacts list -->
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -72,27 +81,24 @@
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/editMainTownPopulation"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Main Town Population"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="number"
-                    android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+                android:layout_height="wrap_content"
+                android:background="@android:color/darker_gray"
+                android:imeActionId="@+id/login"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified"
+                android:textStyle="bold"
+                android:text="1. SUB COUNTY"/>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="County Support"/>
+                    android:text="County Support of LG"/>
                 <RadioGroup
                     android:id="@+id/editCountySupport"
                     android:layout_width="fill_parent"
@@ -147,13 +153,13 @@
                 android:background="@android:color/darker_gray"/>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sub County Support"/>
+                    android:text="Sub County Support of LG"/>
                 <RadioGroup
                     android:id="@+id/editSubCountySupport"
                     android:layout_width="fill_parent"
@@ -207,14 +213,14 @@
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
 
-            <LinearLayout
-                android:orientation="horizontal"
+            <!-- <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="CHV Activity"/>
+                    android:text="Level of CHV Activity in the last one year"/>
                 <RadioGroup
                     android:id="@+id/editChvActivity"
                     android:layout_width="fill_parent"
@@ -266,9 +272,9 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
+                android:background="@android:color/darker_gray"/> -->
 
-            <android.support.design.widget.TextInputLayout
+            <!-- <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
@@ -279,18 +285,28 @@
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+            </android.support.design.widget.TextInputLayout> -->
 
-            <android.support.design.widget.TextInputLayout
+
+
+           <!-- replace this with a spinner of counties -->
+            <!-- County: Name, Contact person, couunty population,  -->
+
+
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <Spinner
-                    android:id="@+id/editPopulationDensity"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/population_density_types"
-                    android:prompt="@string/select_prompt" />
-            </android.support.design.widget.TextInputLayout>
+                android:layout_height="wrap_content"
+                android:background="@android:color/darker_gray"
+                android:imeActionId="@+id/login"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified"
+                android:textStyle="bold"
+                android:text="2. POPULATION"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -299,7 +315,7 @@
                     android:id="@+id/editSubCountyPopulation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Sub County Population"
+                    android:hint="Sub-county population"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />
@@ -312,7 +328,20 @@
                     android:id="@+id/editNoOfVillages"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Number of Villages"
+                    android:hint="Number of villages  in a radius of 20km from Main Town"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="number"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/editMainTownPopulation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Main Town Population"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />
@@ -325,11 +354,41 @@
                     android:id="@+id/editServicePopulation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Target Population"
+                    android:hint="Potential population to serve in a 20km radius"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Est. population density"/>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <Spinner
+                    android:id="@+id/editPopulationDensity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/population_density_types"
+                    android:prompt="@string/select_prompt" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/darker_gray"
+                android:imeActionId="@+id/login"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified"
+                android:textStyle="bold"
+                android:text="3. ACCESSIBILITY"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -338,7 +397,7 @@
                     android:id="@+id/editTransportCost"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Transport cost to proposed branch location"
+                    android:hint="Transport cost from furthest village to main town"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />
@@ -351,11 +410,21 @@
                     android:id="@+id/editMajorRoads"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Major Roads"
+                    android:hint="Number of major roads crossing the main town"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="text"
+                    android:inputType="number"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/darker_gray"
+                android:imeActionId="@+id/login"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified"
+                android:textStyle="bold"
+                android:text="4. PRIVATE CLINICS"/>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -364,9 +433,22 @@
                     android:id="@+id/editPrivateClinics"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Private clinics in the area"
+                    android:hint="Number of private clinics and chemist shops in the main town"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="text"
+                    android:inputType="number"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/editPrivateClinicsLg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Number of private clinics and chemist shops in the town targeted by LG"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="number"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
@@ -377,13 +459,13 @@
                     android:id="@+id/editPrivateClinicsInRadius"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Private clinics in 20km radius"
+                    android:hint="Number of Private clinics in 20km radius"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="text"
+                    android:inputType="number"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <!-- <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
@@ -394,7 +476,17 @@
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+            </android.support.design.widget.TextInputLayout> -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/darker_gray"
+                android:imeActionId="@+id/login"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified"
+                android:textStyle="bold"
+                android:text="5. BUSINESS ENVIRONMENT IN THE TARGETED TOWN"/>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -403,9 +495,9 @@
                     android:id="@+id/editMainSuperMarkets"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Main Supermarkets"
+                    android:hint="Number of Supermarkets"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="textCapWords"
+                    android:inputType="number"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
@@ -416,9 +508,9 @@
                     android:id="@+id/editMainBanks"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Main Banks"
+                    android:hint="Number of main banks"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="textCapWords"
+                    android:inputType="number"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
@@ -429,9 +521,9 @@
                     android:id="@+id/editMajorBusiness"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Major Businesses"
+                    android:hint="Large factories / plantations"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="textCapWords"
+                    android:inputType="number"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
@@ -442,11 +534,16 @@
                     android:id="@+id/editComment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Cooments"
+                    android:hint="Comments"
                     android:imeOptions="actionUnspecified"
                     android:inputType="text"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
 
             <LinearLayout
                 android:orientation="horizontal"

@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 
@@ -100,8 +101,10 @@ public class NewExamFragment extends Fragment implements OnClickListener {
         mMaths = (EditText) v.findViewById(R.id.editMathScore);
         mEnglish = (EditText) v.findViewById(R.id.editEnglishScore);
         mSelfAssessment = (EditText) v.findViewById(R.id.editSelfAssessmentScore);
+        MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_EXAM;
+        MainActivity.backFragment = new ExamsFragment();
 
-        buttonList = (Button) v.findViewById(R.id.buttonList);
+                buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
 
         buttonSave = (Button) v.findViewById(R.id.buttonSave);

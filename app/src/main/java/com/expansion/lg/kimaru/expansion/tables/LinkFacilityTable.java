@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.expansion.lg.kimaru.expansion.mzigos.User;
+import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,13 +21,12 @@ import java.util.List;
  */
 
 
-public class UserTable extends SQLiteOpenHelper {
+public class LinkFacilityTable extends SQLiteOpenHelper {
 
-    public static final String TABLE_NAME="user";
+    public static final String TABLE_NAME="link_facility";
     public static final String DATABASE_NAME="expansion";
     public static final int DATABASE_VERSION=1;
 
-    //String email, username, password, name;
 
     public static String varchar_field = " varchar(512) ";
     public static String primary_field = " _id INTEGER PRIMARY KEY AUTOINCREMENT ";
@@ -35,23 +34,33 @@ public class UserTable extends SQLiteOpenHelper {
     public static String text_field = " text ";
 
     public static final String ID = "_id";
-    public static final String EMAIL= "email";
-    public static final String USERNAME = "username";
-    public static final String PASSWORD = "password";
-    public static final String NAME = "name";
+    public static final String NAME = "facility_name";
+    public static final String COUNTY = "county";
+    public static final String LAT = "lat";
+    public static final String LON = "lon";
+    public static final String SUBCOUNTY = "subcounty";
+    public static final String ADDED = "date_added";
+    public static final String ADDEDBY = "added_by";
+    public static final String MRDTLEVELS = "mrdt_levels";
+    public static final String ACTLEVELS = "act_levels";
     public static final String COUNTRY = "country";
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
-            + primary_field + ", "
-            + EMAIL + varchar_field + ", "
-            + USERNAME + varchar_field + ", "
-            + PASSWORD + varchar_field + ", "
+            + ID + varchar_field +", "
             + NAME + varchar_field + ", "
+            + COUNTY + varchar_field + ", "
+            + LAT + varchar_field + ", "
+            + LON + varchar_field + ", "
+            + SUBCOUNTY + varchar_field + ", "
+            + ADDED + integer_field + ", "
+            + ADDEDBY + integer_field + ", "
+            + MRDTLEVELS + integer_field + ", "
+            + ACTLEVELS + integer_field + ", "
             + COUNTRY + varchar_field + "); ";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
 
-    public UserTable(Context context) {
+    public LinkFacilityTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);
     }
 
@@ -65,22 +74,26 @@ public class UserTable extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        Log.w("RegistrationTable", "upgrading database from" + oldVersion + "to" + newVersion);
+        Log.w("Link Facility", "upgrading database from" + oldVersion + "to" + newVersion);
         db.execSQL(DATABASE_DROP);
     }
 
-    public long addUser(User user) {
+    public long addData(LinkFacility linkFacility) {
 
         SQLiteDatabase db=getWritableDatabase();
         ContentValues cv=new ContentValues();
-        cv.put(ID, user.getId());
-        cv.put(EMAIL, user.getEmail());
-        cv.put(USERNAME, user.getUsername());
-        cv.put(PASSWORD, user.getPassword());
-        cv.put(NAME, user.getName());
-        cv.put(COUNTRY, user.getCountry());
+        cv.put(ID, linkFacility.getId());
+        cv.put(NAME, linkFacility.getFacilityName());
+        cv.put(COUNTY, linkFacility.getMappingId());
+        cv.put(LAT, linkFacility.getLat());
+        cv.put(LON, linkFacility.getLon());
+        cv.put(SUBCOUNTY, linkFacility.getSubCountyId());
+        cv.put(ADDED, linkFacility.getDateAdded());
+        cv.put(ADDEDBY, linkFacility.getAddedBy());
+        cv.put(MRDTLEVELS, linkFacility.getMrdtLevels());
+        cv.put(ACTLEVELS, linkFacility.getActLevels());
+        cv.put(COUNTRY, linkFacility.getCountry());
 
-        // long id=db.insert(TABLE_NAME,null,cv);
 
         long id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
 
@@ -88,58 +101,54 @@ public class UserTable extends SQLiteOpenHelper {
         return id;
 
     }
-    public List<User> getUserData() {
+    public List<LinkFacility> getLinkFacilityData() {
 
         SQLiteDatabase db=getReadableDatabase();
 
-        String [] columns=new String[]{ID, EMAIL, USERNAME, PASSWORD, NAME};
+        String [] columns=new String[]{ID, NAME, COUNTY, LAT, LON, SUBCOUNTY, ADDED, ADDEDBY,
+                MRDTLEVELS, ACTLEVELS, COUNTRY};
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
-        List<User> userList=new ArrayList<>();
+        List<LinkFacility> facilityList =new ArrayList<>();
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-            User user=new User();
+            LinkFacility linkFacility =new LinkFacility();
 
-            user.setId(cursor.getInt(0));
-            user.setEmail(cursor.getString(1));
-            user.setUsername(cursor.getString(2));
-            user.setPassword(cursor.getString(3));
-            user.setName(cursor.getString(4));
-            user.setCountry(cursor.getString(5));
+            linkFacility.setId(cursor.getString(0));
+            linkFacility.setFacilityName(cursor.getString(1));
+            linkFacility.setMappingId(cursor.getString(2));
+            linkFacility.setLat(cursor.getString(3));
+            linkFacility.setLon(cursor.getString(4));
+            linkFacility.setSubCountyId(cursor.getString(5));
+            linkFacility.setDateAdded(cursor.getInt(6));
+            linkFacility.setAddedBy(cursor.getInt(7));
+            linkFacility.setMrdtLevels(cursor.getInt(8));
+            linkFacility.setActLevels(cursor.getInt(9));
+            linkFacility.setCountry(cursor.getString(10));
 
-            userList.add(user);
+            facilityList.add(linkFacility);
         }
         db.close();
-        return userList;
+        return facilityList;
     }
 
     public Cursor getUserCursor() {
 
         SQLiteDatabase db=getReadableDatabase();
 
-        String [] columns=new String[]{ID, EMAIL, USERNAME, PASSWORD, NAME, COUNTRY};
+        String [] columns=new String[]{ID, NAME, COUNTY, LAT, LON, SUBCOUNTY, ADDED, ADDEDBY,
+                MRDTLEVELS, ACTLEVELS, COUNTRY};
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
         return cursor;
     }
 
-
-    public Cursor fetchUser (String username, String password){
-        SQLiteDatabase db = getReadableDatabase();
-        String [] columns=new String[]{ID, EMAIL, USERNAME, PASSWORD, NAME, COUNTRY};
-        Cursor myCursor = db.query(TABLE_NAME, columns, EMAIL + "='" + username +
-                "' AND " + PASSWORD + " = '" + password + "'", null, null, null, null);
-        if (myCursor != null){
-            myCursor.moveToFirst();
-        }
-        return myCursor;
-    }
-
-    public JSONObject getUsersJson() {
+    public JSONObject getJson() {
 
         SQLiteDatabase db=getReadableDatabase();
 
-        String [] columns=new String[]{ID, NAME, EMAIL, PASSWORD, USERNAME, COUNTRY};
+        String [] columns=new String[]{ID, NAME, COUNTY, LAT, LON, SUBCOUNTY, ADDED, ADDEDBY,
+                MRDTLEVELS, ACTLEVELS, COUNTRY};
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 

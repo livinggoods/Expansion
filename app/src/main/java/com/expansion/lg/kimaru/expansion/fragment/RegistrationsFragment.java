@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,13 +29,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationListAdapter;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -68,6 +72,7 @@ public class RegistrationsFragment extends Fragment  {
     private ActionModeCallback actionModeCallback;
 
     SessionManagement session;
+    HashMap <String, String> recruitment;
 
 
 
@@ -114,9 +119,12 @@ public class RegistrationsFragment extends Fragment  {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_registrations, container, false);
+        MainActivity.CURRENT_TAG =MainActivity.TAG_REGISTRATIONS;
+        MainActivity.backFragment = new RecruitmentsFragment();
         textshow = (TextView) v.findViewById(R.id.textShow);
         //session Management
         session = new SessionManagement(getContext());
+        recruitment = session.getRecruitmentSession();
 
 
         // ============Gmail View starts here =======================
@@ -220,6 +228,12 @@ public class RegistrationsFragment extends Fragment  {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(recruitment.get(SessionManagement.RECRUITMENT_NAME)+" Registrations");
     }
 
     /**

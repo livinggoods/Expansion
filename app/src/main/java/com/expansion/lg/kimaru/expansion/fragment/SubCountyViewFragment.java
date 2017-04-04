@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
@@ -40,12 +41,15 @@ public class SubCountyViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View v = inflater.inflate(R.layout.recycleview_layout, container, false);
+        MainActivity.CURRENT_TAG =MainActivity.TAG_SUBCOUNTY_VIEW;
+        MainActivity.backFragment = new SubCountiesFragment();
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         // Retrieve saved details
         sessionManagement = new SessionManagement(getContext());
         mapping = sessionManagement.getSavedMapping();
         subCounty = sessionManagement.getSavedSubCounty();
+
 
         //recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
@@ -56,9 +60,9 @@ public class SubCountyViewFragment extends Fragment {
 
     private void createAdapter(RecyclerView recyclerView){
         final List<DefaultListMenu> content = new ArrayList<>();
-        content.add(new DefaultListMenu("Community Units", null, new CommunityUnitsFragment()));
         content.add(new DefaultListMenu("Link Facilities", null, new LinkFacilitiesFragment()));
-        content.add(new DefaultListMenu("View Villages", null, new VillagesFragment()));
+        content.add(new DefaultListMenu("Community Units", null, new CommunityUnitsFragment()));
+        content.add(new DefaultListMenu("Villages", null, new VillagesFragment()));
         content.add(new DefaultListMenu("Partners working in the area", null, new PartnersFragment()));
 
         final ParallaxRecyclerAdapter<DefaultListMenu> adapter = new ParallaxRecyclerAdapter<>(content);
@@ -136,7 +140,7 @@ public class SubCountyViewFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         String county = mapping.getCounty();
         String subCountyName = subCounty.getSubCountyName();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(county + " - "+ subCountyName);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(county + " - "+ subCountyName + "Sub County");
     }
 
 }

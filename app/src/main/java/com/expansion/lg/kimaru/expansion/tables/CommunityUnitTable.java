@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
+import com.expansion.lg.kimaru.expansion.mzigos.Partners;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,8 @@ import java.util.List;
 public class CommunityUnitTable extends SQLiteOpenHelper {
 
     public static final String TABLE_NAME="community_unit";
+    public static final String PARTNERS_TABLE="partners";
+    public static final String CU_PARTNERS_TABLE="cu_partners";
     public static final String DATABASE_NAME="expansion";
     public static final int DATABASE_VERSION=1;
 
@@ -29,7 +32,7 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
     public static String text_field = " text ";
 
     public static final String ID = "_id";
-    public static final String COMMUNITYUNITNAME = "communityunitname";
+    public static final String NAME = "name";
     public static final String MAPPINGID = "mappingid";
     public static final String LAT = "lat";
     public static final String LON = "lon";
@@ -69,10 +72,16 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
     public static final String NGOSGIVINGFREEDRUGS = "ngosgivingfreedrugs";
     public static final String NGODOINGICCM = "ngodoingiccm";
     public static final String NGODOINGMHEALTH = "ngodoingmhealth";
+    public static final String ICCM = "iccm";
+    public static final String ICCMCOMPONENT = "iccm_component";
+    public static final String MHEALTH = "mhealth";
+    public static final String COMMENT = "comment";
+    public static final String PARTNERID = "partner_id";
+    public static final String CUID = "cu_id";
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + " varchar(36)" + ","
-            + COMMUNITYUNITNAME + varchar_field + ","
+            + NAME + varchar_field + ","
             + MAPPINGID + " varchar(36)" + ","
             + LAT + varchar_field + ","
             + LON + varchar_field + ","
@@ -113,7 +122,24 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
             + NGODOINGICCM + integer_field + ","
             + NGODOINGMHEALTH + integer_field + ");";
 
+    public static final String CREATE_PARTNERS = "CREATE TABLE " + PARTNERS_TABLE + "("
+            + ID + " varchar(36)" + ","
+            + NAME + varchar_field + ","
+            + ICCM + varchar_field + ","
+            + ICCMCOMPONENT + varchar_field + ","
+            + MHEALTH + varchar_field + ","
+            + COMMENT + text_field + ","
+            + DATEADDED + integer_field + ","
+            + ADDEDBY + integer_field + "); ";
+
+    public static final String CREATE_CU_PARTNERS = "CREATE TABLE " + CU_PARTNERS_TABLE + "("
+            + ID + " varchar(36)" + ","
+            + PARTNERID + varchar_field + ","
+            + CUID + varchar_field + ");";
+
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
+    public static final String PARTNERS_DROP="DROP TABLE IF EXISTS" + PARTNERS_TABLE;
+    public static final String PARTNERS_CU_DROP="DROP TABLE IF EXISTS" + CU_PARTNERS_TABLE;
 
 
     public CommunityUnitTable(Context context) {
@@ -124,20 +150,24 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_DATABASE);
+        db.execSQL(CREATE_PARTNERS);
+        db.execSQL(CREATE_CU_PARTNERS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w("RegistrationTable", "upgrading database from" + oldVersion + "to" + newVersion);
         db.execSQL(DATABASE_DROP);
+        db.execSQL(PARTNERS_DROP);
+        db.execSQL(PARTNERS_CU_DROP);
     }
 
-    public long addData(CommunityUnit communityUnit) {
+    public long addCommunityUnitData(CommunityUnit communityUnit) {
 
         SQLiteDatabase db=getWritableDatabase();
         ContentValues cv=new ContentValues();
         cv.put(ID, communityUnit.getId());
-        cv.put(COMMUNITYUNITNAME, communityUnit.getCommunityUnitName());
+        cv.put(NAME, communityUnit.getCommunityUnitName());
         cv.put(MAPPINGID, communityUnit.getMappingId());
         cv.put(LAT, communityUnit.getLat());
         cv.put(LON, communityUnit.getLon());
@@ -184,12 +214,62 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
         return id;
     }
 
+    public long addPartnerData(Partners partners) {
+
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(ID, partners.getPartnerID());
+        cv.put(NAME, partners.getPartnerName());
+        cv.put(ICCM, partners.isDoingIccm() ? 1 : 0);
+        cv.put(ICCMCOMPONENT, partners.getIccmComponent());
+        cv.put(MHEALTH, partners.isDoingMHealth() ? 1 : 0);
+        cv.put(COMMENT, partners.getComment());
+        cv.put(DATEADDED, partners.getDateAdded());
+        cv.put(ADDEDBY, partners.getAddedBy());
+
+        long id = db.insertWithOnConflict(PARTNERS_TABLE, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+        return id;
+    }
+    public long addPartnerCUData(String id, Partners partner, CommunityUnit communityUnit) {
+
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(ID, id);
+        cv.put(PARTNERID, partner.getPartnerID());
+        cv.put(CUID, communityUnit.getId());
+
+        long savedId = db.insertWithOnConflict(CU_PARTNERS_TABLE, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+        return savedId;
+    }
+
+    public List<Partners> getPartnersData() {
+        SQLiteDatabase db = getReadableDatabase();
+        String [] columns =new String [] {ID, NAME, ICCM, ICCMCOMPONENT, MHEALTH, COMMENT, DATEADDED, ADDEDBY};
+        Cursor c = db.query(PARTNERS_TABLE, columns,null,null,null,null,null,null);
+        List<Partners> partnersList = new ArrayList<>();
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
+            Partners partners = new Partners();
+            partners.setPartnerID(c.getString(0));
+            partners.setPartnerName(c.getString(1));
+            partners.setDoingIccm(c.getInt(2) == 1);
+            partners.setIccmComponent(c.getString(3));
+            partners.setDoingMHealth(c.getInt(4) == 1);
+            partners.setComment(c.getString(5));
+            partners.setDateAdded(c.getLong(6));
+            partners.setAddedBy(c.getLong(7));
+
+            partnersList.add(partners);
+        }
+        db.close();
+        return partnersList;
+    }
+
 
     public List<CommunityUnit> getCommunityUnitData() {
 
         SQLiteDatabase db=getReadableDatabase();
 
-        String [] columns=new String[]{ID, COMMUNITYUNITNAME, MAPPINGID, LAT, LON, COUNTRY,
+        String [] columns=new String[]{ID, NAME, MAPPINGID, LAT, LON, COUNTRY,
                 SUBCOUNTYID, LINKFACILITYID, AREACHIEFNAME, WARD, ECONOMICSTATUS,
                 PRIVATEFACILITYFORACT, PRIVATEFACILITYFORMRDT, NAMEOFNGODOINGICCM,
                 NAMEOFNGODOINGMHEALTH, DATEADDED, ADDEDBY, NUMBEROFCHVS, HOUSEHOLDPERCHV,
@@ -198,7 +278,7 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
                 DISTANCETONEARESTHEALTHFACILITY, ACTLEVELS, ACTPRICE, MRDTLEVELS,
                 MRDTPRICE, NOOFDISTIBUTORS, CHVSTRAINED, PRESENCEOFESTATES, PRESENCEOFFACTORIES,
                 PRESENCEOFHOSTELS, TRADERMARKET, LARGESUPERMARKET, NGOSGIVINGFREEDRUGS,
-                NGODOINGICCM, NGODOINGMHEALTH,};
+                NGODOINGICCM, NGODOINGMHEALTH};
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
@@ -259,7 +339,7 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
 
     public Cursor getCommunityUnitDataCursor() {
         SQLiteDatabase db=getReadableDatabase();
-        String [] columns=new String[]{ID, COMMUNITYUNITNAME, MAPPINGID, LAT, LON, COUNTRY,
+        String [] columns=new String[]{ID, NAME, MAPPINGID, LAT, LON, COUNTRY,
                 SUBCOUNTYID, LINKFACILITYID, AREACHIEFNAME, WARD, ECONOMICSTATUS,
                 PRIVATEFACILITYFORACT, PRIVATEFACILITYFORMRDT, NAMEOFNGODOINGICCM,
                 NAMEOFNGODOINGMHEALTH, DATEADDED, ADDEDBY, NUMBEROFCHVS, HOUSEHOLDPERCHV,

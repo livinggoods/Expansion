@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
@@ -107,10 +108,12 @@ public class NewMappingFragment extends Fragment implements OnClickListener {
         // mMappingName, mMappingContactPerson, mMappingContactPersonPhone, mCounty, mComment;
 
         user = session.getUserDetails();
+        MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_MAPPING;
+        MainActivity.backFragment = new MappingFragment();
 
 
 
-        mMappingName = (EditText) v.findViewById(R.id.editMappingName);
+                mMappingName = (EditText) v.findViewById(R.id.editMappingName);
         mMappingContactPerson = (EditText) v.findViewById(R.id.editContactPerson);
         mMappingContactPersonPhone = (EditText) v.findViewById(R.id.editContactPersonPhone);
         mCounty = (EditText) v.findViewById(R.id.editMappingCounty);

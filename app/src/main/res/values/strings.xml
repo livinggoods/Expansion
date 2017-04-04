@@ -20,6 +20,7 @@
     <string name="nav_about_us">About Us</string>
     <string name="nav_http_server">Http Server</string>
     <string name="nav_mapping">Mapping</string>
+    <string name="nav_sub_county_screening">Sub County Screening</string>
 
     <!-- Toolbar titles when navigation menu item is selected -->
     <string-array name="nav_item_activity_titles">
@@ -29,6 +30,7 @@
         <item>Exams</item>
         <item>Interviews</item>
         <item>Mapping</item>
+        <item>Sub County Screening</item>
     </string-array>
 
 

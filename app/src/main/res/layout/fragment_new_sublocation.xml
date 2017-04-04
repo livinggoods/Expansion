@@ -24,7 +24,7 @@
                     android:id="@+id/editName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Village Name"
+                    android:hint="Community Unit Name"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textCapWords"
                     android:maxLines="1" />
@@ -54,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Chief's Phone"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="textCapWords"
+                    android:inputType="phone"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
@@ -71,16 +71,27 @@
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
-                <Spinner
-                    android:id="@+id/editEconomicStatus"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:entries="@array/population_density_types"
-                    android:prompt="@string/select_prompt" />
-            </android.support.design.widget.TextInputLayout>
+                    android:text="Economic Level Status"/>
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <Spinner
+                        android:id="@+id/editEconomicStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/population_density_types"
+                        android:prompt="@string/select_prompt" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -193,7 +204,7 @@
                     android:id="@+id/editDistanceToBranch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="No of Villages"
+                    android:hint="Distance to Branch"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />
@@ -278,7 +289,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TextView
@@ -323,7 +334,7 @@
                 android:background="@android:color/darker_gray"/>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TextView
@@ -360,7 +371,7 @@
                 android:background="@android:color/darker_gray"/>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TextView
@@ -397,7 +408,7 @@
                 android:background="@android:color/darker_gray"/>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TextView
@@ -434,7 +445,7 @@
                 android:background="@android:color/darker_gray"/>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TextView

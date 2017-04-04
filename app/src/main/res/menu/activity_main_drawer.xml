@@ -2,9 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_counties"
+            android:icon="@drawable/ic_map_black_24dp"
+            android:title="@string/nav_mapping" />
+        <item
             android:id="@+id/nav_mapping"
             android:icon="@drawable/ic_map_black_24dp"
             android:title="@string/nav_mapping" />
+        <item
+            android:id="@+id/nav_subcounty_screening"
+            android:icon="@drawable/ic_map_black_24dp"
+            android:title="@string/nav_sub_county_screening" />
     </group>
     <group android:checkableBehavior="single">
         <item

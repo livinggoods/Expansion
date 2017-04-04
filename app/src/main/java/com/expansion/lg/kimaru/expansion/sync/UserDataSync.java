@@ -67,12 +67,12 @@ public class UserDataSync {
                     List<User> userList = new ArrayList<User>();
                     for (int x = 0; x < recs.length(); x++){
                         User user = new User();
-
                         user.setId(recs.getJSONObject(x).getInt("id"));
                         user.setPassword(recs.getJSONObject(x).getString("app_name"));
                         user.setUsername(recs.getJSONObject(x).getString("username"));
                         user.setEmail(recs.getJSONObject(x).getString("email"));
                         user.setName(recs.getJSONObject(x).getString("name"));
+                        user.setCountry(recs.getJSONObject(x).getString("country"));
                         UserTable userTable = new UserTable(context);
                         long id = userTable.addUser(user);
 

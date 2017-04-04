@@ -21,7 +21,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,9 +36,11 @@ import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.AlertDialogManager;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.GpsTracker;
+import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
 import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
 
 import java.text.DateFormat;
@@ -52,12 +53,12 @@ import java.util.UUID;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link NewSubCountyFragment.OnFragmentInteractionListener} interface
+ * {@link NewLinkFacilityFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link NewSubCountyFragment#newInstance} factory method to
+ * Use the {@link NewLinkFacilityFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewSubCountyFragment extends Fragment implements OnClickListener, LocationListener {
+public class NewLinkFacilityFragment extends Fragment implements OnClickListener, LocationListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -67,21 +68,13 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
     private String mParam2;
     private OnFragmentInteractionListener mListener;
 
-    EditText editName, editContactPerson, editPhone, editMainTown, editMainTownPopulation;
-    EditText editSubCountyPopulation, editNoOfVillages, editServicePopulation;
-    EditText editTransportCost, editMajorRoads, editPrivateClinics, editPrivateClinicsInRadius;
-    EditText editCommunityUnits, editMainSuperMarkets, editMainBanks, editMajorBusiness, editComment;
-
-    RadioGroup editCountySupport, editSubCountySupport, editChvActivity, editRecommended;
-
-    Spinner editPopulationDensity;
-
     Button buttonSave, buttonList;
+
+
+    EditText editFacilityName, editActLevels, editMrdtLevels;
 
     private int mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 100;
-
-    public SubCounty subCountyEditing = null;
 
 
     SessionManagement session;
@@ -110,18 +103,11 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
 
     protected LocationManager locationManager;
 
-    Mapping mapping;
-
 
     //show alerts
     AlertDialogManager alert = new AlertDialogManager();
 
-
-
-
-
-
-    public NewSubCountyFragment() {
+    public NewLinkFacilityFragment() {
         // Required empty public constructor
     }
 
@@ -134,8 +120,8 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
      * @return A new instance of fragment RegistrationsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NewSubCountyFragment newInstance(String param1, String param2) {
-        NewSubCountyFragment fragment = new NewSubCountyFragment();
+    public static NewLinkFacilityFragment newInstance(String param1, String param2) {
+        NewLinkFacilityFragment fragment = new NewLinkFacilityFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -157,13 +143,13 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_new_sub_county, container, false);
-        MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_SUB_COUNTY;
-        MainActivity.backFragment = new SubCountiesFragment();
+        View v =  inflater.inflate(R.layout.fragment_new_link_facility, container, false);
+        MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_LINK_FACILITY;
+        MainActivity.backFragment = new LinkFacilitiesFragment();
+
                 //get the current user
         session = new SessionManagement(getContext());
         user = session.getUserDetails();
-        mapping = session.getSavedMapping();
 
         //get the location
         try {
@@ -267,36 +253,10 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
 
 
         //Initialize the UI Components
-        editName = (EditText) v.findViewById(R.id.editName);
-        editContactPerson = (EditText) v.findViewById(R.id.editContactPerson);
-        editPhone = (EditText) v.findViewById(R.id.editPhone);
-        editMainTown = (EditText) v.findViewById(R.id.editMainTown);
-        editMainTownPopulation = (EditText) v.findViewById(R.id.editMainTownPopulation);
-        // editCountyPopulation = (EditText) v.findViewById(R.id.editCountyPopulation);
-        editSubCountyPopulation = (EditText) v.findViewById(R.id.editSubCountyPopulation);
-        editNoOfVillages = (EditText) v.findViewById(R.id.editNoOfVillages);
-        editServicePopulation = (EditText) v.findViewById(R.id.editServicePopulation);
-        editTransportCost = (EditText) v.findViewById(R.id.editTransportCost);
-        editMajorRoads = (EditText) v.findViewById(R.id.editMajorRoads);
-        editPrivateClinics = (EditText) v.findViewById(R.id.editPrivateClinics);
-        editPrivateClinicsInRadius = (EditText) v.findViewById(R.id.editPrivateClinicsInRadius);
-        //editCommunityUnits = (EditText) v.findViewById(R.id.editCommunityUnits);
-        editMainSuperMarkets = (EditText) v.findViewById(R.id.editMainSuperMarkets);
-        editMainBanks = (EditText) v.findViewById(R.id.editMainBanks);
-        editMajorBusiness = (EditText) v.findViewById(R.id.editMajorBusiness);
-        editComment = (EditText) v.findViewById(R.id.editComment);
+        editFacilityName = (EditText) v.findViewById(R.id.editFacilityName);
+        //editMrdtLevels = (EditText) v.findViewById(R.id.editMrdtLevels);
+        //editActLevels = (EditText) v.findViewById(R.id.editActLevels);
 
-        //radioButtonGrps
-        editCountySupport = (RadioGroup) v.findViewById(R.id.editCountySupport);
-        editSubCountySupport = (RadioGroup) v.findViewById(R.id.editSubCountySupport);
-        //editChvActivity = (RadioGroup) v.findViewById(R.id.editChvActivity);
-        editRecommended = (RadioGroup) v.findViewById(R.id.editRecommended);
-
-        //spinners
-        editPopulationDensity = (Spinner) v.findViewById(R.id.editPopulationDensity);
-
-        //at this point, let us setup Editing Mode
-        setUpEditingMode();
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
@@ -328,14 +288,15 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
             case R.id.buttonList:
                 //when user clicks this button, we will show the list
 
-                SubCountiesFragment subCountiesFragment = new SubCountiesFragment();
-                Fragment fragment = subCountiesFragment;
+                LinkFacilitiesFragment linkFacilitiesFragment  = new LinkFacilitiesFragment();
+                Fragment fragment = linkFacilitiesFragment;
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left,
                         android.R.anim.slide_out_right);
+                MainActivity.CURRENT_TAG = MainActivity.TAG_NEW_LINK_FACILITY;
 
-                fragmentTransaction.replace(R.id.frame, fragment, "subcounties");
+                fragmentTransaction.replace(R.id.frame, fragment, "linkfacility");
                 fragmentTransaction.commitAllowingStateLoss();
                 break;
             case R.id.buttonSave:
@@ -347,113 +308,42 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
 
                 Mapping mapping = session.getSavedMapping();
 
-                String uuid;
-                if (subCountyEditing != null){
-                    uuid = subCountyEditing.getId();
-                }else{
-                    uuid = UUID.randomUUID().toString();
-                }
+                String uuid = UUID.randomUUID().toString();
                 String county = mapping.getCounty();
-                String mappingID = mapping.getId();
+                String mappingId = mapping.getId();
                 String lat = String.valueOf(latitude);
                 String lon= String.valueOf(longitude);
                 Integer addedBy = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
+                String country = user.get(SessionManagement.KEY_USER_COUNTRY);
+                String facilityName = editFacilityName.getText().toString();
+                Long mrdtLevels = 0L; // Long.valueOf(editMrdtLevels.getText().toString());
+                Long actLevels = 0L; //Long.valueOf(editActLevels.getText().toString());
 
-                String editDataName = editName.getText().toString();
-                String editDataContactPerson = editContactPerson.getText().toString();
-                String editDataPhone = editPhone.getText().toString();
-                String editDataMainTown = editMainTown.getText().toString();
-                String editDataMainTownPopulation = editMainTownPopulation.getText().toString();
-                String editDataCountyPopulation = "0"; // editCountyPopulation.getText().toString();
-                String editDataSubCountyPopulation = editSubCountyPopulation.getText().toString();
-                String editDataNoOfVillages = editNoOfVillages.getText().toString();
-                String editDataServicePopulation = editServicePopulation.getText().toString();
-                String editDataTransportCost = editTransportCost.getText().toString();
-                String editDataMajorRoads = editMajorRoads.getText().toString();
-                String editDataPrivateClinics = editPrivateClinics.getText().toString();
-                String editDataPrivateClinicsInRadius = editPrivateClinicsInRadius.getText().toString();
-                String editDataCommunityUnits = ""; //editCommunityUnits.getText().toString();
-                String editDataMainSuperMarkets = editMainSuperMarkets.getText().toString();
-                String editDataMainBanks = editMainBanks.getText().toString();
-                String editDataMajorBusiness = editMajorBusiness.getText().toString();
-                String editDataComment = editComment.getText().toString();
 
-                Integer countySupportRate = editCountySupport.getCheckedRadioButtonId();
-                RadioButton cSupportRate =(RadioButton) editCountySupport.findViewById(countySupportRate);
-                String countySupport = cSupportRate.getText().toString();
 
-                //subcounty support
-                Integer subCountySupportRate = editSubCountySupport.getCheckedRadioButtonId();
-                RadioButton subCountySRate =(RadioButton) editSubCountySupport.findViewById(subCountySupportRate);
-                String subCountySupport = subCountySRate.getText().toString();
 
-                //Recommended
-                Integer subCountyRecommended = editCountySupport.getCheckedRadioButtonId();
-                RadioButton recommend =(RadioButton) editCountySupport.findViewById(subCountyRecommended);
-                boolean isRecommended = recommend.getText().toString() == "yes";
-
-                //chvActivity
-                // Integer intChvActivity = editChvActivity.getCheckedRadioButtonId();
-                // RadioButton selectedChvActivity =(RadioButton) editChvActivity.findViewById(intChvActivity);
-                String chvActivity = "0"; //selectedChvActivity.getText().toString();
-                //editPopulationDensity
-                String populationDensity = String.valueOf(editPopulationDensity.getSelectedItemId());
-                String healtFacilities = "";
 
                 // Do some validations
-                if (editDataName.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Enter the name of Subcounty", Toast.LENGTH_SHORT).show();
+                if (facilityName.toString().trim().equals("")){
+                    Toast.makeText(getContext(), "Enter the name of the facility", Toast.LENGTH_SHORT).show();
                 } else{
                     // Save Details
-
-                    /**
-                     *
-                     * String servicePopulation, String populationDensity,
-                     String transportCost, String majorRoads, String healtFacilities,
-                     String privateClinicsInTown, String privateClinicsInRadius, String communityUnits,
-                     String mainSupermarkets, String mainBanks, String anyMajorBusiness,
-                     String comments, boolean recommended, Integer dateAdded, Integer addedBy)
-                     */
-                    SubCounty subCounty;
-                    subCounty = new SubCounty(uuid, editDataName, mappingID, "", mappingID, lat, lon,
-                            editDataContactPerson, editDataPhone, editDataMainTown, countySupport,
-                            subCountySupport, chvActivity, editDataCountyPopulation,
-                            editDataSubCountyPopulation, editDataNoOfVillages, editDataMainTownPopulation,
-                            editDataServicePopulation, populationDensity, editDataTransportCost, editDataMajorRoads,
-                            healtFacilities, editDataPrivateClinics, editDataPrivateClinicsInRadius,
-                            editDataCommunityUnits,editDataMainSuperMarkets, editDataMainBanks, editDataMajorBusiness,
-                            editDataComment, isRecommended, currentDate, addedBy);
-                    SubCountyTable subCountyTable = new SubCountyTable(getContext());
-                    long id  = subCountyTable.addData(subCounty);
+                    LinkFacility linkFacility = new LinkFacility(uuid, facilityName, country, mappingId, lat, lon, county, currentDate, addedBy,
+                            actLevels, mrdtLevels);
+                    LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
+                    long id  = linkFacilityTable.addData(linkFacility);
 
                     if (id ==-1){
-                        Toast.makeText(getContext(), "Could not save the results", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Could not save the link Facility", Toast.LENGTH_SHORT).show();
                     }
                     else{
                         Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
-                        //clear the subcounty
-                        subCountyEditing = null;
 
                         // Clear boxes
-                        editName.setText("");
-                        editContactPerson.setText("");
-                        editPhone.setText("");
-                        editMainTown.setText("");
-                        editMainTownPopulation.setText("");
-//                        editCountyPopulation.setText("");
-                        editSubCountyPopulation.setText("");
-                        editNoOfVillages.setText("");
-                        editServicePopulation.setText("");
-                        editTransportCost.setText("");
-                        editMajorRoads.setText("");
-                        editPrivateClinics.setText("");
-                        editPrivateClinicsInRadius.setText("");
-//                        editCommunityUnits.setText("");
-                        editMainSuperMarkets.setText("");
-                        editMainBanks.setText("");
-                        editMajorBusiness.setText("");
-                        editComment.setText("");
-                        editName.requestFocus();
+                        editFacilityName.setText("");
+                        editFacilityName.requestFocus();
+                        editMrdtLevels.setText("");
+                        editActLevels.setText("");
                     }
 
                 }
@@ -471,13 +361,6 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
 //            throw new RuntimeException(context.toString()
 //                    + " must implement OnFragmentInteractionListener");
 //        }
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("New Sub County for " + mapping.getCounty());
     }
 
     @Override
@@ -527,32 +410,5 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
 
-    }
-
-    public void setUpEditingMode(){
-        if (subCountyEditing != null){
-            editName.setText(subCountyEditing.getSubCountyName());
-            editContactPerson.setText(subCountyEditing.getContactPerson());
-            editPhone.setText(subCountyEditing.getContactPersonPhone());
-            editMainTown.setText(subCountyEditing.getMainTown());
-            editMainTownPopulation.setText(subCountyEditing.getMainTownPopulation());
-            editSubCountyPopulation.setText(subCountyEditing.getSubCountyPopulation());
-            editNoOfVillages.setText(subCountyEditing.getNoOfVillages());
-            editServicePopulation.setText(subCountyEditing.getServicePopulation());
-            editTransportCost.setText(subCountyEditing.getTransportCost());
-            editMajorRoads.setText(subCountyEditing.getMajorRoads());
-            editPrivateClinics.setText(subCountyEditing.getPrivateClinicsInTown());
-            editPrivateClinicsInRadius.setText(subCountyEditing.getPrivateClinicsInRadius());
-            editMainSuperMarkets.setText(subCountyEditing.getMainSupermarkets());
-            editMainBanks.setText(subCountyEditing.getMainBanks());
-            editMajorBusiness.setText(subCountyEditing.getAnyMajorBusiness());
-            editComment.setText(subCountyEditing.getComments());
-            //clear all radios
-            editSubCountySupport.clearCheck();
-            editSubCountySupport.check(Integer.valueOf(subCountyEditing.getCountySupport()));
-
-            editRecommended.clearCheck();
-            editRecommended.check(Integer.valueOf(subCountyEditing.isRecommended() ? 1 : 0));
-        }
     }
 }

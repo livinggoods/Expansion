@@ -20,10 +20,18 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
+import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
+import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
+import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
+import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.UUID;
 
 
 /**
@@ -63,8 +71,15 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
     private int mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 100;
 
+    SessionManagement session;
+    Mapping mapping;
+    SubCounty subCounty;
+    String name, email;
+    HashMap<String, String> user;
 
-    Integer loggedInUser = 1;
+
+    String latitude = "0";
+    String longitude = "0";
 
 
 
@@ -105,6 +120,14 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_new_sublocation, container, false);
+        MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_COMMUNITY_UNIT;
+        MainActivity.backFragment = new CommunityUnitsFragment();
+
+                session = new SessionManagement(getContext());
+        mapping = session.getSavedMapping();
+        subCounty = session.getSavedSubCounty();
+        user = session.getUserDetails();
+
         //Initialize the UI Components
 
         editName = (EditText) v.findViewById(R.id.editName);
@@ -181,45 +204,45 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
 
                 String privateFacilityForAct = editPrivateFacilityForAct.getText().toString();
                 String privateFacilityForMrdt = editPrivateFacilityForMrdt.getText().toString();
-                String numberOfChvs = editNumberOfChvs.getText().toString();
-                String chvHouseHold = editChvHouseHold.getText().toString();
+                Long numberOfChvs = Long.valueOf(editNumberOfChvs.getText().toString());
+                Long chvHouseHold = Long.valueOf(editChvHouseHold.getText().toString());
 
-                String numberOfHouseHolds = editNumberOfHouseHolds.getText().toString();
-                String mohPopulation = editMohPopulation.getText().toString();
-                String populationDensity = editPopulationDensity.getText().toString();
-                String numberOfVillages = editNumberOfVillages.getText().toString();
+                Long numberOfHouseHolds = Long.valueOf(editNumberOfHouseHolds.getText().toString());
+                Long mohPopulation = Long.valueOf(editMohPopulation.getText().toString());
+                Long populationDensity = Long.valueOf(editPopulationDensity.getText().toString());
+                Long numberOfVillages = Long.valueOf(editNumberOfVillages.getText().toString());
 
-                String distanceToBranch = editDistanceToBranch.getText().toString();
-                String transportCost = editTransportCost.getText().toString();
-                String distanceToMainRoad = editDistanceToMainRoad.getText().toString();
-                String distanceToHealthFacility = editDistanceToHealthFacility.getText().toString();
+                Long distanceToBranch = Long.valueOf(editDistanceToBranch.getText().toString());
+                Long transportCost = Long.valueOf(editTransportCost.getText().toString());
+                Long distanceToMainRoad = Long.valueOf(editDistanceToMainRoad.getText().toString());
+                Long distanceToHealthFacility = Long.valueOf(editDistanceToHealthFacility.getText().toString());
 
                 String linkFacility = editLinkFacility.getText().toString();
-                String distributors = editDistributors.getText().toString();
-                String cHVsTrained = editCHVsTrained.getText().toString();
+                Long distributors = Long.valueOf(editDistributors.getText().toString());
+                boolean cHVsTrained = (editCHVsTrained.getText().toString() == "Yes");
 
 
                 Integer factoriesPresent = editPresenceOfFactories.getCheckedRadioButtonId();
                 RadioButton selectedFactoryOption =(RadioButton) editPresenceOfFactories.findViewById(factoriesPresent);
-                String presenceOfFactories = selectedFactoryOption.getText().toString();
+                boolean presenceOfFactories = (selectedFactoryOption.getText().toString() != "");
 
                 Integer estatesPresent = editPresenceEstates.getCheckedRadioButtonId();
                 RadioButton selectedEstateOption =(RadioButton) editPresenceEstates.findViewById(estatesPresent);
-                String presenceEstates = selectedEstateOption.getText().toString();
+                boolean presenceEstates = (selectedEstateOption.getText().toString() != "");
 
                 Integer tradeMarketsPresent = editPresenceOfTraderMarket.getCheckedRadioButtonId();
                 RadioButton selectedTradeMarketOption =(RadioButton) editPresenceOfTraderMarket.findViewById(tradeMarketsPresent);
-                String presenceOfTraderMarket = selectedTradeMarketOption.getText().toString();
+                boolean presenceOfTraderMarket = (selectedTradeMarketOption.getText().toString() != "");
 
 
                 Integer superMarketPresent = editPresenceOfSuperMarket.getCheckedRadioButtonId();
                 RadioButton selectedSuperMarketOption =(RadioButton) editPresenceOfSuperMarket.findViewById(superMarketPresent);
-                String presenceOfSuperMarket = selectedSuperMarketOption.getText().toString();
+                boolean presenceOfSuperMarket = (selectedSuperMarketOption.getText().toString() != "");
 
 
                 Integer ngosDrugs = editNgosGivingFreeDrugs.getCheckedRadioButtonId();
                 RadioButton ngosGivingFreeDrugsSelected =(RadioButton) editNgosGivingFreeDrugs.findViewById(ngosDrugs);
-                String ngosGivingFreeDrugs = ngosGivingFreeDrugsSelected.getText().toString();
+                boolean ngosGivingFreeDrugs = (ngosGivingFreeDrugsSelected.getText().toString() != "");
 
                 // Do some validations
 
@@ -238,6 +261,24 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                     editAreaChiefPhone.requestFocus();
                 } else{
                     Toast.makeText(getContext(), "saved", Toast.LENGTH_SHORT).show();
+                    String id = UUID.randomUUID().toString();
+                    long userId = Long.valueOf(user.get(SessionManagement.KEY_USERID));
+                    String country = user.get(SessionManagement.KEY_USER_COUNTRY);
+
+                    CommunityUnit communityUnit = new CommunityUnit(id,name, mapping.getId(), latitude, longitude,
+                            country, subCounty.getId(),linkFacility , areaChiefName,
+                            ward, economicStatus, privateFacilityForAct, privateFacilityForMrdt,
+                            "", "", currentDate, userId, numberOfChvs, chvHouseHold, numberOfVillages,
+                            distanceToBranch, transportCost, distanceToMainRoad,
+                            numberOfHouseHolds, mohPopulation, populationDensity,
+                            distanceToHealthFacility, 0, 0, 0, 0, distributors, cHVsTrained,
+                            presenceEstates, presenceOfFactories, presenceEstates, presenceOfTraderMarket,
+                            presenceOfSuperMarket, ngosGivingFreeDrugs, false, false);
+                    CommunityUnitTable communityUnitTable = new CommunityUnitTable(getContext());
+                    // long cid = communityUnitTable.addData(communityUnit);
+                    //if (cid != -1){
+                        Toast.makeText(getContext(), "Community Unit saved successfuly", Toast.LENGTH_SHORT).show();
+                    //}
                 }
 
         }
@@ -260,6 +301,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
         super.onDetach();
         mListener = null;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this

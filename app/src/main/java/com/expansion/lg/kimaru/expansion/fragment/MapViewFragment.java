@@ -41,15 +41,16 @@ public class MapViewFragment extends Fragment {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         createAdapter(mRecyclerView);
+        MainActivity.CURRENT_TAG =MainActivity.TAG_MAP_VIEW;
+        MainActivity.backFragment = new MappingFragment();
         return v;
     }
 
     private void createAdapter(RecyclerView recyclerView){
         final List<DefaultListMenu> content = new ArrayList<>();
-        content.add(new DefaultListMenu("View SubCounties",null,  new SubCountiesFragment()));
-        content.add(new DefaultListMenu("View Villages", null, new NewInterviewFragment()));
-        content.add(new DefaultListMenu("Link Facilities", null, new NewInterviewFragment()));
-        content.add(new DefaultListMenu("View Villages", null, new NewInterviewFragment()));
+        content.add(new DefaultListMenu("SubCounties",null,  new SubCountiesFragment()));
+        content.add(new DefaultListMenu("Link Facilities", null, new LinkFacilitiesFragment()));
+        // content.add(new DefaultListMenu("View Villages", null, new NewInterviewFragment()));
 
         final ParallaxRecyclerAdapter<DefaultListMenu> adapter = new ParallaxRecyclerAdapter<>(content);
 

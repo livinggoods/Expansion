@@ -29,6 +29,7 @@ public class SessionManagement {
     public static final String KEY_NAME = "name";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_USERID = "userid";
+    public static final String KEY_USER_COUNTRY = "country";
 
 
     // Recruitment Details
@@ -149,7 +150,7 @@ public class SessionManagement {
     }
 
 
-    public void createLoginSesstion (String name, String email, Integer userId){
+    public void createLoginSesstion (String name, String email, Integer userId, String country){
         //storing login values as TRUE
         editor.putBoolean(IS_LOGIN, true);
 
@@ -161,6 +162,9 @@ public class SessionManagement {
 
         //put userid
         editor.putInt(KEY_USERID, userId);
+
+        //put user country
+        editor.putString(KEY_USER_COUNTRY, country);
 
         //commit / Save the values
 
@@ -289,6 +293,8 @@ public class SessionManagement {
         user.put(KEY_EMAIL, pref.getString(KEY_EMAIL, null));
         //userId
         user.put(KEY_USERID, String.valueOf(pref.getInt(KEY_USERID, 0)));
+
+        user.put(KEY_USER_COUNTRY, String.valueOf(pref.getString(KEY_USER_COUNTRY, "ug")));
 
         //return user
         return user;

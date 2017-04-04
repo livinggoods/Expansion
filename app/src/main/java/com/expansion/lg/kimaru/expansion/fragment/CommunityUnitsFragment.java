@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,11 +27,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.dbhelpers.CommunityUnitListAdapter;
 import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationListAdapter;
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
@@ -70,6 +73,7 @@ public class CommunityUnitsFragment extends Fragment  {
     private ActionModeCallback actionModeCallback;
 
     SessionManagement session;
+    SubCounty subCounty;
 
 
 
@@ -119,6 +123,9 @@ public class CommunityUnitsFragment extends Fragment  {
         textshow = (TextView) v.findViewById(R.id.textShow);
         //session Management
         session = new SessionManagement(getContext());
+        MainActivity.CURRENT_TAG =MainActivity.TAG_COMMUNITY_UNITS;
+        MainActivity.backFragment = new SubCountyFragment();
+        subCounty = session.getSavedSubCounty();
 
 
         // ============Gmail View starts here =======================
@@ -210,6 +217,12 @@ public class CommunityUnitsFragment extends Fragment  {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        String subCountyName = subCounty.getSubCountyName();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(subCountyName + " - Community Units");
     }
 
     /**

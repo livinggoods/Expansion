@@ -29,8 +29,10 @@ import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.fragment.HomeFragment;
 import com.expansion.lg.kimaru.expansion.fragment.InterviewsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.MappingFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewCommunityUnitFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewExamFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewInterviewFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewLinkFacilityFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewMappingFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRecruitmentFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRegistrationFragment;
@@ -73,21 +75,48 @@ public class MainActivity extends AppCompatActivity {
     public static int navItemIndex = 0;
 
     // tags used to attach the fragments
-    private static final String TAG_HOME = "home";
-    private static final String TAG_RECRUITMENTS = "recruitments";
-    private static final String TAG_REGISTRATIONS = "registrations";
-    private static final String TAG_EXAMS = "exams";
-    private static final String TAG_INTERVIEWS = "interviews";
-    private static final String TAG_MAPPING = "mappings";
-    private static final String TAG_COUNTY = "county";
+    public static final String TAG_HOME = "home";
+    public static final String TAG_RECRUITMENTS = "recruitments";
+    public static final String TAG_REGISTRATIONS = "registrations";
+    public static final String TAG_EXAMS = "exams";
+    public static final String TAG_INTERVIEWS = "interviews";
+    public static final String TAG_MAPPINGS = "mappings";
+    public static final String TAG_MAPPING = "mapping";
+    public static final String TAG_COUNTY = "county";
+    public static final String TAG_COUNTIES = "counties";
+    public static final String TAG_SUBCOUNTIES = "subcounties";
+    public static final String TAG_SUBCOUNTY = "subcounty";
+    public static final String TAG_COMMUNITY_UNIT = "communityunit";
+    public static final String TAG_COMMUNITY_UNITS = "communityunits";
+    public static final String TAG_VILLAGE = "village";
+    public static final String TAG_VILLAGES = "villages";
+    public static final String TAG_LINK_FACILITY = "linkFacility";
+    public static final String TAG_NEW_LINK_FACILITY = "newLinkFacilities";
+    public static final String TAG_LINK_FACILITIES = "linkFacilities";
+    public static final String TAG_MAPPING_VIEW = "mappingView";
+    public static final String TAG_MAP_VIEW = "mapView";
+    public static final String TAG_NEW_COMMUNITY_UNIT = "newCommunityUnit";
+    public static final String TAG_NEW_EXAM = "newExam";
+    public static final String TAG_NEW_INTERVIEW = "newInterview";
+    public static final String TAG_NEW_MAPPING = "newMapping";
+    public static final String TAG_NEW_RECRUITMENT = "newRecruitment";
+    public static final String TAG_NEW_REGISTRATION = "newRegistration";
+    public static final String TAG_NEW_SUB_COUNTY = "newSubCounty";
+    public static final String TAG_NEW_VILLAGE = "newVillage";
+    public static final String TAG_PARTNERS = "partners";
+    public static final String TAG_SUBCOUNTY_VIEW = "subCountyView";
+
     public static String CURRENT_TAG = TAG_HOME;
 
+    public static Fragment backFragment = null;
     // toolbar titles respected to selected nav menu item
     private String[] activityTitles;
 
     // flag to load home fragment when user presses back key
     private boolean shouldLoadHomeFragOnBackPress = true;
     private Handler mHandler;
+
+    private View mView;
 
 
     // We add the dialog Manager
@@ -113,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
             setUpApp.setUpEducation(getBaseContext());
         }
 
-    session.checkLogin();
+        session.checkLogin();
 
         //we can now extract User details
         HashMap<String, String> user = session.getUserDetails();
@@ -147,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String clickedView = Integer.toString(view.getId());
+                mView = view;
                 loadFragment(view);
             }
         });
@@ -186,9 +216,11 @@ public class MainActivity extends AppCompatActivity {
                         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                                 android.R.anim.fade_out);
-                        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+                        //fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+                        fragmentTransaction.replace( R.id.frame, fragment).addToBackStack( CURRENT_TAG).commit();
 
-                        fragmentTransaction.commitAllowingStateLoss();
+
+                        //fragmentTransaction.commitAllowingStateLoss();
                     }
                 };
                 // If mPendingRunnable is not null, then add to the message queue
@@ -257,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
 
-            case TAG_MAPPING:
+            case TAG_MAPPINGS:
                 mPendingRunnable = new Runnable() {
                     @Override
                     public void run() {
@@ -278,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
 
-            case TAG_COUNTY:
+            case TAG_SUBCOUNTIES:
                 mPendingRunnable = new Runnable() {
                     @Override
                     public void run() {
@@ -298,6 +330,55 @@ public class MainActivity extends AppCompatActivity {
                     mHandler.post(mPendingRunnable);
                 }
                 break;
+            case TAG_COMMUNITY_UNITS:
+                mPendingRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        // update the main content by replacing fragments
+                        NewCommunityUnitFragment newCommunityUnitFragment = new NewCommunityUnitFragment();
+                        Fragment fragment = newCommunityUnitFragment;
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                android.R.anim.fade_out);
+                        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+
+                        fragmentTransaction.commitAllowingStateLoss();
+                    }
+                };
+                // If mPendingRunnable is not null, then add to the message queue
+                if (mPendingRunnable != null) {
+                    mHandler.post(mPendingRunnable);
+                }
+                break;
+
+            case TAG_LINK_FACILITIES:
+                mPendingRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        // update the main content by replacing fragments
+                        NewLinkFacilityFragment newLinkFacilityFragment = new NewLinkFacilityFragment();
+                        Fragment fragment = newLinkFacilityFragment;
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                android.R.anim.fade_out);
+                        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+
+                        fragmentTransaction.commitAllowingStateLoss();
+                    }
+                };
+                // If mPendingRunnable is not null, then add to the message queue
+                if (mPendingRunnable != null) {
+                    mHandler.post(mPendingRunnable);
+                }
+                break;
+
+            case TAG_VILLAGES:
+                break;
+            case TAG_COUNTIES:
+                break;
+            case TAG_PARTNERS:
+                break;
+
         }
 
         // show or hide the fab button
@@ -588,20 +669,228 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // This code loads home fragment when back key is pressed
-        // when user is in other fragment than home
-        if (shouldLoadHomeFragOnBackPress) {
-            // checking if user is on other navigation menu
-            // rather than home
-            if (navItemIndex != 0) {
-                navItemIndex = 0;
-                CURRENT_TAG = TAG_HOME;
-                loadHomeFragment();
-                return;
+
+
+        Runnable mPendingRunnable;
+        if (backFragment != null){
+            mPendingRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    // update the main content by replacing fragments
+                    Fragment fragment = backFragment;
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                            android.R.anim.fade_out);
+                    fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+
+                    fragmentTransaction.commitAllowingStateLoss();
+                }
+            };
+
+            // If mPendingRunnable is not null, then add to the message queue
+            if (mPendingRunnable != null) {
+                mHandler.post(mPendingRunnable);
             }
+        } else {
+            super.onBackPressed();
         }
 
-        super.onBackPressed();
+//        switch (CURRENT_TAG) {
+//            case TAG_HOME:
+//                super.onBackPressed();
+//                break;
+//
+//            case TAG_RECRUITMENTS:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_HOME;
+//                HomeFragment homeFragment = new HomeFragment();
+//                backFragment = homeFragment;
+//                break;
+//
+//            case TAG_REGISTRATIONS:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_RECRUITMENTS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_EXAMS:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_REGISTRATIONS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_INTERVIEWS:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_EXAMS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_MAPPINGS:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_HOME;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_MAPPING:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_MAPPINGS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_COUNTY:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_HOME;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_COUNTIES:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_HOME;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_SUBCOUNTIES:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_MAPPING;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_SUBCOUNTY:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_SUBCOUNTIES;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_COMMUNITY_UNIT:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_COMMUNITY_UNITS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_COMMUNITY_UNITS:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_SUBCOUNTY;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_VILLAGE:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_VILLAGES;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_VILLAGES:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_COMMUNITY_UNIT;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_LINK_FACILITY:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_LINK_FACILITIES;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_LINK_FACILITY:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_LINK_FACILITIES;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_LINK_FACILITIES:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_SUBCOUNTY_VIEW;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_MAPPING_VIEW:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_MAPPINGS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_MAP_VIEW:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_MAPPINGS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_COMMUNITY_UNIT:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_COMMUNITY_UNITS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_EXAM:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_EXAMS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_INTERVIEW:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_INTERVIEWS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_MAPPING:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_MAPPINGS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_RECRUITMENT:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_RECRUITMENTS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_REGISTRATION:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_REGISTRATIONS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_SUB_COUNTY:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_SUBCOUNTIES;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_VILLAGE:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_VILLAGES;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_PARTNERS:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_SUBCOUNTY_VIEW;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_SUBCOUNTY_VIEW:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_SUBCOUNTIES;
+//                loadHomeFragment();
+//                break;
+//        }
+
+
+        // This code loads home fragment when back key is pressed
+        // when user is in other fragment than home
+//        if (shouldLoadHomeFragOnBackPress) {
+//            // checking if user is on other navigation menu
+//            // rather than home
+//            if (navItemIndex != 0) {
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_HOME;
+//                loadHomeFragment();
+//                return;
+//            }
+//        }
+//
+//        super.onBackPressed();
     }
 
     @Override

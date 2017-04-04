@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.dbhelpers.MappingListAdapter;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
@@ -115,8 +116,10 @@ public class MappingFragment extends Fragment  {
         // //add session
         session = new SessionManagement(getContext());
         textshow = (TextView) v.findViewById(R.id.textShow);
+        MainActivity.CURRENT_TAG =MainActivity.TAG_MAPPINGS;
+        MainActivity.backFragment = new HomeFragment();
 
-        // ============Gmail View starts here =======================
+                // ============Gmail View starts here =======================
         // Gmail View.
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);

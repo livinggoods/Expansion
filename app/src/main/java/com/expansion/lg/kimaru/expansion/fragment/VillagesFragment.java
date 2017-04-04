@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.dbhelpers.VillageListAdapter;
 import com.expansion.lg.kimaru.expansion.mzigos.Village;
@@ -112,6 +113,8 @@ public class VillagesFragment extends Fragment  {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_communityunits, container, false);
+        MainActivity.CURRENT_TAG = MainActivity.TAG_VILLAGES;
+        MainActivity.backFragment = new SubCountyFragment();
         textshow = (TextView) v.findViewById(R.id.textShow);
         //session Management
         session = new SessionManagement(getContext());

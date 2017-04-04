@@ -118,7 +118,8 @@ public class SubCountiesFragment extends Fragment  {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_subcounties, container, false);
         textshow = (TextView) v.findViewById(R.id.textShow);
-        MainActivity.CURRENT_TAG = "county";
+        MainActivity.CURRENT_TAG = MainActivity.TAG_SUBCOUNTIES;
+        MainActivity.backFragment = new MapViewFragment();
 
         sessionManagement = new SessionManagement(getContext());
         mapping = sessionManagement.getSavedMapping();
@@ -179,7 +180,17 @@ public class SubCountiesFragment extends Fragment  {
 
             @Override
             public void onRowLongClicked(int position) {
-                Toast.makeText(getContext(), "This is Long Press", Toast.LENGTH_SHORT).show();
+                // Need to edit the item
+                SubCounty subCounty = subCounties.get(position);
+                NewSubCountyFragment newSubCountyFragment = new NewSubCountyFragment();
+                newSubCountyFragment.subCountyEditing = subCounty;
+                Fragment fragment = newSubCountyFragment;
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                        android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "newSubCounty");
+                fragmentTransaction.commitAllowingStateLoss();
+
             }
 
         });

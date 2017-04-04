@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 
@@ -96,7 +97,9 @@ public class NewVillageFragment extends Fragment implements OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_new_exam, container, false);
-        //Initialize the UI Components
+        MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_VILLAGE;
+        MainActivity.backFragment = new VillagesFragment();
+                //Initialize the UI Components
         mMaths = (EditText) v.findViewById(R.id.editMathScore);
         mEnglish = (EditText) v.findViewById(R.id.editEnglishScore);
         mSelfAssessment = (EditText) v.findViewById(R.id.editSelfAssessmentScore);

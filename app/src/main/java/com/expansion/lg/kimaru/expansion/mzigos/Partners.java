@@ -10,20 +10,23 @@ public class Partners {
     boolean doingIccm;
     String iccmComponent;
     boolean doingMHealth;
-    String villageID;
     String comment;
+    Long dateAdded;
+    Long addedBy;
 
     //empty constructor
     public Partners(){}
 
-    public Partners (String partnerID, String partnerName, String iccmComponent, String villageID,
-                     boolean doingIccm, boolean doingMHealth, String comment){
+    public Partners (String partnerID, String partnerName, String iccmComponent,
+                     boolean doingIccm, boolean doingMHealth, String comment, Long dateAdded, Long addedBy){
+        this.partnerID = partnerID;
         this.doingIccm = doingIccm;
         this.partnerName = partnerName;
         this.iccmComponent = iccmComponent;
         this.doingMHealth = doingMHealth;
-        this.villageID = villageID;
         this.comment = comment;
+        this.addedBy = addedBy;
+        this.dateAdded = dateAdded;
     }
 
     public void setComment(String comment) {
@@ -46,8 +49,47 @@ public class Partners {
         this.partnerName = partnerName;
     }
 
-    public void setVillageID(String villageID) {
-        this.villageID = villageID;
+    public String getPartnerID() {
+        return partnerID;
     }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public boolean isDoingIccm() {
+        return doingIccm;
+    }
+
+    public boolean isDoingMHealth() {
+        return doingMHealth;
+    }
+
+    public String getIccmComponent() {
+        return iccmComponent;
+    }
+
+    public String getPartnerName() {
+        return partnerName;
+    }
+
+    public void setPartnerID(String partnerID) {
+        this.partnerID = partnerID;
+    }
+
+    public Long getAddedBy() {
+        return addedBy;
+    }
+
+    public Long getDateAdded() {
+        return dateAdded;
+    }
+
+    public void setAddedBy(Long addedBy) {
+        this.addedBy = addedBy;
+    }
+
+    public void setDateAdded(Long dateAdded) {
+        this.dateAdded = dateAdded;
+    }
 }

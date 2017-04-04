@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.dbhelpers.InterviewListAdapter;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
@@ -109,8 +110,10 @@ public class InterviewsFragment extends Fragment  {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_registrations, container, false);
         textshow = (TextView) v.findViewById(R.id.textShow);
+        MainActivity.CURRENT_TAG =MainActivity.TAG_INTERVIEWS;
+        MainActivity.backFragment = new ExamsFragment();
 
-        // ============Gmail View starts here =======================
+                // ============Gmail View starts here =======================
         // Gmail View.
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);

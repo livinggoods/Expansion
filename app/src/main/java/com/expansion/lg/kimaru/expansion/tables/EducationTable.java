@@ -168,13 +168,13 @@ public class EducationTable extends SQLiteOpenHelper {
             education.setId(x);
             education.setHierachy(x);
             if (x > 12) {
-                education.setLevelName("Year " + (x - 12));
+                education.setLevelName("Tertiary (Year " + (x - 12) + ")");
                 education.setLevelType("tertiary");
             }else if (x > 8){
-                education.setLevelName("S " + (x - 8));
+                education.setLevelName("Secondary (Form) " + (x - 8));
                 education.setLevelType("secondary");
             }else {
-                education.setLevelName("P " + x);
+                education.setLevelName("Primary (Class) " + x);
                 education.setLevelType("primary");
             }
             this.addEducation(education);
