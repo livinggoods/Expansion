@@ -378,19 +378,36 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
                 String editDataMajorBusiness = editMajorBusiness.getText().toString();
                 String editDataComment = editComment.getText().toString();
 
-                Integer countySupportRate = editCountySupport.getCheckedRadioButtonId();
-                RadioButton cSupportRate =(RadioButton) editCountySupport.findViewById(countySupportRate);
-                String countySupport = cSupportRate.getText().toString();
+                String countySupport;
+                try{
+                    Integer countySupportRate = editCountySupport.getCheckedRadioButtonId();
+                    RadioButton cSupportRate =(RadioButton) editCountySupport.findViewById(countySupportRate);
+                    countySupport = cSupportRate.getText().toString();
+                }catch (Exception e){
+                    countySupport = "0";
+                }
+
 
                 //subcounty support
-                Integer subCountySupportRate = editSubCountySupport.getCheckedRadioButtonId();
-                RadioButton subCountySRate =(RadioButton) editSubCountySupport.findViewById(subCountySupportRate);
-                String subCountySupport = subCountySRate.getText().toString();
+                String subCountySupport;
+                try{
+                    Integer subCountySupportRate = editSubCountySupport.getCheckedRadioButtonId();
+                    RadioButton subCountySRate =(RadioButton) editSubCountySupport.findViewById(subCountySupportRate);
+                    subCountySupport = subCountySRate.getText().toString();
+                }catch ( Exception e){
+                    subCountySupport = "0";
+                }
 
-                //Recommended
-                Integer subCountyRecommended = editCountySupport.getCheckedRadioButtonId();
-                RadioButton recommend =(RadioButton) editCountySupport.findViewById(subCountyRecommended);
-                boolean isRecommended = recommend.getText().toString() == "yes";
+                boolean isRecommended;
+                try{
+                    //Recommended
+                    Integer subCountyRecommended = editCountySupport.getCheckedRadioButtonId();
+                    RadioButton recommend =(RadioButton) editCountySupport.findViewById(subCountyRecommended);
+                    isRecommended = recommend.getText().toString() == "yes";
+                } catch (Exception e){
+                    isRecommended = false;
+                }
+
 
                 //chvActivity
                 // Integer intChvActivity = editChvActivity.getCheckedRadioButtonId();
@@ -424,13 +441,18 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
                             editDataCommunityUnits,editDataMainSuperMarkets, editDataMainBanks, editDataMajorBusiness,
                             editDataComment, isRecommended, currentDate, addedBy);
                     SubCountyTable subCountyTable = new SubCountyTable(getContext());
-                    long id  = subCountyTable.addData(subCounty);
+                    long id;
+                    if (subCountyEditing == null){
+                        id  = subCountyTable.addData(subCounty);
+                    }else{
+                        id  = subCountyTable.editData(subCounty);
+                    }
 
                     if (id ==-1){
                         Toast.makeText(getContext(), "Could not save the results", Toast.LENGTH_SHORT).show();
                     }
                     else{
-                        Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Operation successful", Toast.LENGTH_SHORT).show();
                         //clear the subcounty
                         subCountyEditing = null;
 

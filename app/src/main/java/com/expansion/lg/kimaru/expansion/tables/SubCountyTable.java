@@ -157,6 +157,49 @@ public class SubCountyTable extends SQLiteOpenHelper {
         db.close();
         return id;
     }
+    //editData
+    public long editData(SubCounty subCounty) {
+
+        SQLiteDatabase db=getWritableDatabase();
+        ContentValues cv=new ContentValues();
+
+        cv.put(ID, subCounty.getId());
+        cv.put(SUBCOUNTYNAME, subCounty.getSubCountyName());
+        cv.put(COUNTYID, subCounty.getCountyID());
+        cv.put(COUNTRY, subCounty.getCountry());
+        cv.put(MAPPINGID, subCounty.getMappingId());
+        cv.put(LAT, subCounty.getLat());
+        cv.put(LON, subCounty.getLon());
+        cv.put(CONTACTPERSON, subCounty.getContactPerson());
+        cv.put(CONTACTPERSONPHONE, subCounty.getContactPersonPhone());
+        cv.put(MAINTOWN, subCounty.getMainTown());
+        cv.put(COUNTYSUPPORT, subCounty.getCountySupport());
+        cv.put(SUBCOUNTYSUPPORT, subCounty.getSubcountySupport());
+        cv.put(CHVACTIVITYLEVEL, subCounty.getChvActivityLevel());
+        cv.put(COUNTYPOPULATION, subCounty.getCountyPopulation());
+        cv.put(SUBCOUNTYPOPULATION, subCounty.getSubCountyPopulation());
+        cv.put(NOOFVILLAGES, subCounty.getNoOfVillages());
+        cv.put(MAINTOWNPOPULATION, subCounty.getMainTownPopulation());
+        cv.put(SERVICEPOPULATION, subCounty.getServicePopulation());
+        cv.put(POPULATIONDENSITY, subCounty.getPopulationDensity());
+        cv.put(TRANSPORTCOST, subCounty.getTransportCost());
+        cv.put(MAJORROADS, subCounty.getMajorRoads());
+        cv.put(HEALTFACILITIES, subCounty.getHealtFacilities());
+        cv.put(PRIVATECLINICSINTOWN, subCounty.getPrivateClinicsInTown());
+        cv.put(PRIVATECLINICSINRADIUS, subCounty.getPrivateClinicsInRadius());
+        cv.put(COMMUNITYUNITS, subCounty.getCommunityUnits());
+        cv.put(MAINSUPERMARKETS, subCounty.getMainSupermarkets());
+        cv.put(MAINBANKS, subCounty.getMainBanks());
+        cv.put(ANYMAJORBUSINESS, subCounty.getAnyMajorBusiness());
+        cv.put(COMMENTS, subCounty.getComments());
+        cv.put(RECOMMENDATION, subCounty.isRecommended() ? 1 : 0);
+        cv.put(DATEADDED, subCounty.getDateAdded());
+        cv.put(ADDEDBY, subCounty.getAddedBy());
+
+        long id = db.update(TABLE_NAME, cv, ID+"='"+subCounty.getId()+"'", null);
+        db.close();
+        return id;
+    }
 
 
     public List<SubCounty> getSubCountyData() {
