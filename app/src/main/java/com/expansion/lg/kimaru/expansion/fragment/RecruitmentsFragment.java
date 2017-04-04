@@ -28,6 +28,7 @@ import android.support.v7.app.AppCompatActivity;
 
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.dbhelpers.RecruitmentListAdapter;
@@ -117,8 +118,9 @@ public class RecruitmentsFragment extends Fragment  {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_exams, container, false);
         textshow = (TextView) v.findViewById(R.id.textShow);
-
-        //session Management
+        MainActivity.CURRENT_TAG =MainActivity.TAG_RECRUITMENTS;
+        MainActivity.backFragment = new HomeFragment();
+                //session Management
         session = new SessionManagement(getContext());
 
         // ============Gmail View starts here =======================
@@ -209,6 +211,7 @@ public class RecruitmentsFragment extends Fragment  {
         super.onDetach();
         mListener = null;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this

@@ -8,13 +8,20 @@ public class LinkFacility {
 
     String id, facilityName, mappingId, lat, lon, country, subCountyId;
     Integer dateAdded, addedBy;
+    long actLevels, mrdtLevels;
+
+    String picture="";
+    int color = -1;
+    Boolean read = false;
+
 
     public LinkFacility(){
 
     }
 
-    public LinkFacility(String id, String facilityName, String country, String mappingId,
-                        String lat, String lon, String subCountyId, Integer dateAdded, Integer addedBy) {
+    public LinkFacility(String id, String facilityName, String country, String mappingId, String lat,
+                        String lon, String subCountyId, Integer dateAdded, Integer addedBy,
+                        long actLevels, long mrdtLevels) {
         this.id = id;
         this.facilityName = facilityName;
         this.mappingId = mappingId;
@@ -23,6 +30,10 @@ public class LinkFacility {
         this.subCountyId = subCountyId;
         this.dateAdded = dateAdded;
         this.addedBy = addedBy;
+        this.mrdtLevels = mrdtLevels;
+        this.actLevels = actLevels;
+        this.country = country;
+
     }
 
     // Get Methods
@@ -99,4 +110,43 @@ public class LinkFacility {
         return subCountyId;
     }
 
+    public long getActLevels() {
+        return actLevels;
+    }
+
+    public long getMrdtLevels() {
+        return mrdtLevels;
+    }
+
+    public void setActLevels(long actLevels) {
+        this.actLevels = actLevels;
+    }
+
+    public void setMrdtLevels(long mrdtLevels) {
+        this.mrdtLevels = mrdtLevels;
+    }
+
+    public Boolean isRead() {
+        return read;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public void setRead(Boolean read) {
+        this.read = read;
+    }
 }

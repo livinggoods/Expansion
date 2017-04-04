@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 
@@ -97,7 +98,9 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_new_interview, container, false);
-        //Initialize the UI Components
+        MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_INTERVIEW;
+        MainActivity.backFragment = new InterviewsFragment();
+                //Initialize the UI Components
         mMotivation = (EditText) v.findViewById(R.id.editMotivation);
         mCommunity = (EditText) v.findViewById(R.id.editCommunity);
         mMentality = (EditText) v.findViewById(R.id.editMentality);

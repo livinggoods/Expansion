@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.dbhelpers.ExamListAdapter;
@@ -114,6 +115,8 @@ public class ExamsFragment extends Fragment  {
                              Bundle savedInstanceState) {
         View v;
         //check if Recruitment is set
+        MainActivity.CURRENT_TAG =MainActivity.TAG_EXAMS;
+        MainActivity.backFragment = new RegistrationsFragment();
         session = new SessionManagement(getContext());
         if(!session.isRegistrationSet()){
             RegistrationsFragment newRegistrationsFragment = new RegistrationsFragment();

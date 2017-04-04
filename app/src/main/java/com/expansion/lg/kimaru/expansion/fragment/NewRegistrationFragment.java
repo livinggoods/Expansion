@@ -19,6 +19,7 @@ import android.widget.Toast;
 import android.support.v4.app.DialogFragment;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.other.SpinnersCursorAdapter;
@@ -129,8 +130,9 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_new_registration, container, false);
-
-        //check if Recruitment is set
+        MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_REGISTRATION;
+        MainActivity.backFragment = new RegistrationsFragment();
+                //check if Recruitment is set
         session = new SessionManagement(getContext());
         session.checkRecruitment();
 
@@ -201,10 +203,10 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 newFragment.show(getFragmentManager(), "DatePicker");
                 break;
 
-            case R.id.editRelocated:
-                DialogFragment dateMovedFragment = new DatePickerFragment().newInstance(R.id.editRelocated);
-                dateMovedFragment.show(getFragmentManager(), "Datepicker");
-                break;
+//            case R.id.editRelocated:
+//                DialogFragment dateMovedFragment = new DatePickerFragment().newInstance(R.id.editRelocated);
+//                dateMovedFragment.show(getFragmentManager(), "Datepicker");
+//                break;
 //            mName, mPhone, mGender, mDistrict,
 //                    mSubcounty, mDivision, mVillage, mMark, mLangs, mEducation, mOccupation,
 //                    mComment, mDob, mReadEnglish, mRecruitment, mDateMoved,

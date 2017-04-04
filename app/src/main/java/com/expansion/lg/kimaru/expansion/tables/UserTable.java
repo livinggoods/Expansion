@@ -39,13 +39,15 @@ public class UserTable extends SQLiteOpenHelper {
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
     public static final String NAME = "name";
+    public static final String COUNTRY = "country";
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + primary_field + ", "
             + EMAIL + varchar_field + ", "
             + USERNAME + varchar_field + ", "
             + PASSWORD + varchar_field + ", "
-            + NAME + varchar_field + "); ";
+            + NAME + varchar_field + ", "
+            + COUNTRY + varchar_field + "); ";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
 
@@ -76,6 +78,7 @@ public class UserTable extends SQLiteOpenHelper {
         cv.put(USERNAME, user.getUsername());
         cv.put(PASSWORD, user.getPassword());
         cv.put(NAME, user.getName());
+        cv.put(COUNTRY, user.getCountry());
 
         // long id=db.insert(TABLE_NAME,null,cv);
 
@@ -102,6 +105,7 @@ public class UserTable extends SQLiteOpenHelper {
             user.setUsername(cursor.getString(2));
             user.setPassword(cursor.getString(3));
             user.setName(cursor.getString(4));
+            user.setCountry(cursor.getString(5));
 
             userList.add(user);
         }
@@ -113,7 +117,7 @@ public class UserTable extends SQLiteOpenHelper {
 
         SQLiteDatabase db=getReadableDatabase();
 
-        String [] columns=new String[]{ID, EMAIL, USERNAME, PASSWORD, NAME};
+        String [] columns=new String[]{ID, EMAIL, USERNAME, PASSWORD, NAME, COUNTRY};
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
         return cursor;
@@ -122,7 +126,7 @@ public class UserTable extends SQLiteOpenHelper {
 
     public Cursor fetchUser (String username, String password){
         SQLiteDatabase db = getReadableDatabase();
-        String [] columns=new String[]{ID, EMAIL, USERNAME, PASSWORD, NAME};
+        String [] columns=new String[]{ID, EMAIL, USERNAME, PASSWORD, NAME, COUNTRY};
         Cursor myCursor = db.query(TABLE_NAME, columns, EMAIL + "='" + username +
                 "' AND " + PASSWORD + " = '" + password + "'", null, null, null, null);
         if (myCursor != null){
@@ -135,7 +139,7 @@ public class UserTable extends SQLiteOpenHelper {
 
         SQLiteDatabase db=getReadableDatabase();
 
-        String [] columns=new String[]{ID, NAME, EMAIL, PASSWORD, USERNAME};
+        String [] columns=new String[]{ID, NAME, EMAIL, PASSWORD, USERNAME, COUNTRY};
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
@@ -170,7 +174,6 @@ public class UserTable extends SQLiteOpenHelper {
         db.close();
         return results;
     }
-
 
 }
 

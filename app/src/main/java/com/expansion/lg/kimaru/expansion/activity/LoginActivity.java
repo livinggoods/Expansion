@@ -55,11 +55,11 @@ public class LoginActivity extends Activity {
                         startActivity(i);
                         finish();
                     } else {
-                        alert.showAlertDialog(LoginActivity.this, "Wrong Credentials", "Email / password combination", true);
+                        alert.showAlertDialog(LoginActivity.this, "Wrong Credentials", "Email / password combination", true, null, null);
                     }
 
                 }else{
-                    alert.showAlertDialog(LoginActivity.this, "Login failed..", "Please enter both the Email and password", true);
+                    alert.showAlertDialog(LoginActivity.this, "Login failed..", "Please enter both the Email and password", true, null, null);
                 }
             }
         });
@@ -70,7 +70,7 @@ public class LoginActivity extends Activity {
         Cursor user = userTable.fetchUser(userName, passWord);
         if (user != null){
             if (user.getCount() > 0){
-                session.createLoginSesstion(user.getString(4), user.getString(1), user.getInt(0));
+                session.createLoginSesstion(user.getString(4), user.getString(1), user.getInt(0), user.getString(5));
                 return true;
             }
         }

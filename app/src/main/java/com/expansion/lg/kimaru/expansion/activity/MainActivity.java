@@ -28,21 +28,32 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.fragment.HomeFragment;
 import com.expansion.lg.kimaru.expansion.fragment.InterviewsFragment;
+import com.expansion.lg.kimaru.expansion.fragment.MappingFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewCommunityUnitFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewExamFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewInterviewFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewLinkFacilityFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewMappingFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRecruitmentFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRegistrationFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewSubCountyFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RegistrationsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.ExamsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
+import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
 import com.expansion.lg.kimaru.expansion.other.SetUpApp;
+import com.expansion.lg.kimaru.expansion.tables.MappingTable;
+import com.expansion.lg.kimaru.expansion.other.FileUtils;
+
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private View navHeader;
     private ImageView imgNavHeaderBg, imgProfile;
     private TextView txtName, txtWebsite;
-    private Toolbar toolbar;
+    public Toolbar toolbar;
     public FloatingActionButton fab;
 
     // urls to load navigation header background image
@@ -64,19 +75,48 @@ public class MainActivity extends AppCompatActivity {
     public static int navItemIndex = 0;
 
     // tags used to attach the fragments
-    private static final String TAG_HOME = "home";
-    private static final String TAG_RECRUITMENTS = "recruitments";
-    private static final String TAG_REGISTRATIONS = "registrations";
-    private static final String TAG_EXAMS = "exams";
-    private static final String TAG_INTERVIEWS = "interviews";
+    public static final String TAG_HOME = "home";
+    public static final String TAG_RECRUITMENTS = "recruitments";
+    public static final String TAG_REGISTRATIONS = "registrations";
+    public static final String TAG_EXAMS = "exams";
+    public static final String TAG_INTERVIEWS = "interviews";
+    public static final String TAG_MAPPINGS = "mappings";
+    public static final String TAG_MAPPING = "mapping";
+    public static final String TAG_COUNTY = "county";
+    public static final String TAG_COUNTIES = "counties";
+    public static final String TAG_SUBCOUNTIES = "subcounties";
+    public static final String TAG_SUBCOUNTY = "subcounty";
+    public static final String TAG_COMMUNITY_UNIT = "communityunit";
+    public static final String TAG_COMMUNITY_UNITS = "communityunits";
+    public static final String TAG_VILLAGE = "village";
+    public static final String TAG_VILLAGES = "villages";
+    public static final String TAG_LINK_FACILITY = "linkFacility";
+    public static final String TAG_NEW_LINK_FACILITY = "newLinkFacilities";
+    public static final String TAG_LINK_FACILITIES = "linkFacilities";
+    public static final String TAG_MAPPING_VIEW = "mappingView";
+    public static final String TAG_MAP_VIEW = "mapView";
+    public static final String TAG_NEW_COMMUNITY_UNIT = "newCommunityUnit";
+    public static final String TAG_NEW_EXAM = "newExam";
+    public static final String TAG_NEW_INTERVIEW = "newInterview";
+    public static final String TAG_NEW_MAPPING = "newMapping";
+    public static final String TAG_NEW_RECRUITMENT = "newRecruitment";
+    public static final String TAG_NEW_REGISTRATION = "newRegistration";
+    public static final String TAG_NEW_SUB_COUNTY = "newSubCounty";
+    public static final String TAG_NEW_VILLAGE = "newVillage";
+    public static final String TAG_PARTNERS = "partners";
+    public static final String TAG_SUBCOUNTY_VIEW = "subCountyView";
+
     public static String CURRENT_TAG = TAG_HOME;
 
+    public static Fragment backFragment = null;
     // toolbar titles respected to selected nav menu item
     private String[] activityTitles;
 
     // flag to load home fragment when user presses back key
     private boolean shouldLoadHomeFragOnBackPress = true;
     private Handler mHandler;
+
+    private View mView;
 
 
     // We add the dialog Manager
@@ -102,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
             setUpApp.setUpEducation(getBaseContext());
         }
 
-    session.checkLogin();
+        session.checkLogin();
 
         //we can now extract User details
         HashMap<String, String> user = session.getUserDetails();
@@ -136,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String clickedView = Integer.toString(view.getId());
+                mView = view;
                 loadFragment(view);
             }
         });
@@ -175,9 +216,11 @@ public class MainActivity extends AppCompatActivity {
                         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                                 android.R.anim.fade_out);
-                        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+                        //fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+                        fragmentTransaction.replace( R.id.frame, fragment).addToBackStack( CURRENT_TAG).commit();
 
-                        fragmentTransaction.commitAllowingStateLoss();
+
+                        //fragmentTransaction.commitAllowingStateLoss();
                     }
                 };
                 // If mPendingRunnable is not null, then add to the message queue
@@ -206,7 +249,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case TAG_EXAMS:
-
                 mPendingRunnable = new Runnable() {
                     @Override
                     public void run() {
@@ -245,6 +287,96 @@ public class MainActivity extends AppCompatActivity {
                 if (mPendingRunnable != null) {
                     mHandler.post(mPendingRunnable);
                 }
+                break;
+
+            case TAG_MAPPINGS:
+                mPendingRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        // update the main content by replacing fragments
+                        NewMappingFragment newMappingFragment = new NewMappingFragment();
+                        Fragment fragment = newMappingFragment;
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                android.R.anim.fade_out);
+                        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+
+                        fragmentTransaction.commitAllowingStateLoss();
+                    }
+                };
+                // If mPendingRunnable is not null, then add to the message queue
+                if (mPendingRunnable != null) {
+                    mHandler.post(mPendingRunnable);
+                }
+                break;
+
+            case TAG_SUBCOUNTIES:
+                mPendingRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        // update the main content by replacing fragments
+                        NewSubCountyFragment newSubCountyFragment = new NewSubCountyFragment();
+                        Fragment fragment = newSubCountyFragment;
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                android.R.anim.fade_out);
+                        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+
+                        fragmentTransaction.commitAllowingStateLoss();
+                    }
+                };
+                // If mPendingRunnable is not null, then add to the message queue
+                if (mPendingRunnable != null) {
+                    mHandler.post(mPendingRunnable);
+                }
+                break;
+            case TAG_COMMUNITY_UNITS:
+                mPendingRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        // update the main content by replacing fragments
+                        NewCommunityUnitFragment newCommunityUnitFragment = new NewCommunityUnitFragment();
+                        Fragment fragment = newCommunityUnitFragment;
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                android.R.anim.fade_out);
+                        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+
+                        fragmentTransaction.commitAllowingStateLoss();
+                    }
+                };
+                // If mPendingRunnable is not null, then add to the message queue
+                if (mPendingRunnable != null) {
+                    mHandler.post(mPendingRunnable);
+                }
+                break;
+
+            case TAG_LINK_FACILITIES:
+                mPendingRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        // update the main content by replacing fragments
+                        NewLinkFacilityFragment newLinkFacilityFragment = new NewLinkFacilityFragment();
+                        Fragment fragment = newLinkFacilityFragment;
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                android.R.anim.fade_out);
+                        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+
+                        fragmentTransaction.commitAllowingStateLoss();
+                    }
+                };
+                // If mPendingRunnable is not null, then add to the message queue
+                if (mPendingRunnable != null) {
+                    mHandler.post(mPendingRunnable);
+                }
+                break;
+
+            case TAG_VILLAGES:
+                break;
+            case TAG_COUNTIES:
+                break;
+            case TAG_PARTNERS:
                 break;
 
         }
@@ -389,6 +521,12 @@ public class MainActivity extends AppCompatActivity {
                     CURRENT_TAG = TAG_RECRUITMENTS;
                     return new RecruitmentsFragment();
                 }
+            case 5:
+                navItemIndex = 5;
+                CURRENT_TAG = TAG_MAPPING;
+                MappingFragment mappingFragment = new MappingFragment();
+                return mappingFragment;
+
             default:
                 return new HomeFragment();
         }
@@ -461,6 +599,13 @@ public class MainActivity extends AppCompatActivity {
                             CURRENT_TAG = TAG_RECRUITMENTS;
                         }
                         break;
+
+                    case R.id.nav_mapping:
+                        navItemIndex = 5;
+                        CURRENT_TAG = TAG_MAPPING;
+                        break;
+
+
                     case R.id.nav_about_us:
                         // launch new intent instead of loading fragment
                         startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
@@ -475,6 +620,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(new Intent(MainActivity.this, HttpServerActivity.class));
                         drawer.closeDrawers();
                         return true;
+
                     default:
                         navItemIndex = 0;
                 }
@@ -523,20 +669,228 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // This code loads home fragment when back key is pressed
-        // when user is in other fragment than home
-        if (shouldLoadHomeFragOnBackPress) {
-            // checking if user is on other navigation menu
-            // rather than home
-            if (navItemIndex != 0) {
-                navItemIndex = 0;
-                CURRENT_TAG = TAG_HOME;
-                loadHomeFragment();
-                return;
+
+
+        Runnable mPendingRunnable;
+        if (backFragment != null){
+            mPendingRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    // update the main content by replacing fragments
+                    Fragment fragment = backFragment;
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                            android.R.anim.fade_out);
+                    fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+
+                    fragmentTransaction.commitAllowingStateLoss();
+                }
+            };
+
+            // If mPendingRunnable is not null, then add to the message queue
+            if (mPendingRunnable != null) {
+                mHandler.post(mPendingRunnable);
             }
+        } else {
+            super.onBackPressed();
         }
 
-        super.onBackPressed();
+//        switch (CURRENT_TAG) {
+//            case TAG_HOME:
+//                super.onBackPressed();
+//                break;
+//
+//            case TAG_RECRUITMENTS:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_HOME;
+//                HomeFragment homeFragment = new HomeFragment();
+//                backFragment = homeFragment;
+//                break;
+//
+//            case TAG_REGISTRATIONS:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_RECRUITMENTS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_EXAMS:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_REGISTRATIONS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_INTERVIEWS:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_EXAMS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_MAPPINGS:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_HOME;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_MAPPING:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_MAPPINGS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_COUNTY:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_HOME;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_COUNTIES:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_HOME;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_SUBCOUNTIES:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_MAPPING;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_SUBCOUNTY:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_SUBCOUNTIES;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_COMMUNITY_UNIT:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_COMMUNITY_UNITS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_COMMUNITY_UNITS:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_SUBCOUNTY;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_VILLAGE:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_VILLAGES;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_VILLAGES:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_COMMUNITY_UNIT;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_LINK_FACILITY:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_LINK_FACILITIES;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_LINK_FACILITY:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_LINK_FACILITIES;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_LINK_FACILITIES:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_SUBCOUNTY_VIEW;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_MAPPING_VIEW:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_MAPPINGS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_MAP_VIEW:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_MAPPINGS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_COMMUNITY_UNIT:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_COMMUNITY_UNITS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_EXAM:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_EXAMS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_INTERVIEW:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_INTERVIEWS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_MAPPING:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_MAPPINGS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_RECRUITMENT:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_RECRUITMENTS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_REGISTRATION:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_REGISTRATIONS;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_SUB_COUNTY:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_SUBCOUNTIES;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_NEW_VILLAGE:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_VILLAGES;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_PARTNERS:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_SUBCOUNTY_VIEW;
+//                loadHomeFragment();
+//                break;
+//
+//            case TAG_SUBCOUNTY_VIEW:
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_SUBCOUNTIES;
+//                loadHomeFragment();
+//                break;
+//        }
+
+
+        // This code loads home fragment when back key is pressed
+        // when user is in other fragment than home
+//        if (shouldLoadHomeFragOnBackPress) {
+//            // checking if user is on other navigation menu
+//            // rather than home
+//            if (navItemIndex != 0) {
+//                navItemIndex = 0;
+//                CURRENT_TAG = TAG_HOME;
+//                loadHomeFragment();
+//                return;
+//            }
+//        }
+//
+//        super.onBackPressed();
     }
 
     @Override
@@ -571,32 +925,43 @@ public class MainActivity extends AppCompatActivity {
         }
         if (id == R.id.backup_db) {
             Toast.makeText(getApplicationContext(), "Backing up the DB!", Toast.LENGTH_LONG).show();
-            try {
-                File sd = Environment.getExternalStorageDirectory();
-                File data = Environment.getDataDirectory();
+            exportDB();
 
-                if (sd.canWrite()) {
-                    String currentDBPath = "/data/data/" + getPackageName() + "/databases/expansion.db";
-                    String backupDBPath = "expansiondb.db";
-                    File currentDB = new File(currentDBPath);
-                    File backupDB = new File(sd, backupDBPath);
-                    Toast.makeText(this, backupDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
 
-                    if (currentDB.exists()) {
-                        Toast.makeText(this, "File is found...", Toast.LENGTH_LONG).show();
-                        FileChannel src = new FileInputStream(currentDB).getChannel();
-                        FileChannel dst = new FileOutputStream(backupDB).getChannel();
-                        dst.transferFrom(src, 0, src.size());
-                        src.close();
-                        dst.close();
-                    }else{
-                        Toast.makeText(this, "file not founf", Toast.LENGTH_LONG).show();
-                    }
-                }
-            } catch (Exception e) {
-
-            }
-            Toast.makeText(this, "BCK Complete", Toast.LENGTH_LONG).show();
+//            try {
+//                File sd = Environment.getExternalStorageDirectory();
+//                File data = Environment.getDataDirectory();
+//
+//                if (sd.canWrite()) {
+//                    String currentDBPath = "//data//data//" + getPackageName() + "//databases//expansion.db";
+//                    String backupDBPath = "expansiondb.db";
+////                    File currentDB = new File(data, currentDBPath);
+//                    File currentDB = getDatabasePath(MappingTable.DATABASE_NAME);
+//                    File backupDB = new File(sd, backupDBPath);
+//                    Toast.makeText(this, getPackageName(), Toast.LENGTH_LONG).show();
+//                    Toast.makeText(this, currentDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
+//                    FileChannel src = new FileInputStream(currentDB).getChannel();
+//                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+//                    dst.transferFrom(src, 0, src.size());
+//                    src.close();
+//                    dst.close();
+//
+//                    if (currentDB.exists()) {
+//                        Toast.makeText(this, "DB file is found...", Toast.LENGTH_LONG).show();
+//                        FileChannel srcs = new FileInputStream(currentDB).getChannel();
+//                        FileChannel dsts = new FileOutputStream(backupDB).getChannel();
+//                        dst.transferFrom(srcs, 0, srcs.size());
+//                        srcs.close();
+//                        dsts.close();
+//                        Toast.makeText(this, "BCK Completed successfully", Toast.LENGTH_LONG).show();
+//                    }else{
+//                        Toast.makeText(this, "Unable to backup. File not found", Toast.LENGTH_LONG).show();
+//                        return true;
+//                    }
+//                }
+//            } catch (Exception e) {
+//                Toast.makeText(this, "Error \n"+e.getMessage(), Toast.LENGTH_LONG).show();
+//            }
             return true;
         }
 
@@ -621,5 +986,29 @@ public class MainActivity extends AppCompatActivity {
             fab.hide();
         else
             fab.show();
+    }
+
+    private void exportDB(){
+        File sd = Environment.getExternalStorageDirectory();
+        File data = Environment.getDataDirectory();
+        FileChannel source=null;
+        FileChannel destination=null;
+        String currentDBPath = "/data/"+ getPackageName() +"/databases/"+MappingTable.DATABASE_NAME;
+        String backupDBPath = MappingTable.DATABASE_NAME;
+        File currentDB = new File(data, currentDBPath);
+        //File backupDB = new File(sd, backupDBPath);
+        File backupDB = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "expansion_backup.db");
+        Toast.makeText(this, backupDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        try {
+            source = new FileInputStream(currentDB).getChannel();
+            destination = new FileOutputStream(backupDB).getChannel();
+            destination.transferFrom(source, 0, source.size());
+            source.close();
+            destination.close();
+            Toast.makeText(this, "DB Exported!", Toast.LENGTH_LONG).show();
+        } catch(IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error in backing up the db!\n"+e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }

@@ -6,6 +6,10 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
+import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
+import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
+import com.expansion.lg.kimaru.expansion.mzigos.Village;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 
@@ -25,6 +29,7 @@ public class SessionManagement {
     public static final String KEY_NAME = "name";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_USERID = "userid";
+    public static final String KEY_USER_COUNTRY = "country";
 
 
     // Recruitment Details
@@ -55,6 +60,15 @@ public class SessionManagement {
     public static final String EXAM_ENGLISH = "examEnglish";
     private static final String IS_EXAM = "IsExamSet";
 
+    //Need to save the selected Mapping
+    public static final String MAPPING = "mapping";
+
+    //Need to save the selected SubCounty
+    public static final String SUBCOUNTY = "subcounty";
+
+    //Need to save the selected Village
+    public static final String VILLAGE = "village";
+
 
     //interview Details
     private static final String IS_INTERVIEW = "IsInterviewSet";
@@ -73,7 +87,70 @@ public class SessionManagement {
         editor = pref.edit();
     }
 
-    public void createLoginSesstion (String name, String email, Integer userId){
+    public void saveMapping(Mapping mapping){
+        Gson gson = new Gson();
+        String mappingObject = gson.toJson(mapping);
+        editor.putString(MAPPING, mappingObject);
+        editor.commit();
+    }
+    /**
+     *
+     * Get the stored Mapping
+     *
+     * */
+    public Mapping getSavedMapping (){
+
+        Mapping mapping;
+        Gson gson = new Gson();
+        String mappingDetails = pref.getString(MAPPING, "");
+        mapping = gson.fromJson(mappingDetails, Mapping.class);
+
+        return mapping;
+    }
+
+
+    public void saveSubCounty(SubCounty subCounty){
+        Gson gson = new Gson();
+        String mappingObject = gson.toJson(subCounty);
+        editor.putString(SUBCOUNTY, mappingObject);
+        editor.commit();
+    }
+    /**
+     *
+     * Get the stored Subcounty
+     *
+     * */
+    public SubCounty getSavedSubCounty (){
+
+        SubCounty subCounty;
+        Gson gson = new Gson();
+        String subCountyDetails = pref.getString(SUBCOUNTY, "");
+        subCounty = gson.fromJson(subCountyDetails, SubCounty.class);
+
+        return subCounty;
+    }
+    public void saveVillage(Village village){
+        Gson gson = new Gson();
+        String villageObject = gson.toJson(village);
+        editor.putString(VILLAGE, villageObject);
+        editor.commit();
+    }
+    /**
+     *
+     * Get the stored Viilage
+     *
+     * */
+    public Village getSavedVillage (){
+
+        Village village;
+        Gson gson = new Gson();
+        String villageDetails = pref.getString(VILLAGE, "");
+        village = gson.fromJson(villageDetails, Village.class);
+        return village;
+    }
+
+
+    public void createLoginSesstion (String name, String email, Integer userId, String country){
         //storing login values as TRUE
         editor.putBoolean(IS_LOGIN, true);
 
@@ -85,6 +162,9 @@ public class SessionManagement {
 
         //put userid
         editor.putInt(KEY_USERID, userId);
+
+        //put user country
+        editor.putString(KEY_USER_COUNTRY, country);
 
         //commit / Save the values
 
@@ -213,6 +293,8 @@ public class SessionManagement {
         user.put(KEY_EMAIL, pref.getString(KEY_EMAIL, null));
         //userId
         user.put(KEY_USERID, String.valueOf(pref.getInt(KEY_USERID, 0)));
+
+        user.put(KEY_USER_COUNTRY, String.valueOf(pref.getString(KEY_USER_COUNTRY, "ug")));
 
         //return user
         return user;

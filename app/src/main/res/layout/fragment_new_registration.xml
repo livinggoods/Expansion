@@ -56,7 +56,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TextView
@@ -86,6 +86,13 @@
                         />
                 </RadioGroup>
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -125,8 +132,9 @@
                     android:inputType="textCapWords"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
+
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TextView
@@ -156,6 +164,11 @@
                         />
                 </RadioGroup>
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -163,10 +176,9 @@
                     android:id="@+id/editRelocated"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="When did you move in?"
+                    android:hint="Years at this location"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="date"
-                    android:focusable="false"
+                    android:inputType="number"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
             <android.support.design.widget.TextInputLayout
@@ -183,7 +195,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TextView
@@ -213,8 +225,14 @@
                         />
                 </RadioGroup>
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TextView
@@ -244,8 +262,13 @@
                         />
                 </RadioGroup>
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
                 <TextView
@@ -275,6 +298,11 @@
                         />
                 </RadioGroup>
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -287,9 +315,13 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/selectEdducation"
                     />
-
-
             </android.support.design.widget.TextInputLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"

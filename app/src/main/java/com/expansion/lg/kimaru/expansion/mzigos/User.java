@@ -7,18 +7,19 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 public class User {
 
     Integer id;
-    String email, username, password, name;
+    String email, username, password, name, country;
 
     public User(){
 
     }
 
-    public User(Integer id, String email, String username, String password, String name ) {
+    public User(Integer id, String email, String username, String password, String name, String country ) {
         this.id = id;
         this.email = email;
         this.username = username;
         this.password = password;
         this.name = name;
+        this.country = country;
     }
 
 
@@ -62,5 +63,13 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 }

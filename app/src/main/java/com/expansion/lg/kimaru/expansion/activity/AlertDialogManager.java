@@ -3,6 +3,7 @@ package com.expansion.lg.kimaru.expansion.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.icu.text.DateFormat;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface.OnClickListener;
 
@@ -24,7 +25,8 @@ public class AlertDialogManager {
      *               - pass null if no Icon is needed
      */
 
-    public void showAlertDialog(Context context, String title, String message, Boolean status){
+    public void showAlertDialog(Context context, String title, String message, Boolean status,
+                                @Nullable String positiveButton, @Nullable String negativeButton){
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 
         //set the title, I almost wrote 'Tithe', lakini  :D
@@ -39,7 +41,19 @@ public class AlertDialogManager {
             alertDialog.setIcon((status) ? R.drawable.ic_error_black_24dp : R.drawable.ic_done_black_24dp);
         }
         alertDialog.setCanceledOnTouchOutside(true);
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Retry", new OnClickListener() {
+
+        if(positiveButton != null){
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, positiveButton, new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+        }
+        if(negativeButton == null){
+            negativeButton = "Cancel";
+        }
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, negativeButton, new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
