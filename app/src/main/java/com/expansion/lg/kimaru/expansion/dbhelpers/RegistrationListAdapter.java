@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.other.FlipAnimator;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
@@ -101,7 +102,7 @@ public class RegistrationListAdapter extends RecyclerView.Adapter<RegistrationLi
         holder.from.setText(registration.getName());
         holder.subject.setText(registration.getPhone());
         holder.message.setText(registration.getName());
-        holder.timestamp.setText(registration.getName());
+        holder.timestamp.setText(new DisplayDate(registration.getDateAdded().longValue()).dateOnly());
 
         // displaying the first letter of From in icon text
         holder.iconText.setText(registration.getName().substring(0,1));
@@ -147,8 +148,8 @@ public class RegistrationListAdapter extends RecyclerView.Adapter<RegistrationLi
         holder.registrationContainser.setOnLongClickListener(new View.OnLongClickListener(){
             @Override
             public boolean onLongClick(View view){
-                listener.onRowLongClicked(position);
                 view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                listener.onRowLongClicked(position);
                 return true;
             }
         });
@@ -206,32 +207,32 @@ public class RegistrationListAdapter extends RecyclerView.Adapter<RegistrationLi
         selectedItemsIndex.clear();
     }
 
-    @Override
-    public long getItemId(int position) {
-        return registrations.get(position).getId();
-    }
+//    @Override
+//    public long getItemId(int position) {
+//        return registrations.get(position).getId();
+//    }
 
     private void applyImportant(ListHolder holder, Registration message) {
-        if (message.isImportant()) {
-            holder.iconImp.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_star_black_24dp));
+//        if (message.isImportant()) {
+            holder.iconImp.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_visibility_black_24dp));
             holder.iconImp.setColorFilter(ContextCompat.getColor(mContext, R.color.icon_tint_selected));
-        } else {
-            holder.iconImp.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_star_border_black_24dp));
-            holder.iconImp.setColorFilter(ContextCompat.getColor(mContext, R.color.icon_tint_normal));
-        }
+//        } else {
+//            holder.iconImp.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_star_border_black_24dp));
+//            holder.iconImp.setColorFilter(ContextCompat.getColor(mContext, R.color.icon_tint_normal));
+//        }
     }
 
     private void applyReadStatus(ListHolder holder, Registration message) {
-        if (message.isRead()) {
-            holder.from.setTypeface(null, Typeface.NORMAL);
-            holder.subject.setTypeface(null, Typeface.NORMAL);
-            holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
-            holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.message));
-        } else {
+        if (message.hasPassed()) {
             holder.from.setTypeface(null, Typeface.BOLD);
             holder.subject.setTypeface(null, Typeface.BOLD);
             holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.from));
             holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
+        } else {
+            holder.from.setTypeface(null, Typeface.NORMAL);
+            holder.subject.setTypeface(null, Typeface.NORMAL);
+            holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.subject)); //subject
+            holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.message)); //message
         }
     }
 

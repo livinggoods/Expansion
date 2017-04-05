@@ -204,33 +204,33 @@ public class RecruitmentListAdapter extends RecyclerView.Adapter<RecruitmentList
         selectedItemsIndex.clear();
     }
 
-    @Override
-    public long getItemId(int position) {
-        return recruitments.get(position).getId();
-    }
+//    @Override
+//    public long getItemId(int position) {
+//        return recruitments.get(position).getId();
+//    }
 
     private void applyImportant(ListHolder holder, Recruitment recruitment) {
-        if (recruitment.isImportant()) {
-            holder.iconImp.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_star_black_24dp));
+        //if (recruitment.isImportant()) {
+            holder.iconImp.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_visibility_black_24dp));
             holder.iconImp.setColorFilter(ContextCompat.getColor(mContext, R.color.icon_tint_selected));
-        } else {
-            holder.iconImp.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_star_border_black_24dp));
-            holder.iconImp.setColorFilter(ContextCompat.getColor(mContext, R.color.icon_tint_normal));
-        }
+        //} else {
+            //holder.iconImp.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_star_border_black_24dp));
+            //holder.iconImp.setColorFilter(ContextCompat.getColor(mContext, R.color.icon_tint_normal));
+        //}
     }
 
     private void applyReadStatus(ListHolder holder, Recruitment recruitment) {
-        if (recruitment.isRead()) {
-            holder.from.setTypeface(null, Typeface.NORMAL);
-            holder.subject.setTypeface(null, Typeface.NORMAL);
-            holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
-            holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.message));
-        } else {
+        //if (recruitment.isRead()) {
+        //    holder.from.setTypeface(null, Typeface.NORMAL);
+        //    holder.subject.setTypeface(null, Typeface.NORMAL);
+        //    holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
+        //    holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.message));
+        //} else {
             holder.from.setTypeface(null, Typeface.BOLD);
             holder.subject.setTypeface(null, Typeface.BOLD);
             holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.from));
             holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
-        }
+        //}
     }
 
     @Override

@@ -21,7 +21,9 @@ import android.support.v4.app.DialogFragment;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.other.SpinnersCursorAdapter;
 import com.expansion.lg.kimaru.expansion.tables.EducationTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
@@ -30,6 +32,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 
 
 /**
@@ -88,9 +91,9 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     Integer loggedInUser = 1;
 
     SessionManagement session;
-    String userName, userEmail;
+    String userName, userEmail, recruitmentId;
     Integer userId;
-    Integer recruitmentId;
+    Registration editingRegistration = null;
 
 
     public NewRegistrationFragment() {
@@ -143,8 +146,8 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         //Emails
         userEmail = user.get(SessionManagement.KEY_EMAIL);
         userId = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
-        HashMap<String, String> recruitment = session.getRecruitmentSession();
-        recruitmentId = Integer.parseInt(recruitment.get(SessionManagement.RECRUITMENT_ID));
+        Recruitment recruitment = session.getSavedRecruitment();
+        recruitmentId = recruitment.getId();
 
         //Initialize the UI Components
         mName = (EditText) v.findViewById(R.id.editName);
@@ -165,6 +168,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
 
 
         addEducationSelectList();
+        setUpEditingMode();
 
         /*
         Th
@@ -216,7 +220,16 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
                 Toast.makeText(getContext(), "Validating and saving.", Toast.LENGTH_SHORT).show();
-                Integer currentDate =  (int) (new Date().getTime()/1000);
+                Long currentDate =  new Date().getTime();
+
+                String registrationId;
+                if (editingRegistration != null){
+                    Toast.makeText(getContext(), "Editng", Toast.LENGTH_SHORT).show();
+                    registrationId = editingRegistration.getId();
+                }else{
+                    registrationId = UUID.randomUUID().toString();
+                    Toast.makeText(getContext(), "New Reg", Toast.LENGTH_SHORT).show();
+                }
 
                 String applicantName = mName.getText().toString();
                 String applicantPhone = mPhone.getText().toString();
@@ -235,10 +248,10 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 String applicantOccupation = mOccupation.getText().toString();
                 String applicantComment = "";
                 String aDob = mDob.getText().toString();
-                Integer applicantDob;
+                Long applicantDob;
                 try{
                     Date date = dateFormat.parse(aDob);
-                    applicantDob = (int) date.getTime()/1000;
+                    applicantDob = date.getTime();
                 }catch (Exception e){
                     applicantDob = currentDate;
                 }
@@ -249,15 +262,14 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 String canApplicantReadEnglish = readEnglishRadioButton.getText().toString();
                 Integer applicantReadEnglish = canApplicantReadEnglish == "yes" ? 1 : 0;
 
-
-                Integer applicantDateMoved;
-                String aDateMoved = mDateMoved.getText().toString();
-                try{
-                    Date date = dateFormat.parse(aDateMoved);
-                    applicantDateMoved = (int) date.getTime()/1000;
-                }catch (Exception e){
-                    applicantDateMoved = currentDate;
+                String dateMoved = mDateMoved.getText().toString();
+                Long applicantDateMoved;
+                if (dateMoved.toString().trim().equals("")){
+                    applicantDateMoved = 0L;
+                }else {
+                    applicantDateMoved = Long.valueOf(dateMoved);
                 }
+
 
                 Integer workedBrac = mBrac.getCheckedRadioButtonId();
                 RadioButton hasWorkAtBrac =(RadioButton) mBrac.findViewById(workedBrac);
@@ -276,9 +288,9 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
 
                 Integer applicantAddedBy = userId;
                 Integer applicantProceed = 0;
-                Integer applicantDateAdded = currentDate;
+                Long applicantDateAdded = currentDate;
                 Integer applicantSync = 0;
-                Integer applicantRecruitment = recruitmentId;
+                String applicantRecruitment = recruitmentId;
 
 
                 // Do some validations
@@ -296,7 +308,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                     // Save Registration
 //                    Registration registration = new Registration(mName, mNumber, mEmail);
                     Registration registration;
-                    registration = new Registration(applicantName, applicantPhone, applicantGender,
+                    registration = new Registration(registrationId, applicantName, applicantPhone, applicantGender,
                             applicantDistrict, applicantSubcounty, applicantDivision, applicantVillage,
                             applicantMark, applicantLangs, applicantEducation, applicantOccupation,
                             applicantComment, applicantDob, applicantReadEnglish, applicantRecruitment,
@@ -304,7 +316,6 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                             applicantAddedBy, applicantProceed, applicantDateAdded, applicantSync);
                     RegistrationTable registrationTable = new RegistrationTable(getContext());
                     long id = registrationTable.addData(registration);
-
                     if (id ==-1){
                         Toast.makeText(getContext(), "Could not save registration", Toast.LENGTH_SHORT).show();
                     }
@@ -366,5 +377,38 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         SpinnersCursorAdapter cursorAdapter = new SpinnersCursorAdapter(getContext(), educationTable.getEducationDataCursor());
         educationLevel.setAdapter(cursorAdapter);
 
+    }
+    public void setUpEditingMode(){
+        if (editingRegistration != null){
+            mName.setText(editingRegistration.getName());
+            mPhone.setText(editingRegistration.getPhone());
+            mVillage.setText(editingRegistration.getVillage());
+            mMark.setText(editingRegistration.getMark());
+            mLangs.setText(editingRegistration.getLangs());
+            mOccupation.setText(editingRegistration.getOccupation());
+            mDob.setText(new DisplayDate(Long.valueOf(editingRegistration.getDob())).dateOnly());
+            mDateMoved.setText(editingRegistration.getDateMoved().toString());
+
+            mGender.clearCheck();
+            mGender.check(editingRegistration.getGender() == "Male" ? R.id.radioM : R.id.radioF);
+
+            mReadEnglish.clearCheck();
+            mReadEnglish.check(editingRegistration.getReadEnglish() == 1 ?
+                    R.id.radioCanReadEnglish: R.id.radioCannotReadEnglish);
+
+            mBrac.clearCheck();
+            mBrac.check(editingRegistration.getBrac() == 1 ? R.id.radiobracYes : R.id.radiobracNo);
+
+            mBracChp.clearCheck();
+            mBracChp.check(editingRegistration.getBracChp() == 1 ?
+                    R.id.radiobracChpYes : R.id.radiobracChpNo);
+
+
+            mCommunity.clearCheck();
+            mCommunity.check(editingRegistration.getCommunity() == 1 ?
+                    R.id.radioCommMbrYes : R.id.radioCommMbrNo);
+
+            educationLevel.setSelection(Integer.valueOf(editingRegistration.getEducation()), true);
+        }
     }
 }

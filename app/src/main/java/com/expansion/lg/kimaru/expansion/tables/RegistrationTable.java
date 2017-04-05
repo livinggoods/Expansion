@@ -3,6 +3,7 @@ package com.expansion.lg.kimaru.expansion.tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -33,7 +34,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
-    public static final String ID = "_id";
+    public static final String ID = "id";
     public static final String NAME= "name";
     public static final String PHONE = "phone";
     public static final String GENDER = "gender";
@@ -58,7 +59,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public static final String SYNCED = "synced";
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
-            + primary_field + ", "
+            + ID + varchar_field + ", "
             + NAME + varchar_field + ", "
             + PHONE + varchar_field + ", "
             + GENDER + varchar_field + ", "
@@ -107,6 +108,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
         SQLiteDatabase db=getWritableDatabase();
 
         ContentValues cv=new ContentValues();
+        cv.put(ID, registration.getId());
         cv.put(NAME, registration.getName());
         cv.put(PHONE, registration.getPhone());
         cv.put(GENDER, registration.getGender());
@@ -129,8 +131,12 @@ public class RegistrationTable extends SQLiteOpenHelper {
         cv.put(PROCEED, registration.getProceed());
         cv.put(DATE_ADDED, registration.getDateAdded());
         cv.put(SYNCED, registration.getSynced());
-
-        long id=db.insert(TABLE_NAME,null,cv);
+        long id;
+        if (exists(registration)){
+            id = db.update(TABLE_NAME, cv, ID+"='"+registration.getId()+"'", null);
+        }else{
+            id = db.insert(TABLE_NAME,null,cv);
+        }
 
         db.close();
         return id;
@@ -168,29 +174,29 @@ public class RegistrationTable extends SQLiteOpenHelper {
 
             Registration registration=new Registration();
 
-            registration.setId(cursor.getInt(0));
+            registration.setId(cursor.getString(0));
             registration.setName(cursor.getString(1));
             registration.setPhone(cursor.getString(2));
             registration.setGender(cursor.getString(3));
-            registration.setDob(cursor.getInt(4));
+            registration.setDob(cursor.getLong(4));
             registration.setDistrict(cursor.getString(5));
-            registration.setSubcounty(cursor.getString(2));
-            registration.setDivision(cursor.getString(2));
-            registration.setVillage(cursor.getString(2));
-            registration.setMark(cursor.getString(2));
-            registration.setReadEnglish(cursor.getInt(2));
-            registration.setDateMoved(cursor.getInt(2));
-            registration.setLangs(cursor.getString(2));
-            registration.setBrac(cursor.getInt(2));
-            registration.setBracChp(cursor.getInt(2));
-            registration.setEducation(cursor.getString(2));
-            registration.setOccupation(cursor.getString(2));
-            registration.setCommunity(cursor.getInt(2));
-            registration.setAddedBy(cursor.getInt(2));
-            registration.setComment(cursor.getString(2));
-            registration.setProceed(cursor.getInt(2));
-            registration.setDateAdded(cursor.getInt(2));
-            registration.setSynced(cursor.getInt(2));
+            registration.setSubcounty(cursor.getString(6));
+            registration.setDivision(cursor.getString(7));
+            registration.setVillage(cursor.getString(8));
+            registration.setMark(cursor.getString(9));
+            registration.setReadEnglish(cursor.getInt(10));
+            registration.setDateMoved(cursor.getLong(11));
+            registration.setLangs(cursor.getString(12));
+            registration.setBrac(cursor.getInt(13));
+            registration.setBracChp(cursor.getInt(14));
+            registration.setEducation(cursor.getString(15));
+            registration.setOccupation(cursor.getString(16));
+            registration.setCommunity(cursor.getInt(17));
+            registration.setAddedBy(cursor.getInt(18));
+            registration.setComment(cursor.getString(19));
+            registration.setProceed(cursor.getInt(20));
+            registration.setDateAdded(cursor.getLong(21));
+            registration.setSynced(cursor.getInt(22));
             registration.setPicture("");
 
 
@@ -202,5 +208,18 @@ public class RegistrationTable extends SQLiteOpenHelper {
         db.close();
 
         return registrationList;
+    }
+    public boolean exists(Registration registration){
+        SQLiteDatabase db = getReadableDatabase();
+        long cnt = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                ID+"=?", new String[] {registration.getId()});
+        return cnt > 0;
+    }
+
+    public long getRegistrationCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME);
+        db.close();
+        return cnt;
     }
 }

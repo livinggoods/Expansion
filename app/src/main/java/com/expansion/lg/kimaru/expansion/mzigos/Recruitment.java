@@ -6,8 +6,10 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 
 public class Recruitment {
 
-    String name, district, subcounty, division, comment, lat, lon;
-    Integer id, addedBy, dateAdded, synced;
+    String id, name, district, subcounty, division, comment, lat, lon;
+    Integer addedBy, synced;
+    Long dateAdded;
+
     boolean isRead, isImportant;
     int color = -1;
     String picture =  "";
@@ -16,8 +18,8 @@ public class Recruitment {
 
     }
 
-    public Recruitment(String name, String district, String subcounty, String division, String lat, String lon,
-                       String comment, Integer addedBy, Integer dateAdded, Integer synced) {
+    public Recruitment(String id, String name, String district, String subcounty, String division, String lat, String lon,
+                       String comment, Integer addedBy, Long dateAdded, Integer synced) {
         this.name = name;
         this.district = district;
         this.subcounty = subcounty;
@@ -28,6 +30,7 @@ public class Recruitment {
         this.synced = synced;
         this.lat = lat;
         this.lon = lon;
+        this.id = id;
     }
 
 
@@ -56,7 +59,7 @@ public class Recruitment {
     public Integer getAddedBy() {
         return addedBy;
     }
-    public Integer getDateAdded() {
+    public Long getDateAdded() {
         return dateAdded;
     }
     public Integer getSynced() {
@@ -66,7 +69,7 @@ public class Recruitment {
     public String getPicture() {
         return picture;
     }
-    public Integer getId() {
+    public String getId() {
         return id;
     }
     public boolean isRead() {
@@ -96,7 +99,7 @@ public class Recruitment {
     public void setAddedBy(Integer addedBy) {
         this.addedBy = addedBy;
     }
-    public void setDateAdded(Integer dateAdded) {
+    public void setDateAdded(Long dateAdded) {
         this.dateAdded = dateAdded;
     }
     public void setSynced(Integer synced) {
@@ -116,7 +119,7 @@ public class Recruitment {
     public void setIsImportant(boolean isImportant) {
         this.isImportant = isImportant;
     }
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

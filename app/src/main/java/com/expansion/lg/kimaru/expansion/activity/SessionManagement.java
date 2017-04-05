@@ -36,32 +36,20 @@ public class SessionManagement {
 
 
     // Recruitment Details
-    public static final String RECRUITMENT_ID = "recruitmentId";
-    public static final String RECRUITMENT_NAME = "recruitmentName";
-    public static final String RECRUITMENT_DISTRICT = "recruitmentDistrict";
-    public static final String RECRUITMENT_SUBCOUNTY = "recruitmentSubcounty";
-    public static final String RECRUITMENT_DIVISION = "recruitmentDivision";
-    public static final String RECRUITMENT_LAT = "recruitmentLat";
-    public static final String RECRUITMENT_LON = "recruitmentLon";
-    private static final String IS_RECRUITMENT = "IsRecruitmentSet";
+    public static final String RECRUITMENT = "recruitment";
+    public static final String IS_RECRUITMENT = "isRecruitment";
 
 
 
     // Registration Details
-    public static final String REGISTRATION_ID = "registrationId";
-    public static final String REGISTRATION_NAME = "registrationName";
-    public static final String REGISTRATION_PHONE = "registrationPhone";
-    public static final String REGISTRATION_GENDER = "registrationGender";
-    public static final String REGISTRATION_VILLAGE = "registrationVillage";
-    public static final String REGISTRATION_OCCUPATION = "registrationOccupation";
-    private static final String IS_REGISTRATION = "IsRegistrationSet";
+    public static final String REGISTRATION = "registration";
+    public static final String IS_REGISTRATION = "isRegistration";
+
 
     //Exam Details
-    public static final String EXAM_ID = "examID";
-    public static final String EXAM_MATH = "examMath";
-    public static final String EXAM_PERSONALITY = "examPersonality";
-    public static final String EXAM_ENGLISH = "examEnglish";
-    private static final String IS_EXAM = "IsExamSet";
+    public static final String EXAM = "exam";
+    public static final String IS_EXAM = "isExam";
+
 
     //Need to save the selected Mapping
     public static final String MAPPING = "mapping";
@@ -88,6 +76,73 @@ public class SessionManagement {
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
+    }
+
+    public void saveRegistration(Registration registration){
+        Gson gson = new Gson();
+        String registrationObject = gson.toJson(registration);
+        editor.putString(REGISTRATION, registrationObject);
+        editor.putBoolean(IS_REGISTRATION, true);
+        editor.commit();
+    }
+    /**
+     *
+     * Get the stored recruitment
+     *
+     * */
+    public Recruitment getSavedRecruitment (){
+
+        Recruitment recruitment;
+        Gson gson = new Gson();
+        String recruitmentDetails = pref.getString(RECRUITMENT, "");
+        recruitment = gson.fromJson(recruitmentDetails, Recruitment.class);
+
+        return recruitment;
+    }
+
+    public void saveExam(Exam exam){
+        Gson gson = new Gson();
+        String examObject = gson.toJson(exam);
+        editor.putString(EXAM, examObject);
+        editor.putBoolean(IS_EXAM, true);
+        editor.commit();
+    }
+    /**
+     *
+     * Get the stored exam
+     *
+     * */
+    public Exam getSavedExam (){
+
+        Exam exam;
+        Gson gson = new Gson();
+        String examDetails = pref.getString(EXAM, "");
+        exam = gson.fromJson(examDetails, Exam.class);
+
+        return exam;
+    }
+
+
+    public void saveRecruitment(Recruitment recruitment){
+        Gson gson = new Gson();
+        String recruitmentObject = gson.toJson(recruitment);
+        editor.putString(RECRUITMENT, recruitmentObject);
+        editor.putBoolean(IS_RECRUITMENT, true);
+        editor.commit();
+    }
+    /**
+     *
+     * Get the stored Mapping
+     *
+     * */
+    public Registration getSavedRegistration (){
+
+        Registration registration;
+        Gson gson = new Gson();
+        String registrationDetails = pref.getString(REGISTRATION, "");
+        registration = gson.fromJson(registrationDetails, Registration.class);
+
+        return registration;
     }
 
     public void saveMapping(Mapping mapping){
@@ -175,50 +230,6 @@ public class SessionManagement {
 
     }
 
-
-    // set the recruitment ID
-    public void createRecruitmentSession (Integer recruitmentID, String name, String district,
-                                          String subcounty, String division, String lat, String lon){
-        editor.putInt(RECRUITMENT_ID, recruitmentID);
-        editor.putString(RECRUITMENT_NAME, name);
-        editor.putString(RECRUITMENT_DISTRICT, district);
-        editor.putString(RECRUITMENT_SUBCOUNTY, subcounty);
-        editor.putString(RECRUITMENT_DIVISION, division);
-        editor.putString(RECRUITMENT_LAT, lat);
-        editor.putString(RECRUITMENT_LON, lon);
-        editor.putBoolean(IS_RECRUITMENT, true);
-        editor.commit();
-    }
-
-    // set the Registration Session
-    public void createRegistrationSession (Integer registrationId, String registrationName,
-                                           String registrationPhone, String registrationGender,
-                                           String registrationVillage, String registrationOccupation ){
-
-        editor.putInt(REGISTRATION_ID, registrationId);
-        editor.putString(REGISTRATION_NAME, registrationName);
-        editor.putString(REGISTRATION_PHONE, registrationPhone);
-        editor.putString(REGISTRATION_GENDER, registrationGender);
-        editor.putString(REGISTRATION_VILLAGE, registrationVillage);
-        editor.putString(REGISTRATION_OCCUPATION, registrationOccupation);
-        editor.putBoolean(IS_REGISTRATION, true);
-        editor.commit();
-    }
-
-    // set the Exam Session
-    public void createExamSession (Integer examId, Integer examMath,
-                                   Integer examPersonality, Integer examEnglish){
-
-        editor.putInt(EXAM_ID, examId);
-        editor.putInt(EXAM_MATH, examMath);
-        editor.putInt(EXAM_PERSONALITY, examPersonality);
-        editor.putInt(EXAM_ENGLISH, examEnglish);
-        editor.putBoolean(IS_EXAM, true);
-        editor.commit();
-
-    }
-
-
     /**
      * Check login method will check user login status
      * If false it will redirect user to login page
@@ -301,58 +312,6 @@ public class SessionManagement {
 
         //return user
         return user;
-    }
-
-    /**
-     *
-     * Get the stored Recruitment
-     *
-     * */
-    public HashMap<String, String> getRecruitmentSession (){
-        HashMap<String, String> recruitment = new HashMap<String, String>();
-
-        recruitment.put(RECRUITMENT_ID, String.valueOf(pref.getInt(RECRUITMENT_ID, 0)));
-        recruitment.put(RECRUITMENT_NAME, pref.getString(RECRUITMENT_NAME, null));
-        recruitment.put(RECRUITMENT_DISTRICT, pref.getString(RECRUITMENT_DISTRICT, null));
-        recruitment.put(RECRUITMENT_SUBCOUNTY, pref.getString(RECRUITMENT_SUBCOUNTY, null));
-        recruitment.put(RECRUITMENT_DIVISION, pref.getString(RECRUITMENT_DIVISION, null));
-        recruitment.put(RECRUITMENT_LAT, pref.getString(RECRUITMENT_LAT, null));
-        recruitment.put(RECRUITMENT_LON, pref.getString(RECRUITMENT_LON, null));
-
-        return recruitment;
-    }
-    /**
-     *
-     * Get the stored Registration
-     *
-     * */
-    public HashMap<String, String> getRegistrationSession (){
-        HashMap<String, String> registration = new HashMap<String, String>();
-
-        registration.put(REGISTRATION_ID, String.valueOf(pref.getInt(REGISTRATION_ID, 0)));
-        registration.put(REGISTRATION_NAME, pref.getString(REGISTRATION_NAME, null));
-        registration.put(REGISTRATION_PHONE, pref.getString(REGISTRATION_PHONE, null));
-        registration.put(REGISTRATION_GENDER, pref.getString(REGISTRATION_GENDER, null));
-        registration.put(REGISTRATION_VILLAGE, pref.getString(REGISTRATION_VILLAGE, null));
-        registration.put(REGISTRATION_OCCUPATION, pref.getString(REGISTRATION_OCCUPATION, null));
-
-        return registration;
-    }
-
-    /**
-     *
-     * Get the stored Exam
-     *
-     * */
-    public HashMap<String, Integer> getExamSession (){
-        HashMap<String, Integer> exam = new HashMap<String, Integer>();
-
-        exam.put(EXAM_ID, pref.getInt(EXAM_ID, 0));
-        exam.put(EXAM_MATH, pref.getInt(EXAM_MATH, 0));
-        exam.put(EXAM_PERSONALITY, pref.getInt(EXAM_PERSONALITY, 0));
-        exam.put(EXAM_ENGLISH, pref.getInt(EXAM_ENGLISH, 0));
-
-        return exam;
     }
 
 

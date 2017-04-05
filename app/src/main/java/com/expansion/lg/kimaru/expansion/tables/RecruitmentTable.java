@@ -2,6 +2,7 @@ package com.expansion.lg.kimaru.expansion.tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -45,7 +46,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     public static final String SYNCED = "synced";
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
-            + primary_field + ", "
+            + ID + varchar_field + ", "
             + NAME + varchar_field + ", "
             + LAT + varchar_field + ", "
             + LON + varchar_field + ", "
@@ -82,6 +83,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         SQLiteDatabase db=getWritableDatabase();
 
         ContentValues cv=new ContentValues();
+        cv.put(ID, recruitment.getId());
         cv.put(NAME, recruitment.getName());
         cv.put(DISTRICT, recruitment.getDistrict());
         cv.put(LAT, recruitment.getLat());
@@ -92,12 +94,30 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         cv.put(COMMENT, recruitment.getComment());
         cv.put(DATE_ADDED, recruitment.getDateAdded());
         cv.put(SYNCED, recruitment.getSynced());
-
-        long id=db.insert(TABLE_NAME,null,cv);
-
+        long id;
+        if (exists(recruitment)){
+            //uupdate
+            id = db.update(TABLE_NAME, cv, ID+"='"+recruitment.getId()+"'", null);
+        }else{
+            //create new
+            id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+        }
         db.close();
         return id;
 
+    }
+    public boolean exists(Recruitment recruitment){
+        SQLiteDatabase db = getReadableDatabase();
+        long cnt = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                ID+"=?", new String[] {recruitment.getId()});
+        return cnt > 0;
+    }
+
+    public long getRecruitmentCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME);
+        db.close();
+        return cnt;
     }
 
     public List<Recruitment> getRecruitmentData() {
@@ -116,7 +136,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
 
             Recruitment recruitment=new Recruitment();
 
-            recruitment.setId(cursor.getInt(0));
+            recruitment.setId(cursor.getString(0));
             recruitment.setName(cursor.getString(1));
             recruitment.setDistrict(cursor.getString(2));
             recruitment.setSubcounty(cursor.getString(3));
@@ -125,7 +145,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
             recruitment.setLon(cursor.getString(6));
             recruitment.setAddedBy(cursor.getInt(7));
             recruitment.setComment(cursor.getString(8));
-            recruitment.setDateAdded(cursor.getInt(9));
+            recruitment.setDateAdded(cursor.getLong(9));
             recruitment.setSynced(cursor.getInt(10));
 
             recruitmentList.add(recruitment);
@@ -160,7 +180,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
 
             Recruitment recruitment=new Recruitment();
 
-            recruitment.setId(cursor.getInt(0));
+            recruitment.setId(cursor.getString(0));
             recruitment.setName(cursor.getString(1));
             recruitment.setDistrict(cursor.getString(2));
             recruitment.setSubcounty(cursor.getString(3));
@@ -169,7 +189,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
             recruitment.setLon(cursor.getString(6));
             recruitment.setAddedBy(cursor.getInt(7));
             recruitment.setComment(cursor.getString(8));
-            recruitment.setDateAdded(cursor.getInt(9));
+            recruitment.setDateAdded(cursor.getLong(9));
             recruitment.setSynced(cursor.getInt(10));
 
             recruitments.add(recruitment);

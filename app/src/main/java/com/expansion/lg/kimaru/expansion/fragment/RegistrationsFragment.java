@@ -72,7 +72,7 @@ public class RegistrationsFragment extends Fragment  {
     private ActionModeCallback actionModeCallback;
 
     SessionManagement session;
-    HashMap <String, String> recruitment;
+    Recruitment recruitment;
 
 
 
@@ -124,7 +124,7 @@ public class RegistrationsFragment extends Fragment  {
         textshow = (TextView) v.findViewById(R.id.textShow);
         //session Management
         session = new SessionManagement(getContext());
-        recruitment = session.getRecruitmentSession();
+        recruitment = session.getSavedRecruitment();
 
 
         // ============Gmail View starts here =======================
@@ -137,6 +137,7 @@ public class RegistrationsFragment extends Fragment  {
             public void onRefresh() {
                 // onRefresh action here
                 Toast.makeText(getContext(), "Refreshing the list", Toast.LENGTH_SHORT).show();
+                getRegistrations();
             }
         });
         rAdapter = new RegistrationListAdapter(this.getContext(), registrations, new RegistrationListAdapter.RegistrationListAdapterListener() {
@@ -159,8 +160,6 @@ public class RegistrationsFragment extends Fragment  {
             public void onMessageRowClicked(int position) {
                 // read the message which removes bold from the row
                 Registration registration = registrations.get(position);
-
-                registration.setRead(true);
                 registrations.set(position, registration);
                 rAdapter.notifyDataSetChanged();
             }
@@ -172,14 +171,12 @@ public class RegistrationsFragment extends Fragment  {
 
                 //extract the clicked recruitment
                 Registration registration = registrations.get(position);
-                session.createRegistrationSession(registration.getId(), registration.getName(),
-                        registration.getPhone(), registration.getGender(), registration.getVillage(),
-                        registration.getOccupation());
+                session.saveRegistration(registration);
+                NewRegistrationFragment newRegistrationFragment = new NewRegistrationFragment();
+                newRegistrationFragment.editingRegistration  = registration;
 
 //                getSupportFragmentManager().beginTransaction();
-
-                NewInterviewFragment nextFrag = new NewInterviewFragment();
-                Fragment fragment = nextFrag;
+                Fragment fragment = newRegistrationFragment;
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
@@ -233,7 +230,7 @@ public class RegistrationsFragment extends Fragment  {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(recruitment.get(SessionManagement.RECRUITMENT_NAME)+" Registrations");
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(recruitment.getName() +" Registrations");
     }
 
     /**

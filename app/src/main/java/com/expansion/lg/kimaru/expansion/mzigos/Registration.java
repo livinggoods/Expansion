@@ -1,14 +1,17 @@
 package com.expansion.lg.kimaru.expansion.mzigos;
 
+import java.util.Date;
+
 /**
  * Created by kimaru on 3/11/17.
  */
 
 public class Registration {
 
-    String name, phone,gender, district, subcounty, division, village, mark, langs, education;
-    String occupation, comment, picture;
-    Integer Id, dob, readEnglish, recruitment, dateMoved, brac, bracChp, community, addedBy, proceed, dateAdded, synced;
+    String recruitment, name, phone, gender, district, subcounty, division, village, mark, langs, education;
+    String id, occupation, comment, picture;
+    Integer readEnglish, brac, bracChp, community, addedBy, proceed, synced;
+    Long dob, dateMoved, dateAdded;
     int color = -1;
     Boolean read = false;
 
@@ -16,12 +19,12 @@ public class Registration {
 
     }
 
-    public Registration(String mName, String mPhone, String mGender, String mDistrict,
+    public Registration(String id, String mName, String mPhone, String mGender, String mDistrict,
                         String mSubcounty, String mDivision, String mVillage, String mMark,
                         String mLangs, String mEducation, String mOccupation, String mComment,
-                        Integer mDob, Integer mReadEnglish, Integer mRecruitment,
-                        Integer mDateMoved, Integer mBrac, Integer mBracChp, Integer mCommunity,
-                        Integer mAddedBy, Integer mProceed, Integer mDateAdded, Integer mSynced) {
+                        Long mDob, Integer mReadEnglish, String mRecruitment,
+                        Long mDateMoved, Integer mBrac, Integer mBracChp, Integer mCommunity,
+                        Integer mAddedBy, Integer mProceed, Long mDateAdded, Integer mSynced) {
         this.name = mName;
         this.phone = mPhone;
         this.recruitment = mRecruitment;
@@ -45,6 +48,7 @@ public class Registration {
         this.proceed = mProceed;
         this.dateAdded = mDateAdded;
         this.synced = mSynced;
+        this.id = id;
     }
 
 
@@ -58,7 +62,7 @@ public class Registration {
     public String getGender() {
         return gender;
     }
-    public Integer getRecruitment() {
+    public String getRecruitment() {
         return recruitment;
     }
     public String getDistrict() {
@@ -88,13 +92,13 @@ public class Registration {
     public String getComment() {
         return comment;
     }
-    public Integer getDob() {
+    public Long getDob() {
         return dob;
     }
     public Integer getReadEnglish() {
         return readEnglish;
     }
-    public Integer getDateMoved() {
+    public Long getDateMoved() {
         return dateMoved;
     }
 
@@ -118,7 +122,7 @@ public class Registration {
         return proceed;
     }
 
-    public Integer getDateAdded() {
+    public Long getDateAdded() {
         return dateAdded;
     }
 
@@ -126,8 +130,8 @@ public class Registration {
     public Integer getSynced() {
         return synced;
     }
-    public Integer getId() {
-        return Id;
+    public String getId() {
+        return id;
     }
 
 
@@ -155,7 +159,7 @@ public class Registration {
     public void setGender(String gender) {
         this.gender = gender;
     }
-    public void setRecruitment(Integer recruitment) {
+    public void setRecruitment(String recruitment) {
         this.recruitment = recruitment;
     }
 
@@ -175,7 +179,7 @@ public class Registration {
         this.education = education;
     }
 
-    public void setDob(Integer dob) {
+    public void setDob(Long dob) {
         this.dob = dob;
     }
 
@@ -215,11 +219,11 @@ public class Registration {
         this.community = community;
     }
 
-    public void setDateAdded(Integer dateAdded) {
+    public void setDateAdded(Long dateAdded) {
         this.dateAdded = dateAdded;
     }
 
-    public void setDateMoved(Integer dateMoved) {
+    public void setDateMoved(Long dateMoved) {
         this.dateMoved = dateMoved;
     }
 
@@ -244,8 +248,28 @@ public class Registration {
         this.read = read;
     }
 
-    public void setId(Integer Id) {
-        this.Id = Id;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public boolean hasPassed(){
+        // age should be between 30 and 55
+        Long currentDate =  new Date().getTime();
+        Long epochYear = 31556926000L;
+        Long age = this.dob - currentDate;
+        if (30 * epochYear< age || age > 55 * epochYear){
+            return false;
+        }else if (this.readEnglish == 0) {
+            return false;
+        }else if (this.dateMoved < 2) {
+            return false;
+        }else if (brac == 1 && bracChp == 1){
+            return false;
+        }else if (Integer.valueOf(this.education) < 7 || Integer.valueOf(this.education) > 12){
+            return false;
+        }else {
+            return true;
+        }
     }
 
 }

@@ -25,6 +25,7 @@ import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 
 /**
@@ -54,6 +55,7 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
 
 
     Button buttonSave, buttonList;
+    public Recruitment editingRecruitment = null;
 
 
     private int mYear, mMonth, mDay;
@@ -109,6 +111,8 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
         mDivision = (EditText) v.findViewById(R.id.editRecruitmentDivision);
         mSubCounty = (EditText) v.findViewById(R.id.editRecruitmentSubCounty);
 
+        //in case we are editing
+        setUpEditingMode();
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
@@ -132,7 +136,17 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                 // set date as integers
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                 Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
-                Integer currentDate =  (int) (new Date().getTime()/1000);
+                Long currentDate =  new Date().getTime();
+
+                // Generate the uuid
+                String id;
+                if (editingRecruitment != null){
+                    id = editingRecruitment.getId();
+                }else {
+                    id = UUID.randomUUID().toString();
+                }
+
+
 
                 String recruitmentName = mName.getText().toString();
                 String recruitmentDistrict = mDistrict.getText().toString();
@@ -143,7 +157,7 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                 String recruitmentLon = "";
 
                 Integer recruitmentAddedBy = loggedInUser;
-                Integer recruitmentDateAdded = currentDate;
+                Long recruitmentDateAdded = currentDate;
                 Integer recruitmentSync = 0;
 
 
@@ -165,11 +179,11 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                 else{
                     // Save Recruitment
                     Recruitment recruitment;
-                    recruitment = new Recruitment(recruitmentName, recruitmentDistrict, recruitmentSubCounty, recruitmentDivision, recruitmentLat, recruitmentLon, recruitmentComment, recruitmentAddedBy, recruitmentDateAdded, recruitmentSync);
+                    recruitment = new Recruitment(id, recruitmentName, recruitmentDistrict, recruitmentSubCounty, recruitmentDivision, recruitmentLat, recruitmentLon, recruitmentComment, recruitmentAddedBy, recruitmentDateAdded, recruitmentSync);
                     RecruitmentTable recruitmentTable = new RecruitmentTable(getContext());
-                    long id = recruitmentTable.addData(recruitment);
+                    long statusId = recruitmentTable.addData(recruitment);
 
-                    if (id ==-1){
+                    if (statusId ==-1){
                         Toast.makeText(getContext(), "Could not save registration", Toast.LENGTH_SHORT).show();
                     }
                     else{
@@ -221,5 +235,14 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void setUpEditingMode(){
+        if (editingRecruitment != null){
+            mName.setText(editingRecruitment.getName());
+            mDistrict.setText(editingRecruitment.getDistrict());
+            mDivision.setText(editingRecruitment.getDivision());
+            mSubCounty.setText(editingRecruitment.getSubcounty());
+        }
     }
 }

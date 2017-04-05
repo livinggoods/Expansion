@@ -147,17 +147,17 @@ public class RecruitmentsFragment extends Fragment  {
 
             @Override
             public void onIconImportantClicked(int position) {
-                Toast.makeText(getContext(), "An iconImportant is clicked", Toast.LENGTH_SHORT).show();
+                //when you click ka-macho, it sould open for you the details of the recruitment
+                Recruitment recruitment = recruitments.get(position);
+
             }
 
             @Override
             public void onMessageRowClicked(int position) {
-                // read the message which removes bold from the row
+                // go to view the recruitment
                 Recruitment recruitment = recruitments.get(position);
+                session.saveRecruitment(recruitment);
 
-                recruitment.setRead(true);
-                recruitments.set(position, recruitment);
-                rAdapter.notifyDataSetChanged();
 
             }
 
@@ -166,10 +166,9 @@ public class RecruitmentsFragment extends Fragment  {
 
                 //extract the clicked recruitment
                 Recruitment recruitment = recruitments.get(position);
-                session.createRecruitmentSession(recruitment.getId(), recruitment.getName(),
-                        recruitment.getDistrict(), recruitment.getSubcounty(),
-                        recruitment.getDivision(), recruitment.getLat(), recruitment.getLon());
-                Toast.makeText(getContext(), recruitment.getName() + " is now made the default", Toast.LENGTH_SHORT).show();
+                session.saveRecruitment(recruitment);
+                NewRecruitmentFragment newRecruitmentFragment = new NewRecruitmentFragment();
+                newRecruitmentFragment.editingRecruitment = recruitment;
             }
         });
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
