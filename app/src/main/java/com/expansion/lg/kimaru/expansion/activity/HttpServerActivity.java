@@ -135,7 +135,7 @@ public class HttpServerActivity extends AppCompatActivity {
                     for (int x = 0; x < recs.length(); x++){
                         Recruitment recruitment = new Recruitment();
 
-                        recruitment.setId(Integer.parseInt(recs.getJSONObject(x).getString("_id")));
+                        recruitment.setId(recs.getJSONObject(x).getString("_id"));
                         recruitment.setName(recs.getJSONObject(x).getString("title"));
                         recruitment.setDistrict(recs.getJSONObject(x).getString("district"));
                         recruitment.setSubcounty(recs.getJSONObject(x).getString("subcounty"));
@@ -144,7 +144,7 @@ public class HttpServerActivity extends AppCompatActivity {
                         recruitment.setLon(recs.getJSONObject(x).getString("lon"));
                         recruitment.setAddedBy(Integer.parseInt(recs.getJSONObject(x).getString("added_by")));
                         recruitment.setComment(recs.getJSONObject(x).getString("comment"));
-                        recruitment.setDateAdded(Integer.parseInt(recs.getJSONObject(x).getString("date_added")));
+                        recruitment.setDateAdded(Long.parseLong(recs.getJSONObject(x).getString("date_added")));
                         recruitment.setSynced(Integer.parseInt(recs.getJSONObject(x).getString("synced")));
 
                     }
