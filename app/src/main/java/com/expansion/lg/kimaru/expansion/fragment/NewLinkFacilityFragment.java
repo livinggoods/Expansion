@@ -473,7 +473,6 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
     @Override
     public void onProviderDisabled(String provider){
-
     }
 
     @Override
