@@ -47,7 +47,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Maths Score"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="number"
+                    android:inputType="numberDecimal"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
@@ -60,7 +60,7 @@
                     android:layout_height="wrap_content"
                     android:hint="English Score"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="number"
+                    android:inputType="numberDecimal"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
@@ -73,7 +73,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Self Assessment Score"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="number"
+                    android:inputType="numberDecimal"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 

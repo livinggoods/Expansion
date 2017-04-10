@@ -102,7 +102,7 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
         examResults = (TextView) v.findViewById(R.id.examResults);
         examResults.setText("");
         if (exam != null){
-            Integer total = exam.getEnglish() + exam.getMath() + exam.getPersonality();
+            Double total = exam.getEnglish() + exam.getMath() + exam.getPersonality();
             String ex = "Exam Results " +"\n\n" +
                         "English: " +exam.getEnglish() + "\n" +
                         "Maths: "+ exam.getMath() + "\n" +

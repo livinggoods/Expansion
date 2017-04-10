@@ -32,6 +32,7 @@ public class ExamTable extends SQLiteOpenHelper {
 
 
     public static String varchar_field = " varchar(512) ";
+    public static String real_field = " REAL ";
     public static String primary_field = " _id INTEGER PRIMARY KEY AUTOINCREMENT ";
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
@@ -55,9 +56,9 @@ public class ExamTable extends SQLiteOpenHelper {
             + APPLICANT + varchar_field + ", "
             + RECRUITMENT + varchar_field + ", "
             + COUNTRY + varchar_field + ", "
-            + MATH + integer_field + ", "
-            + PERSONALITY + integer_field + ", "
-            + ENGLISH + integer_field + ", "
+            + MATH + real_field + ", "
+            + PERSONALITY + real_field + ", "
+            + ENGLISH + real_field + ", "
             + ADDED_BY + integer_field + ", "
             + COMMENT + text_field + ", "
             + DATE_ADDED + integer_field + ", "
@@ -126,9 +127,9 @@ public class ExamTable extends SQLiteOpenHelper {
             exam.setId(cursor.getString(0));
             exam.setApplicant(cursor.getString(1));
             exam.setRecruitment(cursor.getString(2));
-            exam.setMath(cursor.getInt(3));
-            exam.setPersonality(cursor.getInt(4));
-            exam.setEnglish(cursor.getInt(5));
+            exam.setMath(cursor.getDouble(3));
+            exam.setPersonality(cursor.getDouble(4));
+            exam.setEnglish(cursor.getDouble(5));
             exam.setAddedBy(cursor.getInt(6));
             exam.setComment(cursor.getString(7));
             exam.setDateAdded(cursor.getLong(8));
@@ -157,9 +158,9 @@ public class ExamTable extends SQLiteOpenHelper {
             exam.setId(cursor.getString(0));
             exam.setApplicant(cursor.getString(1));
             exam.setRecruitment(cursor.getString(2));
-            exam.setMath(cursor.getInt(3));
-            exam.setPersonality(cursor.getInt(4));
-            exam.setEnglish(cursor.getInt(5));
+            exam.setMath(cursor.getDouble(3));
+            exam.setPersonality(cursor.getDouble(4));
+            exam.setEnglish(cursor.getDouble(5));
             exam.setAddedBy(cursor.getInt(6));
             exam.setComment(cursor.getString(7));
             exam.setDateAdded(cursor.getLong(8));
@@ -191,9 +192,9 @@ public class ExamTable extends SQLiteOpenHelper {
             exam.setId(cursor.getString(0));
             exam.setApplicant(cursor.getString(1));
             exam.setRecruitment(cursor.getString(2));
-            exam.setMath(cursor.getInt(3));
-            exam.setPersonality(cursor.getInt(4));
-            exam.setEnglish(cursor.getInt(5));
+            exam.setMath(cursor.getDouble(3));
+            exam.setPersonality(cursor.getDouble(4));
+            exam.setEnglish(cursor.getDouble(5));
             exam.setAddedBy(cursor.getInt(6));
             exam.setComment(cursor.getString(7));
             exam.setDateAdded(cursor.getLong(8));

@@ -158,9 +158,9 @@ public class NewExamFragment extends Fragment implements OnClickListener {
                 String applicantId = sessionManagement.getSavedRegistration().getId();
                 String recruitment = sessionManagement.getSavedRecruitment().getId();
 
-                Integer applicantMathsScore = Integer.parseInt(mMaths.getText().toString());
-                Integer applicantEnglishScore = Integer.parseInt(mEnglish.getText().toString());
-                Integer applicantSelfAssessmentScore = Integer.parseInt(mSelfAssessment.getText().toString());
+                Double applicantMathsScore = Double.parseDouble(mMaths.getText().toString());
+                Double applicantEnglishScore = Double.parseDouble(mEnglish.getText().toString());
+                Double applicantSelfAssessmentScore = Double.parseDouble(mSelfAssessment.getText().toString());
 
                 String applicantComment = "";
                 Integer applicantAddedBy = Integer.valueOf(user.get(SessionManagement.KEY_USERID));

@@ -6,7 +6,8 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 
 public class Exam {
 
-    Integer math, english, personality, addedBy, synced;
+    Double math, english, personality;
+    Integer addedBy, synced;
     Long dateAdded;
     String comment, Id, applicant, recruitment, country;
     String picture="";
@@ -17,8 +18,8 @@ public class Exam {
 
     }
 
-    public Exam(String id, String applicant, Integer math, String recruitment, Integer personality,
-                Integer english, Integer addedBy, Long dateAdded, Integer synced, String comment,
+    public Exam(String id, String applicant, Double math, String recruitment, Double personality,
+                Double english, Integer addedBy, Long dateAdded, Integer synced, String comment,
                 String country) {
         this.applicant = applicant;
         this.recruitment = recruitment;
@@ -41,10 +42,10 @@ public class Exam {
     public String getRecruitment() {
         return recruitment;
     }
-    public Integer getMath() {
+    public Double getMath() {
         return math;
     }
-    public Integer getEnglish() {
+    public Double getEnglish() {
         return english;
     }
     public Integer getAddedBy() {
@@ -56,7 +57,7 @@ public class Exam {
     public Integer getSynced() {
         return synced;
     }
-    public Integer getPersonality() { return  personality; }
+    public Double getPersonality() { return  personality; }
 
     public String getComment() {
         return comment;
@@ -101,15 +102,15 @@ public class Exam {
         this.addedBy = addedBy;
     }
 
-    public void setEnglish(Integer english) {
+    public void setEnglish(Double english) {
         this.english = english;
     }
 
-    public void setMath(Integer math) {
+    public void setMath(Double math) {
         this.math = math;
     }
 
-    public void setPersonality(Integer personality) {
+    public void setPersonality(Double personality) {
         this.personality = personality;
     }
 
@@ -140,14 +141,24 @@ public class Exam {
     }
 
     public boolean hasPassed(){
+
         if (this.math == 0 || this.english == 0 || this.personality ==0){
             return false;
         }else{
-            if ((this.math + this.english + this.personality) < 30){
-                return false;
-            }else{
-                return true;
+            if (this.country == "KE"){
+                if ((this.math + this.english + this.personality) < 20){
+                    return false;
+                }else{
+                    return true;
+                }
+            }else {
+                if ((this.math + this.english + this.personality) < 30){
+                    return false;
+                }else{
+                    return true;
+                }
             }
+
         }
     }
 }

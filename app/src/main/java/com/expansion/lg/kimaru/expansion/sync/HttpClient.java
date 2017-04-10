@@ -187,9 +187,9 @@ public class HttpClient {
                         exam.setId(recs.getJSONObject(x).getString(ExamTable.ID));
                         exam.setApplicant(recs.getJSONObject(x).getString(ExamTable.APPLICANT));
                         exam.setRecruitment(recs.getJSONObject(x).getString(ExamTable.RECRUITMENT));
-                        exam.setMath(recs.getJSONObject(x).getInt(ExamTable.MATH));
-                        exam.setPersonality(recs.getJSONObject(x).getInt(ExamTable.PERSONALITY));
-                        exam.setEnglish(recs.getJSONObject(x).getInt(ExamTable.ENGLISH));
+                        exam.setMath(recs.getJSONObject(x).getDouble(ExamTable.MATH));
+                        exam.setPersonality(recs.getJSONObject(x).getDouble(ExamTable.PERSONALITY));
+                        exam.setEnglish(recs.getJSONObject(x).getDouble(ExamTable.ENGLISH));
                         exam.setAddedBy(recs.getJSONObject(x).getInt(ExamTable.ADDED_BY));
                         exam.setComment(recs.getJSONObject(x).getString(ExamTable.COMMENT));
                         exam.setDateAdded(recs.getJSONObject(x).getLong(ExamTable.DATE_ADDED));
