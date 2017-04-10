@@ -92,6 +92,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
 
     SessionManagement session;
     String userName, userEmail, recruitmentId;
+    HashMap<String, String> user;
     Integer userId;
     Registration editingRegistration = null;
 
@@ -140,7 +141,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         session.checkRecruitment();
 
         //we can now extract User details
-        HashMap<String, String> user = session.getUserDetails();
+        user = session.getUserDetails();
         //name
         userName = user.get(SessionManagement.KEY_NAME);
         //Emails
@@ -291,6 +292,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 Long applicantDateAdded = currentDate;
                 Integer applicantSync = 0;
                 String applicantRecruitment = recruitmentId;
+                String country = user.get(SessionManagement.KEY_USER_COUNTRY);
 
 
                 // Do some validations
@@ -312,7 +314,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                             applicantDistrict, applicantSubcounty, applicantDivision, applicantVillage,
                             applicantMark, applicantLangs, applicantEducation, applicantOccupation,
                             applicantComment, applicantDob, applicantReadEnglish, applicantRecruitment,
-                            applicantDateMoved, applicantBrac, applicantBracChp, applicantCommunity,
+                            country, applicantDateMoved, applicantBrac, applicantBracChp, applicantCommunity,
                             applicantAddedBy, applicantProceed, applicantDateAdded, applicantSync);
                     RegistrationTable registrationTable = new RegistrationTable(getContext());
                     long id = registrationTable.addData(registration);

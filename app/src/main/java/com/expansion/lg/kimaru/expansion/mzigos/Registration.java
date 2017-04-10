@@ -9,7 +9,7 @@ import java.util.Date;
 public class Registration {
 
     String recruitment, name, phone, gender, district, subcounty, division, village, mark, langs, education;
-    String id, occupation, comment, picture;
+    String id, occupation, comment, picture, country;
     Integer readEnglish, brac, bracChp, community, addedBy, proceed, synced;
     Long dob, dateMoved, dateAdded;
     int color = -1;
@@ -22,7 +22,7 @@ public class Registration {
     public Registration(String id, String mName, String mPhone, String mGender, String mDistrict,
                         String mSubcounty, String mDivision, String mVillage, String mMark,
                         String mLangs, String mEducation, String mOccupation, String mComment,
-                        Long mDob, Integer mReadEnglish, String mRecruitment,
+                        Long mDob, Integer mReadEnglish, String mRecruitment, String country,
                         Long mDateMoved, Integer mBrac, Integer mBracChp, Integer mCommunity,
                         Integer mAddedBy, Integer mProceed, Long mDateAdded, Integer mSynced) {
         this.name = mName;
@@ -33,6 +33,7 @@ public class Registration {
         this.subcounty = mSubcounty;
         this.division = mDivision;
         this.village = mVillage;
+        this.country = country;
         this.mark = mMark;
         this.langs = mLangs;
         this.education = mEducation;
@@ -148,6 +149,14 @@ public class Registration {
         return read;
     }
     public String getMessage(){return "This is a great Message";}
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
     //Set Methods
     public void setName(String name) {

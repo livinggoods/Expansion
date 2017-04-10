@@ -43,6 +43,7 @@ public class InterviewTable extends SQLiteOpenHelper {
     public static final String MOTIVATION = "motivation";
     public static final String COMMUNITY = "community";
     public static final String MENTALITY = "mentality";
+    public static final String COUNTRY = "country";
     public static final String SELLING = "selling";
     public static final String HEALTH = "health";
     public static final String INVESTMENT = "investment";
@@ -55,6 +56,9 @@ public class InterviewTable extends SQLiteOpenHelper {
     public static final String ADDED_BY = "added_by";
     public static final String COMMENT = "comment";
     public static final String DATE_ADDED = "date_added";
+    String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MOTIVATION, COMMUNITY,MENTALITY,
+            SELLING, HEALTH, INVESTMENT, INTERPERSONAL, TOTAL, SELECTED, ADDED_BY, COMMENT,
+            COMMITMENT, DATE_ADDED, SYNCED, CANJOIN, COUNTRY};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ", "
@@ -64,6 +68,7 @@ public class InterviewTable extends SQLiteOpenHelper {
             + COMMUNITY + integer_field + ", "
             + MENTALITY + integer_field + ", "
             + SELLING + integer_field + ", "
+            + COUNTRY + varchar_field + ", "
             + HEALTH + integer_field + ", "
             + INVESTMENT + integer_field + ", "
             + INTERPERSONAL + integer_field + ", "
@@ -107,6 +112,7 @@ public class InterviewTable extends SQLiteOpenHelper {
         cv.put(MOTIVATION, interview.getMotivation());
         cv.put(COMMUNITY, interview.getCommunity());
         cv.put(MENTALITY, interview.getMentality());
+        cv.put(COUNTRY, interview.getCountry());
         cv.put(SELLING, interview.getSelling());
         cv.put(HEALTH, interview.getHealth());
         cv.put(INVESTMENT, interview.getInvestment());
@@ -144,10 +150,6 @@ public class InterviewTable extends SQLiteOpenHelper {
 
         SQLiteDatabase db=getReadableDatabase();
 
-        String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MOTIVATION, COMMUNITY,MENTALITY,
-                SELLING, HEALTH, INVESTMENT, INTERPERSONAL, TOTAL, SELECTED, ADDED_BY, COMMENT,
-                COMMITMENT, DATE_ADDED, SYNCED, CANJOIN};
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
         List<Interview> interviewList=new ArrayList<>();
@@ -175,6 +177,7 @@ public class InterviewTable extends SQLiteOpenHelper {
             interview.setDateAdded(cursor.getLong(15));
             interview.setSynced(cursor.getInt(16));
             interview.setCanJoin(cursor.getInt(17) == 1);
+            interview.setCountry(cursor.getString(18));
 
             interviewList.add(interview);
         }
@@ -186,20 +189,12 @@ public class InterviewTable extends SQLiteOpenHelper {
     public Cursor getInterviewDataCursor() {
 
         SQLiteDatabase db=getReadableDatabase();
-
-        String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MOTIVATION, COMMUNITY,MENTALITY,
-                SELLING, HEALTH, INVESTMENT, INTERPERSONAL, TOTAL, SELECTED, ADDED_BY, COMMENT,
-                COMMITMENT, DATE_ADDED, SYNCED, CANJOIN};
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
         return cursor;
     }
     public Interview getInterviewByRegistrationId (String registrationUuid){
         SQLiteDatabase db = getReadableDatabase();
-        String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MOTIVATION, COMMUNITY,MENTALITY,
-                SELLING, HEALTH, INVESTMENT, INTERPERSONAL, TOTAL, SELECTED, ADDED_BY, COMMENT,
-                COMMITMENT, DATE_ADDED, SYNCED, CANJOIN};
         String whereClause = APPLICANT+" = ?";
         String[] whereArgs = new String[] {
                 registrationUuid,
@@ -236,10 +231,6 @@ public class InterviewTable extends SQLiteOpenHelper {
     public JSONObject getInterviewJson() {
 
         SQLiteDatabase db=getReadableDatabase();
-
-        String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MOTIVATION, COMMUNITY,MENTALITY,
-                SELLING, HEALTH, INVESTMENT, INTERPERSONAL, TOTAL, SELECTED, ADDED_BY, COMMENT,
-                COMMITMENT, DATE_ADDED, SYNCED, CANJOIN};
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 

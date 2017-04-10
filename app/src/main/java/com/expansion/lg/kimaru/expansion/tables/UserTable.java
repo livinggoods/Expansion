@@ -40,7 +40,7 @@ public class UserTable extends SQLiteOpenHelper {
     public static final String PASSWORD = "password";
     public static final String NAME = "name";
     public static final String COUNTRY = "country";
-
+    String [] columns=new String[]{ID, EMAIL, USERNAME, PASSWORD, NAME, COUNTRY};
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + primary_field + ", "
             + EMAIL + varchar_field + ", "
@@ -92,8 +92,6 @@ public class UserTable extends SQLiteOpenHelper {
 
         SQLiteDatabase db=getReadableDatabase();
 
-        String [] columns=new String[]{ID, EMAIL, USERNAME, PASSWORD, NAME};
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
         List<User> userList=new ArrayList<>();
@@ -117,8 +115,6 @@ public class UserTable extends SQLiteOpenHelper {
 
         SQLiteDatabase db=getReadableDatabase();
 
-        String [] columns=new String[]{ID, EMAIL, USERNAME, PASSWORD, NAME, COUNTRY};
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
         return cursor;
     }
@@ -126,7 +122,6 @@ public class UserTable extends SQLiteOpenHelper {
 
     public Cursor fetchUser (String username, String password){
         SQLiteDatabase db = getReadableDatabase();
-        String [] columns=new String[]{ID, EMAIL, USERNAME, PASSWORD, NAME, COUNTRY};
         Cursor myCursor = db.query(TABLE_NAME, columns, EMAIL + "='" + username +
                 "' AND " + PASSWORD + " = '" + password + "'", null, null, null, null);
         if (myCursor != null){
@@ -138,8 +133,6 @@ public class UserTable extends SQLiteOpenHelper {
     public JSONObject getUsersJson() {
 
         SQLiteDatabase db=getReadableDatabase();
-
-        String [] columns=new String[]{ID, NAME, EMAIL, PASSWORD, USERNAME, COUNTRY};
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 

@@ -8,7 +8,7 @@ public class Exam {
 
     Integer math, english, personality, addedBy, synced;
     Long dateAdded;
-    String comment, Id, applicant, recruitment;
+    String comment, Id, applicant, recruitment, country;
     String picture="";
     int color = -1;
     Boolean read = false;
@@ -18,7 +18,8 @@ public class Exam {
     }
 
     public Exam(String id, String applicant, Integer math, String recruitment, Integer personality,
-                Integer english, Integer addedBy, Long dateAdded, Integer synced, String comment) {
+                Integer english, Integer addedBy, Long dateAdded, Integer synced, String comment,
+                String country) {
         this.applicant = applicant;
         this.recruitment = recruitment;
         this.math = math;
@@ -29,6 +30,7 @@ public class Exam {
         this.synced = synced;
         this.comment = comment;
         this.Id = id;
+        this.country = country;
     }
 
 
@@ -60,6 +62,9 @@ public class Exam {
         return comment;
     }
 
+    public String getCountry() {
+        return country;
+    }
 
     public String getId() {
         return Id;
@@ -124,6 +129,10 @@ public class Exam {
 
     public void setRead(boolean read) {
         this.read = read;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public void setId(String Id) {

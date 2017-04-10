@@ -167,6 +167,7 @@ public class NewExamFragment extends Fragment implements OnClickListener {
                 Integer applicantProceed = 0;
                 Long applicantDateAdded = currentDate;
                 Integer applicantSync = 0;
+                String country = user.get(SessionManagement.KEY_USER_COUNTRY);
 
 
                 // Do some validations
@@ -185,9 +186,7 @@ public class NewExamFragment extends Fragment implements OnClickListener {
                     Exam exam;
                     exam = new Exam(uuid, applicantId, applicantMathsScore, recruitment,
                             applicantSelfAssessmentScore, applicantEnglishScore, applicantAddedBy,
-                            applicantDateAdded, applicantSync, applicantComment);
-
-                    Toast.makeText(getContext(), "ExamID is "+exam.getId(), Toast.LENGTH_SHORT).show();
+                            applicantDateAdded, applicantSync, applicantComment, country);
 
                     ExamTable examTable = new ExamTable(getContext());
                     long id = examTable.addData(exam);

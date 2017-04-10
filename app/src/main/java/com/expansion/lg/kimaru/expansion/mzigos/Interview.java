@@ -11,7 +11,7 @@ public class Interview {
 
     Integer motivation, community, mentality, selling, health, investment;
     Integer interpersonal, commitment, total, addedBy, synced;
-    String comment, id, applicant, recruitment;
+    String comment, id, applicant, recruitment, country;
     Long dateAdded;
     boolean isRead, isImportant, canJoin, selected;
     int color = -1;
@@ -24,7 +24,7 @@ public class Interview {
     public Interview(String id, String applicant, String recruitment, Integer motivation, Integer community,
                      Integer mentality, Integer selling, Integer health, Integer investment,
                      Integer interpersonal, Integer commitment, boolean selected, Integer addedBy,
-                     Long dateAdded, Integer synced, String comment, boolean canJoin) {
+                     Long dateAdded, Integer synced, String comment, boolean canJoin, String country) {
         this.applicant = applicant;
         this.recruitment = recruitment;
         this.motivation = motivation;
@@ -40,6 +40,7 @@ public class Interview {
         this.dateAdded = dateAdded;
         this.synced = synced;
         this.comment = comment;
+        this.country = country;
         this.id = id;
         this.canJoin = canJoin;
         this.total = (motivation + community + mentality + selling + health + investment + interpersonal + commitment);
@@ -111,6 +112,14 @@ public class Interview {
             return this.calculateTotal();
         }
 
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public boolean isCanJoin() {

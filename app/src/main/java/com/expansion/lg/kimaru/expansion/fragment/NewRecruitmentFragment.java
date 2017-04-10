@@ -25,6 +25,7 @@ import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 
@@ -61,8 +62,8 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
     private int mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 100;
 
-
-    Integer loggedInUser = 1;
+    SessionManagement session;
+    HashMap<String, String> user;
 
 
 
@@ -105,6 +106,8 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
         View v =  inflater.inflate(R.layout.fragment_new_recruitment, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_RECRUITMENT;
         MainActivity.backFragment = new RecruitmentsFragment();
+        session = new SessionManagement(getContext());
+        user = session.getUserDetails();
                 //Initialize the UI Components
         mName = (EditText) v.findViewById(R.id.editRecruitmentName);
         mDistrict = (EditText) v.findViewById(R.id.editRecruitmentDistrict);
@@ -155,8 +158,9 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                 String recruitmentComment = "";
                 String recruitmentLat = "";
                 String recruitmentLon = "";
+                String country = user.get(SessionManagement.KEY_USER_COUNTRY);
 
-                Integer recruitmentAddedBy = loggedInUser;
+                Integer recruitmentAddedBy = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
                 Long recruitmentDateAdded = currentDate;
                 Integer recruitmentSync = 0;
 
@@ -179,12 +183,15 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                 else{
                     // Save Recruitment
                     Recruitment recruitment;
-                    recruitment = new Recruitment(id, recruitmentName, recruitmentDistrict, recruitmentSubCounty, recruitmentDivision, recruitmentLat, recruitmentLon, recruitmentComment, recruitmentAddedBy, recruitmentDateAdded, recruitmentSync);
+                    recruitment = new Recruitment(id, recruitmentName, recruitmentDistrict,
+                            recruitmentSubCounty, recruitmentDivision, recruitmentLat,
+                            recruitmentLon, recruitmentComment, recruitmentAddedBy,
+                            recruitmentDateAdded, recruitmentSync, country);
                     RecruitmentTable recruitmentTable = new RecruitmentTable(getContext());
                     long statusId = recruitmentTable.addData(recruitment);
 
                     if (statusId ==-1){
-                        Toast.makeText(getContext(), "Could not save registration", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Could not save recruitment", Toast.LENGTH_SHORT).show();
                     }
                     else{
                         Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();

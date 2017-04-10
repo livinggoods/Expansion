@@ -41,10 +41,14 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     public static final String DISTRICT = "district";
     public static final String SUB_COUNTY = "subcounty";
     public static final String DIVISION = "division";
+    public static final String COUNTRY = "country";
     public static final String ADDED_BY = "added_by";
     public static final String COMMENT = "comment";
     public static final String DATE_ADDED = "date_added";
     public static final String SYNCED = "synced";
+
+    String [] columns=new String[]{ID, NAME, DISTRICT, SUB_COUNTY, DIVISION, LAT, LON, ADDED_BY,
+            COMMENT, DATE_ADDED, SYNCED, COUNTRY};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ", "
@@ -54,6 +58,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
             + DISTRICT + varchar_field + ", "
             + SUB_COUNTY + varchar_field + ", "
             + DIVISION + varchar_field + ", "
+            + COUNTRY + varchar_field + ", "
             + ADDED_BY + integer_field + ", "
             + COMMENT + text_field + ", "
             + DATE_ADDED + integer_field + ", "
@@ -90,6 +95,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         cv.put(LAT, recruitment.getLat());
         cv.put(LON, recruitment.getLon());
         cv.put(SUB_COUNTY, recruitment.getSubcounty());
+        cv.put(COUNTRY, recruitment.getCountry());
         cv.put(DIVISION, recruitment.getDivision());
         cv.put(ADDED_BY, recruitment.getAddedBy());
         cv.put(COMMENT, recruitment.getComment());
@@ -127,10 +133,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
 
         SQLiteDatabase db=getReadableDatabase();
 
-        String [] columns=new String[]{ID, NAME, DISTRICT, SUB_COUNTY, DIVISION, LAT, LON, ADDED_BY, COMMENT, DATE_ADDED, SYNCED};
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
-
         List<Recruitment> recruitmentList=new ArrayList<>();
 
 
@@ -150,6 +153,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
             recruitment.setComment(cursor.getString(8));
             recruitment.setDateAdded(cursor.getLong(9));
             recruitment.setSynced(cursor.getInt(10));
+            recruitment.setCountry(cursor.getString(11));
 
             recruitmentList.add(recruitment);
         }
@@ -173,8 +177,6 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         List<Recruitment> recruitments = new ArrayList<>();
 
         SQLiteDatabase db = getReadableDatabase();
-
-
         String queryString = "SELECT * FROM  " + TABLE_NAME + " WHERE " + whereClause;
         Cursor cursor = db.rawQuery(queryString, null);
 
@@ -194,6 +196,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
             recruitment.setComment(cursor.getString(8));
             recruitment.setDateAdded(cursor.getLong(9));
             recruitment.setSynced(cursor.getInt(10));
+            recruitment.setCountry(cursor.getString(11));
 
             recruitments.add(recruitment);
         }
@@ -205,8 +208,6 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     public JSONObject getRecruitmentJson() {
 
         SQLiteDatabase db=getReadableDatabase();
-
-        String [] columns=new String[]{ID, NAME, DISTRICT, SUB_COUNTY, DIVISION, LAT, LON, ADDED_BY, COMMENT, DATE_ADDED, SYNCED};
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 

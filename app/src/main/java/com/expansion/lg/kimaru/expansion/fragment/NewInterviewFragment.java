@@ -175,6 +175,7 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
                 Integer applicantInvestment = Integer.parseInt(getSelectedRadioItemValue(mInvestment));
                 boolean conditionsPreventingJoining = getSelectedRadioItemValue(mConditionsPreventing) == "Yes";
                 boolean applicantSelected = getSelectedRadioItemValue(mSelected) == "Yes";
+                String country = user.get(SessionManagement.KEY_USER_COUNTRY);
 
                 String applicantComment = mComment.getText().toString();
                 Integer applicantAddedBy = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
@@ -185,7 +186,7 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
                             applicantCommunity, applicantMentality, applicantSelling, applicantHealth,
                             applicantInvestment, applicantInterpersonal, applicantCommitment,
                             applicantSelected, applicantAddedBy, applicantDateAdded, 0,
-                            applicantComment, conditionsPreventingJoining);
+                            applicantComment, conditionsPreventingJoining, country);
                     InterviewTable interviewTable = new InterviewTable(getContext());
                 long id = interviewTable.addData(interview);
 

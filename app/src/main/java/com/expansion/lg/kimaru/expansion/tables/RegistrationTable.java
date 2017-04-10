@@ -45,6 +45,8 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public static final String NAME= "name";
     public static final String PHONE = "phone";
     public static final String GENDER = "gender";
+    public static final String RECRUITMENT = "recruitment";
+    public static final String COUNTRY = "country";
     public static final String DOB = "dob";
     public static final String DISTRICT = "district";
     public static final String SUB_COUNTY = "subcounty";
@@ -65,6 +67,10 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public static final String DATE_ADDED = "date_added";
     public static final String SYNCED = "synced";
 
+    String [] columns=new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
+            VILLAGE, MARK, READ_ENGLISH, DATE_MOVED, LANGS, BRAC, BRAC_CHP, EDUCATION, OCCUPATION,
+            COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED, RECRUITMENT, COUNTRY};
+
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ", "
             + NAME + varchar_field + ", "
@@ -73,6 +79,8 @@ public class RegistrationTable extends SQLiteOpenHelper {
             + DOB + integer_field + ", "
             + DISTRICT + varchar_field + ", "
             + SUB_COUNTY + varchar_field + ", "
+            + RECRUITMENT + varchar_field + ", "
+            + COUNTRY + varchar_field + ", "
             + DIVISION + varchar_field + ", "
             + VILLAGE + varchar_field + ", "
             + MARK + text_field + ", "
@@ -120,6 +128,8 @@ public class RegistrationTable extends SQLiteOpenHelper {
         cv.put(PHONE, registration.getPhone());
         cv.put(GENDER, registration.getGender());
         cv.put(DOB, registration.getDob());
+        cv.put(COUNTRY, registration.getCountry());
+        cv.put(RECRUITMENT, registration.getRecruitment());
         cv.put(DISTRICT, registration.getDistrict());
         cv.put(SUB_COUNTY, registration.getSubcounty());
         cv.put(DIVISION, registration.getDivision());
@@ -152,9 +162,6 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public Cursor getRegistrationDataCursor() {
 
         SQLiteDatabase db=getReadableDatabase();
-        String [] columns=new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
-                VILLAGE, MARK, READ_ENGLISH, DATE_MOVED, LANGS, BRAC, BRAC_CHP, EDUCATION, OCCUPATION,
-                COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED};
         String orderBy = "id desc";
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,orderBy,null);
@@ -165,10 +172,6 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public List<Registration> getRegistrationData() {
 
         SQLiteDatabase db=getReadableDatabase();
-
-        String [] columns=new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
-                VILLAGE, MARK, READ_ENGLISH, DATE_MOVED, LANGS, BRAC, BRAC_CHP, EDUCATION, OCCUPATION,
-                COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED};
         String orderBy = "id desc";
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,orderBy,null);
@@ -204,6 +207,8 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setProceed(cursor.getInt(20));
             registration.setDateAdded(cursor.getLong(21));
             registration.setSynced(cursor.getInt(22));
+            registration.setRecruitment(cursor.getString(23));
+            registration.setCountry(cursor.getString(24));
             registration.setPicture("");
 
 
@@ -219,9 +224,6 @@ public class RegistrationTable extends SQLiteOpenHelper {
 
     public Registration getRegistrationById(String registrationUuid){
         SQLiteDatabase db = getReadableDatabase();
-        String [] columns = new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
-                VILLAGE, MARK, READ_ENGLISH, DATE_MOVED, LANGS, BRAC, BRAC_CHP, EDUCATION, OCCUPATION,
-                COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED};
         String whereClause = ID+" = ?";
         String[] whereArgs = new String[] {
                 registrationUuid,
@@ -256,6 +258,8 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setProceed(cursor.getInt(20));
             registration.setDateAdded(cursor.getLong(21));
             registration.setSynced(cursor.getInt(22));
+            registration.setRecruitment(cursor.getString(23));
+            registration.setCountry(cursor.getString(24));
             registration.setPicture("");
 
             return registration;
@@ -278,18 +282,54 @@ public class RegistrationTable extends SQLiteOpenHelper {
         db.close();
         return cnt;
     }
-    public Interview getInterviewByRegistrationId(String registrationId){
-        Interview interview = new Interview();
-        return interview;
+    public Registration getRegistrationsByRecruitment(Recruitment recruitment){
+        SQLiteDatabase db = getReadableDatabase();
+        String whereClause = RECRUITMENT+" = ?";
+        String[] whereArgs = new String[] {
+                recruitment.getId(),
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else{
+            Registration registration=new Registration();
+
+            registration.setId(cursor.getString(0));
+            registration.setName(cursor.getString(1));
+            registration.setPhone(cursor.getString(2));
+            registration.setGender(cursor.getString(3));
+            registration.setDob(cursor.getLong(4));
+            registration.setDistrict(cursor.getString(5));
+            registration.setSubcounty(cursor.getString(6));
+            registration.setDivision(cursor.getString(7));
+            registration.setVillage(cursor.getString(8));
+            registration.setMark(cursor.getString(9));
+            registration.setReadEnglish(cursor.getInt(10));
+            registration.setDateMoved(cursor.getLong(11));
+            registration.setLangs(cursor.getString(12));
+            registration.setBrac(cursor.getInt(13));
+            registration.setBracChp(cursor.getInt(14));
+            registration.setEducation(cursor.getString(15));
+            registration.setOccupation(cursor.getString(16));
+            registration.setCommunity(cursor.getInt(17));
+            registration.setAddedBy(cursor.getInt(18));
+            registration.setComment(cursor.getString(19));
+            registration.setProceed(cursor.getInt(20));
+            registration.setDateAdded(cursor.getLong(21));
+            registration.setSynced(cursor.getInt(22));
+            registration.setRecruitment(cursor.getString(23));
+            registration.setCountry(cursor.getString(24));
+            registration.setPicture("");
+
+            return registration;
+        }
+
     }
 
     public JSONObject getRegistrationJson() {
 
         SQLiteDatabase db=getReadableDatabase();
-
-        String [] columns = new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
-                VILLAGE, MARK, READ_ENGLISH, DATE_MOVED, LANGS, BRAC, BRAC_CHP, EDUCATION, OCCUPATION,
-                COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED};
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
