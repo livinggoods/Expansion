@@ -369,7 +369,7 @@ public class RegistrationsFragment extends Fragment  {
             RegistrationTable registrationTable = new RegistrationTable(getContext());
             List<Registration> registrationList = new ArrayList<>();
 
-            registrationList = registrationTable.getRegistrationData();
+            registrationList = registrationTable.getRegistrationsByRecruitment(session.getSavedRecruitment());
             for (Registration registration:registrationList){
                 registration.setColor(getRandomMaterialColor("400"));
                 registrations.add(registration);
