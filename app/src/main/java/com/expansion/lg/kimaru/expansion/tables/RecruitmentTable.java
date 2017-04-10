@@ -163,6 +163,43 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         return recruitmentList;
     }
 
+    public List<Recruitment> getRecruitmentDataByCountryCode(String country) {
+
+        SQLiteDatabase db=getReadableDatabase();
+        String whereClause = COUNTRY+" = ?";
+        String[] whereArgs = new String[] {
+                country,
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        List<Recruitment> recruitmentList=new ArrayList<>();
+
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+
+
+            Recruitment recruitment=new Recruitment();
+
+            recruitment.setId(cursor.getString(0));
+            recruitment.setName(cursor.getString(1));
+            recruitment.setDistrict(cursor.getString(2));
+            recruitment.setSubcounty(cursor.getString(3));
+            recruitment.setDivision(cursor.getString(4));
+            recruitment.setLat(cursor.getString(5));
+            recruitment.setLon(cursor.getString(6));
+            recruitment.setAddedBy(cursor.getInt(7));
+            recruitment.setComment(cursor.getString(8));
+            recruitment.setDateAdded(cursor.getLong(9));
+            recruitment.setSynced(cursor.getInt(10));
+            recruitment.setCountry(cursor.getString(11));
+
+            recruitmentList.add(recruitment);
+        }
+
+        db.close();
+
+        return recruitmentList;
+    }
+
     public void syncRecruitment(Recruitment recruitment){
         //In order to make it unique, we shall be checking the recruitments as follows
         // a) The recruitment must be created by someone else (addedby != currentUserID)

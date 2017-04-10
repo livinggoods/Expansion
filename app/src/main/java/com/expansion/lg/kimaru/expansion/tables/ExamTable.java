@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
+import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +39,7 @@ public class ExamTable extends SQLiteOpenHelper {
     public static final String ID= "id";
     public static final String APPLICANT= "applicant";
     public static final String RECRUITMENT = "recruitment";
+    public static final String COUNTRY = "country";
     public static final String MATH = "math";
     public static final String PERSONALITY = "personality";
     public static final String ENGLISH = "english";
@@ -45,11 +47,14 @@ public class ExamTable extends SQLiteOpenHelper {
     public static final String COMMENT = "comment";
     public static final String DATE_ADDED = "date_added";
     public static final String SYNCED = "synced";
+    String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MATH, PERSONALITY, ENGLISH,
+            ADDED_BY, COMMENT, DATE_ADDED, SYNCED, COUNTRY};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ", "
             + APPLICANT + varchar_field + ", "
             + RECRUITMENT + varchar_field + ", "
+            + COUNTRY + varchar_field + ", "
             + MATH + integer_field + ", "
             + PERSONALITY + integer_field + ", "
             + ENGLISH + integer_field + ", "
@@ -85,6 +90,7 @@ public class ExamTable extends SQLiteOpenHelper {
         cv.put(ID, exam.getId());
         cv.put(APPLICANT, exam.getApplicant());
         cv.put(RECRUITMENT, exam.getRecruitment());
+        cv.put(COUNTRY, exam.getCountry());
         cv.put(MATH, exam.getMath());
         cv.put(PERSONALITY, exam.getPersonality());
         cv.put(ENGLISH, exam.getEnglish());
@@ -106,8 +112,6 @@ public class ExamTable extends SQLiteOpenHelper {
     public List<Exam> getExamData() {
 
         SQLiteDatabase db=getReadableDatabase();
-
-        String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MATH, PERSONALITY, ENGLISH, ADDED_BY, COMMENT, DATE_ADDED, SYNCED};
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
@@ -139,11 +143,36 @@ public class ExamTable extends SQLiteOpenHelper {
 
     public Exam getExamByRegistration(String registrationUuid){
         SQLiteDatabase db = getReadableDatabase();
-        String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MATH, PERSONALITY, ENGLISH,
-                ADDED_BY, COMMENT, DATE_ADDED, SYNCED};
+
         String whereClause = APPLICANT+" = ?";
         String[] whereArgs = new String[] {
                 registrationUuid,
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else{
+            Exam exam=new Exam();
+            exam.setId(cursor.getString(0));
+            exam.setApplicant(cursor.getString(1));
+            exam.setRecruitment(cursor.getString(2));
+            exam.setMath(cursor.getInt(3));
+            exam.setPersonality(cursor.getInt(4));
+            exam.setEnglish(cursor.getInt(5));
+            exam.setAddedBy(cursor.getInt(6));
+            exam.setComment(cursor.getString(7));
+            exam.setDateAdded(cursor.getLong(8));
+            exam.setSynced(cursor.getInt(9));
+            return exam;
+        }
+
+    }
+    public Exam getExamByRecruitment(Recruitment recruitment){
+        SQLiteDatabase db = getReadableDatabase();
+        String whereClause = RECRUITMENT+" = ?";
+        String[] whereArgs = new String[] {
+                recruitment.getId(),
         };
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
 
@@ -186,8 +215,6 @@ public class ExamTable extends SQLiteOpenHelper {
 
         SQLiteDatabase db=getReadableDatabase();
 
-        String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MATH, PERSONALITY, ENGLISH, ADDED_BY, COMMENT, DATE_ADDED, SYNCED};
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
         return cursor;
@@ -195,8 +222,6 @@ public class ExamTable extends SQLiteOpenHelper {
     public JSONObject getExamJson() {
 
         SQLiteDatabase db=getReadableDatabase();
-
-        String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MATH, PERSONALITY, ENGLISH, ADDED_BY, COMMENT, DATE_ADDED, SYNCED};
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 

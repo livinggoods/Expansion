@@ -282,6 +282,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
         db.close();
         return cnt;
     }
+
     public Registration getRegistrationsByRecruitment(Recruitment recruitment){
         SQLiteDatabase db = getReadableDatabase();
         String whereClause = RECRUITMENT+" = ?";

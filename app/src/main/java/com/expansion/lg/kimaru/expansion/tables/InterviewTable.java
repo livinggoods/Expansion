@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
+import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -198,6 +199,41 @@ public class InterviewTable extends SQLiteOpenHelper {
         String whereClause = APPLICANT+" = ?";
         String[] whereArgs = new String[] {
                 registrationUuid,
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else{
+
+            Interview interview = new Interview();
+
+            interview.setId(cursor.getString(0));
+            interview.setApplicant(cursor.getString(1));
+            interview.setRecruitment(cursor.getString(2));
+            interview.setMotivation(cursor.getInt(3));
+            interview.setCommunity(cursor.getInt(4));
+            interview.setMentality(cursor.getInt(5));
+            interview.setSelling(cursor.getInt(6));
+            interview.setHealth(cursor.getInt(7));
+            interview.setInvestment(cursor.getInt(8));
+            interview.setInterpersonal(cursor.getInt(9));
+            // interview.setTotal(cursor.getInt(10));
+            interview.setSelected(cursor.getInt(11) == 1);
+            interview.setAddedBy(cursor.getInt(12));
+            interview.setComment(cursor.getString(13));
+            interview.setCommitment(cursor.getInt(14));
+            interview.setDateAdded(cursor.getLong(15));
+            interview.setSynced(cursor.getInt(16));
+            interview.setCanJoin(cursor.getInt(17) == 1);
+            return interview;
+        }
+    }
+    public Interview getInterviewByRecruitment (Recruitment recruitment){
+        SQLiteDatabase db = getReadableDatabase();
+        String whereClause = APPLICANT+" = ?";
+        String[] whereArgs = new String[] {
+                recruitment.getId(),
         };
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
 
