@@ -172,12 +172,12 @@ public class ExamTable extends SQLiteOpenHelper {
     public List<Exam> getExamsByRecruitment(Recruitment recruitment) {
 
         SQLiteDatabase db=getReadableDatabase();
-
+        String orderBy = DATE_ADDED + " desc";
         String whereClause = RECRUITMENT+" = ?";
         String[] whereArgs = new String[] {
                 recruitment.getId(),
         };
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
 
 
         List<Exam> examList=new ArrayList<>();

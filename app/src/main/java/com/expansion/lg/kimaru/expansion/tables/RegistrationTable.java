@@ -283,7 +283,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public List<Registration> getRegistrationsByRecruitment(Recruitment recruitment) {
 
         SQLiteDatabase db=getReadableDatabase();
-        String orderBy = "id desc";
+        String orderBy = DATE_ADDED + " desc";
         String whereClause = RECRUITMENT+" = ?";
         String[] whereArgs = new String[] {
                 recruitment.getId(),

@@ -166,11 +166,12 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     public List<Recruitment> getRecruitmentDataByCountryCode(String country) {
 
         SQLiteDatabase db=getReadableDatabase();
+        String orderBy = DATE_ADDED +" desc";
         String whereClause = COUNTRY+" = ?";
         String[] whereArgs = new String[] {
                 country,
         };
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
         List<Recruitment> recruitmentList=new ArrayList<>();
 
 
