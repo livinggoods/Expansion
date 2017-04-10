@@ -219,17 +219,13 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
             case R.id.buttonSave:
                 // set date as integers
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-
-                Toast.makeText(getContext(), "Validating and saving.", Toast.LENGTH_SHORT).show();
                 Long currentDate =  new Date().getTime();
 
                 String registrationId;
                 if (editingRegistration != null){
-                    Toast.makeText(getContext(), "Editng", Toast.LENGTH_SHORT).show();
                     registrationId = editingRegistration.getId();
                 }else{
                     registrationId = UUID.randomUUID().toString();
-                    Toast.makeText(getContext(), "New Reg", Toast.LENGTH_SHORT).show();
                 }
 
                 String applicantName = mName.getText().toString();
@@ -316,26 +312,33 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                             applicantComment, applicantDob, applicantReadEnglish, applicantRecruitment,
                             country, applicantDateMoved, applicantBrac, applicantBracChp, applicantCommunity,
                             applicantAddedBy, applicantProceed, applicantDateAdded, applicantSync);
-                    RegistrationTable registrationTable = new RegistrationTable(getContext());
-                    long id = registrationTable.addData(registration);
-                    if (id ==-1){
-                        Toast.makeText(getContext(), "Could not save registration", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
 
-                        // Clear boxes
-                        mName.setText("");
-                        mPhone.setText("");
-                        mVillage.setText("");
-                        mMark.setText("");
-                        mLangs.setText("");
-                        mOccupation.setText("");
-                        //mComment.setText("");
-                        mDob.setText("");
-                        mDateMoved.setText("");
-                    }
+                    // Before saving, do some validations
+                    // Years in location should always be less than age
+                    if (registration.getAge() < applicantDateMoved){
+                        mDateMoved.requestFocus();
+                        Toast.makeText(getContext(), "The years at the location is greater than the age ", Toast.LENGTH_LONG).show();
+                    } else {
+                        RegistrationTable registrationTable = new RegistrationTable(getContext());
+                        long id = registrationTable.addData(registration);
+                        if (id ==-1){
+                            Toast.makeText(getContext(), "Could not save registration", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
 
+                            // Clear boxes
+                            mName.setText("");
+                            mPhone.setText("");
+                            mVillage.setText("");
+                            mMark.setText("");
+                            mLangs.setText("");
+                            mOccupation.setText("");
+                            //mComment.setText("");
+                            mDob.setText("");
+                            mDateMoved.setText("");
+                        }
+                    }
                 }
 
         }
