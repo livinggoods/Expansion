@@ -146,7 +146,7 @@ public class Exam {
             return false;
         }else{
             if (this.country == "KE"){
-                if ((this.math + this.english + this.personality) < 20){
+                if ((this.math + this.english + this.personality) < 10){
                     return false;
                 }else{
                     return true;
