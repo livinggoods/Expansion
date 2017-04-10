@@ -37,6 +37,7 @@ import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 // to show list in Gmail Mode
@@ -73,6 +74,7 @@ public class RecruitmentsFragment extends Fragment  {
     AppCompatActivity a = new AppCompatActivity();
 
     SessionManagement session;
+    HashMap <String, String> user;
 
 
     // I cant seem to get the context working
@@ -123,6 +125,7 @@ public class RecruitmentsFragment extends Fragment  {
         MainActivity.backFragment = new HomeFragment();
                 //session Management
         session = new SessionManagement(getContext());
+        user = session.getUserDetails();
 
         // ============Gmail View starts here =======================
         // Gmail View.
@@ -342,7 +345,7 @@ public class RecruitmentsFragment extends Fragment  {
             RecruitmentTable recruitmentTable = new RecruitmentTable(getContext());
             List<Recruitment> recruitmentList = new ArrayList<>();
 
-            recruitmentList = recruitmentTable.getRecruitmentData();
+            recruitmentList = recruitmentTable.getRecruitmentDataByCountryCode(user.get(SessionManagement.KEY_USER_COUNTRY));
             for (Recruitment recruitment : recruitmentList){
                 recruitment.setColor(getRandomMaterialColor("400"));
                 recruitments.add(recruitment);
