@@ -15,13 +15,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
+import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
 import com.expansion.lg.kimaru.expansion.other.FlipAnimator;
+import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +39,11 @@ public class InterviewListAdapter extends RecyclerView.Adapter<InterviewListAdap
     private InterviewListAdapterListener listener;
     private SparseBooleanArray selectedItems;
 
+    private RegistrationTable registrationTable;
+    private Registration registration;
+
     //array to perform multiple actions at once
-    private SparseBooleanArray selectedItemsIndex;
+    private SparseBooleanArray animationItemsIndex;
     private boolean reverseAllActions = false;
 
     Resources res;
@@ -80,8 +86,9 @@ public class InterviewListAdapter extends RecyclerView.Adapter<InterviewListAdap
         this.interviews = interviews;
         this.listener = listener;
         selectedItems = new SparseBooleanArray();
-        selectedItemsIndex = new SparseBooleanArray();
+        animationItemsIndex = new SparseBooleanArray();
         this.res = mContext.getResources();
+        this.registrationTable = new RegistrationTable(mContext);
     }
 
     @Override
@@ -96,13 +103,15 @@ public class InterviewListAdapter extends RecyclerView.Adapter<InterviewListAdap
         Interview interview = interviews.get(position);
 
         //// displaying text view data
-        holder.from.setText(interview.getTotal());
+        // Display the applicant Name
+        registration = registrationTable.getRegistrationById(interview.getApplicant());
+        holder.from.setText(registration.getName());
         holder.subject.setText(interview.getApplicant());
         holder.message.setText(interview.getId());
-        holder.timestamp.setText(interview.getSelling());
+        holder.timestamp.setText(interview.getSelling().toString());
 
         // displaying the first letter of From in icon text
-        holder.iconText.setText(String.valueOf(interview.getApplicant()).substring(0,1));
+        holder.iconText.setText(String.valueOf(registration.getName().substring(0,1)));
 
         // change the row state to activated
         holder.itemView.setActivated(selectedItems.get(position, false));
@@ -183,7 +192,7 @@ public class InterviewListAdapter extends RecyclerView.Adapter<InterviewListAdap
             resetIconYAxis(holder.iconFront);
             holder.iconFront.setVisibility(View.VISIBLE);
             holder.iconFront.setAlpha(1);
-            if ((reverseAllActions && selectedItemsIndex.get(position, false)) || currentSelectedIndex == position) {
+            if ((reverseAllActions && animationItemsIndex.get(position, false)) || currentSelectedIndex == position) {
                 FlipAnimator.flipView(mContext, holder.iconBack, holder.iconFront, false);
                 resetCurrentIndex();
             }
@@ -201,13 +210,9 @@ public class InterviewListAdapter extends RecyclerView.Adapter<InterviewListAdap
 
     public void resetAnimationIndex() {
         reverseAllActions = false;
-        selectedItemsIndex.clear();
+        animationItemsIndex.clear();
     }
 
-    @Override
-    public long getItemId(int position) {
-        return interviews.get(position).getId();
-    }
 
     private void applyImportant(ListHolder holder, Interview interview) {
         if (interview.isImportant()) {
@@ -242,10 +247,10 @@ public class InterviewListAdapter extends RecyclerView.Adapter<InterviewListAdap
         currentSelectedIndex = pos;
         if (selectedItems.get(pos, false)) {
             selectedItems.delete(pos);
-            selectedItemsIndex.delete(pos);
+            animationItemsIndex.delete(pos);
         } else {
             selectedItems.put(pos, true);
-            selectedItemsIndex.put(pos, true);
+            animationItemsIndex.put(pos, true);
         }
         notifyItemChanged(pos);
     }

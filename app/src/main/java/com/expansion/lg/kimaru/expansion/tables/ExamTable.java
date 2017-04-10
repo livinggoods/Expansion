@@ -2,11 +2,16 @@ package com.expansion.lg.kimaru.expansion.tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +25,7 @@ import java.util.List;
 public class ExamTable extends SQLiteOpenHelper {
 
     public static final String TABLE_NAME="exam";
+    public static final String JSON_ROOT="exams";
     public static final String DATABASE_NAME="expansion";
     public static final int DATABASE_VERSION=1;
 
@@ -29,7 +35,7 @@ public class ExamTable extends SQLiteOpenHelper {
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
-    public static final String ID= "_id";
+    public static final String ID= "id";
     public static final String APPLICANT= "applicant";
     public static final String RECRUITMENT = "recruitment";
     public static final String MATH = "math";
@@ -41,9 +47,9 @@ public class ExamTable extends SQLiteOpenHelper {
     public static final String SYNCED = "synced";
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
-            + primary_field + ", "
-            + APPLICANT + integer_field + ", "
-            + RECRUITMENT + integer_field + ", "
+            + ID + varchar_field + ", "
+            + APPLICANT + varchar_field + ", "
+            + RECRUITMENT + varchar_field + ", "
             + MATH + integer_field + ", "
             + PERSONALITY + integer_field + ", "
             + ENGLISH + integer_field + ", "
@@ -76,6 +82,7 @@ public class ExamTable extends SQLiteOpenHelper {
 
         SQLiteDatabase db=getWritableDatabase();
         ContentValues cv=new ContentValues();
+        cv.put(ID, exam.getId());
         cv.put(APPLICANT, exam.getApplicant());
         cv.put(RECRUITMENT, exam.getRecruitment());
         cv.put(MATH, exam.getMath());
@@ -86,8 +93,12 @@ public class ExamTable extends SQLiteOpenHelper {
         cv.put(DATE_ADDED, exam.getDateAdded());
         cv.put(SYNCED, exam.getSynced());
 
-        long id=db.insert(TABLE_NAME,null,cv);
-
+        long id;
+        if (isExist(exam)){
+            id = db.update(TABLE_NAME, cv, ID+"='"+exam.getId()+"'", null);
+        }else{
+            id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+        }
         db.close();
         return id;
 
@@ -108,15 +119,15 @@ public class ExamTable extends SQLiteOpenHelper {
 
             Exam exam=new Exam();
 
-            exam.setId(cursor.getInt(0));
-            exam.setApplicant(cursor.getInt(1));
-            exam.setRecruitment(cursor.getInt(2));
+            exam.setId(cursor.getString(0));
+            exam.setApplicant(cursor.getString(1));
+            exam.setRecruitment(cursor.getString(2));
             exam.setMath(cursor.getInt(3));
             exam.setPersonality(cursor.getInt(4));
             exam.setEnglish(cursor.getInt(5));
             exam.setAddedBy(cursor.getInt(6));
             exam.setComment(cursor.getString(7));
-            exam.setDateAdded(cursor.getInt(8));
+            exam.setDateAdded(cursor.getLong(8));
             exam.setSynced(cursor.getInt(9));
 
             examList.add(exam);
@@ -124,6 +135,51 @@ public class ExamTable extends SQLiteOpenHelper {
         db.close();
 
         return examList;
+    }
+
+    public Exam getExamByRegistration(String registrationUuid){
+        SQLiteDatabase db = getReadableDatabase();
+        String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MATH, PERSONALITY, ENGLISH,
+                ADDED_BY, COMMENT, DATE_ADDED, SYNCED};
+        String whereClause = APPLICANT+" = ?";
+        String[] whereArgs = new String[] {
+                registrationUuid,
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else{
+            Exam exam=new Exam();
+            exam.setId(cursor.getString(0));
+            exam.setApplicant(cursor.getString(1));
+            exam.setRecruitment(cursor.getString(2));
+            exam.setMath(cursor.getInt(3));
+            exam.setPersonality(cursor.getInt(4));
+            exam.setEnglish(cursor.getInt(5));
+            exam.setAddedBy(cursor.getInt(6));
+            exam.setComment(cursor.getString(7));
+            exam.setDateAdded(cursor.getLong(8));
+            exam.setSynced(cursor.getInt(9));
+            return exam;
+        }
+
+    }
+
+    public boolean isExist(Exam exam) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cur = db.rawQuery("SELECT id FROM " + TABLE_NAME + " WHERE "+ID+" = '" + exam.getId() + "'", null);
+        boolean exist = (cur.getCount() > 0);
+        cur.close();
+        return exist;
+
+    }
+
+    public long getExamCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME);
+        db.close();
+        return cnt;
     }
 
     public Cursor getExamDataCursor() {
@@ -135,6 +191,45 @@ public class ExamTable extends SQLiteOpenHelper {
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
         return cursor;
+    }
+    public JSONObject getExamJson() {
+
+        SQLiteDatabase db=getReadableDatabase();
+
+        String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MATH, PERSONALITY, ENGLISH, ADDED_BY, COMMENT, DATE_ADDED, SYNCED};
+
+        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+
+        JSONObject results = new JSONObject();
+
+        JSONArray resultSet = new JSONArray();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
     }
 }
 

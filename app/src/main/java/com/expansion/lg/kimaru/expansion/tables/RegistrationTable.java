@@ -8,8 +8,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.expansion.lg.kimaru.expansion.mzigos.Interview;
+import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.other.FileUtils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,6 +34,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public static final String TABLE_NAME="registration";
     public static final String DATABASE_NAME="expansion";
     public static final int DATABASE_VERSION=1;
+    public static final String JSON_ROOT="registrations";
 
     public static String varchar_field = " varchar(512) ";
     public static String primary_field = " _id INTEGER PRIMARY KEY AUTOINCREMENT ";
@@ -132,7 +139,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
         cv.put(DATE_ADDED, registration.getDateAdded());
         cv.put(SYNCED, registration.getSynced());
         long id;
-        if (exists(registration)){
+        if (isExist(registration)){
             id = db.update(TABLE_NAME, cv, ID+"='"+registration.getId()+"'", null);
         }else{
             id = db.insert(TABLE_NAME,null,cv);
@@ -209,17 +216,112 @@ public class RegistrationTable extends SQLiteOpenHelper {
 
         return registrationList;
     }
-    public boolean exists(Registration registration){
+
+    public Registration getRegistrationById(String registrationUuid){
         SQLiteDatabase db = getReadableDatabase();
-        long cnt = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
-                ID+"=?", new String[] {registration.getId()});
-        return cnt > 0;
+        String [] columns = new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
+                VILLAGE, MARK, READ_ENGLISH, DATE_MOVED, LANGS, BRAC, BRAC_CHP, EDUCATION, OCCUPATION,
+                COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED};
+        String whereClause = ID+" = ?";
+        String[] whereArgs = new String[] {
+                registrationUuid,
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else{
+            Registration registration=new Registration();
+
+            registration.setId(cursor.getString(0));
+            registration.setName(cursor.getString(1));
+            registration.setPhone(cursor.getString(2));
+            registration.setGender(cursor.getString(3));
+            registration.setDob(cursor.getLong(4));
+            registration.setDistrict(cursor.getString(5));
+            registration.setSubcounty(cursor.getString(6));
+            registration.setDivision(cursor.getString(7));
+            registration.setVillage(cursor.getString(8));
+            registration.setMark(cursor.getString(9));
+            registration.setReadEnglish(cursor.getInt(10));
+            registration.setDateMoved(cursor.getLong(11));
+            registration.setLangs(cursor.getString(12));
+            registration.setBrac(cursor.getInt(13));
+            registration.setBracChp(cursor.getInt(14));
+            registration.setEducation(cursor.getString(15));
+            registration.setOccupation(cursor.getString(16));
+            registration.setCommunity(cursor.getInt(17));
+            registration.setAddedBy(cursor.getInt(18));
+            registration.setComment(cursor.getString(19));
+            registration.setProceed(cursor.getInt(20));
+            registration.setDateAdded(cursor.getLong(21));
+            registration.setSynced(cursor.getInt(22));
+            registration.setPicture("");
+
+            return registration;
+        }
+
     }
+
+    public boolean isExist(Registration registration) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cur = db.rawQuery("SELECT "+ID+" FROM " + TABLE_NAME + " WHERE " + ID + " = '" + registration.getId() + "'", null);
+        boolean exist = (cur.getCount() > 0);
+        cur.close();
+        return exist;
+    }
+
 
     public long getRegistrationCount() {
         SQLiteDatabase db = this.getReadableDatabase();
         long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME);
         db.close();
         return cnt;
+    }
+    public Interview getInterviewByRegistrationId(String registrationId){
+        Interview interview = new Interview();
+        return interview;
+    }
+
+    public JSONObject getRegistrationJson() {
+
+        SQLiteDatabase db=getReadableDatabase();
+
+        String [] columns = new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
+                VILLAGE, MARK, READ_ENGLISH, DATE_MOVED, LANGS, BRAC, BRAC_CHP, EDUCATION, OCCUPATION,
+                COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED};
+
+        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+
+        JSONObject results = new JSONObject();
+
+        JSONArray resultSet = new JSONArray();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
     }
 }

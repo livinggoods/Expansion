@@ -1,15 +1,19 @@
 package com.expansion.lg.kimaru.expansion.mzigos;
 
+import com.expansion.lg.kimaru.expansion.activity.MainActivity;
+import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
+
 /**
  * Created by kimaru on 3/2/17.
  */
 
 public class Interview {
 
-    Integer id, applicant, recruitment, motivation, community, mentality, selling, health, investment;
-    Integer interpersonal, commitment, total, selected, addedBy, dateAdded, synced;
-    String comment;
-    boolean isRead, isImportant;
+    Integer motivation, community, mentality, selling, health, investment;
+    Integer interpersonal, commitment, total, addedBy, synced;
+    String comment, id, applicant, recruitment;
+    Long dateAdded;
+    boolean isRead, isImportant, canJoin, selected;
     int color = -1;
     String picture =  "";
 
@@ -17,10 +21,10 @@ public class Interview {
 
     }
 
-    public Interview(Integer applicant, Integer recruitment, Integer motivation, Integer community,
+    public Interview(String id, String applicant, String recruitment, Integer motivation, Integer community,
                      Integer mentality, Integer selling, Integer health, Integer investment,
-                     Integer interpersonal, Integer commitment, Integer selected, Integer addedBy,
-                     Integer dateAdded, Integer synced, String comment) {
+                     Integer interpersonal, Integer commitment, boolean selected, Integer addedBy,
+                     Long dateAdded, Integer synced, String comment, boolean canJoin) {
         this.applicant = applicant;
         this.recruitment = recruitment;
         this.motivation = motivation;
@@ -36,17 +40,19 @@ public class Interview {
         this.dateAdded = dateAdded;
         this.synced = synced;
         this.comment = comment;
+        this.id = id;
+        this.canJoin = canJoin;
+        this.total = (motivation + community + mentality + selling + health + investment + interpersonal + commitment);
     }
 
 
     // Get Methods
 
-
-    public Integer getApplicant() {
+    public String getApplicant() {
         return applicant;
     }
 
-    public Integer getRecruitment() {
+    public String getRecruitment() {
         return recruitment;
     }
 
@@ -82,7 +88,7 @@ public class Interview {
         return commitment;
     }
 
-    public Integer getSelected() {
+    public boolean getSelected() {
         return selected;
     }
 
@@ -90,7 +96,7 @@ public class Interview {
         return addedBy;
     }
 
-    public Integer getDateAdded() {
+    public Long getDateAdded() {
         return dateAdded;
     }
 
@@ -99,13 +105,27 @@ public class Interview {
     }
 
     public Integer getTotal() {
-        return total;
+        if (!(this.total==null)){
+            return this.total;
+        }else{
+            return this.calculateTotal();
+        }
+
     }
+
+    public boolean isCanJoin() {
+        return canJoin;
+    }
+
+    public void setCanJoin(boolean canJoin) {
+        this.canJoin = canJoin;
+    }
+
     public String getComment() {
         return comment;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
@@ -125,11 +145,25 @@ public class Interview {
         return picture;
     }
 
+    private Integer calculateTotal(){
+        Integer interviewTotal = 0;
+        Integer motivation = this.motivation == null ? 0: this.motivation;
+        Integer community = this.community == null ? 0: this.community;
+        Integer mentality = this.mentality == null ? 0: this.mentality;
+        Integer selling  = this.selling  == null ? 0: this.selling;
+        Integer health  =this.health  == null ? 0: this.health;
+        Integer investment = this.investment == null ? 0: this.investment;
+        Integer interpersonal  =this.interpersonal  == null ? 0: this.interpersonal;
+        Integer commitment = this.commitment == null ? 0: this.commitment;
+        interviewTotal = motivation +community+mentality+selling+health+investment+interpersonal+commitment;
+        return interviewTotal;
+    }
+
 
     //Set Methods
 
 
-    public void setRecruitment(Integer recruitment) {
+    public void setRecruitment(String recruitment) {
         this.recruitment = recruitment;
     }
 
@@ -161,7 +195,7 @@ public class Interview {
         this.motivation = motivation;
     }
 
-    public void setSelected(Integer selected) {
+    public void setSelected(boolean selected) {
         this.selected = selected;
     }
 
@@ -169,12 +203,8 @@ public class Interview {
         this.selling = selling;
     }
 
-    public void setTotal(Integer total) {
-        this.total = total;
-    }
 
-
-    public void setApplicant(Integer applicant) {
+    public void setApplicant(String applicant) {
         this.applicant = applicant;
     }
 
@@ -182,7 +212,7 @@ public class Interview {
         this.synced = synced;
     }
 
-    public void setDateAdded(Integer dateAdded) {
+    public void setDateAdded(Long dateAdded) {
         this.dateAdded = dateAdded;
     }
 
@@ -194,7 +224,7 @@ public class Interview {
         this.comment = comment;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -212,5 +242,9 @@ public class Interview {
 
     public void setColor(int color) {
         this.color = color;
+    }
+
+    public boolean hasPassed(){
+        return false;
     }
 }

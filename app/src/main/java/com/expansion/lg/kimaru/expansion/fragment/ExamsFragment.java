@@ -31,8 +31,10 @@ import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.dbhelpers.ExamListAdapter;
+import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
+import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,7 +109,6 @@ public class ExamsFragment extends Fragment  {
             mParam2 = getArguments().getString(ARG_PARAM2);
 
         }
-        Toast.makeText(getContext(), "Mimi Sijui", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -143,24 +144,42 @@ public class ExamsFragment extends Fragment  {
         swipeRefreshLayout.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // onRefresh action here
-                Toast.makeText(getContext(), "Refreshing the list", Toast.LENGTH_SHORT).show();
+                getExams();
             }
         });
         rAdapter = new ExamListAdapter(this.getContext(), exams, new ExamListAdapter.ExamListAdapterListener() {
             @Override
             public void onIconClicked(int position) {
-                if (actionMode == null) {
-//                    actionMode = startSupportActionMode(actionModeCallback);
-                    Toast.makeText(getContext(), "An Icon is clicked "+ position, Toast.LENGTH_SHORT).show();
-                }
 
-//                toggleSelection(position);
+                // get the registration
+                Exam exam = exams.get(position);
+                //extract registration from the exam
+                String regId = exam.getApplicant();
+                RegistrationTable registrationTable = new RegistrationTable(getContext());
+                Registration registration = registrationTable.getRegistrationById(regId);
+                session.saveRegistration(registration);
+                Fragment fragment = new RegistrationViewFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                fragmentTransaction.commitAllowingStateLoss();
+
             }
 
             @Override
             public void onIconImportantClicked(int position) {
-                Toast.makeText(getContext(), "An iconImportant is clicked", Toast.LENGTH_SHORT).show();
+                // get the registration
+                Exam exam = exams.get(position);
+                //extract registration from the exam
+                String regId = exam.getApplicant();
+                RegistrationTable registrationTable = new RegistrationTable(getContext());
+                Registration registration = registrationTable.getRegistrationById(regId);
+                session.saveRegistration(registration);
+                Fragment fragment = new RegistrationViewFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                fragmentTransaction.commitAllowingStateLoss();
             }
 
             @Override
@@ -172,13 +191,32 @@ public class ExamsFragment extends Fragment  {
                 exams.set(position, exam);
                 rAdapter.notifyDataSetChanged();
 
-                Toast.makeText(getContext(), "Read: " + exam.getId(), Toast.LENGTH_SHORT).show();
+                //extract registration from the exam
+                String regId = exam.getApplicant();
+                RegistrationTable registrationTable = new RegistrationTable(getContext());
+                Registration registration = registrationTable.getRegistrationById(regId);
+                session.saveRegistration(registration);
+                Fragment fragment = new RegistrationViewFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                fragmentTransaction.commitAllowingStateLoss();
 
             }
 
             @Override
             public void onRowLongClicked(int position) {
-                Toast.makeText(getContext(), "This is Long Press", Toast.LENGTH_SHORT).show();
+                Exam exam = exams.get(position);
+                NewExamFragment newExamFragment = new NewExamFragment();
+                newExamFragment.editingExam = exam;
+                Fragment fragment = newExamFragment;
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                        android.R.anim.fade_out);
+
+                fragmentTransaction.replace(R.id.frame, fragment, "exams");
+                fragmentTransaction.commitAllowingStateLoss();
             }
 
         });

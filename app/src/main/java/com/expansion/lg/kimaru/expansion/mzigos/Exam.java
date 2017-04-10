@@ -6,8 +6,9 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 
 public class Exam {
 
-    Integer Id, applicant, recruitment, math, english, personality, addedBy, dateAdded, synced;
-    String comment;
+    Integer math, english, personality, addedBy, synced;
+    Long dateAdded;
+    String comment, Id, applicant, recruitment;
     String picture="";
     int color = -1;
     Boolean read = false;
@@ -16,8 +17,8 @@ public class Exam {
 
     }
 
-    public Exam(Integer applicant, Integer math, Integer recruitment, Integer personality,
-                Integer english, Integer addedBy, Integer dateAdded, Integer synced, String comment) {
+    public Exam(String id, String applicant, Integer math, String recruitment, Integer personality,
+                Integer english, Integer addedBy, Long dateAdded, Integer synced, String comment) {
         this.applicant = applicant;
         this.recruitment = recruitment;
         this.math = math;
@@ -27,14 +28,15 @@ public class Exam {
         this.dateAdded = dateAdded;
         this.synced = synced;
         this.comment = comment;
+        this.Id = id;
     }
 
 
     // Get Methods
-    public Integer getApplicant() {
+    public String getApplicant() {
         return applicant;
     }
-    public Integer getRecruitment() {
+    public String getRecruitment() {
         return recruitment;
     }
     public Integer getMath() {
@@ -46,7 +48,7 @@ public class Exam {
     public Integer getAddedBy() {
         return addedBy;
     }
-    public Integer getDateAdded() {
+    public Long getDateAdded() {
         return dateAdded;
     }
     public Integer getSynced() {
@@ -59,7 +61,7 @@ public class Exam {
     }
 
 
-    public Integer getId() {
+    public String getId() {
         return Id;
     }
 
@@ -78,7 +80,7 @@ public class Exam {
     }
     //Set Methods
 
-    public void setApplicant(Integer applicant) {
+    public void setApplicant(String applicant) {
         this.applicant = applicant;
     }
 
@@ -86,7 +88,7 @@ public class Exam {
         this.synced = synced;
     }
 
-    public void setDateAdded(Integer dateAdded) {
+    public void setDateAdded(Long dateAdded) {
         this.dateAdded = dateAdded;
     }
 
@@ -106,7 +108,7 @@ public class Exam {
         this.personality = personality;
     }
 
-    public void setRecruitment(Integer recruitment) {
+    public void setRecruitment(String recruitment) {
         this.recruitment = recruitment;
     }
 
@@ -124,7 +126,19 @@ public class Exam {
         this.read = read;
     }
 
-    public void setId(Integer Id) {
+    public void setId(String Id) {
         this.Id = Id;
+    }
+
+    public boolean hasPassed(){
+        if (this.math == 0 || this.english == 0 || this.personality ==0){
+            return false;
+        }else{
+            if ((this.math + this.english + this.personality) < 30){
+                return false;
+            }else{
+                return true;
+            }
+        }
     }
 }

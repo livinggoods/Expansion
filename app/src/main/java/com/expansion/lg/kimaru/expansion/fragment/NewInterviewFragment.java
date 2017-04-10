@@ -14,16 +14,21 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
+import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.UUID;
 
 
 /**
@@ -46,10 +51,10 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
 
     private OnFragmentInteractionListener mListener;
 
-    EditText mMotivation, mCommunity, mMentality, mSelling, mHealth, mInvestment;
-    EditText mInterpersonal, mCommitment;
+    RadioGroup mMotivation, mCommunity, mMentality, mSelling, mHealth, mInvestment;
+    RadioGroup mInterpersonal, mCommitment, mConditionsPreventing, mSelected;
 
-
+    EditText mComment;
     Button buttonSave, buttonList;
 
 
@@ -57,7 +62,10 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
     static final int DATE_DIALOG_ID = 100;
 
 
-    Integer loggedInUser = 1;
+    SessionManagement session;
+    HashMap <String, String> user;
+
+    Interview editingInterview = null;
 
 
 
@@ -100,20 +108,26 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
         View v =  inflater.inflate(R.layout.fragment_new_interview, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_INTERVIEW;
         MainActivity.backFragment = new InterviewsFragment();
+        session = new SessionManagement(getContext());
+        user = session.getUserDetails();
                 //Initialize the UI Components
-        mMotivation = (EditText) v.findViewById(R.id.editMotivation);
-        mCommunity = (EditText) v.findViewById(R.id.editCommunity);
-        mMentality = (EditText) v.findViewById(R.id.editMentality);
-        mSelling = (EditText) v.findViewById(R.id.editSelling);
-        mHealth = (EditText) v.findViewById(R.id.editHealth);
-        mInvestment = (EditText) v.findViewById(R.id.editInvestment);
-        mInterpersonal = (EditText) v.findViewById(R.id.editInterpersonal);
-        mCommitment = (EditText) v.findViewById(R.id.editCommitment);
+        mMotivation = (RadioGroup) v.findViewById(R.id.editMotivation);
+        mCommunity = (RadioGroup) v.findViewById(R.id.editCommunity);
+        mMentality = (RadioGroup) v.findViewById(R.id.editMentality);
+        mSelling = (RadioGroup) v.findViewById(R.id.editSelling);
+        mHealth = (RadioGroup) v.findViewById(R.id.editHealth);
+        mInvestment = (RadioGroup) v.findViewById(R.id.editInvestment);
+        mInterpersonal = (RadioGroup) v.findViewById(R.id.editInterpersonal);
+        mCommitment = (RadioGroup) v.findViewById(R.id.editCommitment);
+        mConditionsPreventing = (RadioGroup) v.findViewById(R.id.conditionsPreventing);
+        mSelected = (RadioGroup) v.findViewById(R.id.editSelected);
+        mComment = (EditText) v.findViewById(R.id.editComment);
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
-
         buttonSave = (Button) v.findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(this);
+
+        setupEditingMode();
 
         return v;
     }
@@ -141,82 +155,101 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
                 Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
-                Integer currentDate =  (int) (new Date().getTime()/1000);
+                Long currentDate =  new Date().getTime();
+                String uuid;
+                if (editingInterview == null){
+                    uuid = UUID.randomUUID().toString();
+                }else{
+                    uuid = editingInterview.getId();
+                }
 
-                Integer applicantId = 1;
-                Integer recruitment = 1; //mMaths, mEnglish, mSelfAssessment
+                String applicantId = session.getSavedRegistration().getId();
+                String recruitment = session.getSavedRecruitment().getId();
+                Integer applicantInterpersonal = Integer.parseInt(getSelectedRadioItemValue(mInterpersonal));
+                Integer applicantCommitment = Integer.parseInt(getSelectedRadioItemValue(mCommitment));
+                Integer applicantMotivation = Integer.parseInt(getSelectedRadioItemValue(mMotivation));
+                Integer applicantCommunity = Integer.parseInt(getSelectedRadioItemValue(mCommunity));
+                Integer applicantMentality = Integer.parseInt(getSelectedRadioItemValue(mMentality));
+                Integer applicantSelling = Integer.parseInt(getSelectedRadioItemValue(mSelling));
+                Integer applicantHealth = Integer.parseInt(getSelectedRadioItemValue(mHealth));
+                Integer applicantInvestment = Integer.parseInt(getSelectedRadioItemValue(mInvestment));
+                boolean conditionsPreventingJoining = getSelectedRadioItemValue(mConditionsPreventing) == "Yes";
+                boolean applicantSelected = getSelectedRadioItemValue(mSelected) == "Yes";
 
-                Integer applicantMotivation = Integer.parseInt(mMotivation.getText().toString());
-                Integer applicantCommunity = Integer.parseInt(mCommitment.getText().toString());
-                Integer applicantMentality = Integer.parseInt(mMentality.getText().toString());
-                Integer applicantSelling = Integer.parseInt(mSelling.getText().toString());
-                Integer applicantHealth = Integer.parseInt(mHealth.getText().toString());
-                Integer applicantInvestment = Integer.parseInt(mInvestment.getText().toString());
-                Integer applicantInterpersonal = Integer.parseInt(mInterpersonal.getText().toString());
-                Integer applicantCommitment = Integer.parseInt(mCommitment.getText().toString());
-
-                String applicantComment = "";
-                Integer applicantAddedBy = loggedInUser;
-                Integer applicantDateAdded = currentDate;
+                String applicantComment = mComment.getText().toString();
+                Integer applicantAddedBy = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
+                Long applicantDateAdded = currentDate;
                 Integer applicantSync = 0;
-                Integer applicant = 1;
-
-
-                // Do some validations
-                if (applicantMotivation.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Enter the Score for Motivation", Toast.LENGTH_SHORT).show();
-                }
-
-                else if (applicantCommunity.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Enter the Score for community involvement", Toast.LENGTH_SHORT).show();
-                }
-
-                else if(applicantMentality.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Enter the Score for the applicant's mentality", Toast.LENGTH_SHORT).show();
-                }
-                else if(applicantSelling.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Enter the Score for the applicant's selling skills", Toast.LENGTH_SHORT).show();
-                }
-                else if(applicantHealth.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Enter the Score for the applicant's rating for interest in health", Toast.LENGTH_SHORT).show();
-                }
-                else if(applicantInvestment.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Enter the Score for the applicant's ability to invest", Toast.LENGTH_SHORT).show();
-                }
-                else if(applicantInterpersonal.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Enter the Score for the applicant's interpersonal skills", Toast.LENGTH_SHORT).show();
-                }
-                else if(applicantCommitment.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Enter the Score for the applicant's commitment ability", Toast.LENGTH_SHORT).show();
-                } else{
-                    // Save Exam Details
-                    Interview interview;
-//                    interview = new Interview(applicant, )
-                    interview = new Interview(applicant, recruitment, applicantMotivation,
+                // save the details
+                Interview interview = new Interview(uuid, applicantId, recruitment, applicantMotivation,
                             applicantCommunity, applicantMentality, applicantSelling, applicantHealth,
-                            applicantInvestment, applicantInterpersonal, applicantCommitment, 0,
-                            applicantAddedBy, applicantDateAdded, 0, applicantComment);
+                            applicantInvestment, applicantInterpersonal, applicantCommitment,
+                            applicantSelected, applicantAddedBy, applicantDateAdded, 0,
+                            applicantComment, conditionsPreventingJoining);
                     InterviewTable interviewTable = new InterviewTable(getContext());
-                    long id = interviewTable.addData(interview);
+                long id = interviewTable.addData(interview);
 
                     if (id ==-1){
                         Toast.makeText(getContext(), "Could not save the results", Toast.LENGTH_SHORT).show();
                     }
-                    else{
+                    else {
                         Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
-
-                        // Clear boxes
-                        mMotivation.setText("");
-                        mCommunity.setText("");
-                        mMentality.setText("");
-                        mSelling.setText("");
-                        mHealth.setText("");
-                        mInvestment.setText("");
-                        mInterpersonal.setText("");
-                        mCommitment.setText("");
                     }
 
-                }
+
+                // Do some validations
+//                if (applicantMotivation.toString().trim().equals("")){
+//                    Toast.makeText(getContext(), "Enter the Score for Motivation", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                else if (applicantCommunity.toString().trim().equals("")){
+//                    Toast.makeText(getContext(), "Enter the Score for community involvement", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                else if(applicantMentality.toString().trim().equals("")){
+//                    Toast.makeText(getContext(), "Enter the Score for the applicant's mentality", Toast.LENGTH_SHORT).show();
+//                }
+//                else if(applicantSelling.toString().trim().equals("")){
+//                    Toast.makeText(getContext(), "Enter the Score for the applicant's selling skills", Toast.LENGTH_SHORT).show();
+//                }
+//                else if(applicantHealth.toString().trim().equals("")){
+//                    Toast.makeText(getContext(), "Enter the Score for the applicant's rating for interest in health", Toast.LENGTH_SHORT).show();
+//                }
+//                else if(applicantInvestment.toString().trim().equals("")){
+//                    Toast.makeText(getContext(), "Enter the Score for the applicant's ability to invest", Toast.LENGTH_SHORT).show();
+//                }
+//                else if(applicantInterpersonal.toString().trim().equals("")){
+//                    Toast.makeText(getContext(), "Enter the Score for the applicant's interpersonal skills", Toast.LENGTH_SHORT).show();
+//                }
+//                else if(applicantCommitment.toString().trim().equals("")){
+//                    Toast.makeText(getContext(), "Enter the Score for the applicant's commitment ability", Toast.LENGTH_SHORT).show();
+//                } else{
+//                    // Save Exam Details
+//                    Interview interview = new Interview(uuid, applicantId, recruitment, applicantMotivation,
+//                            applicantCommunity, applicantMentality, applicantSelling, applicantHealth,
+//                            applicantInvestment, applicantInterpersonal, applicantCommitment, 0,
+//                            applicantAddedBy, applicantDateAdded, 0, applicantComment);
+//                    InterviewTable interviewTable = new InterviewTable(getContext());
+//                    long id = interviewTable.addData(interview);
+//
+//                    if (id ==-1){
+//                        Toast.makeText(getContext(), "Could not save the results", Toast.LENGTH_SHORT).show();
+//                    }
+//                    else{
+//                        Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
+//
+//                        // Clear boxes
+//                        mMotivation.clearCheck();
+//                        mCommunity.clearCheck();
+//                        mMentality.clearCheck();
+//                        mSelling.clearCheck();
+//                        mHealth.clearCheck();
+//                        mInvestment.clearCheck();
+//                        mInterpersonal.clearCheck();
+//                        mCommitment.clearCheck();
+//                    }
+//
+//                }
 
         }
     }
@@ -253,4 +286,24 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+    public void setupEditingMode(){
+        if (editingInterview != null){
+//            mMotivation.setText(editingInterview.getMotivation());
+//            mCommunity.setText(editingInterview.getCommunity());
+//            mMentality.setText(editingInterview.getMentality());
+//            mSelling.setText(editingInterview.getSelling());
+//            mHealth.setText(editingInterview.getHealth());
+//            mInvestment.setText(editingInterview.getInvestment());
+//            mInterpersonal.setText(editingInterview.getInterpersonal());
+//            mCommitment.setText(editingInterview.getCommitment());
+        }
+    }
+
+    public String getSelectedRadioItemValue(RadioGroup radioGroup){
+        Integer selectedButton = radioGroup.getCheckedRadioButtonId();
+        RadioButton selectedRadioButton =(RadioButton) radioGroup.findViewById(selectedButton);
+        String selectedValue = selectedRadioButton.getText().toString();
+        return selectedValue;
+    }
+
 }

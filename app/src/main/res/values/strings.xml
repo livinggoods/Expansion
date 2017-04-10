@@ -5,6 +5,7 @@
     <string name="radio_female">Female</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="wait">Wait</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -40,6 +41,13 @@
         <item>Rural</item>
     </string-array>
     <string name="select_prompt">Choose one</string>
+    <!-- Radiobutton values -->
+
+    <string name="value1">1</string>
+    <string name="value2">2</string>
+    <string name="value3">3</string>
+    <string name="value4">4</string>
+    <string name="value5">5</string>
 
     <string name="activity_title_about_us">About Us</string>
     <string name="activity_title_privacy_policy">Privacy Policy</string>
@@ -60,5 +68,6 @@
     </string>
     <string name="title_activity_login">Sign in</string>
     <string name="action_delete">Delete</string>
+    <string name="action_invite">Invite</string>
     <string name="activity_title_http_server">Server Settings</string>
 </resources>

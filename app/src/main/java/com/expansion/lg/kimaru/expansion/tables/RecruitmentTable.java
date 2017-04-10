@@ -26,6 +26,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
 
     public static final String TABLE_NAME="recruitment";
     public static final String DATABASE_NAME="expansion";
+    public static final String JSON_ROOT="recruitments";
     public static final int DATABASE_VERSION=1;
 
     public static String varchar_field = " varchar(512) ";
@@ -95,7 +96,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         cv.put(DATE_ADDED, recruitment.getDateAdded());
         cv.put(SYNCED, recruitment.getSynced());
         long id;
-        if (exists(recruitment)){
+        if (isExist(recruitment)){
             //uupdate
             id = db.update(TABLE_NAME, cv, ID+"='"+recruitment.getId()+"'", null);
         }else{
@@ -106,12 +107,14 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         return id;
 
     }
-    public boolean exists(Recruitment recruitment){
+    public boolean isExist(Recruitment recruitment) {
         SQLiteDatabase db = getReadableDatabase();
-        long cnt = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
-                ID+"=?", new String[] {recruitment.getId()});
-        return cnt > 0;
+        Cursor cur = db.rawQuery("SELECT "+ID+" FROM " + TABLE_NAME + " WHERE " + ID + " = '" + recruitment.getId() + "'", null);
+        boolean exist = (cur.getCount() > 0);
+        cur.close();
+        return exist;
     }
+
 
     public long getRecruitmentCount() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -229,7 +232,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
             }
             resultSet.put(rowObject);
             try {
-                results.put("recruitments", resultSet);
+                results.put(JSON_ROOT, resultSet);
             } catch (JSONException e) {
 
             }

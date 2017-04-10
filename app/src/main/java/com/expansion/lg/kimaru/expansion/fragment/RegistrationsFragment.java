@@ -143,25 +143,42 @@ public class RegistrationsFragment extends Fragment  {
         rAdapter = new RegistrationListAdapter(this.getContext(), registrations, new RegistrationListAdapter.RegistrationListAdapterListener() {
             @Override
             public void onIconClicked(int position) {
-                if (actionMode == null) {
-//                    actionMode = startSupportActionMode(actionModeCallback);
-                    Toast.makeText(getContext(), "An Icon is clicked "+ position, Toast.LENGTH_SHORT).show();
-                }
-
-//                toggleSelection(position);
+                Registration registration = registrations.get(position);
+                session.saveRegistration(registration);
+                registrations.set(position, registration);
+                rAdapter.notifyDataSetChanged();
+                Fragment fragment = new RegistrationViewFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                fragmentTransaction.commitAllowingStateLoss();
             }
 
             @Override
             public void onIconImportantClicked(int position) {
-                Toast.makeText(getContext(), "An iconImportant is clicked", Toast.LENGTH_SHORT).show();
+                Registration registration = registrations.get(position);
+                session.saveRegistration(registration);
+                registrations.set(position, registration);
+                rAdapter.notifyDataSetChanged();
+                Fragment fragment = new RegistrationViewFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                fragmentTransaction.commitAllowingStateLoss();
             }
 
             @Override
             public void onMessageRowClicked(int position) {
                 // read the message which removes bold from the row
                 Registration registration = registrations.get(position);
+                session.saveRegistration(registration);
                 registrations.set(position, registration);
                 rAdapter.notifyDataSetChanged();
+                Fragment fragment = new RegistrationViewFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                fragmentTransaction.commitAllowingStateLoss();
             }
 
             @Override

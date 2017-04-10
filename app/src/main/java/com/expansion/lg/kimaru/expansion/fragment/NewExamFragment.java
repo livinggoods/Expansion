@@ -14,16 +14,20 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
+import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.UUID;
 
 
 /**
@@ -47,16 +51,19 @@ public class NewExamFragment extends Fragment implements OnClickListener {
     private OnFragmentInteractionListener mListener;
 
     EditText mMaths, mEnglish, mSelfAssessment;
-
+    TextView editApplicantDetails;
 
     Button buttonSave, buttonList;
+
+    Exam editingExam = null;
 
 
     private int mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 100;
 
 
-    Integer loggedInUser = 1;
+    SessionManagement sessionManagement;
+    HashMap<String, String> user;
 
 
 
@@ -102,9 +109,13 @@ public class NewExamFragment extends Fragment implements OnClickListener {
         mEnglish = (EditText) v.findViewById(R.id.editEnglishScore);
         mSelfAssessment = (EditText) v.findViewById(R.id.editSelfAssessmentScore);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_EXAM;
-        MainActivity.backFragment = new ExamsFragment();
-
-                buttonList = (Button) v.findViewById(R.id.buttonList);
+        MainActivity.backFragment = new RegistrationViewFragment();
+        sessionManagement = new SessionManagement(getContext());
+        user = sessionManagement.getUserDetails();
+        editApplicantDetails = (TextView) v.findViewById(R.id.editApplicantDetails);
+        editApplicantDetails.setText(sessionManagement.getSavedRegistration().getName());
+        setUpEditingMode();
+        buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
 
         buttonSave = (Button) v.findViewById(R.id.buttonSave);
@@ -136,21 +147,26 @@ public class NewExamFragment extends Fragment implements OnClickListener {
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
                 Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
-                Integer currentDate =  (int) (new Date().getTime()/1000);
+                Long currentDate =  new Date().getTime();
+                String uuid;
+                if (editingExam == null){
+                    uuid = UUID.randomUUID().toString();
+                }else{
+                    uuid = UUID.randomUUID().toString();
+                }
 
-                Integer applicantId = 1;
-                Integer recruitment = 1; //mMaths, mEnglish, mSelfAssessment
+                String applicantId = sessionManagement.getSavedRegistration().getId();
+                String recruitment = sessionManagement.getSavedRecruitment().getId();
 
                 Integer applicantMathsScore = Integer.parseInt(mMaths.getText().toString());
                 Integer applicantEnglishScore = Integer.parseInt(mEnglish.getText().toString());
                 Integer applicantSelfAssessmentScore = Integer.parseInt(mSelfAssessment.getText().toString());
 
                 String applicantComment = "";
-                Integer applicantAddedBy = loggedInUser;
+                Integer applicantAddedBy = Integer.valueOf(user.get(SessionManagement.KEY_USERID));
                 Integer applicantProceed = 0;
-                Integer applicantDateAdded = currentDate;
+                Long applicantDateAdded = currentDate;
                 Integer applicantSync = 0;
-                Integer applicantRecruitment = 1;
 
 
                 // Do some validations
@@ -167,9 +183,11 @@ public class NewExamFragment extends Fragment implements OnClickListener {
                 } else{
                     // Save Exam Details
                     Exam exam;
-                    exam = new Exam(applicantId, applicantMathsScore, applicantRecruitment,
+                    exam = new Exam(uuid, applicantId, applicantMathsScore, recruitment,
                             applicantSelfAssessmentScore, applicantEnglishScore, applicantAddedBy,
                             applicantDateAdded, applicantSync, applicantComment);
+
+                    Toast.makeText(getContext(), "ExamID is "+exam.getId(), Toast.LENGTH_SHORT).show();
 
                     ExamTable examTable = new ExamTable(getContext());
                     long id = examTable.addData(exam);
@@ -223,5 +241,15 @@ public class NewExamFragment extends Fragment implements OnClickListener {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+    public void setUpEditingMode(){
+
+        if (editingExam != null){
+
+            mMaths.setText(String.valueOf(editingExam.getMath()));
+            mEnglish.setText(String.valueOf(editingExam.getEnglish()));
+            mSelfAssessment.setText(String.valueOf(editingExam.getPersonality()));
+            mMaths.requestFocus();
+        }
     }
 }

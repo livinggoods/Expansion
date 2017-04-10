@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.view.ActionMode;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -105,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG_NEW_VILLAGE = "newVillage";
     public static final String TAG_PARTNERS = "partners";
     public static final String TAG_SUBCOUNTY_VIEW = "subCountyView";
+    public static final String REGISTRATION_VIEW = "registrationView";
 
     public static String CURRENT_TAG = TAG_HOME;
 
@@ -694,203 +696,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
-
-//        switch (CURRENT_TAG) {
-//            case TAG_HOME:
-//                super.onBackPressed();
-//                break;
-//
-//            case TAG_RECRUITMENTS:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_HOME;
-//                HomeFragment homeFragment = new HomeFragment();
-//                backFragment = homeFragment;
-//                break;
-//
-//            case TAG_REGISTRATIONS:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_RECRUITMENTS;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_EXAMS:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_REGISTRATIONS;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_INTERVIEWS:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_EXAMS;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_MAPPINGS:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_HOME;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_MAPPING:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_MAPPINGS;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_COUNTY:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_HOME;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_COUNTIES:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_HOME;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_SUBCOUNTIES:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_MAPPING;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_SUBCOUNTY:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_SUBCOUNTIES;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_COMMUNITY_UNIT:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_COMMUNITY_UNITS;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_COMMUNITY_UNITS:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_SUBCOUNTY;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_VILLAGE:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_VILLAGES;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_VILLAGES:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_COMMUNITY_UNIT;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_LINK_FACILITY:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_LINK_FACILITIES;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_NEW_LINK_FACILITY:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_LINK_FACILITIES;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_LINK_FACILITIES:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_SUBCOUNTY_VIEW;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_MAPPING_VIEW:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_MAPPINGS;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_MAP_VIEW:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_MAPPINGS;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_NEW_COMMUNITY_UNIT:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_COMMUNITY_UNITS;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_NEW_EXAM:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_EXAMS;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_NEW_INTERVIEW:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_INTERVIEWS;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_NEW_MAPPING:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_MAPPINGS;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_NEW_RECRUITMENT:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_RECRUITMENTS;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_NEW_REGISTRATION:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_REGISTRATIONS;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_NEW_SUB_COUNTY:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_SUBCOUNTIES;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_NEW_VILLAGE:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_VILLAGES;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_PARTNERS:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_SUBCOUNTY_VIEW;
-//                loadHomeFragment();
-//                break;
-//
-//            case TAG_SUBCOUNTY_VIEW:
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_SUBCOUNTIES;
-//                loadHomeFragment();
-//                break;
-//        }
-
-
-        // This code loads home fragment when back key is pressed
-        // when user is in other fragment than home
-//        if (shouldLoadHomeFragOnBackPress) {
-//            // checking if user is on other navigation menu
-//            // rather than home
-//            if (navItemIndex != 0) {
-//                navItemIndex = 0;
-//                CURRENT_TAG = TAG_HOME;
-//                loadHomeFragment();
-//                return;
-//            }
-//        }
-//
-//        super.onBackPressed();
     }
 
     @Override
@@ -982,10 +787,10 @@ public class MainActivity extends AppCompatActivity {
 
     // show or hide the fab
     private void toggleFab() {
-        if (navItemIndex == 0)
-            fab.hide();
-        else
+        if (navItemIndex == 1 || navItemIndex == 2 )
             fab.show();
+        else
+            fab.hide();
     }
 
     private void exportDB(){

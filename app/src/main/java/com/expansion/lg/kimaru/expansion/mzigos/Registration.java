@@ -252,12 +252,17 @@ public class Registration {
         this.id = id;
     }
 
-    public boolean hasPassed(){
-        // age should be between 30 and 55
+    public Long getAge(){
         Long currentDate =  new Date().getTime();
         Long epochYear = 31556926000L;
-        Long age = this.dob - currentDate;
-        if (30 * epochYear< age || age > 55 * epochYear){
+        Long yearEpoch = currentDate - this.dob;
+        Long ageYear = yearEpoch / epochYear;
+        return ageYear;
+    }
+
+    public boolean hasPassed(){
+        Long age = this.getAge();
+        if ( 30 < age || age > 55){
             return false;
         }else if (this.readEnglish == 0) {
             return false;

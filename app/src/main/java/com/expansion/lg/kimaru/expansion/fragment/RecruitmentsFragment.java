@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -138,17 +139,15 @@ public class RecruitmentsFragment extends Fragment  {
         rAdapter = new RecruitmentListAdapter(this.getContext(), recruitments, new RecruitmentListAdapter.RecruitmentListAdapterListener() {
             @Override
             public void onIconClicked(int position) {
-                if (actionMode == null) {
-                   Toast.makeText(getContext(), "An Icon is clicked "+ position, Toast.LENGTH_SHORT).show();
-                }
-
-//                toggleSelection(position);
+                Recruitment recruitment = recruitments.get(position);
+                session.saveRecruitment(recruitment);
             }
 
             @Override
             public void onIconImportantClicked(int position) {
                 //when you click ka-macho, it sould open for you the details of the recruitment
                 Recruitment recruitment = recruitments.get(position);
+                session.saveRecruitment(recruitment);
 
             }
 
@@ -158,6 +157,11 @@ public class RecruitmentsFragment extends Fragment  {
                 Recruitment recruitment = recruitments.get(position);
                 session.saveRecruitment(recruitment);
 
+                Fragment fragment = new RegistrationsFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                fragmentTransaction.commitAllowingStateLoss();
 
             }
 
@@ -167,8 +171,15 @@ public class RecruitmentsFragment extends Fragment  {
                 //extract the clicked recruitment
                 Recruitment recruitment = recruitments.get(position);
                 session.saveRecruitment(recruitment);
+
                 NewRecruitmentFragment newRecruitmentFragment = new NewRecruitmentFragment();
                 newRecruitmentFragment.editingRecruitment = recruitment;
+
+                Fragment fragment = newRecruitmentFragment;
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                fragmentTransaction.commitAllowingStateLoss();
             }
         });
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());

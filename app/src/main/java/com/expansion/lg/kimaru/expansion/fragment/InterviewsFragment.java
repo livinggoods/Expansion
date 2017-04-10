@@ -11,8 +11,10 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.view.ActionMode;
+import android.view.ActionMode;
+import android.view.ActionMode.Callback;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,10 +28,13 @@ import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
+import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.dbhelpers.InterviewListAdapter;
+import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
+import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +49,7 @@ import java.util.List;
  * Use the {@link InterviewsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class InterviewsFragment extends Fragment  {
+public class InterviewsFragment extends Fragment implements Callback {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -63,8 +68,8 @@ public class InterviewsFragment extends Fragment  {
     private InterviewListAdapter rAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ActionMode actionMode;
-    private ActionModeCallback actionModeCallback;
 
+    SessionManagement session;
 
     // I cant seem to get the context working
     Context mContext = getContext();
@@ -111,10 +116,8 @@ public class InterviewsFragment extends Fragment  {
         View v =  inflater.inflate(R.layout.fragment_registrations, container, false);
         textshow = (TextView) v.findViewById(R.id.textShow);
         MainActivity.CURRENT_TAG =MainActivity.TAG_INTERVIEWS;
-        MainActivity.backFragment = new ExamsFragment();
-
-                // ============Gmail View starts here =======================
-        // Gmail View.
+        MainActivity.backFragment = new RegistrationViewFragment();
+        session = new SessionManagement(getContext());
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
@@ -129,17 +132,32 @@ public class InterviewsFragment extends Fragment  {
         rAdapter = new InterviewListAdapter(this.getContext(), interviews, new InterviewListAdapter.InterviewListAdapterListener() {
             @Override
             public void onIconClicked(int position) {
+
                 if (actionMode == null) {
-//                    actionMode = startSupportActionMode(actionModeCallback);
-                    Toast.makeText(getContext(), "An Icon is clicked "+ position, Toast.LENGTH_SHORT).show();
+                    actionMode = getActivity().startActionMode(InterviewsFragment.this);
+                    // Toast.makeText(getContext(), "An Icon is clicked "+ position, Toast.LENGTH_SHORT).show();
                 }
 
-//                toggleSelection(position);
+                toggleSelection(position);
             }
 
             @Override
             public void onIconImportantClicked(int position) {
-                Toast.makeText(getContext(), "An iconImportant is clicked", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getContext(), "An iconImportant is clicked", Toast.LENGTH_SHORT).show();
+
+
+                // get the registration
+                Interview interview = interviews.get(position);
+                //extract registration from the exam
+                String regId = interview.getApplicant();
+                RegistrationTable registrationTable = new RegistrationTable(getContext());
+                Registration registration = registrationTable.getRegistrationById(regId);
+                session.saveRegistration(registration);
+                Fragment fragment = new RegistrationViewFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                fragmentTransaction.commitAllowingStateLoss();
             }
 
             @Override
@@ -151,13 +169,23 @@ public class InterviewsFragment extends Fragment  {
                 interviews.set(position, interview);
                 rAdapter.notifyDataSetChanged();
 
-                Toast.makeText(getContext(), "Read: " + interview.getId(), Toast.LENGTH_SHORT).show();
+                // get the registration
+                //extract registration from the exam
+                String regId = interview.getApplicant();
+                RegistrationTable registrationTable = new RegistrationTable(getContext());
+                Registration registration = registrationTable.getRegistrationById(regId);
+                session.saveRegistration(registration);
+                Fragment fragment = new RegistrationViewFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                fragmentTransaction.commitAllowingStateLoss();
 
             }
 
             @Override
             public void onRowLongClicked(int position) {
-                Toast.makeText(getContext(), "This is Long Press", Toast.LENGTH_SHORT).show();
+
             }
 
         });
@@ -166,7 +194,6 @@ public class InterviewsFragment extends Fragment  {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(rAdapter);
-        actionModeCallback = new ActionModeCallback();
         swipeRefreshLayout.post(
                 new Runnable(){
                     @Override
@@ -175,11 +202,6 @@ public class InterviewsFragment extends Fragment  {
                     }
                 }
         );
-
-//        actionModeCallback = new ActionMode().Callback;
-
-
-        //===========Gmail View Ends here ============================
         return v;
     }
 
@@ -230,12 +252,13 @@ public class InterviewsFragment extends Fragment  {
         rAdapter.toggleSelection(position);
         int count = rAdapter.getSelectedItemCount();
 
-        if (count == 0) {
-            actionMode.finish();
-        } else {
-            actionMode.setTitle(String.valueOf(count));
-            actionMode.invalidate();
-        }
+
+//        if (count == 0) {
+//            actionMode.finish();
+//        } else {
+//            actionMode.setTitle(String.valueOf(count));
+//            actionMode.invalidate();
+//        }
     }
     /*
     *  Choose a random
@@ -253,52 +276,47 @@ public class InterviewsFragment extends Fragment  {
         }
         return returnColor;
     }
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        mode.getMenuInflater().inflate(R.menu.menu_action_mode, menu);
 
+        // disable swipe refresh if action mode is enabled
+        swipeRefreshLayout.setEnabled(false);
+        return true;
+    }
 
-    private class ActionModeCallback implements ActionMode.Callback {
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.getMenuInflater().inflate(R.menu.menu_action_mode, menu);
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
 
-            // disable swipe refresh if action mode is enabled
-            swipeRefreshLayout.setEnabled(false);
-            return true;
-        }
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_delete:
+                // delete all the selected messages
+                deleteMessages();
+                mode.finish();
+                return true;
 
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.action_delete:
-                    // delete all the selected messages
-                    deleteMessages();
-                    mode.finish();
-                    return true;
-
-                default:
-                    return false;
-            }
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            rAdapter.clearSelections();
-            swipeRefreshLayout.setEnabled(true);
-            actionMode = null;
-            recyclerView.post(new Runnable() {
-                @Override
-                public void run() {
-                    rAdapter.resetAnimationIndex();
-                    // mAdapter.notifyDataSetChanged();
-                }
-            });
+            default:
+                return false;
         }
     }
 
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        rAdapter.clearSelections();
+        swipeRefreshLayout.setEnabled(true);
+        actionMode = null;
+        recyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                rAdapter.resetAnimationIndex();
+                // mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
     // deleting the messages from recycler view
     private void deleteMessages() {
         rAdapter.resetAnimationIndex();
@@ -335,5 +353,7 @@ public class InterviewsFragment extends Fragment  {
     }
 
     //====================================== End Gmail Methods======================================
+
+
 
 }

@@ -208,11 +208,6 @@ public class ExamListAdapter extends RecyclerView.Adapter<ExamListAdapter.ListHo
         selectedItemsIndex.clear();
     }
 
-    @Override
-    public long getItemId(int position) {
-        return exams.get(position).getId();
-    }
-
     private void applyImportant(ListHolder holder, Exam exam) {
         if (exam.isImportant()) {
             holder.iconImp.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_star_black_24dp));

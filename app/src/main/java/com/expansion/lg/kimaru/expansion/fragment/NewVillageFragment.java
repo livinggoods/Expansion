@@ -18,12 +18,16 @@ import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
+import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
+import com.expansion.lg.kimaru.expansion.mzigos.Village;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.UUID;
 
 
 /**
@@ -56,7 +60,9 @@ public class NewVillageFragment extends Fragment implements OnClickListener {
     static final int DATE_DIALOG_ID = 100;
 
 
-    Integer loggedInUser = 1;
+    SessionManagement session;
+    Village editingVillage = null;
+    HashMap<String, String> user;
 
 
 
@@ -99,10 +105,11 @@ public class NewVillageFragment extends Fragment implements OnClickListener {
         View v =  inflater.inflate(R.layout.fragment_new_exam, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_VILLAGE;
         MainActivity.backFragment = new VillagesFragment();
-                //Initialize the UI Components
-        mMaths = (EditText) v.findViewById(R.id.editMathScore);
-        mEnglish = (EditText) v.findViewById(R.id.editEnglishScore);
-        mSelfAssessment = (EditText) v.findViewById(R.id.editSelfAssessmentScore);
+        session = new SessionManagement(getContext());
+        user = session.getUserDetails();
+
+        //in case we are editing
+        setupEditingMode();
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
@@ -135,59 +142,18 @@ public class NewVillageFragment extends Fragment implements OnClickListener {
                 // set date as integers
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
+                String uuid;
+                if (editingVillage == null){
+                    uuid = UUID.randomUUID().toString();
+                }else{
+                    uuid = editingVillage.getId();
+                }
+
                 Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
-                Integer currentDate =  (int) (new Date().getTime()/1000);
+                Long currentDate =  new Date().getTime();
 
-                Integer applicantId = 1;
-                Integer recruitment = 1; //mMaths, mEnglish, mSelfAssessment
-
-                Integer applicantMathsScore = Integer.parseInt(mMaths.getText().toString());
-                Integer applicantEnglishScore = Integer.parseInt(mEnglish.getText().toString());
-                Integer applicantSelfAssessmentScore = Integer.parseInt(mSelfAssessment.getText().toString());
-
-                String applicantComment = "";
-                Integer applicantAddedBy = loggedInUser;
-                Integer applicantProceed = 0;
-                Integer applicantDateAdded = currentDate;
-                Integer applicantSync = 0;
-                Integer applicantRecruitment = 1;
-
-
-                // Do some validations
-                if (applicantMathsScore.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Enter the Score for Maths", Toast.LENGTH_SHORT).show();
-                }
-
-                else if (applicantEnglishScore.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Enter the Score for English", Toast.LENGTH_SHORT).show();
-                }
-
-                else if(applicantSelfAssessmentScore.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Enter the Score for Self Assessment", Toast.LENGTH_SHORT).show();
-                } else{
-                    // Save Exam Details
-                    Exam exam;
-                    exam = new Exam(applicantId, applicantMathsScore, applicantRecruitment,
-                            applicantSelfAssessmentScore, applicantEnglishScore, applicantAddedBy,
-                            applicantDateAdded, applicantSync, applicantComment);
-
-                    ExamTable examTable = new ExamTable(getContext());
-                    long id = examTable.addData(exam);
-
-                    if (id ==-1){
-                        Toast.makeText(getContext(), "Could not save the results", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
-
-                        // Clear boxes
-                        mMaths.setText("");
-                        mEnglish.setText("");
-                        mSelfAssessment.setText("");
-                        mMaths.requestFocus();
-                    }
-
-                }
+                Integer applicantId = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
+                String mapping = session.getSavedMapping().getId();
 
         }
     }
@@ -223,5 +189,11 @@ public class NewVillageFragment extends Fragment implements OnClickListener {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void setupEditingMode(){
+        if (editingVillage != null){
+
+        }
     }
 }
