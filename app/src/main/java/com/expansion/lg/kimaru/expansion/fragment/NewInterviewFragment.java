@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -195,6 +196,13 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
                     }
                     else {
                         Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
+                        Fragment fragment = new RegistrationViewFragment();
+                        FragmentTransaction fragmentTransaction;
+                        fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                android.R.anim.fade_out);
+                        fragmentTransaction.replace(R.id.frame, fragment, MainActivity.REGISTRATION_VIEW);
+                        fragmentTransaction.commitAllowingStateLoss();
                     }
 
 

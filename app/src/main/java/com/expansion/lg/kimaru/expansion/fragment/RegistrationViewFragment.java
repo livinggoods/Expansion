@@ -181,7 +181,14 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
         switch (item.getItemId()) {
             // action with ID action_refresh was selected
             case R.id.action_interview:
-                fragment = new NewInterviewFragment();
+                // get teh interview so that users dont reenter new data
+                InterviewTable interviewTable = new InterviewTable(getContext());
+                Interview interview = interviewTable.getInterviewByRegistrationId(
+                        sessionManagement.getSavedRegistration().getId());
+                NewInterviewFragment newInterviewFragment = new NewInterviewFragment();
+                newInterviewFragment.editingInterview = interview;
+                fragment = newInterviewFragment;
+
                 fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
@@ -190,7 +197,11 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
                 break;
             // action with ID action_settings was selected
             case R.id.action_exam:
-                fragment = new NewExamFragment();
+                ExamTable examTable = new ExamTable(getContext());
+                Exam exam = examTable.getExamByRegistration(sessionManagement.getSavedRegistration().getId());
+                NewExamFragment newExamFragment = new NewExamFragment();
+                newExamFragment.editingExam = exam;
+                fragment = newExamFragment;
                 fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
