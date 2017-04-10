@@ -210,10 +210,6 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setRecruitment(cursor.getString(23));
             registration.setCountry(cursor.getString(24));
             registration.setPicture("");
-
-
-
-
             registrationList.add(registration);
         }
 
@@ -267,6 +263,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
 
     }
 
+
     public boolean isExist(Registration registration) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cur = db.rawQuery("SELECT "+ID+" FROM " + TABLE_NAME + " WHERE " + ID + " = '" + registration.getId() + "'", null);
@@ -283,17 +280,22 @@ public class RegistrationTable extends SQLiteOpenHelper {
         return cnt;
     }
 
-    public Registration getRegistrationsByRecruitment(Recruitment recruitment){
-        SQLiteDatabase db = getReadableDatabase();
+    public List<Registration> getRegistrationsByRecruitment(Recruitment recruitment) {
+
+        SQLiteDatabase db=getReadableDatabase();
+        String orderBy = "id desc";
         String whereClause = RECRUITMENT+" = ?";
         String[] whereArgs = new String[] {
                 recruitment.getId(),
         };
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
 
-        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
-            return null;
-        }else{
+        List<Registration> registrationList=new ArrayList<>();
+
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+
+
             Registration registration=new Registration();
 
             registration.setId(cursor.getString(0));
@@ -322,10 +324,12 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setRecruitment(cursor.getString(23));
             registration.setCountry(cursor.getString(24));
             registration.setPicture("");
-
-            return registration;
+            registrationList.add(registration);
         }
 
+        db.close();
+
+        return registrationList;
     }
 
     public JSONObject getRegistrationJson() {
