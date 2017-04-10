@@ -229,17 +229,23 @@ public class InterviewTable extends SQLiteOpenHelper {
             return interview;
         }
     }
-    public Interview getInterviewByRecruitment (Recruitment recruitment){
-        SQLiteDatabase db = getReadableDatabase();
+
+    public List<Interview> getInterviewsByRecruitment(Recruitment recruitment) {
+
+        SQLiteDatabase db=getReadableDatabase();
+
         String whereClause = APPLICANT+" = ?";
         String[] whereArgs = new String[] {
                 recruitment.getId(),
         };
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
 
-        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
-            return null;
-        }else{
+
+        List<Interview> interviewList=new ArrayList<>();
+
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+
 
             Interview interview = new Interview();
 
@@ -253,7 +259,6 @@ public class InterviewTable extends SQLiteOpenHelper {
             interview.setHealth(cursor.getInt(7));
             interview.setInvestment(cursor.getInt(8));
             interview.setInterpersonal(cursor.getInt(9));
-            // interview.setTotal(cursor.getInt(10));
             interview.setSelected(cursor.getInt(11) == 1);
             interview.setAddedBy(cursor.getInt(12));
             interview.setComment(cursor.getString(13));
@@ -261,9 +266,16 @@ public class InterviewTable extends SQLiteOpenHelper {
             interview.setDateAdded(cursor.getLong(15));
             interview.setSynced(cursor.getInt(16));
             interview.setCanJoin(cursor.getInt(17) == 1);
-            return interview;
+            interview.setCountry(cursor.getString(18));
+
+            interviewList.add(interview);
         }
+
+        db.close();
+
+        return interviewList;
     }
+
     public JSONObject getInterviewJson() {
 
         SQLiteDatabase db=getReadableDatabase();

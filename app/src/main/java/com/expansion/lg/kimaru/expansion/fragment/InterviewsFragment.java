@@ -338,7 +338,7 @@ public class InterviewsFragment extends Fragment implements Callback {
             InterviewTable interviewTable = new InterviewTable(getContext());
             List<Interview> interviewList = new ArrayList<>();
 
-            interviewList = interviewTable.getInterviewData();
+            interviewList = interviewTable.getInterviewsByRecruitment(session.getSavedRecruitment());
             for (Interview interview:interviewList){
                 interview.setColor(getRandomMaterialColor("400"));
                 interviews.add(interview);
