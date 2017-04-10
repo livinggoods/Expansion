@@ -6,6 +6,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.telephony.PhoneNumberUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -293,11 +294,29 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
 
                 // Do some validations
                 if (applicantName.toString().trim().equals("")){
+                    mName.requestFocus();
                     Toast.makeText(getContext(), "Name cannot be blank", Toast.LENGTH_SHORT).show();
                 }
 
                 else if (applicantVillage.toString().trim().equals("")){
+                    mVillage.requestFocus();
                     Toast.makeText(getContext(), "Village is required", Toast.LENGTH_SHORT).show();
+                }
+                else if (!applicantPhone.toString().trim().equals("")){
+                    if (applicantPhone.toString().trim().startsWith("+")){
+                        if (applicantPhone.length() != 13){
+                            Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+                            mPhone.requestFocus();
+                        } else if (!PhoneNumberUtils.isGlobalPhoneNumber(applicantPhone)) {
+                            mPhone.requestFocus();
+                            Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+                        }
+                    }else if (applicantPhone.length() != 10){
+                        mPhone.requestFocus();
+                        Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+                    }else if(!PhoneNumberUtils.isGlobalPhoneNumber(applicantPhone)){
+                        Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
                 else if(applicantEducation.toString().trim().equals("")){
