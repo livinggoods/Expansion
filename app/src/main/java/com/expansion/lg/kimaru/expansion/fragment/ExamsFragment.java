@@ -380,6 +380,7 @@ public class ExamsFragment extends Fragment  {
             List<Exam> examList = new ArrayList<>();
 
             examList = examTable.getExamData();
+            examList = examTable.getExamsByRecruitment(session.getSavedRecruitment());
             for (Exam exam:examList){
                 exam.setColor(getRandomMaterialColor("400"));
                 exams.add(exam);
@@ -387,8 +388,8 @@ public class ExamsFragment extends Fragment  {
             rAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
         } catch (Exception error){
-            Toast.makeText(getContext(), "No Registrations", Toast.LENGTH_SHORT).show();
-            textshow.setText("No registrations added. Please create one");
+            Toast.makeText(getContext(), "No Exams", Toast.LENGTH_SHORT).show();
+            textshow.setText("No Exams added. Please create one");
         }
         swipeRefreshLayout.setRefreshing(false);
     }

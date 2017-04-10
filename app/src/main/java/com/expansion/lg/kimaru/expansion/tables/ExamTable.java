@@ -168,18 +168,26 @@ public class ExamTable extends SQLiteOpenHelper {
         }
 
     }
-    public Exam getExamByRecruitment(Recruitment recruitment){
-        SQLiteDatabase db = getReadableDatabase();
+
+    public List<Exam> getExamsByRecruitment(Recruitment recruitment) {
+
+        SQLiteDatabase db=getReadableDatabase();
+
         String whereClause = RECRUITMENT+" = ?";
         String[] whereArgs = new String[] {
                 recruitment.getId(),
         };
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
 
-        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
-            return null;
-        }else{
+
+        List<Exam> examList=new ArrayList<>();
+
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+
+
             Exam exam=new Exam();
+
             exam.setId(cursor.getString(0));
             exam.setApplicant(cursor.getString(1));
             exam.setRecruitment(cursor.getString(2));
@@ -190,9 +198,12 @@ public class ExamTable extends SQLiteOpenHelper {
             exam.setComment(cursor.getString(7));
             exam.setDateAdded(cursor.getLong(8));
             exam.setSynced(cursor.getInt(9));
-            return exam;
-        }
 
+            examList.add(exam);
+        }
+        db.close();
+
+        return examList;
     }
 
     public boolean isExist(Exam exam) {
