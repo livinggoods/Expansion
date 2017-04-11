@@ -67,12 +67,6 @@ public class MainActivity extends AppCompatActivity {
     public Toolbar toolbar;
     public FloatingActionButton fab;
 
-    // urls to load navigation header background image
-    // and profile image
-    private static final String urlNavHeaderBg = "http://api.androidhive.info/images/nav-menu-header-bg.jpg";
-//    private static final String userProfileImg = "https://lh3.googleusercontent.com/eCtE_G34M9ygdkmOpYvCag1vBARCmZwnVS6rS5t4JLzJ6QgQSBquM0nuTsCpLhYbKljoyS-txg";
-    private static final String urlProfileImg = "https://pbs.twimg.com/profile_images/2167974144/Screen_Shot_2012-04-26_at_11.39.13_AM.png";
-
     // index to identify current nav menu item
     public static int navItemIndex = 0;
 
@@ -406,20 +400,8 @@ public class MainActivity extends AppCompatActivity {
         // name, website
         txtName.setText(name);
         txtWebsite.setText(email);
-
-        // loading header background image
-        Glide.with(this).load(urlNavHeaderBg)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imgNavHeaderBg);
-
-        // Loading profile image
-        Glide.with(this).load(urlProfileImg)
-                .crossFade()
-                .thumbnail(0.5f)
-                .bitmapTransform(new CircleTransform(this))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imgProfile);
+        imgNavHeaderBg.setImageResource(R.drawable.nav_menu_header_bg);
+        imgProfile.setImageResource(R.drawable.lg_bg);
 
         // showing dot next to notifications label
         navigationView.getMenu().getItem(3).setActionView(R.layout.menu_dot);
