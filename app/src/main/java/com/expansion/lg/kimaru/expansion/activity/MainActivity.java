@@ -44,6 +44,7 @@ import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
 import com.expansion.lg.kimaru.expansion.other.SetUpApp;
+import com.expansion.lg.kimaru.expansion.service.SyncServiceAdapter;
 import com.expansion.lg.kimaru.expansion.tables.MappingTable;
 import com.expansion.lg.kimaru.expansion.other.FileUtils;
 
@@ -134,6 +135,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        // Start the Sync Service
+        SyncServiceAdapter.initializeSyncAdapter(getApplicationContext());
 
         //since we want login to be the first thing
         session = new SessionManagement(getBaseContext());
