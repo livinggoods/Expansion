@@ -8,6 +8,7 @@ import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
@@ -105,6 +106,16 @@ public class HttpClient {
     }
 
 
+    // Callback for the API
+    private String syncClient(JSONObject json, String apiEndpoint) throws Exception {
+        //  get the server URL
+        AsyncHttpPost p = new AsyncHttpPost(Constants.API_SERVER+apiEndpoint);
+        p.setBody(new JSONObjectBody(json));
+        JSONObject ret = AsyncHttpClient.getDefaultInstance().executeJSONObject(p, null).get();
+//        return ret.getString(expectedJsonRoot);
+        return ret.toString();
+    }
+
     // GET RECORDS FROM THE SERVER
     public void startClient(){
         final Handler handler = new Handler();
@@ -187,6 +198,7 @@ public class HttpClient {
                         exam.setId(recs.getJSONObject(x).getString(ExamTable.ID));
                         exam.setApplicant(recs.getJSONObject(x).getString(ExamTable.APPLICANT));
                         exam.setRecruitment(recs.getJSONObject(x).getString(ExamTable.RECRUITMENT));
+                        exam.setCountry(recs.getJSONObject(x).getString(ExamTable.COUNTRY));
                         exam.setMath(recs.getJSONObject(x).getDouble(ExamTable.MATH));
                         exam.setPersonality(recs.getJSONObject(x).getDouble(ExamTable.PERSONALITY));
                         exam.setEnglish(recs.getJSONObject(x).getDouble(ExamTable.ENGLISH));
@@ -237,7 +249,6 @@ public class HttpClient {
                     // Get the array first JSONObject
                     List<Recruitment> recruitmentList = new ArrayList<Recruitment>();
 
-
                     for (int x = 0; x < recs.length(); x++){
                         Registration registration=new Registration();
                         registration.setId(recs.getJSONObject(x).getString(RegistrationTable.ID));
@@ -246,6 +257,8 @@ public class HttpClient {
                         registration.setGender(recs.getJSONObject(x).getString(RegistrationTable.GENDER));
                         registration.setDob(recs.getJSONObject(x).getLong(RegistrationTable.DOB));
                         registration.setDistrict(recs.getJSONObject(x).getString(RegistrationTable.DISTRICT));
+                        registration.setCountry(recs.getJSONObject(x).getString(RegistrationTable.COUNTRY));
+                        registration.setRecruitment(recs.getJSONObject(x).getString(RegistrationTable.RECRUITMENT));
                         registration.setSubcounty(recs.getJSONObject(x).getString(RegistrationTable.SUB_COUNTY));
                         registration.setDivision(recs.getJSONObject(x).getString(RegistrationTable.DIVISION));
                         registration.setVillage(recs.getJSONObject(x).getString(RegistrationTable.VILLAGE));
@@ -312,11 +325,15 @@ public class HttpClient {
                     for (int x = 0; x < recs.length(); x++){
                         Recruitment recruitment = new Recruitment();
 
+
+
+
                         recruitment.setId(recs.getJSONObject(x).getString(RecruitmentTable.ID));
                         recruitment.setName(recs.getJSONObject(x).getString(RecruitmentTable.NAME));
                         recruitment.setDistrict(recs.getJSONObject(x).getString(RecruitmentTable.DISTRICT));
                         recruitment.setSubcounty(recs.getJSONObject(x).getString(RecruitmentTable.SUB_COUNTY));
                         recruitment.setDivision(recs.getJSONObject(x).getString(RecruitmentTable.DIVISION));
+                        recruitment.setCountry(recs.getJSONObject(x).getString(RecruitmentTable.COUNTRY));
                         recruitment.setLat(recs.getJSONObject(x).getString(RecruitmentTable.LAT));
                         recruitment.setLon(recs.getJSONObject(x).getString(RecruitmentTable.LON));
                         recruitment.setAddedBy(Integer.parseInt(recs.getJSONObject(x).getString(RecruitmentTable.ADDED_BY)));
@@ -378,6 +395,7 @@ public class HttpClient {
                         interview.setSelling(recs.getJSONObject(x).getInt(InterviewTable.SELLING));
                         interview.setHealth(recs.getJSONObject(x).getInt(InterviewTable.HEALTH));
                         interview.setInvestment(recs.getJSONObject(x).getInt(InterviewTable.INVESTMENT));
+                        interview.setCountry(recs.getJSONObject(x).getString(InterviewTable.COUNTRY));
                         interview.setInterpersonal(recs.getJSONObject(x).getInt(InterviewTable.INTERPERSONAL));
                         interview.setSelected(recs.getJSONObject(x).getInt(InterviewTable.SELECTED) == 1);
                         interview.setAddedBy(recs.getJSONObject(x).getInt(InterviewTable.ADDED_BY));
@@ -405,5 +423,51 @@ public class HttpClient {
             } // if statement end
         } // onPostExecute() end
     }
+
+
+    //we add method to pull users from the
+
+    public String getJsonData(String urlString){
+        String stream;
+        ApiClient hh = new ApiClient();
+        stream = hh.GetHTTPData(urlString);
+        return stream;
+    }
+
+
+    public void syncRecruitments () {
+        String syncResults;
+        RecruitmentTable recruitmentTable = new RecruitmentTable(context);
+        try {
+            syncResults = this.syncClient(recruitmentTable.getRecruitmentToSyncAsJson(),
+                    HttpServer.RECRUIRMENT_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+
+        if (syncResults != null){
+            processSyncedRecruitments(syncResults);
+        }
+    }
+    private void processSyncedRecruitments(String stream){
+        try {
+
+            JSONObject reader = new JSONObject(stream);
+
+            // Get the JSONArray recruitments
+            JSONArray recs = reader.getJSONArray("status");
+            RecruitmentTable recruitmentTable = new RecruitmentTable(context);
+
+            for (int x = 0; x < recs.length(); x++) {
+                Recruitment recruitment = recruitmentTable.getRecruitmentById(
+                        recs.getJSONObject(x).getString("id"));
+                recruitment.setSynced(recs.getJSONObject(x).getString("id") == "ok" ? 1 : 0);
+                // update recruitment
+                recruitmentTable.addData(recruitment);
+            }
+        }catch (Exception e){}
+
+    }
+
 
 }

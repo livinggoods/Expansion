@@ -194,6 +194,7 @@ public class HttpServer {
                 recruitment.setDistrict(recs.getJSONObject(x).getString(RecruitmentTable.DISTRICT));
                 recruitment.setSubcounty(recs.getJSONObject(x).getString(RecruitmentTable.SUB_COUNTY));
                 recruitment.setDivision(recs.getJSONObject(x).getString(RecruitmentTable.DIVISION));
+                recruitment.setCountry(recs.getJSONObject(x).getString(RecruitmentTable.COUNTRY));
                 recruitment.setLat(recs.getJSONObject(x).getString(RecruitmentTable.LAT));
                 recruitment.setLon(recs.getJSONObject(x).getString(RecruitmentTable.LON));
                 recruitment.setAddedBy(Integer.parseInt(recs.getJSONObject(x).getString(RecruitmentTable.ADDED_BY)));
@@ -231,6 +232,8 @@ public class HttpServer {
                 registration.setDistrict(recs.getJSONObject(x).getString(RegistrationTable.DISTRICT));
                 registration.setSubcounty(recs.getJSONObject(x).getString(RegistrationTable.SUB_COUNTY));
                 registration.setDivision(recs.getJSONObject(x).getString(RegistrationTable.DIVISION));
+                registration.setRecruitment(recs.getJSONObject(x).getString(RegistrationTable.RECRUITMENT));
+                registration.setCountry(recs.getJSONObject(x).getString(RegistrationTable.COUNTRY));
                 registration.setVillage(recs.getJSONObject(x).getString(RegistrationTable.VILLAGE));
                 registration.setMark(recs.getJSONObject(x).getString(RegistrationTable.MARK));
                 registration.setReadEnglish(recs.getJSONObject(x).getInt(RegistrationTable.READ_ENGLISH));
@@ -268,7 +271,6 @@ public class HttpServer {
             // Get the array first JSONObject
             List<Recruitment> recruitmentList = new ArrayList<Recruitment>();
             for (int x = 0; x < recs.length(); x++){
-
                 Interview interview = new Interview();
 
                 interview.setId(recs.getJSONObject(x).getString(InterviewTable.ID));
@@ -277,6 +279,7 @@ public class HttpServer {
                 interview.setMotivation(recs.getJSONObject(x).getInt(InterviewTable.MOTIVATION));
                 interview.setCommunity(recs.getJSONObject(x).getInt(InterviewTable.COMMUNITY));
                 interview.setMentality(recs.getJSONObject(x).getInt(InterviewTable.MENTALITY));
+                interview.setCountry(recs.getJSONObject(x).getString(InterviewTable.COUNTRY));
                 interview.setSelling(recs.getJSONObject(x).getInt(InterviewTable.SELLING));
                 interview.setHealth(recs.getJSONObject(x).getInt(InterviewTable.HEALTH));
                 interview.setInvestment(recs.getJSONObject(x).getInt(InterviewTable.INVESTMENT));
@@ -316,6 +319,7 @@ public class HttpServer {
                 exam.setId(recs.getJSONObject(x).getString(ExamTable.ID));
                 exam.setApplicant(recs.getJSONObject(x).getString(ExamTable.APPLICANT));
                 exam.setRecruitment(recs.getJSONObject(x).getString(ExamTable.RECRUITMENT));
+                exam.setCountry(recs.getJSONObject(x).getString(ExamTable.COUNTRY));
                 exam.setMath(recs.getJSONObject(x).getDouble(ExamTable.MATH));
                 exam.setPersonality(recs.getJSONObject(x).getDouble(ExamTable.PERSONALITY));
                 exam.setEnglish(recs.getJSONObject(x).getDouble(ExamTable.ENGLISH));

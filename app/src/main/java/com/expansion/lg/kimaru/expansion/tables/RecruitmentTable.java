@@ -280,6 +280,81 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         db.close();
         return results;
     }
+
+    public Recruitment getRecruitmentById(String id) {
+
+        SQLiteDatabase db=getReadableDatabase();
+        String orderBy = DATE_ADDED +" desc";
+        String whereClause = ID+" = ?";
+        String[] whereArgs = new String[] {
+                id,
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
+
+        Recruitment recruitment = new Recruitment();
+
+        recruitment.setId(cursor.getString(0));
+        recruitment.setName(cursor.getString(1));
+        recruitment.setDistrict(cursor.getString(2));
+        recruitment.setSubcounty(cursor.getString(3));
+        recruitment.setDivision(cursor.getString(4));
+        recruitment.setLat(cursor.getString(5));
+        recruitment.setLon(cursor.getString(6));
+        recruitment.setAddedBy(cursor.getInt(7));
+        recruitment.setComment(cursor.getString(8));
+        recruitment.setDateAdded(cursor.getLong(9));
+        recruitment.setSynced(cursor.getInt(10));
+        recruitment.setCountry(cursor.getString(11));
+
+        db.close();
+
+        return recruitment;
+    }
+
+    public JSONObject getRecruitmentToSyncAsJson() {
+
+        SQLiteDatabase db=getReadableDatabase();
+
+        String whereClause = SYNCED+" = ?";
+        String[] whereArgs = new String[] {
+                "0",
+        };
+
+        Cursor cursor=db.query(TABLE_NAME,columns, whereClause, whereArgs,null,null,null,null);
+
+        JSONObject results = new JSONObject();
+
+        JSONArray resultSet = new JSONArray();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
+    }
+
+
     public Cursor getRecruitmentDataCursor() {
 
         SQLiteDatabase db=getReadableDatabase();

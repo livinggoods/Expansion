@@ -77,9 +77,6 @@ public class UserDataSync {
                         long id = userTable.addUser(user);
 
                     }
-
-
-
                     // process other data as this way..............
 
                 }catch(JSONException e){

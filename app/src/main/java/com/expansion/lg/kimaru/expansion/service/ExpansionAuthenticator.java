@@ -26,12 +26,11 @@ public class ExpansionAuthenticator extends AbstractAccountAuthenticator {
     // Because we're not actually adding an account to the device, just return null.
     // @TODO Add account: Add Acc to the device so that we can manage it at device level.
     @Override
-    public Bundle addAccount(
-            AccountAuthenticatorResponse r,
-            String s,
-            String s2,
-            String[] strings,
+    public Bundle addAccount( AccountAuthenticatorResponse r, String s, String s2, String[] strings,
             Bundle bundle) throws NetworkErrorException {
+
+        //Try Adding my account here
+
         return null;
     }
 

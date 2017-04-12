@@ -19,17 +19,18 @@ import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
+import com.expansion.lg.kimaru.expansion.sync.HttpClient;
 
 /**
  * Created by kimaru on 4/11/17.
  */
 
-public class SyncServiceAdapter extends AbstractThreadedSyncAdapter {
-    public  static final int SYNC_INTERVAL = 60;
+public class RecruitmentsSyncServiceAdapter extends AbstractThreadedSyncAdapter {
+    public  static final int SYNC_INTERVAL = 15;
     public  static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
     public static final int NOTIFICATION_ID = 3004;
 
-    public SyncServiceAdapter(Context context, boolean autoInitialize){
+    public RecruitmentsSyncServiceAdapter(Context context, boolean autoInitialize){
         super(context, autoInitialize);
     }
 
@@ -39,7 +40,11 @@ public class SyncServiceAdapter extends AbstractThreadedSyncAdapter {
         Log.i("MyServiceSyncAdapter", "onPerformSync");
         //TODO get some data from the internet, api calls, etc.
         //TODO save the data to database, sqlite, etc
-        notifyDataDownloaded();
+
+        // syncRecruitments
+        HttpClient client = new HttpClient(getContext());
+        client.syncRecruitments();
+        // notifyDataDownloaded();
     }
 
     /**
@@ -50,8 +55,8 @@ public class SyncServiceAdapter extends AbstractThreadedSyncAdapter {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(android.support.v7.appcompat.R.drawable.notification_template_icon_bg)
-                        .setContentTitle("Sync Adapter")
-                        .setContentText("New Data Available!");
+                        .setContentTitle("Downloaded Recruitments")
+                        .setContentText("Sync has happened");
 
         // Opening the app when the user clicks on the notification.
         Intent resultIntent = new Intent(context, MainActivity.class);
@@ -123,7 +128,7 @@ public class SyncServiceAdapter extends AbstractThreadedSyncAdapter {
 
     private static void onAccountCreated(Account newAccount, Context context) {
         Log.i("MyServiceSyncAdapter", "onAccountCreated");
-        SyncServiceAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
+        RecruitmentsSyncServiceAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
         ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
         syncImmediately(context);
     }
