@@ -44,6 +44,7 @@
             android:authorities="@string/content_authority"
             android:name=".service.ExpansionContentProvider"
             android:exported="false"
+            android:label="@string/nav_photos"
             android:syncable="true" />
 
 
