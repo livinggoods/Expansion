@@ -330,7 +330,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                     Toast.makeText(getContext(), "Education is required", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+                
                 // Save Registration
 //                    Registration registration = new Registration(mName, mNumber, mEmail);
                 Registration registration;
@@ -366,8 +366,8 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                     //mComment.setText("");
                     mDob.setText("");
                     mDateMoved.setText("");
+                    mName.requestFocus();
                 }
-                Toast.makeText(getContext(), "Savigb is pressed", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.buttonSave:
                 // set date as integers

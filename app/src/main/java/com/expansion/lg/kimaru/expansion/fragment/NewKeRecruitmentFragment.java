@@ -7,7 +7,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,8 +21,6 @@ import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
@@ -32,12 +29,12 @@ import java.util.UUID;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link NewRecruitmentFragment.OnFragmentInteractionListener} interface
+ * {@link NewKeRecruitmentFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link NewRecruitmentFragment#newInstance} factory method to
+ * Use the {@link NewKeRecruitmentFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewRecruitmentFragment extends Fragment implements OnClickListener {
+public class NewKeRecruitmentFragment extends Fragment implements OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -50,9 +47,8 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
     private OnFragmentInteractionListener mListener;
 
     EditText mName;
-    EditText mDivision;
+    EditText mCounty;
     EditText mSubCounty;
-    EditText mDistrict;
 
 
     Button buttonSave, buttonList;
@@ -67,7 +63,7 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
 
 
 
-    public NewRecruitmentFragment() {
+    public NewKeRecruitmentFragment() {
         // Required empty public constructor
     }
 
@@ -80,8 +76,8 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
      * @return A new instance of fragment RegistrationsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NewRecruitmentFragment newInstance(String param1, String param2) {
-        NewRecruitmentFragment fragment = new NewRecruitmentFragment();
+    public static NewKeRecruitmentFragment newInstance(String param1, String param2) {
+        NewKeRecruitmentFragment fragment = new NewKeRecruitmentFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -103,17 +99,15 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_new_recruitment, container, false);
+        View v =  inflater.inflate(R.layout.fragment_new_ke_recruitment, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_RECRUITMENT;
         MainActivity.backFragment = new RecruitmentsFragment();
         session = new SessionManagement(getContext());
         user = session.getUserDetails();
                 //Initialize the UI Components
         mName = (EditText) v.findViewById(R.id.editRecruitmentName);
-        mDistrict = (EditText) v.findViewById(R.id.editRecruitmentDistrict);
-        mDivision = (EditText) v.findViewById(R.id.editRecruitmentDivision);
+        mCounty = (EditText) v.findViewById(R.id.editRecruitmentCounty);
         mSubCounty = (EditText) v.findViewById(R.id.editRecruitmentSubCounty);
-
         //in case we are editing
         setUpEditingMode();
 
@@ -149,9 +143,10 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                     id = UUID.randomUUID().toString();
                 }
                 String recruitmentName = mName.getText().toString();
-                String recruitmentDistrict = mDistrict.getText().toString();
-                String recruitmentDivision = mDivision.getText().toString();
+                String recruitmentDistrict = "";
+                String recruitmentDivision = "";
                 String recruitmentSubCounty = mSubCounty.getText().toString();
+                String recruitmentCounty = mCounty.getText().toString();
                 String recruitmentComment = "";
                 String recruitmentLat = "";
                 String recruitmentLon = "";
@@ -167,13 +162,13 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                     Toast.makeText(getContext(), "Name cannot be blank", Toast.LENGTH_SHORT).show();
                 }
 
-                else if (recruitmentDistrict.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "District is required", Toast.LENGTH_SHORT).show();
+                else if (recruitmentCounty.toString().trim().equals("")){
+                    Toast.makeText(getContext(), "County is required", Toast.LENGTH_SHORT).show();
                 }
 
-                else if(recruitmentDivision.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Division is required", Toast.LENGTH_SHORT).show();
-                }
+//                else if(recruitmentDivision.toString().trim().equals("")){
+//                    Toast.makeText(getContext(), "Division is required", Toast.LENGTH_SHORT).show();
+//                }
                 else if(recruitmentSubCounty.toString().trim().equals("")){
                     Toast.makeText(getContext(), "Sub County is required", Toast.LENGTH_SHORT).show();
                 }
@@ -183,7 +178,7 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                     recruitment = new Recruitment(id, recruitmentName, recruitmentDistrict,
                             recruitmentSubCounty, recruitmentDivision, recruitmentLat,
                             recruitmentLon, recruitmentComment, recruitmentAddedBy,
-                            recruitmentDateAdded, recruitmentSync, country, "");
+                            recruitmentDateAdded, recruitmentSync, country, recruitmentCounty);
                     RecruitmentTable recruitmentTable = new RecruitmentTable(getContext());
                     long statusId = recruitmentTable.addData(recruitment);
 
@@ -195,8 +190,7 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
 
                         // Clear boxes
                         mName.setText("");
-                        mDistrict.setText("");
-                        mDivision.setText("");
+                        mCounty.setText("");
                         mSubCounty.setText("");
 
                         //set Focus
@@ -244,8 +238,7 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
     public void setUpEditingMode(){
         if (editingRecruitment != null){
             mName.setText(editingRecruitment.getName());
-            mDistrict.setText(editingRecruitment.getDistrict());
-            mDivision.setText(editingRecruitment.getDivision());
+            mCounty.setText(editingRecruitment.getCounty());
             mSubCounty.setText(editingRecruitment.getSubcounty());
         }
     }

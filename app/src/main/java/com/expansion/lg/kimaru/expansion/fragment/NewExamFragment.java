@@ -174,47 +174,61 @@ public class NewExamFragment extends Fragment implements OnClickListener {
                 // Do some validations
                 if (applicantMathsScore.toString().trim().equals("")){
                     Toast.makeText(getContext(), "Enter the Score for Maths", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (applicantMathsScore > 10 && country == "KE"){
+                    Toast.makeText(getContext(), "Marks cannot be more than 10", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
-                else if (applicantEnglishScore.toString().trim().equals("")){
+                if (applicantEnglishScore.toString().trim().equals("")){
                     Toast.makeText(getContext(), "Enter the Score for English", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (applicantEnglishScore > 10 && country == "KE"){
+                    Toast.makeText(getContext(), "Marks cannot be more than 10", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
-                else if(applicantSelfAssessmentScore.toString().trim().equals("")){
+                if(applicantSelfAssessmentScore.toString().trim().equals("")){
                     Toast.makeText(getContext(), "Enter the Score for Self Assessment", Toast.LENGTH_SHORT).show();
-                } else{
-                    // Save Exam Details
-                    Exam exam;
-                    exam = new Exam(uuid, applicantId, applicantMathsScore, recruitment,
-                            applicantSelfAssessmentScore, applicantEnglishScore, applicantAddedBy,
-                            applicantDateAdded, applicantSync, applicantComment, country);
-
-                    ExamTable examTable = new ExamTable(getContext());
-                    long id = examTable.addData(exam);
-
-                    if (id ==-1){
-                        Toast.makeText(getContext(), "Could not save the results", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
-
-                        // Clear boxes
-                        mMaths.setText("");
-                        mEnglish.setText("");
-                        mSelfAssessment.setText("");
-                        mMaths.requestFocus();
-
-                        Fragment fragment = new RegistrationViewFragment();
-                        FragmentTransaction fragmentTransaction;
-                        fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                                android.R.anim.fade_out);
-                        fragmentTransaction.replace(R.id.frame, fragment, MainActivity.REGISTRATION_VIEW);
-                        fragmentTransaction.commitAllowingStateLoss();
-                    }
-
+                    return;
+                }
+                if (applicantSelfAssessmentScore > 10 && country == "KE"){
+                    Toast.makeText(getContext(), "Marks cannot be more than 10", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
+                // Save Exam Details
+                Exam exam;
+                exam = new Exam(uuid, applicantId, applicantMathsScore, recruitment,
+                        applicantSelfAssessmentScore, applicantEnglishScore, applicantAddedBy,
+                        applicantDateAdded, applicantSync, applicantComment, country);
+
+                ExamTable examTable = new ExamTable(getContext());
+                long id = examTable.addData(exam);
+
+                if (id ==-1){
+                    Toast.makeText(getContext(), "Could not save the results", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
+
+                    // Clear boxes
+                    mMaths.setText("");
+                    mEnglish.setText("");
+                    mSelfAssessment.setText("");
+                    mMaths.requestFocus();
+
+                    Fragment fragment = new RegistrationViewFragment();
+                    FragmentTransaction fragmentTransaction;
+                    fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                            android.R.anim.fade_out);
+                    fragmentTransaction.replace(R.id.frame, fragment, MainActivity.REGISTRATION_VIEW);
+                    fragmentTransaction.commitAllowingStateLoss();
+                }
+            break;
         }
     }
 

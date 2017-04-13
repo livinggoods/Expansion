@@ -175,7 +175,7 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
                 Integer applicantHealth = Integer.parseInt(getSelectedRadioItemValue(mHealth));
                 Integer applicantInvestment = Integer.parseInt(getSelectedRadioItemValue(mInvestment));
                 boolean conditionsPreventingJoining = getSelectedRadioItemValue(mConditionsPreventing) == "Yes";
-                boolean applicantSelected = getSelectedRadioItemValue(mSelected) == "Yes";
+                boolean applicantSelected = false;//= getSelectedRadioItemValue(mSelected) == "Yes";
                 String country = user.get(SessionManagement.KEY_USER_COUNTRY);
 
                 String applicantComment = mComment.getText().toString();

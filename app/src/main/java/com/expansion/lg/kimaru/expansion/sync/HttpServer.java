@@ -202,6 +202,7 @@ public class HttpServer {
                 recruitment.setComment(recs.getJSONObject(x).getString(RecruitmentTable.COMMENT));
                 recruitment.setDateAdded(Long.parseLong(recs.getJSONObject(x).getString(RecruitmentTable.DATE_ADDED)));
                 recruitment.setSynced(Integer.parseInt(recs.getJSONObject(x).getString(RecruitmentTable.SYNCED)));
+                recruitment.setCounty(recs.getJSONObject(x).getString(RecruitmentTable.COUNTY));
 
                 // add recruitment
                 RecruitmentTable recruitmentTable = new RecruitmentTable(context);

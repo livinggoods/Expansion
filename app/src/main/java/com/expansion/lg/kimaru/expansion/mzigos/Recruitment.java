@@ -6,7 +6,7 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 
 public class Recruitment {
 
-    String id, name, district, subcounty, division, comment, lat, lon, country;
+    String id, name, district, subcounty, division, comment, lat, lon, country, county;
     Integer addedBy, synced;
     Long dateAdded;
 
@@ -19,7 +19,7 @@ public class Recruitment {
     }
 
     public Recruitment(String id, String name, String district, String subcounty, String division, String lat, String lon,
-                       String comment, Integer addedBy, Long dateAdded, Integer synced, String country) {
+                       String comment, Integer addedBy, Long dateAdded, Integer synced, String country, String county) {
         this.name = name;
         this.district = district;
         this.subcounty = subcounty;
@@ -32,6 +32,7 @@ public class Recruitment {
         this.lon = lon;
         this.id = id;
         this.country = country;
+        this.county = county;
     }
 
 
@@ -71,6 +72,9 @@ public class Recruitment {
         return country;
     }
 
+    public String getCounty() {
+        return county;
+    }
 
     public String getPicture() {
         return picture;
@@ -116,6 +120,10 @@ public class Recruitment {
     }
     public void setLon(String lon) {
         this.lon = lon;
+    }
+
+    public void setCounty(String county) {
+        this.county = county;
     }
 
     public void setCountry(String country) {

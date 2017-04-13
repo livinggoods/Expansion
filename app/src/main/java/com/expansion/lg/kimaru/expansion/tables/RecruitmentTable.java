@@ -40,6 +40,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     public static final String LAT = "lat";
     public static final String DISTRICT = "district";
     public static final String SUB_COUNTY = "subcounty";
+    public static final String COUNTY = "county";
     public static final String DIVISION = "division";
     public static final String COUNTRY = "country";
     public static final String ADDED_BY = "added_by";
@@ -48,7 +49,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     public static final String SYNCED = "synced";
 
     String [] columns=new String[]{ID, NAME, DISTRICT, SUB_COUNTY, DIVISION, LAT, LON, ADDED_BY,
-            COMMENT, DATE_ADDED, SYNCED, COUNTRY};
+            COMMENT, DATE_ADDED, SYNCED, COUNTRY, COUNTY};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ", "
@@ -57,6 +58,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
             + LON + varchar_field + ", "
             + DISTRICT + varchar_field + ", "
             + SUB_COUNTY + varchar_field + ", "
+            + COUNTY + varchar_field + ", "
             + DIVISION + varchar_field + ", "
             + COUNTRY + varchar_field + ", "
             + ADDED_BY + integer_field + ", "
@@ -95,6 +97,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         cv.put(LAT, recruitment.getLat());
         cv.put(LON, recruitment.getLon());
         cv.put(SUB_COUNTY, recruitment.getSubcounty());
+        cv.put(COUNTY, recruitment.getCounty());
         cv.put(COUNTRY, recruitment.getCountry());
         cv.put(DIVISION, recruitment.getDivision());
         cv.put(ADDED_BY, recruitment.getAddedBy());
@@ -155,6 +158,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
             recruitment.setDateAdded(cursor.getLong(9));
             recruitment.setSynced(cursor.getInt(10));
             recruitment.setCountry(cursor.getString(11));
+            recruitment.setCounty(cursor.getString(12));
 
             recruitmentList.add(recruitment);
         }
@@ -193,6 +197,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
             recruitment.setDateAdded(cursor.getLong(9));
             recruitment.setSynced(cursor.getInt(10));
             recruitment.setCountry(cursor.getString(11));
+            recruitment.setCounty(cursor.getString(12));
 
             recruitmentList.add(recruitment);
         }
@@ -236,6 +241,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
             recruitment.setDateAdded(cursor.getLong(9));
             recruitment.setSynced(cursor.getInt(10));
             recruitment.setCountry(cursor.getString(11));
+            recruitment.setCounty(cursor.getString(12));
 
             recruitments.add(recruitment);
         }
@@ -306,6 +312,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         recruitment.setDateAdded(cursor.getLong(9));
         recruitment.setSynced(cursor.getInt(10));
         recruitment.setCountry(cursor.getString(11));
+        recruitment.setCounty(cursor.getString(12));
 
         db.close();
 
@@ -359,8 +366,6 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     public Cursor getRecruitmentDataCursor() {
 
         SQLiteDatabase db=getReadableDatabase();
-
-        String [] columns=new String[]{ID, NAME, DISTRICT, SUB_COUNTY, DIVISION, LAT, LON, ADDED_BY, COMMENT, DATE_ADDED, SYNCED};
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
         return  cursor;

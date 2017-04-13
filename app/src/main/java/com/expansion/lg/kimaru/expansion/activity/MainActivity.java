@@ -29,6 +29,7 @@ import com.expansion.lg.kimaru.expansion.fragment.MappingFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewCommunityUnitFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewExamFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewInterviewFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewKeRecruitmentFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewLinkFacilityFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewKeMappingFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRecruitmentFragment;
@@ -206,16 +207,24 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         // update the main content by replacing fragments
-                        NewRecruitmentFragment newRecruitmentFragment = new NewRecruitmentFragment();
-                        Fragment fragment = newRecruitmentFragment;
-                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                                android.R.anim.fade_out);
-                        //fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
-                        fragmentTransaction.replace( R.id.frame, fragment).addToBackStack( CURRENT_TAG).commit();
+                        Fragment fragment = null;
+                        switch (country){
+                            case "KE":
+                                NewKeRecruitmentFragment newKeRecruitmentFragment = new NewKeRecruitmentFragment();
+                                fragment = newKeRecruitmentFragment;
+                                break;
+                            case "UG":
+                                NewRecruitmentFragment newRecruitmentFragment = new NewRecruitmentFragment();
+                                fragment = newRecruitmentFragment;
+                                break;
+                        }
+                        if (fragment != null){
+                            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                    android.R.anim.fade_out);
+                            fragmentTransaction.replace( R.id.frame, fragment).addToBackStack( CURRENT_TAG).commit();
+                        }
 
-
-                        //fragmentTransaction.commitAllowingStateLoss();
                     }
                 };
                 // If mPendingRunnable is not null, then add to the message queue
