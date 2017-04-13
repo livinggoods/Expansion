@@ -136,8 +136,8 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
     public void onClick(View view){
         switch (view.getId()){
             case R.id.buttonSave:
+
                 // set date as integers
-                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                 Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
                 Long currentDate =  new Date().getTime();
 
@@ -148,9 +148,6 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                 }else {
                     id = UUID.randomUUID().toString();
                 }
-
-
-
                 String recruitmentName = mName.getText().toString();
                 String recruitmentDistrict = mDistrict.getText().toString();
                 String recruitmentDivision = mDivision.getText().toString();

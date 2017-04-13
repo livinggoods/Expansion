@@ -353,9 +353,9 @@ public class SubCountyFragment extends Fragment  {
             rAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
         } catch (Exception error){
-            Toast.makeText(getContext(), "No Village unit  found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "No subcounty  found", Toast.LENGTH_SHORT).show();
 
-            textshow.setText(" No village unit recorded ");
+            textshow.setText(" No subcounty recorded ");
         }
         swipeRefreshLayout.setRefreshing(false);
     }

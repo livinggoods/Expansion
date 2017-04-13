@@ -129,6 +129,7 @@ public class InterviewTable extends SQLiteOpenHelper {
 
         long id;
         if (isExist(interview)){
+            cv.put(SYNCED, 0);
             id = db.update(TABLE_NAME, cv, ID+"='"+interview.getId()+"'", null);
         }else{
             id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
@@ -230,6 +231,44 @@ public class InterviewTable extends SQLiteOpenHelper {
         }
     }
 
+    public Interview getInterviewById (String id){
+        SQLiteDatabase db = getReadableDatabase();
+        String whereClause = ID+" = ?";
+        String[] whereArgs = new String[] {
+                id,
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else{
+
+            Interview interview = new Interview();
+
+            interview.setId(cursor.getString(0));
+            interview.setApplicant(cursor.getString(1));
+            interview.setRecruitment(cursor.getString(2));
+            interview.setMotivation(cursor.getInt(3));
+            interview.setCommunity(cursor.getInt(4));
+            interview.setMentality(cursor.getInt(5));
+            interview.setSelling(cursor.getInt(6));
+            interview.setHealth(cursor.getInt(7));
+            interview.setInvestment(cursor.getInt(8));
+            interview.setInterpersonal(cursor.getInt(9));
+            // interview.setTotal(cursor.getInt(10));
+            interview.setSelected(cursor.getInt(11) == 1);
+            interview.setAddedBy(cursor.getInt(12));
+            interview.setComment(cursor.getString(13));
+            interview.setCommitment(cursor.getInt(14));
+            interview.setDateAdded(cursor.getLong(15));
+            interview.setSynced(cursor.getInt(16));
+            interview.setCanJoin(cursor.getInt(17) == 1);
+            return interview;
+        }
+    }
+
+    //getInterviewById
+
     public List<Interview> getInterviewsByRecruitment(Recruitment recruitment) {
 
         SQLiteDatabase db=getReadableDatabase();
@@ -281,6 +320,48 @@ public class InterviewTable extends SQLiteOpenHelper {
         SQLiteDatabase db=getReadableDatabase();
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+
+        JSONObject results = new JSONObject();
+
+        JSONArray resultSet = new JSONArray();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
+    }
+
+    public JSONObject getInterviewsToSyncAsJson() {
+
+        SQLiteDatabase db=getReadableDatabase();
+        String whereClause = SYNCED+" = ?";
+        String[] whereArgs = new String[] {
+                "0",
+        };
+
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
 
         JSONObject results = new JSONObject();
 

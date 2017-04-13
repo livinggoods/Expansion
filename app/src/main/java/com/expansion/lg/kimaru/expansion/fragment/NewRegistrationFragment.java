@@ -187,11 +187,10 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
 
-        buttonSave = (Button) v.findViewById(R.id.buttonSave);
+        buttonSave = (Button) v.findViewById(R.id.buttonSaveRegistration);
         buttonSave.setOnClickListener(this);
 
         mDob.setOnClickListener(this);
-        mDateMoved.setOnClickListener(this);
         return v;
     }
 
@@ -217,8 +216,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
 //                    mSubcounty, mDivision, mVillage, mMark, mLangs, mEducation, mOccupation,
 //                    mComment, mDob, mReadEnglish, mRecruitment, mDateMoved,
 //                    mBrac, mBracChp, mCommunity, mAddedBy, mProceed, mDateAdded, mSynced
-            case R.id.buttonSave:
-                // set date as integers
+            case R.id.buttonSaveRegistration:
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                 Long currentDate =  new Date().getTime();
 
@@ -228,7 +226,6 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 }else{
                     registrationId = UUID.randomUUID().toString();
                 }
-
                 String applicantName = mName.getText().toString();
                 String applicantPhone = mPhone.getText().toString();
 
@@ -253,8 +250,6 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 }catch (Exception e){
                     applicantDob = currentDate;
                 }
-
-
                 Integer readEnglish = mReadEnglish.getCheckedRadioButtonId();
                 RadioButton readEnglishRadioButton =(RadioButton) mReadEnglish.findViewById(readEnglish);
                 String canApplicantReadEnglish = readEnglishRadioButton.getText().toString();
@@ -268,16 +263,25 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                     applicantDateMoved = Long.valueOf(dateMoved);
                 }
 
-
                 Integer workedBrac = mBrac.getCheckedRadioButtonId();
                 RadioButton hasWorkAtBrac =(RadioButton) mBrac.findViewById(workedBrac);
                 String hasApplicantWorkedAtBrac = hasWorkAtBrac.getText().toString();
-                Integer applicantBrac = hasApplicantWorkedAtBrac == "yes" ? 1 : 0;
+                Integer applicantBrac; //= hasApplicantWorkedAtBrac == "Yes" ? 1 : 0;
+                if (hasApplicantWorkedAtBrac == "Yes"){
+                    applicantBrac = 1;
+                }else{
+                    applicantBrac = 0;
+                }
 
                 Integer workedBracAsChp = mBracChp.getCheckedRadioButtonId();
                 RadioButton hasWorkAsBracChp =(RadioButton) mBracChp.findViewById(workedBracAsChp);
                 String hasApplicantWorkedAsBracChp = hasWorkAsBracChp.getText().toString();
-                Integer applicantBracChp = hasApplicantWorkedAsBracChp == "yes" ? 1 : 0;
+                Integer applicantBracChp; // = hasApplicantWorkedAsBracChp == "Yes" ? 1 : 0;
+                if (hasApplicantWorkedAsBracChp == "Yes"){
+                    applicantBracChp =1;
+                }else{
+                    applicantBracChp = 0;
+                }
 
                 Integer communityParticipation = mCommunity.getCheckedRadioButtonId();
                 RadioButton hasCommunityParticipation =(RadioButton) mCommunity.findViewById(communityParticipation);
@@ -290,6 +294,89 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 Integer applicantSync = 0;
                 String applicantRecruitment = recruitmentId;
                 String country = user.get(SessionManagement.KEY_USER_COUNTRY);
+
+                // Do some validations
+                if (applicantName.toString().trim().equals("")){
+                    mName.requestFocus();
+                    Toast.makeText(getContext(), "Name cannot be blank", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (applicantVillage.toString().trim().equals("")){
+                    mVillage.requestFocus();
+                    Toast.makeText(getContext(), "Village is required", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!applicantPhone.toString().trim().equals("")){
+                    if (applicantPhone.toString().trim().startsWith("+")){
+                        if (applicantPhone.length() != 13){
+                            Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+                            mPhone.requestFocus();
+                            return;
+                        } else if (!PhoneNumberUtils.isGlobalPhoneNumber(applicantPhone)) {
+                            mPhone.requestFocus();
+                            Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }else if (applicantPhone.length() != 10){
+                        mPhone.requestFocus();
+                        Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+                        return;
+                    }else if(!PhoneNumberUtils.isGlobalPhoneNumber(applicantPhone)){
+                        Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+                if(applicantEducation.toString().trim().equals("")){
+                    Toast.makeText(getContext(), "Education is required", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Save Registration
+//                    Registration registration = new Registration(mName, mNumber, mEmail);
+                Registration registration;
+                registration = new Registration(registrationId, applicantName, applicantPhone, applicantGender,
+                        applicantDistrict, applicantSubcounty, applicantDivision, applicantVillage,
+                        applicantMark, applicantLangs, applicantEducation, applicantOccupation,
+                        applicantComment, applicantDob, applicantReadEnglish, applicantRecruitment,
+                        country, applicantDateMoved, applicantBrac, applicantBracChp, applicantCommunity,
+                        applicantAddedBy, applicantProceed, applicantDateAdded, applicantSync);
+
+                // Before saving, do some validations
+                // Years in location should always be less than age
+                if (registration.getAge() < applicantDateMoved){
+                    mDateMoved.requestFocus();
+                    Toast.makeText(getContext(), "The years at the location is greater than the age ", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                RegistrationTable registrationTable = new RegistrationTable(getContext());
+                long id = registrationTable.addData(registration);
+                if (id ==-1){
+                    Toast.makeText(getContext(), "Could not save registration", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
+
+                    // Clear boxes
+                    mName.setText("");
+                    mPhone.setText("");
+                    mVillage.setText("");
+                    mMark.setText("");
+                    mLangs.setText("");
+                    mOccupation.setText("");
+                    //mComment.setText("");
+                    mDob.setText("");
+                    mDateMoved.setText("");
+                }
+                Toast.makeText(getContext(), "Savigb is pressed", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.buttonSave:
+                // set date as integers
+                /*
+
+
+
+
+
 
 
                 // Do some validations
@@ -358,8 +445,8 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                             mDateMoved.setText("");
                         }
                     }
-                }
-
+                }*/
+            break;
         }
     }
 

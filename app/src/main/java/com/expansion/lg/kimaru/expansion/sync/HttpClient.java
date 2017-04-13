@@ -9,6 +9,7 @@ import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.other.Constants;
+import com.expansion.lg.kimaru.expansion.other.WifiState;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
@@ -127,42 +128,47 @@ public class HttpClient {
                     @Override
                     public void run() {
                         String registrationUrl, recruitmentUrl, examUrl, interviewUrl;
+                        WifiState wifiState = new WifiState(context);
+                        if (wifiState.canReachPeerServer()) {
+                            //Recruitments
+                            recruitmentUrl = url + "/" + HttpServer.RECRUIRMENT_URL;
+                            new ProcessRecruitment().execute(recruitmentUrl);
 
-                        //Recruitments
-                        recruitmentUrl = url+"/"+HttpServer.RECRUIRMENT_URL;
-                        new ProcessRecruitment().execute(recruitmentUrl);
+                            //registrations
+                            registrationUrl = url + "/" + HttpServer.REGISTRATION_URL;
+                            new ProcessRegistrations().execute(registrationUrl);
 
-                        //registrations
-                        registrationUrl = url+"/"+HttpServer.REGISTRATION_URL;
-                        new ProcessRegistrations().execute(registrationUrl);
+                            //Interviews
+                            interviewUrl = url + "/" + HttpServer.INTERVIEW_URL;
+                            new ProcessInterviews().execute(interviewUrl);
 
-                        //Interviews
-                        interviewUrl = url+"/"+HttpServer.INTERVIEW_URL;
-                        new ProcessInterviews().execute(interviewUrl);
-
-                        //Exams
-                        examUrl = url+"/"+HttpServer.EXAM_URL;
-                        new ProcessExams().execute(examUrl);
+                            //Exams
+                            examUrl = url + "/" + HttpServer.EXAM_URL;
+                            new ProcessExams().execute(examUrl);
 
 
-                        //Poll server for new records
-                        // Recruitments
-                        try {
-                            String status = postRecruitments();
-                        }catch (Exception e){}
+                            //Poll server for new records
+                            // Recruitments
+                            try {
+                                String status = postRecruitments();
+                            } catch (Exception e) {
+                            }
 
-                        try {
-                            String status = postRegistrations();
-                        }catch (Exception e){}
+                            try {
+                                String status = postRegistrations();
+                            } catch (Exception e) {
+                            }
 
-                        try {
-                            String status = postExams();
-                        }catch (Exception e){}
+                            try {
+                                String status = postExams();
+                            } catch (Exception e) {
+                            }
 
-                        try {
-                            String status = postInterviews();
-                        }catch (Exception e){}
-
+                            try {
+                                String status = postInterviews();
+                            } catch (Exception e) {
+                            }
+                        }
                     }
                 });
             }
@@ -461,9 +467,111 @@ public class HttpClient {
             for (int x = 0; x < recs.length(); x++) {
                 Recruitment recruitment = recruitmentTable.getRecruitmentById(
                         recs.getJSONObject(x).getString("id"));
-                recruitment.setSynced(recs.getJSONObject(x).getString("id") == "ok" ? 1 : 0);
+                recruitment.setSynced(recs.getJSONObject(x).getString("status") == "ok" ? 1 : 0);
                 // update recruitment
                 recruitmentTable.addData(recruitment);
+            }
+        }catch (Exception e){}
+
+    }
+
+    public void syncRegistrations () {
+        String syncResults;
+        RegistrationTable registrationTable = new RegistrationTable(context);
+        try {
+            syncResults = this.syncClient(registrationTable.getRecruitmentToSyncAsJson(),
+                    HttpServer.REGISTRATION_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+
+        if (syncResults != null){
+            processSyncedRegistrations(syncResults);
+        }
+    }
+    private void processSyncedRegistrations(String stream){
+        try {
+
+            JSONObject reader = new JSONObject(stream);
+
+            // Get the JSONArray recruitments
+            JSONArray recs = reader.getJSONArray("status");
+            RegistrationTable registrationTable = new RegistrationTable(context);
+
+            for (int x = 0; x < recs.length(); x++) {
+                Registration registration = registrationTable.getRegistrationById(
+                        recs.getJSONObject(x).getString("id"));
+                registration.setSynced(recs.getJSONObject(x).getString("status") == "ok" ? 1 : 0);
+                // update recruitment
+                registrationTable.addData(registration);
+            }
+        }catch (Exception e){}
+
+    }
+
+    public void syncInterviews () {
+        String syncResults;
+        InterviewTable interviewTable = new InterviewTable(context);
+        try {
+            syncResults = this.syncClient(interviewTable.getInterviewsToSyncAsJson(),
+                    HttpServer.INTERVIEW_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+
+        if (syncResults != null){
+            processSyncedInterviews(syncResults);
+        }
+    }
+    private void processSyncedInterviews(String stream){
+        try {
+
+            JSONObject reader = new JSONObject(stream);
+
+            // Get the JSONArray
+            JSONArray recs = reader.getJSONArray("status");
+            InterviewTable interviewTable = new InterviewTable(context);
+
+            for (int x = 0; x < recs.length(); x++) {
+                Interview interview = interviewTable.getInterviewById(
+                        recs.getJSONObject(x).getString("id"));
+                interview.setSynced(recs.getJSONObject(x).getString("status") == "ok" ? 1 : 0);
+                // update recruitment
+                interviewTable.addData(interview);
+            }
+        }catch (Exception e){}
+
+    }
+
+    public void syncExams () {
+        String syncResults;
+        ExamTable examTable = new ExamTable(context);
+        try {
+            syncResults = this.syncClient(examTable.getExamsToSyncAsJson(),
+                    HttpServer.EXAM_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+
+        if (syncResults != null){
+            processSyncedExams(syncResults);
+        }
+    }
+    private void processSyncedExams(String stream){
+        try {
+
+            JSONObject reader = new JSONObject(stream);
+
+            // Get the JSONArray
+            JSONArray recs = reader.getJSONArray("status");
+            ExamTable examTable = new ExamTable(context);
+
+            for (int x = 0; x < recs.length(); x++) {
+                Exam exam = examTable.getExamById(
+                        recs.getJSONObject(x).getString("id"));
+                exam.setSynced(recs.getJSONObject(x).getString("status") == "ok" ? 1 : 0);
+                // update recruitment
+                examTable.addData(exam);
             }
         }catch (Exception e){}
 

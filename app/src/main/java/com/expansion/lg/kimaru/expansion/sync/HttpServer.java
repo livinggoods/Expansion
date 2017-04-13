@@ -7,6 +7,7 @@ import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.tables.EducationTable;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
@@ -44,8 +45,8 @@ public class HttpServer {
 
     private AsyncHttpClient client = new AsyncHttpClient(asyncServer);
 
-    public static final String SERVER_URL = "http://192.168.43.1";
-    public static final int SERVER_PORT = 8090;
+    public static final String SERVER_URL = Constants.PEER_SERVER;
+    public static final int SERVER_PORT = Constants.PEER_SERVER_PORT;
     public static final String RECRUIRMENT_URL = "recruitments";
     public static final String REGISTRATION_URL = "registrations";
     public static final String EXAM_URL = "exams";

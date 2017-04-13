@@ -19,7 +19,6 @@ import android.widget.Toast;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
-import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.tables.MappingTable;
 
@@ -27,19 +26,18 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link NewMappingFragment.OnFragmentInteractionListener} interface
+ * {@link NewKeMappingFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link NewMappingFragment#newInstance} factory method to
+ * Use the {@link NewKeMappingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewMappingFragment extends Fragment implements OnClickListener {
+public class NewKeMappingFragment extends Fragment implements OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -66,7 +64,7 @@ public class NewMappingFragment extends Fragment implements OnClickListener {
 
 
 
-    public NewMappingFragment() {
+    public NewKeMappingFragment() {
         // Required empty public constructor
     }
 
@@ -79,8 +77,8 @@ public class NewMappingFragment extends Fragment implements OnClickListener {
      * @return A new instance of fragment RegistrationsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NewMappingFragment newInstance(String param1, String param2) {
-        NewMappingFragment fragment = new NewMappingFragment();
+    public static NewKeMappingFragment newInstance(String param1, String param2) {
+        NewKeMappingFragment fragment = new NewKeMappingFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

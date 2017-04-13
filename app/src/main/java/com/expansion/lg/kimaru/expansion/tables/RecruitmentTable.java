@@ -104,6 +104,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         long id;
         if (isExist(recruitment)){
             //uupdate
+            cv.put(SYNCED, 0);
             id = db.update(TABLE_NAME, cv, ID+"='"+recruitment.getId()+"'", null);
         }else{
             //create new

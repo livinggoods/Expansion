@@ -102,6 +102,7 @@ public class ExamTable extends SQLiteOpenHelper {
 
         long id;
         if (isExist(exam)){
+            cv.put(SYNCED, 0);
             id = db.update(TABLE_NAME, cv, ID+"='"+exam.getId()+"'", null);
         }else{
             id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
@@ -148,6 +149,34 @@ public class ExamTable extends SQLiteOpenHelper {
         String whereClause = APPLICANT+" = ?";
         String[] whereArgs = new String[] {
                 registrationUuid,
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else{
+            Exam exam=new Exam();
+            exam.setId(cursor.getString(0));
+            exam.setApplicant(cursor.getString(1));
+            exam.setRecruitment(cursor.getString(2));
+            exam.setMath(cursor.getDouble(3));
+            exam.setPersonality(cursor.getDouble(4));
+            exam.setEnglish(cursor.getDouble(5));
+            exam.setAddedBy(cursor.getInt(6));
+            exam.setComment(cursor.getString(7));
+            exam.setDateAdded(cursor.getLong(8));
+            exam.setSynced(cursor.getInt(9));
+            return exam;
+        }
+
+    }
+
+    public Exam getExamById(String id){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String whereClause = ID+" = ?";
+        String[] whereArgs = new String[] {
+                id,
         };
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
 
@@ -236,6 +265,48 @@ public class ExamTable extends SQLiteOpenHelper {
         SQLiteDatabase db=getReadableDatabase();
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+
+        JSONObject results = new JSONObject();
+
+        JSONArray resultSet = new JSONArray();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
+    }
+
+    public JSONObject getExamsToSyncAsJson() {
+
+        SQLiteDatabase db=getReadableDatabase();
+        String whereClause = SYNCED+" = ?";
+        String[] whereArgs = new String[] {
+                "0",
+        };
+
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
 
         JSONObject results = new JSONObject();
 

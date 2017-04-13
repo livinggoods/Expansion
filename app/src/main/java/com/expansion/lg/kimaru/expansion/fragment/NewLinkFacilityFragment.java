@@ -45,10 +45,12 @@ import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.AlertDialogManager;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.GpsTracker;
+import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
 import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
 
@@ -80,6 +82,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     private LinearLayout parentLayout;
     private OnFragmentInteractionListener mListener;
     List<EditText> communityUnitsCreated = new ArrayList<EditText>();
+    List<EditText> cuPartner = new ArrayList<EditText>();
 
     Button buttonSave, buttonList;
 
@@ -367,6 +370,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 Integer currentDate =  (int) (new Date().getTime()/1000);
 
                 Mapping mapping = session.getSavedMapping();
+                String subCountyId = session.getSavedSubCounty().getId();
 
                 String uuid = UUID.randomUUID().toString();
                 String county = mapping.getCounty();
@@ -387,8 +391,14 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
                 for(int i=0; i < communityUnitsCreated.size(); i++){
                     //strings[i] = communityUnitsCreated.get(i).getText().toString();
-                    String cuNamme = communityUnitsCreated.get(i).getText().toString();
-                    Toast.makeText(getContext(), cuNamme, Toast.LENGTH_SHORT).show();
+                    String cuName = communityUnitsCreated.get(i).getText().toString();
+                    Toast.makeText(getContext(), cuName, Toast.LENGTH_SHORT).show();
+
+                    // Save the community unit
+                    CommunityUnit communityUnit = new CommunityUnit("id", cuName, mappingId, lat, lon, country, subCountyId, uuid, "", "", "", "","","","", 0L, 0L, 0L, 0L, currentDate, addedBy, 0L,
+                            0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, false, false, false, false, false, false, false, false, false);
+                    CommunityUnitTable communityUnitTable = new CommunityUnitTable(getContext());
+                    communityUnitTable.addCommunityUnitData(communityUnit);
                 }
 
 

@@ -30,10 +30,11 @@ import com.expansion.lg.kimaru.expansion.fragment.NewCommunityUnitFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewExamFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewInterviewFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewLinkFacilityFragment;
-import com.expansion.lg.kimaru.expansion.fragment.NewMappingFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewKeMappingFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRecruitmentFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRegistrationFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewSubCountyFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewUgMappingFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RegistrationsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.ExamsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
     //We add the Session Manager
     SessionManagement session;
     String name, email;
-
+    String country;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Emails
         email = user.get(SessionManagement.KEY_EMAIL);
+        country = user.get(SessionManagement.KEY_USER_COUNTRY);
 
 
         setSupportActionBar(toolbar);
@@ -283,23 +285,44 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case TAG_MAPPINGS:
-                mPendingRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        // update the main content by replacing fragments
-                        NewMappingFragment newMappingFragment = new NewMappingFragment();
-                        Fragment fragment = newMappingFragment;
-                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                                android.R.anim.fade_out);
-                        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+                if (country == "KE") {
+                    mPendingRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            // update the main content by replacing fragments
+                            NewKeMappingFragment newKeMappingFragment = new NewKeMappingFragment();
+                            Fragment fragment = newKeMappingFragment;
+                            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                    android.R.anim.fade_out);
+                            fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
 
-                        fragmentTransaction.commitAllowingStateLoss();
+                            fragmentTransaction.commitAllowingStateLoss();
+                        }
+                    };
+                    // If mPendingRunnable is not null, then add to the message queue
+                    if (mPendingRunnable != null) {
+                        mHandler.post(mPendingRunnable);
                     }
-                };
-                // If mPendingRunnable is not null, then add to the message queue
-                if (mPendingRunnable != null) {
-                    mHandler.post(mPendingRunnable);
+                }else{
+                    mPendingRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            // update the main content by replacing fragments
+                            NewUgMappingFragment newUgMappingFragment = new NewUgMappingFragment();
+                            Fragment fragment = newUgMappingFragment;
+                            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                    android.R.anim.fade_out);
+                            fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+
+                            fragmentTransaction.commitAllowingStateLoss();
+                        }
+                    };
+                    // If mPendingRunnable is not null, then add to the message queue
+                    if (mPendingRunnable != null) {
+                        mHandler.post(mPendingRunnable);
+                    }
                 }
                 break;
 
@@ -766,7 +789,7 @@ public class MainActivity extends AppCompatActivity {
 
     // show or hide the fab
     private void toggleFab() {
-        if (navItemIndex == 1 || navItemIndex == 2 )
+        if (navItemIndex == 1 || navItemIndex == 2 || navItemIndex == 5)
             fab.show();
         else
             fab.hide();

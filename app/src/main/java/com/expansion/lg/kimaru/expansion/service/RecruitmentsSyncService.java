@@ -9,13 +9,13 @@ import android.util.Log;
  * Created by kimaru on 4/11/17.
  */
 
-public class SyncService extends Service {
+public class RecruitmentsSyncService extends Service {
     private static final Object sSyncAdapterLock = new Object();
     private static RecruitmentsSyncServiceAdapter syncServiceAdapter = null;
 
     @Override
     public void onCreate(){
-        Log.d("SyncService", "onCreate fn()");
+        Log.d("RecruitmentsSyncService", "onCreate fn()");
         synchronized (sSyncAdapterLock){
             if (syncServiceAdapter == null){
                 syncServiceAdapter = new RecruitmentsSyncServiceAdapter(getApplicationContext(), true);

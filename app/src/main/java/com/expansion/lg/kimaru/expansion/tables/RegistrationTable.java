@@ -150,6 +150,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
         cv.put(SYNCED, registration.getSynced());
         long id;
         if (isExist(registration)){
+            cv.put(SYNCED, 0);
             id = db.update(TABLE_NAME, cv, ID+"='"+registration.getId()+"'", null);
         }else{
             id = db.insert(TABLE_NAME,null,cv);
@@ -337,6 +338,47 @@ public class RegistrationTable extends SQLiteOpenHelper {
         SQLiteDatabase db=getReadableDatabase();
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+
+        JSONObject results = new JSONObject();
+
+        JSONArray resultSet = new JSONArray();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
+    }
+    public JSONObject getRecruitmentToSyncAsJson() {
+
+        SQLiteDatabase db=getReadableDatabase();
+        String whereClause = SYNCED+" = ?";
+        String[] whereArgs = new String[] {
+                "0",
+        };
+
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
 
         JSONObject results = new JSONObject();
 
