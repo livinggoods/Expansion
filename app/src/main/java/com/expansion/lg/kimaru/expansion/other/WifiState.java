@@ -16,10 +16,12 @@ import java.net.SocketAddress;
 public class WifiState {
     ConnectivityManager connectivityManager;
     NetworkInfo wifiCheck;
+    Context context;
 
     public WifiState(Context context){
+        this.context = context;
         this.connectivityManager = (ConnectivityManager)
-                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                context.getSystemService(context.CONNECTIVITY_SERVICE);
         this.wifiCheck = connectivityManager.getActiveNetworkInfo();
     }
 
@@ -28,21 +30,7 @@ public class WifiState {
     }
 
     public boolean canReachPeerServer(){
-        boolean reachPeerServer = false;
-
-        //must be connected to wifi
-        if (this.isWifiConnected()){
-            try{
-                InetAddress address = InetAddress.getByName(Constants.PEER_SERVER);
-                if (canReachServer(address, Constants.PEER_SERVER_PORT)){
-                    return true;
-                }
-            }catch (Exception e){
-                return false;
-            }
-        }
-
-        return reachPeerServer;
+        return isWifiConnected();
     }
 
     public boolean canReachServer(InetAddress ip, int port){
@@ -53,7 +41,9 @@ public class WifiState {
             int timeOutMs = 2000;
             socket.connect(socketAddress, timeOutMs);
             canReach = true;
-        }catch (Exception e){}
+        }catch (Exception e){
+
+        }
 
         return canReach;
     }

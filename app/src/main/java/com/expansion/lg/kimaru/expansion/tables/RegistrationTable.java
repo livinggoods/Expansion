@@ -7,6 +7,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
@@ -66,10 +67,29 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public static final String PROCEED = "proceed";
     public static final String DATE_ADDED = "date_added";
     public static final String SYNCED = "synced";
+    public static final String CHEW_NAME = "chew_name";
+    public static final String CHEW_NUMBER = "chew_number";
+    public static final String WARD = "ward";
+    public static final String CU_NAME = "cu_name";
+    public static final String LINK_FACILITY = "link_facility";
+    public static final String HOUSEHOLDS = "households";
+    public static final String TRAININGS = "trainings";
+    public static final String CHV = "is_chv";
+    public static final String GOK_TRAINED = "is_gok_trained";
+    public static final String REFERRAL_NAME = "referral";
+    public static final String REFERRAL_NUMBER = "referral_number";
+    public static final String REFERRAL_TITLE = "referral_title";
+    public static final String VHT = "vht";
+    public static final String PARISH = "parish";
+    public static final String ACCOUNTS = "financial_accounts";
+
+    Context context;
 
     String [] columns=new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
             VILLAGE, MARK, READ_ENGLISH, DATE_MOVED, LANGS, BRAC, BRAC_CHP, EDUCATION, OCCUPATION,
-            COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED, RECRUITMENT, COUNTRY};
+            COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED, RECRUITMENT, COUNTRY,
+            CHEW_NAME, CHEW_NUMBER, WARD, CU_NAME, LINK_FACILITY, HOUSEHOLDS, TRAININGS, CHV,
+            GOK_TRAINED, REFERRAL_NAME, REFERRAL_NUMBER, REFERRAL_TITLE, VHT, PARISH, ACCOUNTS};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ", "
@@ -96,12 +116,29 @@ public class RegistrationTable extends SQLiteOpenHelper {
             + COMMENT + text_field + ", "
             + PROCEED + integer_field + ", "
             + DATE_ADDED + integer_field + ", "
+            + CHEW_NAME + varchar_field + ", "
+            + CHEW_NUMBER + varchar_field + ", "
+            + WARD + varchar_field + ", "
+            + CU_NAME + varchar_field + ", "
+            + LINK_FACILITY + varchar_field + ", "
+            + HOUSEHOLDS + integer_field + ", "
+            + TRAININGS + text_field + ", "
+            + CHV + integer_field + ", "
+            + GOK_TRAINED + integer_field + ", "
+            + REFERRAL_NAME + varchar_field + ", "
+            + REFERRAL_TITLE + varchar_field + ", "
+            + REFERRAL_NUMBER + varchar_field + ", "
+            + VHT + integer_field + ", "
+            + PARISH + varchar_field + ", "
+            + ACCOUNTS + integer_field + ", "
             + SYNCED + integer_field + "); ";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
 
     public RegistrationTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);
+        this.context = context;
+
     }
 
     @Override
@@ -148,6 +185,22 @@ public class RegistrationTable extends SQLiteOpenHelper {
         cv.put(PROCEED, registration.getProceed());
         cv.put(DATE_ADDED, registration.getDateAdded());
         cv.put(SYNCED, registration.getSynced());
+        cv.put(CHEW_NAME, registration.getChewName());
+        cv.put(CHEW_NUMBER, registration.getChewNumber());
+        cv.put(WARD, registration.getWard());
+        cv.put(CU_NAME, registration.getCuName());
+        cv.put(LINK_FACILITY, registration.getLinkFacility());
+        cv.put(HOUSEHOLDS, registration.getNoOfHouseholds());
+        cv.put(TRAININGS, registration.getOtherTrainings());
+        cv.put(CHV, registration.isChv() ? 1 : 0);
+        cv.put(GOK_TRAINED, registration.isGokTrained() ? 1 : 0);
+        cv.put(REFERRAL_NAME, registration.getReferralName());
+        cv.put(REFERRAL_NUMBER, registration.getReferralPhone());
+        cv.put(REFERRAL_TITLE, registration.getReferralTitle());
+        cv.put(VHT, registration.isVht() ? 1 : 0);
+        cv.put(PARISH, registration.getParish());
+        cv.put(ACCOUNTS, registration.isAccounts() ? 1 : 0);
+
         long id;
         if (isExist(registration)){
             cv.put(SYNCED, 0);
@@ -155,7 +208,6 @@ public class RegistrationTable extends SQLiteOpenHelper {
         }else{
             id = db.insert(TABLE_NAME,null,cv);
         }
-
         db.close();
         return id;
 
@@ -210,8 +262,25 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setSynced(cursor.getInt(22));
             registration.setRecruitment(cursor.getString(23));
             registration.setCountry(cursor.getString(24));
+            registration.setChewName(cursor.getString(25));
+            registration.setChewNumber(cursor.getString(26));
+            registration.setWard(cursor.getString(27));
+            registration.setCuName(cursor.getString(28));
+            registration.setLinkFacility(cursor.getString(29));
+            registration.setNoOfHouseholds(cursor.getLong(30));
+            registration.setOtherTrainings(cursor.getString(31));
+            registration.setChv(cursor.getInt(32) == 1);
+            registration.setGokTrained(cursor.getInt(33) == 1);
+            registration.setReferralName(cursor.getString(34));
+            registration.setReferralPhone(cursor.getString(35));
+            registration.setReferralTitle(cursor.getString(36));
+            registration.setVht(cursor.getInt(37) == 1);
+            registration.setParish(cursor.getString(38));
+            registration.setAccounts(cursor.getInt(39) == 1);
             registration.setPicture("");
             registrationList.add(registration);
+            //REFERRAL_NAME, REFERRAL_NUMBER, REFERRAL_TITLE, VHT, PARISH, ACCOUNTS
+
         }
 
         db.close();
@@ -257,8 +326,23 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setSynced(cursor.getInt(22));
             registration.setRecruitment(cursor.getString(23));
             registration.setCountry(cursor.getString(24));
+            registration.setChewName(cursor.getString(25));
+            registration.setChewNumber(cursor.getString(26));
+            registration.setWard(cursor.getString(27));
+            registration.setCuName(cursor.getString(28));
+            registration.setLinkFacility(cursor.getString(29));
+            registration.setNoOfHouseholds(cursor.getLong(30));
+            registration.setOtherTrainings(cursor.getString(31));
+            registration.setChv(cursor.getInt(32) == 1);
+            registration.setGokTrained(cursor.getInt(33) == 1);
+            registration.setReferralName(cursor.getString(34));
+            registration.setReferralPhone(cursor.getString(35));
+            registration.setReferralTitle(cursor.getString(36));
+            registration.setVht(cursor.getInt(37) == 1);
+            registration.setParish(cursor.getString(38));
+            registration.setAccounts(cursor.getInt(39) == 1);
             registration.setPicture("");
-
+            db.close();
             return registration;
         }
 
@@ -324,6 +408,21 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setSynced(cursor.getInt(22));
             registration.setRecruitment(cursor.getString(23));
             registration.setCountry(cursor.getString(24));
+            registration.setChewName(cursor.getString(25));
+            registration.setChewNumber(cursor.getString(26));
+            registration.setWard(cursor.getString(27));
+            registration.setCuName(cursor.getString(28));
+            registration.setLinkFacility(cursor.getString(29));
+            registration.setNoOfHouseholds(cursor.getLong(30));
+            registration.setOtherTrainings(cursor.getString(31));
+            registration.setChv(cursor.getInt(32) == 1);
+            registration.setGokTrained(cursor.getInt(33) == 1);
+            registration.setReferralName(cursor.getString(34));
+            registration.setReferralPhone(cursor.getString(35));
+            registration.setReferralTitle(cursor.getString(36));
+            registration.setVht(cursor.getInt(37) == 1);
+            registration.setParish(cursor.getString(38));
+            registration.setAccounts(cursor.getInt(39) == 1);
             registration.setPicture("");
             registrationList.add(registration);
         }
@@ -370,7 +469,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
         db.close();
         return results;
     }
-    public JSONObject getRecruitmentToSyncAsJson() {
+    public JSONObject getRegistrationToSyncAsJson() {
 
         SQLiteDatabase db=getReadableDatabase();
         String whereClause = SYNCED+" = ?";

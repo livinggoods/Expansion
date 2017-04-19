@@ -2,11 +2,12 @@ package com.expansion.lg.kimaru.expansion.fragment;
 /**
  * Created by kimaru on 3/11/17.
  */
+
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.telephony.PhoneNumberUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,6 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v4.app.DialogFragment;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
@@ -43,12 +43,12 @@ import java.util.UUID;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link NewRegistrationFragment.OnFragmentInteractionListener} interface
+ * {@link NewKeRegistrationFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link NewRegistrationFragment#newInstance} factory method to
+ * Use the {@link NewKeRegistrationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewRegistrationFragment extends Fragment implements View.OnClickListener {
+public class NewKeRegistrationFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -64,15 +64,10 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     EditText mName;
     EditText mPhone;
     RadioGroup mGender;
-    EditText editReferralName;
-    EditText editReferralNumber;
-    EditText editReferralTitle;
-    RadioGroup editVht;
-    EditText editSubCounty;
-    EditText editParish;
-
-    EditText mDistrict;
-    EditText mDivision;
+    RadioButton gender;
+    EditText editChewName;
+    EditText editChewNumber;
+    EditText editWard;
     EditText mVillage;
     EditText mMark;
     EditText mLangs;
@@ -82,13 +77,12 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     RadioGroup mReadEnglish;
     EditText mRecruitment;
     EditText mDateMoved;
-    RadioGroup mBrac, mAccounts;
-    RadioGroup mBracChp;
-    RadioGroup mCommunity;
-    EditText mAddedBy;
-    EditText mProceed;
-    EditText mDateAdded;
-    EditText mSync;
+    RadioGroup editIsChv, editIsGokTrained;
+    RadioGroup mCommunity, mAccounts;
+    EditText editCuName;
+    EditText editLinkFacility;
+    EditText editNoOfHouseholds;
+    EditText editOtherTrainings;
     Spinner educationLevel;
 
     Button buttonSave, buttonList;
@@ -97,8 +91,6 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     private int mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 100;
 
-
-    Integer loggedInUser = 1;
 
     SessionManagement session;
     String userName, userEmail, recruitmentId;
@@ -109,7 +101,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     List<EditText> kenyanFieldsCreated = new ArrayList<EditText>();
     private LinearLayout parentLayout;
 
-    public NewRegistrationFragment() {
+    public NewKeRegistrationFragment() {
         // Required empty public constructor
     }
 
@@ -122,8 +114,8 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
      * @return A new instance of fragment RegistrationsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NewRegistrationFragment newInstance(String param1, String param2) {
-        NewRegistrationFragment fragment = new NewRegistrationFragment();
+    public static NewKeRegistrationFragment newInstance(String param1, String param2) {
+        NewKeRegistrationFragment fragment = new NewKeRegistrationFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -137,7 +129,6 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
-
         }
     }
 
@@ -145,7 +136,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_new_registration, container, false);
+        View v =  inflater.inflate(R.layout.fragment_new_ke_registration, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_REGISTRATION;
         MainActivity.backFragment = new RegistrationsFragment();
                 //check if Recruitment is set
@@ -171,20 +162,21 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         mLangs = (EditText) v.findViewById(R.id.editOtherlanguages);
         mOccupation = (EditText) v.findViewById(R.id.editOccupation);
         mDob = (EditText) v.findViewById(R.id.editDob);
-        mComment = (EditText) v.findViewById(R.id.editComment);
         mReadEnglish = (RadioGroup) v.findViewById(R.id.editReadEnglish);
+        editChewName = (EditText) v.findViewById(R.id.editChewName);
+        editChewNumber = (EditText) v.findViewById(R.id.editChewNumber);
+        mComment = (EditText) v.findViewById(R.id.editComment);
+        editWard = (EditText) v.findViewById(R.id.editWard);
+        editCuName = (EditText) v.findViewById(R.id.editCuName);
+        editLinkFacility = (EditText) v.findViewById(R.id.editLinkFacility);
+        editNoOfHouseholds = (EditText) v.findViewById(R.id.editNoOfHouseholds);
+        editOtherTrainings = (EditText) v.findViewById(R.id.editOtherTrainings);
         mDateMoved = (EditText) v.findViewById(R.id.editRelocated);
-        mBrac = (RadioGroup) v.findViewById(R.id.editWorkedWithBrac);
         mAccounts = (RadioGroup) v.findViewById(R.id.editAccounts);
-        mBracChp = (RadioGroup) v.findViewById(R.id.editBracChp);
+        editIsChv = (RadioGroup) v.findViewById(R.id.editIsChv);
+        editIsGokTrained = (RadioGroup) v.findViewById(R.id.editIsGokTrained);
         mCommunity = (RadioGroup) v.findViewById(R.id.editCommunityMembership);
         educationLevel = (Spinner) v.findViewById(R.id.selectEdducation);
-        editReferralName = (EditText) v.findViewById(R.id.editReferralName);
-        editReferralNumber = (EditText) v.findViewById(R.id.editReferralNumber);
-        editReferralTitle = (EditText) v.findViewById(R.id.editReferralTitle);
-        editSubCounty = (EditText) v.findViewById(R.id.editSubCounty);
-        editParish = (EditText) v.findViewById(R.id.editParish);
-        editVht = (RadioGroup) v.findViewById(R.id.editVht);
 
 
 
@@ -222,14 +214,6 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     @Override
     public void onClick(View view){
         switch (view.getId()){
-            case R.id.buttonList:
-                Fragment fragment = new RegistrationsFragment();
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_REGISTRATION);
-                fragmentTransaction.commitAllowingStateLoss();
-                break;
             case R.id.editDob:
                 DialogFragment newFragment = new DatePickerFragment().newInstance(R.id.editDob);
                 newFragment.show(getFragmentManager(), "DatePicker");
@@ -260,19 +244,8 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 RadioButton genderRadioButton =(RadioButton) mGender.findViewById(selectedGender);
                 String applicantGender = genderRadioButton.getText().toString();
 
-
-                Integer selectedVht = editVht.getCheckedRadioButtonId();
-                RadioButton vht =(RadioButton) editVht.findViewById(selectedVht);
-                boolean isVht = vht.getText().toString().equalsIgnoreCase("Yes");
-
-
-                String referralName = editReferralName.getText().toString();
-                String referralNumber = editReferralNumber.getText().toString();
-                String referralTitle = editReferralTitle.getText().toString();
-                String applicantParish = editParish.getText().toString();
-
                 String applicantDistrict = "";
-                String applicantSubcounty = editSubCounty.getText().toString();
+                String applicantSubcounty = "";
                 String applicantDivision = "";
                 String applicantVillage = mVillage.getText().toString();
                 String applicantMark = mMark.getText().toString();
@@ -281,6 +254,36 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 String applicantOccupation = mOccupation.getText().toString();
                 String applicantComment = mComment.getText().toString();
                 String aDob = mDob.getText().toString();
+                String applicantChewName = editChewName.getText().toString();
+                String applicantChewNumber = editChewNumber.getText().toString();
+                String applicantWard = editWard.getText().toString();
+                String applicantCuName = editCuName.getText().toString();
+                String applicantLinkFacility = editLinkFacility.getText().toString();
+                String noOfHouseholds = editNoOfHouseholds.getText().toString();
+                String applicantOtherTrainings = editOtherTrainings.getText().toString();
+                //////////////
+                Long applicantNoOfHouseholds;
+                if (noOfHouseholds.toString().trim().equals("")){
+                    applicantNoOfHouseholds = 0L;
+                }else {
+                    applicantNoOfHouseholds = Long.valueOf(noOfHouseholds);
+                }
+                Integer chv = editIsChv.getCheckedRadioButtonId();
+                RadioButton isChv =(RadioButton) editIsChv.findViewById(chv);
+                String isApplicantAChv = isChv.getText().toString();
+                Boolean applicantIsChv = isApplicantAChv.equalsIgnoreCase("Yes");
+
+
+                Integer acc = mAccounts.getCheckedRadioButtonId();
+                RadioButton accounts = (RadioButton) mAccounts.findViewById(acc);
+                String hasAccount = accounts.getText().toString();
+                Boolean applicantAccounts = hasAccount.equalsIgnoreCase("Yes");
+
+                Integer gok = editIsGokTrained.getCheckedRadioButtonId();
+                RadioButton isTrained =(RadioButton) editIsGokTrained.findViewById(gok);
+                String isApplicantTrained = isTrained.getText().toString();
+                Boolean isGokTrained = isApplicantTrained.equalsIgnoreCase("Yes");
+
                 Long applicantDob;
                 try{
                     Date date = dateFormat.parse(aDob);
@@ -291,7 +294,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 Integer readEnglish = mReadEnglish.getCheckedRadioButtonId();
                 RadioButton readEnglishRadioButton =(RadioButton) mReadEnglish.findViewById(readEnglish);
                 String canApplicantReadEnglish = readEnglishRadioButton.getText().toString();
-                Integer applicantReadEnglish = canApplicantReadEnglish.equalsIgnoreCase("Yes") ? 1 : 0;
+                Integer applicantReadEnglish = canApplicantReadEnglish.equalsIgnoreCase("yes") ? 1 : 0;
 
                 String dateMoved = mDateMoved.getText().toString();
                 Long applicantDateMoved;
@@ -301,30 +304,16 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                     applicantDateMoved = Long.valueOf(dateMoved);
                 }
 
-                Integer workedBrac = mBrac.getCheckedRadioButtonId();
-                RadioButton hasWorkAtBrac =(RadioButton) mBrac.findViewById(workedBrac);
-                String hasApplicantWorkedAtBrac = hasWorkAtBrac.getText().toString();
-                Integer applicantBrac;
-                if (hasApplicantWorkedAtBrac.equalsIgnoreCase("Yes")){
-                    applicantBrac = 1;
-                }else{
-                    applicantBrac = 0;
-                }
+                Integer applicantBrac = 0;
 
-                Integer workedBracAsChp = mBracChp.getCheckedRadioButtonId();
-                RadioButton hasWorkAsBracChp =(RadioButton) mBracChp.findViewById(workedBracAsChp);
-                String hasApplicantWorkedAsBracChp = hasWorkAsBracChp.getText().toString();
-                Integer applicantBracChp; // = hasApplicantWorkedAsBracChp == "Yes" ? 1 : 0;
-                if (hasApplicantWorkedAsBracChp.equalsIgnoreCase("Yes")){
-                    applicantBracChp =1;
-                }else{
-                    applicantBracChp = 0;
-                }
+
+                Integer applicantBracChp = 0; // = hasApplicantWorkedAsBracChp == "Yes" ? 1 : 0;
+
 
                 Integer communityParticipation = mCommunity.getCheckedRadioButtonId();
                 RadioButton hasCommunityParticipation =(RadioButton) mCommunity.findViewById(communityParticipation);
                 String hasApplicantCommunityParticipation = hasCommunityParticipation.getText().toString();
-                Integer applicantCommunity = hasApplicantCommunityParticipation.equalsIgnoreCase("Yes") ? 1 : 0;
+                Integer applicantCommunity = hasApplicantCommunityParticipation.equalsIgnoreCase("yes") ? 1 : 0;
 
                 Integer applicantAddedBy = userId;
                 Integer applicantProceed = 0;
@@ -377,9 +366,10 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                         applicantMark, applicantLangs, applicantEducation, applicantOccupation,
                         applicantComment, applicantDob, applicantReadEnglish, applicantRecruitment,
                         country, applicantDateMoved, applicantBrac, applicantBracChp, applicantCommunity,
-                        applicantAddedBy, applicantProceed, applicantDateAdded, applicantSync, "",
-                        "", "", "", "", 0L, false, false, "", referralName, referralTitle,
-                        referralNumber, isVht, false, applicantParish);
+                        applicantAddedBy, applicantProceed, applicantDateAdded, applicantSync, applicantChewName,
+                        applicantChewNumber, applicantWard, applicantCuName, applicantLinkFacility,
+                        applicantNoOfHouseholds, applicantIsChv, isGokTrained, applicantOtherTrainings,
+                        "", "","",false, applicantAccounts, "");
 
                 // Before saving, do some validations
                 // Years in location should always be less than age
@@ -399,19 +389,29 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                     // Clear boxes
                     mName.setText("");
                     mPhone.setText("");
+                    mGender.clearCheck();
                     mVillage.setText("");
                     mMark.setText("");
                     mLangs.setText("");
+                    //educationLevel
                     mOccupation.setText("");
-                    mComment.setText("");
                     mDob.setText("");
+                    editChewName.setText("");
+                    editChewNumber.setText("");
+                    editWard.setText("");
+                    editCuName.setText("");
+                    editLinkFacility.setText("");
+                    editNoOfHouseholds.setText("");
+                    editOtherTrainings.setText("");
+                    editIsChv.clearCheck();
+                    mAccounts.clearCheck();
+                    editIsGokTrained.clearCheck();
+                    mReadEnglish.clearCheck();
                     mDateMoved.setText("");
+                    mCommunity.clearCheck();
+                    editingRegistration = null;
                     mName.requestFocus();
-                    editReferralName.setText("");
-                    editReferralTitle.setText("");
-                    editReferralNumber.setText("");
-                    editParish.setText("");
-                    editVht.clearCheck();
+
                 }
                 break;
             case R.id.buttonSave:
@@ -462,43 +462,36 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         if (editingRegistration != null){
             mName.setText(editingRegistration.getName());
             mPhone.setText(editingRegistration.getPhone());
+            mGender.clearCheck();
+            if (editingRegistration.getGender().equalsIgnoreCase("Male")){
+                mGender.check(R.id.radioM);
+            }else{
+                mGender.check(R.id.radioF);
+            }
             mVillage.setText(editingRegistration.getVillage());
             mMark.setText(editingRegistration.getMark());
             mLangs.setText(editingRegistration.getLangs());
+            educationLevel.setSelection(Integer.valueOf(editingRegistration.getEducation()) - 1, true);
             mOccupation.setText(editingRegistration.getOccupation());
             mDob.setText(new DisplayDate(Long.valueOf(editingRegistration.getDob())).widgetDateOnly());
+            editChewName.setText(editingRegistration.getChewName());
+            editChewNumber.setText(editingRegistration.getChewNumber());
+            editWard.setText(editingRegistration.getWard());
+            editCuName.setText(editingRegistration.getCuName());
+            editLinkFacility.setText(editingRegistration.getLinkFacility());
+            editNoOfHouseholds.setText(String.valueOf(editingRegistration.getNoOfHouseholds()));
+            editOtherTrainings.setText(editingRegistration.getOtherTrainings());
+            if (editingRegistration.isChv()){
+                editIsChv.check(R.id.editIsChvYes);
+            }else{
+                editIsChv.check(R.id.editIsChvNo);
+            }
+            mAccounts.check(editingRegistration.isAccounts() ? R.id.editAccountsYes : R.id.editAccountsNo);
+            editIsGokTrained.check(editingRegistration.isGokTrained() ? R.id.editIsGokTrainedYes : R.id.editIsGokTrainedNo);
+            mReadEnglish.check(editingRegistration.getReadEnglish() == 1 ? R.id.radioCanReadEnglish : R.id.radioCannotReadEnglish);
             mDateMoved.setText(editingRegistration.getDateMoved().toString());
-            editReferralName.setText(editingRegistration.getReferralName());
-            editReferralTitle.setText(editingRegistration.getReferralTitle());
-            editReferralNumber.setText(editingRegistration.getReferralPhone());
-            editParish.setText(editingRegistration.getParish());
-            editSubCounty.setText(editingRegistration.getSubcounty());
-            mComment.setText(editingRegistration.getComment());
-            editVht.clearCheck();
-            editVht.check(editingRegistration.isVht() ? R.id.editVhtYes : R.id.editVhtNo);
-
-            mGender.clearCheck();
-            mGender.check(editingRegistration.getGender().equalsIgnoreCase("Male") ? R.id.radioM : R.id.radioF);
-
-
-
-            mReadEnglish.clearCheck();
-            mReadEnglish.check(editingRegistration.getReadEnglish().equals(1) ?
-                    R.id.radioCanReadEnglish: R.id.radioCannotReadEnglish);
-
-            mBrac.clearCheck();
-            mBrac.check(editingRegistration.getBrac().equals(1) ? R.id.radiobracYes : R.id.radiobracNo);
-
-            mBracChp.clearCheck();
-            mBracChp.check(editingRegistration.getBracChp() == 1 ?
-                    R.id.radiobracChpYes : R.id.radiobracChpNo);
-
-
-            mCommunity.clearCheck();
-            mCommunity.check(editingRegistration.getCommunity().equals(1) ?
-                    R.id.radioCommMbrYes : R.id.radioCommMbrNo);
-
-            educationLevel.setSelection(Integer.valueOf(editingRegistration.getEducation()) - 1, true);
+            mCommunity.check(editingRegistration.getCommunity() == 1 ? R.id.radioCommMbrYes : R.id.radioCommMbrNo);
+            mName.requestFocus();
         }
     }
 }

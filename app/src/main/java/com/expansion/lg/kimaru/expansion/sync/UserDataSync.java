@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.mzigos.User;
+import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.tables.UserTable;
 
 import org.json.JSONArray;
@@ -38,7 +39,7 @@ public class UserDataSync {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        String url = "http://expansion.lg-apps.com:5000/api/v1/users/json";
+                        String url = Constants.CLOUD_ADDRESS+"/api/v1/users/json";
                         new syncUsers().execute(url);
                     }
                 });

@@ -77,17 +77,18 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View view){
         switch (view.getId()){
             case R.id.buttonStartServer:
-                Toast.makeText(getBaseContext(), "Starting the Server Thread",
-                        Toast.LENGTH_SHORT).show();
                 HttpServer server = new HttpServer(getBaseContext());
                 server.startServer();
                 Toast.makeText(getBaseContext(), "Server started successfully",
                         Toast.LENGTH_SHORT).show();
                 break;
             case R.id.buttonShareRecords:
-                Toast.makeText(getBaseContext(), "Posting records", Toast.LENGTH_LONG).show();
+
                 HttpClient httpClient = new HttpClient(getBaseContext());
                 httpClient.startClient();
+
+                Toast.makeText(getBaseContext(), "Sharing of records enabled.",
+                        Toast.LENGTH_SHORT).show();
 
                 break;
             case R.id.buttonStopServer:

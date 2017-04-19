@@ -7,6 +7,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -111,8 +112,8 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                 //Initialize the UI Components
         mName = (EditText) v.findViewById(R.id.editRecruitmentName);
         mDistrict = (EditText) v.findViewById(R.id.editRecruitmentDistrict);
-        mDivision = (EditText) v.findViewById(R.id.editRecruitmentDivision);
-        mSubCounty = (EditText) v.findViewById(R.id.editRecruitmentSubCounty);
+        //mDivision = (EditText) v.findViewById(R.id.editRecruitmentDivision);
+        //mSubCounty = (EditText) v.findViewById(R.id.editRecruitmentSubCounty);
 
         //in case we are editing
         setUpEditingMode();
@@ -135,6 +136,15 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
     @Override
     public void onClick(View view){
         switch (view.getId()){
+            case R.id.buttonList:
+
+                Fragment fragment = new RecruitmentsFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                        android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
+                fragmentTransaction.commitAllowingStateLoss();
+                break;
             case R.id.buttonSave:
 
                 // set date as integers
@@ -150,8 +160,8 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                 }
                 String recruitmentName = mName.getText().toString();
                 String recruitmentDistrict = mDistrict.getText().toString();
-                String recruitmentDivision = mDivision.getText().toString();
-                String recruitmentSubCounty = mSubCounty.getText().toString();
+                String recruitmentDivision = "";
+                String recruitmentSubCounty = "";
                 String recruitmentComment = "";
                 String recruitmentLat = "";
                 String recruitmentLon = "";
@@ -165,44 +175,35 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                 // Do some validations
                 if (recruitmentName.toString().trim().equals("")){
                     Toast.makeText(getContext(), "Name cannot be blank", Toast.LENGTH_SHORT).show();
+                    mName.requestFocus();
+                    return;
                 }
 
-                else if (recruitmentDistrict.toString().trim().equals("")){
+                if (recruitmentDistrict.toString().trim().equals("")){
                     Toast.makeText(getContext(), "District is required", Toast.LENGTH_SHORT).show();
+                    mDistrict.requestFocus();
+                    return;
                 }
+                // Save Recruitment
+                Recruitment recruitment;
+                recruitment = new Recruitment(id, recruitmentName, recruitmentDistrict,
+                        recruitmentSubCounty, recruitmentDivision, recruitmentLat,
+                        recruitmentLon, recruitmentComment, recruitmentAddedBy,
+                        recruitmentDateAdded, recruitmentSync, country, "");
+                RecruitmentTable recruitmentTable = new RecruitmentTable(getContext());
+                long statusId = recruitmentTable.addData(recruitment);
 
-                else if(recruitmentDivision.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Division is required", Toast.LENGTH_SHORT).show();
-                }
-                else if(recruitmentSubCounty.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Sub County is required", Toast.LENGTH_SHORT).show();
+                if (statusId ==-1){
+                    Toast.makeText(getContext(), "Could not save recruitment", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    // Save Recruitment
-                    Recruitment recruitment;
-                    recruitment = new Recruitment(id, recruitmentName, recruitmentDistrict,
-                            recruitmentSubCounty, recruitmentDivision, recruitmentLat,
-                            recruitmentLon, recruitmentComment, recruitmentAddedBy,
-                            recruitmentDateAdded, recruitmentSync, country, "");
-                    RecruitmentTable recruitmentTable = new RecruitmentTable(getContext());
-                    long statusId = recruitmentTable.addData(recruitment);
+                    Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
 
-                    if (statusId ==-1){
-                        Toast.makeText(getContext(), "Could not save recruitment", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
-
-                        // Clear boxes
-                        mName.setText("");
-                        mDistrict.setText("");
-                        mDivision.setText("");
-                        mSubCounty.setText("");
-
-                        //set Focus
-                        mName.requestFocus();
-                    }
-
+                    // Clear boxes
+                    mName.setText("");
+                    mDistrict.setText("");
+                    //set Focus
+                    mName.requestFocus();
                 }
 
         }
@@ -245,8 +246,7 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
         if (editingRecruitment != null){
             mName.setText(editingRecruitment.getName());
             mDistrict.setText(editingRecruitment.getDistrict());
-            mDivision.setText(editingRecruitment.getDivision());
-            mSubCounty.setText(editingRecruitment.getSubcounty());
+            mName.requestFocus();
         }
     }
 }

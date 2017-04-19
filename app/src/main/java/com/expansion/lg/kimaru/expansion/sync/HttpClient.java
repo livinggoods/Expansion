@@ -189,7 +189,6 @@ public class HttpClient {
         }
 
         protected void onPostExecute(String stream){
-            // Toast.makeText(getBaseContext(), "Sync Exams", Toast.LENGTH_SHORT).show();
             if(stream !=null){
                 try{
                     // Get the full HTTP Data as JSONObject
@@ -224,8 +223,6 @@ public class HttpClient {
                     // process other data as this way..............
 
                 }catch(JSONException e){
-                    // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(),
-                    // Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
 
@@ -245,7 +242,6 @@ public class HttpClient {
         }
 
         protected void onPostExecute(String stream){
-            // Toast.makeText(getBaseContext(), "Sync Registrations", Toast.LENGTH_SHORT).show();
             if(stream !=null){
                 try{
                     // Get the full HTTP Data as JSONObject
@@ -282,6 +278,22 @@ public class HttpClient {
                         registration.setProceed(recs.getJSONObject(x).getInt(RegistrationTable.PROCEED));
                         registration.setDateAdded(recs.getJSONObject(x).getLong(RegistrationTable.DATE_ADDED));
                         registration.setSynced(recs.getJSONObject(x).getInt(RegistrationTable.SYNCED));
+                        registration.setChewName(recs.getJSONObject(x).getString(RegistrationTable.CHEW_NAME));
+                        registration.setChewNumber(recs.getJSONObject(x).getString(RegistrationTable.CHEW_NUMBER));
+                        registration.setWard(recs.getJSONObject(x).getString(RegistrationTable.WARD));
+                        registration.setCuName(recs.getJSONObject(x).getString(RegistrationTable.CU_NAME));
+                        registration.setLinkFacility(recs.getJSONObject(x).getString(RegistrationTable.LINK_FACILITY));
+                        registration.setNoOfHouseholds(recs.getJSONObject(x).getLong(RegistrationTable.HOUSEHOLDS));
+                        registration.setOtherTrainings(recs.getJSONObject(x).getString(RegistrationTable.TRAININGS));
+                        registration.setChv(recs.getJSONObject(x).getInt(RegistrationTable.CHV) == 1);
+                        registration.setGokTrained(recs.getJSONObject(x).getInt(RegistrationTable.GOK_TRAINED) == 1);
+                        registration.setReferralName(recs.getJSONObject(x).getString(RegistrationTable.REFERRAL_NAME));
+                        registration.setReferralPhone(recs.getJSONObject(x).getString(RegistrationTable.REFERRAL_NUMBER));
+                        registration.setReferralTitle(recs.getJSONObject(x).getString(RegistrationTable.REFERRAL_TITLE));
+                        registration.setVht(recs.getJSONObject(x).getInt(RegistrationTable.VHT) == 1);
+                        registration.setParish(recs.getJSONObject(x).getString(RegistrationTable.PARISH));
+                        registration.setAccounts(recs.getJSONObject(x).getInt(RegistrationTable.ACCOUNTS) ==1);
+                        registration.setPicture("");
                         registration.setPicture("");
 
                         // add recruitment
@@ -295,7 +307,6 @@ public class HttpClient {
                     // process other data as this way..............
 
                 }catch(JSONException e){
-                    // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
 
@@ -359,7 +370,6 @@ public class HttpClient {
                     // process other data as this way..............
 
                 }catch(JSONException e){
-                    // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
 
@@ -380,7 +390,6 @@ public class HttpClient {
         }
 
         protected void onPostExecute(String stream){
-            // Toast.makeText(getBaseContext(), "Sync Interviews", Toast.LENGTH_SHORT).show();
             if(stream !=null){
                 try{
                     // Get the full HTTP Data as JSONObject
@@ -423,7 +432,6 @@ public class HttpClient {
                     // process other data as this way..............
 
                 }catch(JSONException e){
-                    // Toast.makeText(getBaseContext(), "ERROR: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
 
@@ -480,7 +488,7 @@ public class HttpClient {
         String syncResults;
         RegistrationTable registrationTable = new RegistrationTable(context);
         try {
-            syncResults = this.syncClient(registrationTable.getRecruitmentToSyncAsJson(),
+            syncResults = this.syncClient(registrationTable.getRegistrationToSyncAsJson(),
                     HttpServer.REGISTRATION_URL);
         } catch (Exception e){
             syncResults = null;

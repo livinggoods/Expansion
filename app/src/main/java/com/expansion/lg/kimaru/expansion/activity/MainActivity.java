@@ -30,6 +30,7 @@ import com.expansion.lg.kimaru.expansion.fragment.NewCommunityUnitFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewExamFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewInterviewFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewKeRecruitmentFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewKeRegistrationFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewLinkFacilityFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewKeMappingFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRecruitmentFragment;
@@ -199,8 +200,6 @@ public class MainActivity extends AppCompatActivity {
         Runnable mPendingRunnable;
         switch (CURRENT_TAG){
             case TAG_HOME:
-                Snackbar.make(view, "Please set fragment for " + CURRENT_TAG, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
                 break;
             case TAG_RECRUITMENTS:
                 mPendingRunnable = new Runnable() {
@@ -237,8 +236,14 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         // update the main content by replacing fragments
-                        NewRegistrationFragment newRegistrationFragment = new NewRegistrationFragment();
-                        Fragment fragment = newRegistrationFragment;
+                        Fragment fragment;
+                        if (country.equalsIgnoreCase("UG")) {
+                            NewRegistrationFragment newRegistrationFragment = new NewRegistrationFragment();
+                            fragment = newRegistrationFragment;
+                        }else{
+                            NewKeRegistrationFragment newKeRegistrationFragment = new NewKeRegistrationFragment();
+                            fragment = newKeRegistrationFragment;
+                        }
                         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                                 android.R.anim.fade_out);

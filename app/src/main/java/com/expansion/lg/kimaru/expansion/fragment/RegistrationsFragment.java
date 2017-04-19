@@ -73,7 +73,8 @@ public class RegistrationsFragment extends Fragment  {
 
     SessionManagement session;
     Recruitment recruitment;
-
+    HashMap <String, String> user;
+    String country;
 
 
     // I cant seem to get the context working
@@ -125,7 +126,8 @@ public class RegistrationsFragment extends Fragment  {
         //session Management
         session = new SessionManagement(getContext());
         recruitment = session.getSavedRecruitment();
-
+        user = session.getUserDetails();
+        country = user.get(SessionManagement.KEY_USER_COUNTRY);
 
         // ============Gmail View starts here =======================
         // Gmail View.
@@ -184,16 +186,21 @@ public class RegistrationsFragment extends Fragment  {
             @Override
             public void onRowLongClicked(int position) {
                 // When one long presses a registration, we give them a chance to
-                // Interview the selected applicant
+                // edit the selected applicant
 
                 //extract the clicked recruitment
                 Registration registration = registrations.get(position);
                 session.saveRegistration(registration);
-                NewRegistrationFragment newRegistrationFragment = new NewRegistrationFragment();
-                newRegistrationFragment.editingRegistration  = registration;
-
-//                getSupportFragmentManager().beginTransaction();
-                Fragment fragment = newRegistrationFragment;
+                Fragment fragment;
+                if (country.equalsIgnoreCase("KE")){
+                    NewKeRegistrationFragment newKeRegistrationFragment = new NewKeRegistrationFragment();
+                    newKeRegistrationFragment.editingRegistration  = registration;
+                    fragment = newKeRegistrationFragment;
+                }else{
+                    NewRegistrationFragment newRegistrationFragment = new NewRegistrationFragment();
+                    newRegistrationFragment.editingRegistration  = registration;
+                    fragment = newRegistrationFragment;
+                }
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);

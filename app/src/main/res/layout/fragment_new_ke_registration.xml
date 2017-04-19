@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.RegistrationsFragment"
+    tools:context=".fragment.NewKeRegistrationFragment"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -27,6 +27,7 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <EditText
                     android:id="@+id/editName"
                     android:layout_width="match_parent"
@@ -37,6 +38,7 @@
                     android:imeOptions="actionUnspecified"
                     android:inputType="textCapWords"
                     android:maxLines="1" />
+
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -57,12 +59,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
-                    android:id="@+id/editReferralName"
+                    android:id="@+id/editChewName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Referral Name"
-                    android:imeActionId="@+id/login"
-                    android:imeActionLabel="@string/action_sign_in_short"
+                    android:hint="Chew Name"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textCapWords"
                     android:maxLines="1" />
@@ -72,68 +72,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
-                    android:id="@+id/editReferralNumber"
+                    android:id="@+id/editChewNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Referral Phone Number"
-                    android:imeActionId="@+id/login"
-                    android:imeActionLabel="@string/action_sign_in_short"
+                    android:hint="Chew's Phone"
                     android:imeOptions="actionUnspecified"
                     android:inputType="phone"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/editReferralTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Referral Title"
-                    android:imeActionId="@+id/login"
-                    android:imeActionLabel="@string/action_sign_in_short"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="textCapWords"
-                    android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="VHT?"/>
-                <RadioGroup
-                    android:id="@+id/editVht"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <RadioButton
-                        android:id="@+id/editVhtYes"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:checked="false"
-                        android:text="@string/yes"
-                        />
-                    <RadioButton
-                        android:id="@+id/editVhtNo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="right"
-                        android:checked="true"
-                        android:text="@string/no"
-                        />
-                </RadioGroup>
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
 
             <LinearLayout
                 android:orientation="vertical"
@@ -191,10 +137,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
-                    android:id="@+id/editSubCounty"
+                    android:id="@+id/editWard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Applicant Sub County"
+                    android:hint="Name of the Ward"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textCapWords"
                     android:maxLines="1" />
@@ -204,12 +150,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
-                    android:id="@+id/editParish"
+                    android:id="@+id/editCuName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Applicant Parish"
+                    android:hint="Community Unit"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textCapWords"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/editLinkFacility"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Link Facility"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="textCapWords"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/editNoOfHouseholds"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Number of households"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="number"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
@@ -287,7 +259,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
-
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -308,14 +279,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ever worked with BRAC?"/>
+                    android:text="Is a CHV?"/>
                 <RadioGroup
-                    android:id="@+id/editWorkedWithBrac"
+                    android:id="@+id/editIsChv"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <RadioButton
-                        android:id="@+id/radiobracYes"
+                        android:id="@+id/editIsChvYes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
@@ -323,7 +294,7 @@
                         android:text="@string/yes"
                         />
                     <RadioButton
-                        android:id="@+id/radiobracNo"
+                        android:id="@+id/editIsChvNo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
@@ -332,11 +303,11 @@
                         />
                 </RadioGroup>
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
-
 
             <LinearLayout
                 android:orientation="vertical"
@@ -345,14 +316,64 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="BRAC CHP?"/>
+                    android:text="Has received GoK Training?"/>
                 <RadioGroup
-                    android:id="@+id/editBracChp"
+                    android:id="@+id/editIsGokTrained"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <RadioButton
-                        android:id="@+id/radiobracChpYes"
+                        android:id="@+id/editIsGokTrainedYes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:checked="true"
+                        android:text="@string/yes"
+                        />
+                    <RadioButton
+                        android:id="@+id/editIsGokTrainedNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:checked="false"
+                        android:text="@string/no"
+                        />
+                </RadioGroup>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/editOtherTrainings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Other Trainings received"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Has Bank Accounts"/>
+                <RadioGroup
+                    android:id="@+id/editAccounts"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:id="@+id/editAccountsYes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
@@ -360,7 +381,7 @@
                         android:text="@string/yes"
                         />
                     <RadioButton
-                        android:id="@+id/radiobracChpNo"
+                        android:id="@+id/editAccountsNo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
@@ -373,20 +394,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Education Level"/>
-                <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/selectEdducation"
-                    />
-            </android.support.design.widget.TextInputLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -429,6 +436,25 @@
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
 
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Education Level"/>
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/selectEdducation"
+                    />
+            </android.support.design.widget.TextInputLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -437,12 +463,11 @@
                     android:id="@+id/editOccupation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Previous and Current Occupation"
+                    android:hint="Previous and current business experience"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textCapWords"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
-
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

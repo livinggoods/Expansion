@@ -11,6 +11,7 @@ public class DisplayDate {
 
     Long epoch;
     SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy");
+    SimpleDateFormat selectFormatter = new SimpleDateFormat("yyyy/M/d");
     SimpleDateFormat timeFormatter = new SimpleDateFormat("hh/mm/a");
     SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("MM/dd/yyyy hh/mm/a");
 
@@ -26,6 +27,11 @@ public class DisplayDate {
     public String timeOnly() {
         Date date = new Date (this.epoch);
         return timeFormatter.format(date);
+    }
+
+    public String widgetDateOnly(){
+        Date date = new Date (this.epoch);
+        return selectFormatter.format(date);
     }
 
     public String dateAndTime() {

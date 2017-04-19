@@ -9,9 +9,11 @@ import java.util.Date;
 public class Registration {
 
     String recruitment, name, phone, gender, district, subcounty, division, village, mark, langs, education;
-    String id, occupation, comment, picture, country;
+    String id, occupation, comment, picture, country, chewName, chewNumber, ward, cuName, linkFacility;
+    String otherTrainings, referralName, referralTitle, referralPhone, parish;
     Integer readEnglish, brac, bracChp, community, addedBy, proceed, synced;
-    Long dob, dateMoved, dateAdded;
+    Long dob, dateMoved, dateAdded, noOfHouseholds;
+    boolean chv, gokTrained, vht, accounts;
     int color = -1;
     Boolean read = false;
 
@@ -24,7 +26,11 @@ public class Registration {
                         String mLangs, String mEducation, String mOccupation, String mComment,
                         Long mDob, Integer mReadEnglish, String mRecruitment, String country,
                         Long mDateMoved, Integer mBrac, Integer mBracChp, Integer mCommunity,
-                        Integer mAddedBy, Integer mProceed, Long mDateAdded, Integer mSynced) {
+                        Integer mAddedBy, Integer mProceed, Long mDateAdded, Integer mSynced,
+                        String chewName, String chewNumber, String ward, String cuName,
+                        String linkFacility, long noOfHouseholds, boolean isChv, boolean gokTrained,
+                        String otherTrainings, String referralName, String referralTitle,
+                        String referralPhone, boolean vht, boolean accounts, String parish) {
         this.name = mName;
         this.phone = mPhone;
         this.recruitment = mRecruitment;
@@ -50,6 +56,21 @@ public class Registration {
         this.dateAdded = mDateAdded;
         this.synced = mSynced;
         this.id = id;
+        this.chewName = chewName;
+        this.chewNumber = chewNumber;
+        this.ward = ward;
+        this.cuName = cuName;
+        this.linkFacility = linkFacility;
+        this.noOfHouseholds = noOfHouseholds;
+        this.chv = isChv;
+        this.gokTrained = gokTrained;
+        this.otherTrainings = otherTrainings;
+        this.referralName = referralName;
+        this.referralTitle = referralTitle;
+        this.referralPhone = referralPhone;
+        this.vht = vht;
+        this.accounts = accounts;
+        this.parish = parish;
     }
 
 
@@ -102,32 +123,101 @@ public class Registration {
     public Long getDateMoved() {
         return dateMoved;
     }
-
     public Integer getBrac() {
         return brac;
     }
-
     public Integer getBracChp() {
         return bracChp;
     }
-
     public Integer getCommunity() {
         return community;
     }
-
     public Integer getAddedBy() {
         return addedBy;
     }
-
     public Integer getProceed() {
         return proceed;
     }
-
     public Long getDateAdded() {
         return dateAdded;
     }
+    public String getChewName() {
+        return chewName;
+    }
+    public String getChewNumber() {
+        return chewNumber;
+    }
+    public String getWard() {
+        return ward;
+    }
+    public String getCuName() {
+        return cuName;
+    }
+    public String getLinkFacility() {
+        return linkFacility;
+    }
+    public boolean isChv() {
+        return chv;
+    }
+    public boolean isGokTrained() {
+        return gokTrained;
+    }
+    public Long getNoOfHouseholds() {
+        return noOfHouseholds;
+    }
+    public String getOtherTrainings() {
+        return otherTrainings;
+    }
 
- // I added these methods
+    public String getReferralName() {
+        return referralName;
+    }
+
+    public String getReferralTitle() {
+        return referralTitle;
+    }
+
+    public String getParish() {
+        return parish;
+    }
+
+    public String getReferralPhone() {
+        return referralPhone;
+    }
+
+    public boolean isAccounts() {
+        return accounts;
+    }
+
+    public boolean isVht() {
+        return vht;
+    }
+
+    public void setAccounts(boolean accounts) {
+        this.accounts = accounts;
+    }
+
+    public void setParish(String parish) {
+        this.parish = parish;
+    }
+
+    public void setReferralName(String referralName) {
+        this.referralName = referralName;
+    }
+
+    public void setReferralPhone(String referralPhone) {
+        this.referralPhone = referralPhone;
+    }
+
+    public void setReferralTitle(String referralTitle) {
+        this.referralTitle = referralTitle;
+    }
+
+    public void setVht(boolean vht) {
+        this.vht = vht;
+    }
+
+    // I added these methods
     public Integer getSynced() {
         return synced;
     }
@@ -261,6 +351,50 @@ public class Registration {
         this.id = id;
     }
 
+    public Boolean getRead() {
+        return read;
+    }
+
+    public void setChewName(String chewName) {
+        this.chewName = chewName;
+    }
+
+    public void setChewNumber(String chewNumber) {
+        this.chewNumber = chewNumber;
+    }
+
+    public void setChv(boolean chv) {
+        this.chv = chv;
+    }
+
+    public void setCuName(String cuName) {
+        this.cuName = cuName;
+    }
+
+    public void setGokTrained(boolean gokTrained) {
+        this.gokTrained = gokTrained;
+    }
+
+    public void setLinkFacility(String linkFacility) {
+        this.linkFacility = linkFacility;
+    }
+
+    public void setNoOfHouseholds(Long noOfHouseholds) {
+        this.noOfHouseholds = noOfHouseholds;
+    }
+
+    public void setOtherTrainings(String otherTrainings) {
+        this.otherTrainings = otherTrainings;
+    }
+
+    public void setRead(Boolean read) {
+        this.read = read;
+    }
+
+    public void setWard(String ward) {
+        this.ward = ward;
+    }
+
     public Long getAge(){
         Long currentDate =  new Date().getTime();
         Long epochYear = 31556926000L;
@@ -268,6 +402,8 @@ public class Registration {
         Long ageYear = yearEpoch / epochYear;
         return ageYear;
     }
+
+
 
     public boolean hasPassed(){
         Long age = this.getAge();
