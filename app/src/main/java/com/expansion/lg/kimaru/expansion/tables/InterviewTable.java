@@ -315,6 +315,32 @@ public class InterviewTable extends SQLiteOpenHelper {
         return interviewList;
     }
 
+    public void fromJson(JSONObject jsonObject){
+        Interview interview = new Interview();
+        try {
+            interview.setId(jsonObject.getString(InterviewTable.ID));
+            interview.setApplicant(jsonObject.getString(InterviewTable.APPLICANT));
+            interview.setRecruitment(jsonObject.getString(InterviewTable.RECRUITMENT));
+            interview.setMotivation(jsonObject.getInt(InterviewTable.MOTIVATION));
+            interview.setCommunity(jsonObject.getInt(InterviewTable.COMMUNITY));
+            interview.setMentality(jsonObject.getInt(InterviewTable.MENTALITY));
+            interview.setSelling(jsonObject.getInt(InterviewTable.SELLING));
+            interview.setHealth(jsonObject.getInt(InterviewTable.HEALTH));
+            interview.setInvestment(jsonObject.getInt(InterviewTable.INVESTMENT));
+            interview.setCountry(jsonObject.getString(InterviewTable.COUNTRY));
+            interview.setInterpersonal(jsonObject.getInt(InterviewTable.INTERPERSONAL));
+            interview.setSelected(jsonObject.getInt(InterviewTable.SELECTED) == 1);
+            interview.setAddedBy(jsonObject.getInt(InterviewTable.ADDED_BY));
+            interview.setComment(jsonObject.getString(InterviewTable.COMMENT));
+            interview.setCommitment(jsonObject.getInt(InterviewTable.COMMITMENT));
+            interview.setDateAdded(jsonObject.getLong(InterviewTable.DATE_ADDED));
+            interview.setSynced(jsonObject.getInt(InterviewTable.SYNCED));
+            interview.setCanJoin(jsonObject.getInt(InterviewTable.CANJOIN) == 1);
+
+            this.addData(interview);
+        }catch (Exception e){}
+    }
+
     public JSONObject getInterviewJson() {
 
         SQLiteDatabase db=getReadableDatabase();

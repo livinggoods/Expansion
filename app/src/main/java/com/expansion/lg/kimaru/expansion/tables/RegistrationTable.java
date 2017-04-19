@@ -82,14 +82,17 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public static final String VHT = "vht";
     public static final String PARISH = "parish";
     public static final String ACCOUNTS = "financial_accounts";
+    public static final String REC_TRANSPORT = "recruitment_transport";
+    public static final String BRANCH_TRANPORT = "branch_transport";
 
     Context context;
 
-    String [] columns=new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
+    public static final String [] columns=new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
             VILLAGE, MARK, READ_ENGLISH, DATE_MOVED, LANGS, BRAC, BRAC_CHP, EDUCATION, OCCUPATION,
             COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED, RECRUITMENT, COUNTRY,
             CHEW_NAME, CHEW_NUMBER, WARD, CU_NAME, LINK_FACILITY, HOUSEHOLDS, TRAININGS, CHV,
-            GOK_TRAINED, REFERRAL_NAME, REFERRAL_NUMBER, REFERRAL_TITLE, VHT, PARISH, ACCOUNTS};
+            GOK_TRAINED, REFERRAL_NAME, REFERRAL_NUMBER, REFERRAL_TITLE, VHT, PARISH, ACCOUNTS,
+            REC_TRANSPORT, BRANCH_TRANPORT};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ", "
@@ -131,6 +134,8 @@ public class RegistrationTable extends SQLiteOpenHelper {
             + VHT + integer_field + ", "
             + PARISH + varchar_field + ", "
             + ACCOUNTS + integer_field + ", "
+            + REC_TRANSPORT + integer_field + ", "
+            + BRANCH_TRANPORT + integer_field + ", "
             + SYNCED + integer_field + "); ";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
@@ -200,6 +205,8 @@ public class RegistrationTable extends SQLiteOpenHelper {
         cv.put(VHT, registration.isVht() ? 1 : 0);
         cv.put(PARISH, registration.getParish());
         cv.put(ACCOUNTS, registration.isAccounts() ? 1 : 0);
+        cv.put(REC_TRANSPORT, registration.getRecruitmentTransportCost());
+        cv.put(BRANCH_TRANPORT, registration.getTransportCostToBranch());
 
         long id;
         if (isExist(registration)){
@@ -277,14 +284,12 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setVht(cursor.getInt(37) == 1);
             registration.setParish(cursor.getString(38));
             registration.setAccounts(cursor.getInt(39) == 1);
+            registration.setRecruitmentTransportCost(cursor.getLong(40));
+            registration.setTransportCostToBranch(cursor.getLong(41));
             registration.setPicture("");
             registrationList.add(registration);
-            //REFERRAL_NAME, REFERRAL_NUMBER, REFERRAL_TITLE, VHT, PARISH, ACCOUNTS
-
         }
-
         db.close();
-
         return registrationList;
     }
 
@@ -341,6 +346,8 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setVht(cursor.getInt(37) == 1);
             registration.setParish(cursor.getString(38));
             registration.setAccounts(cursor.getInt(39) == 1);
+            registration.setRecruitmentTransportCost(cursor.getLong(40));
+            registration.setTransportCostToBranch(cursor.getLong(41));
             registration.setPicture("");
             db.close();
             return registration;
@@ -423,13 +430,63 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setVht(cursor.getInt(37) == 1);
             registration.setParish(cursor.getString(38));
             registration.setAccounts(cursor.getInt(39) == 1);
+            registration.setRecruitmentTransportCost(cursor.getLong(40));
+            registration.setTransportCostToBranch(cursor.getLong(41));
             registration.setPicture("");
             registrationList.add(registration);
         }
-
         db.close();
-
         return registrationList;
+    }
+
+    public void fromJsonObject(JSONObject jsonObject){
+        try{
+            Registration registration=new Registration();
+            registration.setId(jsonObject.getString(ID));
+            registration.setName(jsonObject.getString(NAME));
+            registration.setPhone(jsonObject.getString(PHONE));
+            registration.setGender(jsonObject.getString(GENDER));
+            registration.setDob(jsonObject.getLong(DOB));
+            registration.setDistrict(jsonObject.getString(DISTRICT));
+            registration.setCountry(jsonObject.getString(COUNTRY));
+            registration.setRecruitment(jsonObject.getString(RECRUITMENT));
+            registration.setSubcounty(jsonObject.getString(SUB_COUNTY));
+            registration.setDivision(jsonObject.getString(DIVISION));
+            registration.setVillage(jsonObject.getString(VILLAGE));
+            registration.setMark(jsonObject.getString(MARK));
+            registration.setReadEnglish(jsonObject.getInt(READ_ENGLISH));
+            registration.setDateMoved(jsonObject.getLong(DATE_MOVED));
+            registration.setLangs(jsonObject.getString(LANGS));
+            registration.setBrac(jsonObject.getInt(BRAC));
+            registration.setBracChp(jsonObject.getInt(BRAC_CHP));
+            registration.setEducation(jsonObject.getString(EDUCATION));
+            registration.setOccupation(jsonObject.getString(OCCUPATION));
+            registration.setCommunity(jsonObject.getInt(COMMUNITY));
+            registration.setAddedBy(jsonObject.getInt(ADDED_BY));
+            registration.setComment(jsonObject.getString(COMMENT));
+            registration.setProceed(jsonObject.getInt(PROCEED));
+            registration.setDateAdded(jsonObject.getLong(DATE_ADDED));
+            registration.setSynced(jsonObject.getInt(SYNCED));
+            registration.setChewName(jsonObject.getString(CHEW_NAME));
+            registration.setChewNumber(jsonObject.getString(CHEW_NUMBER));
+            registration.setWard(jsonObject.getString(WARD));
+            registration.setCuName(jsonObject.getString(CU_NAME));
+            registration.setLinkFacility(jsonObject.getString(LINK_FACILITY));
+            registration.setNoOfHouseholds(jsonObject.getLong(HOUSEHOLDS));
+            registration.setOtherTrainings(jsonObject.getString(TRAININGS));
+            registration.setChv(jsonObject.getInt(CHV) == 1);
+            registration.setGokTrained(jsonObject.getInt(GOK_TRAINED) == 1);
+            registration.setReferralName(jsonObject.getString(REFERRAL_NAME));
+            registration.setReferralPhone(jsonObject.getString(REFERRAL_NUMBER));
+            registration.setReferralTitle(jsonObject.getString(REFERRAL_TITLE));
+            registration.setVht(jsonObject.getInt(VHT) == 1);
+            registration.setParish(jsonObject.getString(PARISH));
+            registration.setAccounts(jsonObject.getInt(ACCOUNTS) == 1);
+            registration.setRecruitmentTransportCost(jsonObject.getLong(REC_TRANSPORT));
+            registration.setTransportCostToBranch(jsonObject.getLong(BRANCH_TRANPORT));
+            registration.setPicture("");
+            this.addData(registration);
+        }catch (Exception e){}
     }
 
     public JSONObject getRegistrationJson() {

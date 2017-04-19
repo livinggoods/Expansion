@@ -6,12 +6,15 @@ package com.expansion.lg.kimaru.expansion.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -31,12 +34,21 @@ import android.view.MenuItem;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.Exam;
+import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.other.DisplayDate;
+import com.expansion.lg.kimaru.expansion.tables.ExamTable;
+import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationListAdapter;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
+import com.expansion.lg.kimaru.expansion.tables.UserTable;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,12 +93,6 @@ public class RegistrationsFragment extends Fragment  {
     Context mContext = getContext();
     Activity activity = getActivity();
 
-
-
-    public RegistrationsFragment() {
-        // Required empty public constructor
-    }
-
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -107,6 +113,7 @@ public class RegistrationsFragment extends Fragment  {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -390,7 +397,312 @@ public class RegistrationsFragment extends Fragment  {
         }
         swipeRefreshLayout.setRefreshing(false);
     }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        inflater.inflate(R.menu.registration_action_menu, menu);
+    }
 
-    //====================================== End Gmail Methods======================================
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Fragment fragment;
+        FragmentTransaction fragmentTransaction;
+        switch (item.getItemId()) {
+            // action with ID action_refresh was selected
+            case R.id.action_export_scoring_tool:
+                // export scoring tool
+                Toast.makeText(getContext(), "Exporting Scoring tool", Toast.LENGTH_SHORT).show();
+                exportScoringTool();
+
+                break;
+            // action with ID action_settings was selected
+            case R.id.action_exam:
+
+                break;
+            default:
+                break;
+        }
+
+
+
+        return true;
+    }
+
+    private void exportScoringTool(){
+        // only export the scoring tool for the current recruitment
+        // 1. Check if the Externa Storage is available
+        String state = Environment.getExternalStorageState();
+        if(!Environment.MEDIA_MOUNTED.equals(state)){
+            return;
+        }else{
+            //We used Download Dir
+            File exportDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            if(!exportDir.exists()){
+                exportDir.mkdirs();
+            }
+            File file;
+            PrintWriter printWriter = null;
+            try {
+                file = new File(exportDir, recruitment.getName()+" ScoringTool.csv");
+                file.createNewFile();
+                printWriter = new PrintWriter(new FileWriter(file));
+
+                //here we get the cursor that contains our records
+                RegistrationTable registrationTable = new RegistrationTable(getContext());
+
+                //Write the name of the table and the name of the columns (comma separated values) in the .csv file.
+                printWriter.println(recruitment.getName()+" Scoring tool");
+
+                if (country.equalsIgnoreCase("KE")){
+                        String ugHeader = "CHEW Name," +
+                            "CHEW Contact," +
+                            "Candidate Name," +
+                            "Candidate Mobile," +
+                            "Gender," +
+                            "Year of Birth," +
+                            "Age," +
+                            "Subcounty," +
+                            "Ward," +
+                            "Village/zone/cell, " +
+                            "Landmark, " +
+                            "CU (Community Unit), " +
+                            "Link Facility, " +
+                            "No of Households," +
+                            "Read/speak English," +
+                            "Years at this Location," +
+                            "Other Languages," +
+                            "CHV," +
+                            "GOK Training," +
+                            "Other Trainings,"+
+                            "Highest education level,"+
+                            "Previous/Current health or business experience," +
+                            "Community group membership," +
+                            "Financial Accounts," +
+                            "Math Score," +
+                            "Reading Comprehension," +
+                            "About you," +
+                            "Total Score," +
+                            "Eligible for Interview," +  // pass or not
+                            "Interview: Overall Motivation," +
+                            "Interview: Ability to work with communities," +
+                            "Interview: Mentality," +
+                            "Interview:Selling skills," +
+                            "Interview: Interest in health," +
+                            "Interview: Ability to invest," +
+                            "Interview: Interpersonal skills," +
+                            "Interview: Ability to commit," +
+                            "Interview Score," +
+                            "DO NOT ASK OUTLOUD: Any conditions to prevent joining?," + //canJoin
+                            "Tranport as Per Recruitment," + //canJoin
+                            "Comments," +
+                            "Qualify for Training," + //Interview pass or not
+                            "Invite for Training";  //selected
+
+                    // add for interview and exam
+                    printWriter.println(ugHeader);
+                    // Print the rows
+                    for (Registration registration:registrations){
+                        Exam exam = new ExamTable(getContext()).getExamByRegistration(registration.getId());
+                        Interview interview = new InterviewTable(getContext()).getInterviewByRegistrationId(registration.getId());
+                        Integer motivation = 0, community = 0, mentality = 0, selling=0, recruitmentTransport = 0;
+                        Integer health = 0, investment = 0, interpersonal = 0, commitment = 0, totalI = 0;
+                        String invite = "N", canJoin="N", userNames ="", comments = "";
+                        String qualify = "N";
+
+                        Double math = 0D, english = 0D, personality = 0D, total = 0D;
+                        if (exam != null){
+                            math = exam.getMath();
+                            english = exam.getEnglish();
+                            personality = exam.getPersonality();
+                            total = math + english + personality;
+
+                        }
+                        if (interview != null){
+                            motivation = interview.getMotivation();
+                            community = interview.getCommunity();
+                            mentality = interview.getMentality();
+                            selling = interview.getSelling();
+                            health = interview.getHealth();
+                            investment = interview.getInvestment();
+                            interpersonal = interview.getInterpersonal();
+                            commitment = interview.getCommitment();
+                            totalI = interview.getTotal();
+                            canJoin = interview.isCanJoin() ? "Y" : "N";
+                            comments = interview.getComment();
+                            qualify = interview.hasPassed() ? "Y" : "N";
+                            invite = interview.getSelected() ? "Y" : "N";
+                            userNames = new UserTable(getContext()).getUserById(interview.getAddedBy()).getName();
+                        }
+
+                        String record = registration.getChewName() +","+
+                                registration.getChewNumber()+","+
+                                registration.getName() +","+
+                                registration.getPhone() +","+
+                                registration.getGender() +","+
+                                new DisplayDate(registration.getDob()).dateOnly() +","+  //dd/mm/yyyy format
+                                registration.getAge() +","+
+                                registration.getSubcounty() +","+
+                                registration.getWard()+","+
+                                registration.getVillage()+","+
+                                registration.getMark() +","+
+                                registration.getCuName() +","+
+                                registration.getLinkFacility() +","+
+                                registration.getNoOfHouseholds() +","+
+                                (registration.getReadEnglish().equals(1) ? "Y" : "N") +","+
+                                registration.getDateMoved() +","+
+                                registration.getLangs().replaceAll(",",";") +"," +
+                                (registration.isChv() ? "Y" : "N") +","+
+                                (registration.isGokTrained() ? "Y": "N") +","+
+                                registration.getOtherTrainings().replaceAll(",", ";") +","+
+                                registration.getEducation()+ "," +
+                                registration.getOccupation()+ "," +
+                                (registration.getCommunity().equals(1) ? "Y" : "N")+ "," +
+                                (registration.isAccounts() ? "Y" : "N")+ "," +
+                                math.toString() + ","+
+                                english.toString() + ","+
+                                personality.toString() + ","+
+                                total+","+
+                                total+","+ // has passed
+                                motivation+","+
+                                community+","+
+                                mentality+","+
+                                selling+","+
+                                health+","+
+                                investment+","+
+                                interpersonal+","+
+                                commitment+","+
+                                totalI+","+
+                                canJoin+","+
+                                registration.getRecruitmentTransportCost() +","+
+                                comments+","+
+                                qualify+","+
+                                userNames+","+
+                                invite;
+                        printWriter.println(record);
+                    }
+
+                }else{
+                    String ugHeader = "Referral Name," +
+                            "Referral Title," +
+                            "Referral Mobile No," +
+                            "VHT?," +
+                            "Candidate Name," +
+                            "Candidate Mobile," +
+                            "Gender," +
+                            "Age," +
+                            "District," +
+                            "Subcounty," +
+                            "Parish," +
+                            "Village/zone/cell, " +
+                            "Landmark, " +
+                            "Read/Speak English, " +
+                            "Other Languages," +
+                            "Ever worked with BRAC?," +
+                            "If yes as BRAC CHP?," +
+                            "Highest Educational," +
+                            "Community group memberships," +
+                            "Maths Score," +
+                            "Reading Comprehension,"+
+                            "About You," +
+                            "Total Marks," +
+                            "Interview Completed by," +
+                            "Interview: Overall Motivation," +
+                            "Interview: Ability to work with communities," +
+                            "Interview: Mentality," +
+                            "Interview:Selling skills," +
+                            "Interview: Interest in health," +
+                            "Interview: Ability to invest," +
+                            "Interview: Interpersonal skills," +
+                            "Interview: Ability to commit," +
+                            "Interview Score," +
+                            "DO NOT ASK OUTLOUD: Any conditions to prevent joining?," +
+                            "Comments," +
+                            "Qualify for Training," +
+                            "Invite for Training";
+
+                    // add for interview and exam
+                    printWriter.println(ugHeader);
+                    // Print the rows
+                    for (Registration registration:registrations){
+                        Exam exam = new ExamTable(getContext()).getExamByRegistration(registration.getId());
+                        Interview interview = new InterviewTable(getContext()).getInterviewByRegistrationId(registration.getId());
+                        Integer motivation = 0, community = 0, mentality = 0, selling=0;
+                        Integer health = 0, investment = 0, interpersonal = 0, commitment = 0, totalI = 0;
+                        String invite = "N", canJoin="N", userNames ="", comments = "";
+                        String qualify = "N";
+
+                        Double math = 0D, english = 0D, personality = 0D, total = 0D;
+                        if (exam != null){
+                            math = exam.getMath();
+                            english = exam.getEnglish();
+                            personality = exam.getPersonality();
+                            total = math + english + personality;
+
+                        }
+                        if (interview != null){
+                            motivation = interview.getMotivation();
+                            community = interview.getCommunity();
+                            mentality = interview.getMentality();
+                            selling = interview.getSelling();
+                            health = interview.getHealth();
+                            investment = interview.getInvestment();
+                            interpersonal = interview.getInterpersonal();
+                            commitment = interview.getCommitment();
+                            totalI = interview.getTotal();
+                            canJoin = interview.isCanJoin() ? "Y" : "N";
+                            comments = interview.getComment();
+                            qualify = interview.hasPassed() ? "Y" : "N";
+                            invite = interview.getSelected() ? "Y" : "N";
+                            userNames = new UserTable(getContext()).getUserById(interview.getAddedBy()).getName();
+                        }
+
+                        String record = registration.getReferralName() +","+
+                                registration.getReferralTitle() +","+
+                                registration.getReferralPhone()+","+
+                                (registration.isVht() ? "Y" : "N") +","+
+                                registration.getName() +","+
+                                registration.getPhone() +","+
+                                registration.getGender() +","+
+                                registration.getAge() +","+
+                                recruitment.getDistrict() +","+
+                                registration.getSubcounty() +","+
+                                registration.getParish()+","+
+                                registration.getVillage()+","+
+                                registration.getMark() +","+
+                                (registration.getReadEnglish().equals(1) ? "Y" : "N") +","+
+                                registration.getLangs().replaceAll(",",";") +"," +
+                                (registration.getBrac().equals(1) ? "Y" : "N") +","+
+                                (registration.getBracChp().equals(1) ? "Y": "N") +","+
+                                registration.getEducation() +","+
+                                (registration.getCommunity().equals(1) ? "Y" : "N")+ "," +
+                                math.toString() + ","+
+                                english.toString() + ","+
+                                personality.toString() + ","+
+                                total+","+
+                                userNames+","+
+                                motivation+","+
+                                community+","+
+                                mentality+","+
+                                selling+","+
+                                health+","+
+                                investment+","+
+                                interpersonal+","+
+                                commitment+","+
+                                totalI+","+
+                                canJoin+","+
+                                comments+","+
+                                qualify+","+
+                                invite;
+                        printWriter.println(record);
+                    }
+                }
+
+            } catch (Exception e){}
+            finally {
+                if(printWriter != null) printWriter.close();
+                Toast.makeText(getContext(), "Tool exported to Downloads Folder", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
 
 }

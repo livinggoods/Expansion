@@ -171,6 +171,24 @@ public class ExamTable extends SQLiteOpenHelper {
 
     }
 
+    public void fromJson(JSONObject jsonObject){
+        try{
+            Exam exam=new Exam();
+            exam.setId(jsonObject.getString(ExamTable.ID));
+            exam.setApplicant(jsonObject.getString(ExamTable.APPLICANT));
+            exam.setRecruitment(jsonObject.getString(ExamTable.RECRUITMENT));
+            exam.setCountry(jsonObject.getString(ExamTable.COUNTRY));
+            exam.setMath(jsonObject.getDouble(ExamTable.MATH));
+            exam.setPersonality(jsonObject.getDouble(ExamTable.PERSONALITY));
+            exam.setEnglish(jsonObject.getDouble(ExamTable.ENGLISH));
+            exam.setAddedBy(jsonObject.getInt(ExamTable.ADDED_BY));
+            exam.setComment(jsonObject.getString(ExamTable.COMMENT));
+            exam.setDateAdded(jsonObject.getLong(ExamTable.DATE_ADDED));
+            exam.setSynced(jsonObject.getInt(ExamTable.SYNCED));
+            this.addData(exam);
+        }catch (Exception e){}
+    }
+
     public Exam getExamById(String id){
         SQLiteDatabase db = getReadableDatabase();
 

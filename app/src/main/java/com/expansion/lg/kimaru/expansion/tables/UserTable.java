@@ -111,6 +111,24 @@ public class UserTable extends SQLiteOpenHelper {
         return userList;
     }
 
+    public User getUserById (int id){
+
+        SQLiteDatabase db=getReadableDatabase();
+        String whereClause = ID+" = ?";
+        String[] whereArgs = new String[] {
+                String.valueOf(id),
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        User user = new User();
+        user.setId(cursor.getInt(0));
+        user.setEmail(cursor.getString(1));
+        user.setUsername(cursor.getString(2));
+        user.setPassword(cursor.getString(3));
+        user.setName(cursor.getString(4));
+        user.setCountry(cursor.getString(5));
+        return user;
+    }
+
     public Cursor getUserCursor() {
 
         SQLiteDatabase db=getReadableDatabase();

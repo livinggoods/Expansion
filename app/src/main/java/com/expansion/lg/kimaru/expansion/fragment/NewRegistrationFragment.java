@@ -379,7 +379,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                         country, applicantDateMoved, applicantBrac, applicantBracChp, applicantCommunity,
                         applicantAddedBy, applicantProceed, applicantDateAdded, applicantSync, "",
                         "", "", "", "", 0L, false, false, "", referralName, referralTitle,
-                        referralNumber, isVht, false, applicantParish);
+                        referralNumber, isVht, false, applicantParish, 0L, 0L);
 
                 // Before saving, do some validations
                 // Years in location should always be less than age

@@ -12,7 +12,7 @@ public class Registration {
     String id, occupation, comment, picture, country, chewName, chewNumber, ward, cuName, linkFacility;
     String otherTrainings, referralName, referralTitle, referralPhone, parish;
     Integer readEnglish, brac, bracChp, community, addedBy, proceed, synced;
-    Long dob, dateMoved, dateAdded, noOfHouseholds;
+    Long dob, dateMoved, dateAdded, noOfHouseholds, recruitmentTransportCost, transportCostToBranch;
     boolean chv, gokTrained, vht, accounts;
     int color = -1;
     Boolean read = false;
@@ -30,7 +30,8 @@ public class Registration {
                         String chewName, String chewNumber, String ward, String cuName,
                         String linkFacility, long noOfHouseholds, boolean isChv, boolean gokTrained,
                         String otherTrainings, String referralName, String referralTitle,
-                        String referralPhone, boolean vht, boolean accounts, String parish) {
+                        String referralPhone, boolean vht, boolean accounts, String parish,
+                        Long recruitmentTransportCost, Long transportCostToBranch) {
         this.name = mName;
         this.phone = mPhone;
         this.recruitment = mRecruitment;
@@ -71,6 +72,8 @@ public class Registration {
         this.vht = vht;
         this.accounts = accounts;
         this.parish = parish;
+        this.recruitmentTransportCost = recruitmentTransportCost;
+        this.transportCostToBranch = transportCostToBranch;
     }
 
 
@@ -215,6 +218,14 @@ public class Registration {
 
     public void setVht(boolean vht) {
         this.vht = vht;
+    }
+
+    public Long getRecruitmentTransportCost() {
+        return recruitmentTransportCost;
+    }
+
+    public Long getTransportCostToBranch() {
+        return transportCostToBranch;
     }
 
     // I added these methods
@@ -403,7 +414,13 @@ public class Registration {
         return ageYear;
     }
 
+    public void setRecruitmentTransportCost(Long recruitmentTransportCost) {
+        this.recruitmentTransportCost = recruitmentTransportCost;
+    }
 
+    public void setTransportCostToBranch(Long transportCostToBranch) {
+        this.transportCostToBranch = transportCostToBranch;
+    }
 
     public boolean hasPassed(){
         Long age = this.getAge();

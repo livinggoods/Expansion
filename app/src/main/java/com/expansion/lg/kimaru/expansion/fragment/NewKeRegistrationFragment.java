@@ -76,7 +76,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
     EditText mDob;
     RadioGroup mReadEnglish;
     EditText mRecruitment;
-    EditText mDateMoved;
+    EditText mDateMoved, editBranchTransportCost, editRecruitmentTransportCost;
     RadioGroup editIsChv, editIsGokTrained;
     RadioGroup mCommunity, mAccounts;
     EditText editCuName;
@@ -168,6 +168,8 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         mComment = (EditText) v.findViewById(R.id.editComment);
         editWard = (EditText) v.findViewById(R.id.editWard);
         editCuName = (EditText) v.findViewById(R.id.editCuName);
+        editBranchTransportCost = (EditText) v.findViewById(R.id.editBranchTransportCost);
+        editRecruitmentTransportCost = (EditText) v.findViewById(R.id.editRecruitmentTransportCost);
         editLinkFacility = (EditText) v.findViewById(R.id.editLinkFacility);
         editNoOfHouseholds = (EditText) v.findViewById(R.id.editNoOfHouseholds);
         editOtherTrainings = (EditText) v.findViewById(R.id.editOtherTrainings);
@@ -177,8 +179,6 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         editIsGokTrained = (RadioGroup) v.findViewById(R.id.editIsGokTrained);
         mCommunity = (RadioGroup) v.findViewById(R.id.editCommunityMembership);
         educationLevel = (Spinner) v.findViewById(R.id.selectEdducation);
-
-
 
         addEducationSelectList();
         setUpEditingMode();
@@ -261,6 +261,9 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 String applicantLinkFacility = editLinkFacility.getText().toString();
                 String noOfHouseholds = editNoOfHouseholds.getText().toString();
                 String applicantOtherTrainings = editOtherTrainings.getText().toString();
+                //recruitmentTransportCost,transportCostToBranch
+                Long transportCostToBranch = Long.valueOf(editBranchTransportCost.getText().toString());
+                Long recruitmentTransportCost = Long.valueOf(editRecruitmentTransportCost.getText().toString());
                 //////////////
                 Long applicantNoOfHouseholds;
                 if (noOfHouseholds.toString().trim().equals("")){
@@ -369,7 +372,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                         applicantAddedBy, applicantProceed, applicantDateAdded, applicantSync, applicantChewName,
                         applicantChewNumber, applicantWard, applicantCuName, applicantLinkFacility,
                         applicantNoOfHouseholds, applicantIsChv, isGokTrained, applicantOtherTrainings,
-                        "", "","",false, applicantAccounts, "");
+                        "", "","",false, applicantAccounts, "", recruitmentTransportCost,transportCostToBranch);
 
                 // Before saving, do some validations
                 // Years in location should always be less than age
@@ -462,6 +465,10 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         if (editingRegistration != null){
             mName.setText(editingRegistration.getName());
             mPhone.setText(editingRegistration.getPhone());
+            editRecruitmentTransportCost.setText(
+                    String.valueOf(editingRegistration.getRecruitmentTransportCost()));
+            editBranchTransportCost.setText(
+                    String.valueOf(editingRegistration.getTransportCostToBranch()));
             mGender.clearCheck();
             if (editingRegistration.getGender().equalsIgnoreCase("Male")){
                 mGender.check(R.id.radioM);

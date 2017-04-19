@@ -198,29 +198,8 @@ public class HttpClient {
                     JSONArray recs = reader.getJSONArray(ExamTable.JSON_ROOT);
 
                     for (int x = 0; x < recs.length(); x++){
-
-                        Exam exam=new Exam();
-                        exam.setId(recs.getJSONObject(x).getString(ExamTable.ID));
-                        exam.setApplicant(recs.getJSONObject(x).getString(ExamTable.APPLICANT));
-                        exam.setRecruitment(recs.getJSONObject(x).getString(ExamTable.RECRUITMENT));
-                        exam.setCountry(recs.getJSONObject(x).getString(ExamTable.COUNTRY));
-                        exam.setMath(recs.getJSONObject(x).getDouble(ExamTable.MATH));
-                        exam.setPersonality(recs.getJSONObject(x).getDouble(ExamTable.PERSONALITY));
-                        exam.setEnglish(recs.getJSONObject(x).getDouble(ExamTable.ENGLISH));
-                        exam.setAddedBy(recs.getJSONObject(x).getInt(ExamTable.ADDED_BY));
-                        exam.setComment(recs.getJSONObject(x).getString(ExamTable.COMMENT));
-                        exam.setDateAdded(recs.getJSONObject(x).getLong(ExamTable.DATE_ADDED));
-                        exam.setSynced(recs.getJSONObject(x).getInt(ExamTable.SYNCED));
-
-                        // add recruitment
-                        ExamTable examTable = new ExamTable(context);
-                        examTable.addData(exam);
-
+                        new ExamTable(context).fromJson(recs.getJSONObject(x));
                     }
-
-
-
-                    // process other data as this way..............
 
                 }catch(JSONException e){
                     e.printStackTrace();
@@ -249,62 +228,10 @@ public class HttpClient {
 
                     JSONArray recs = reader.getJSONArray(RegistrationTable.JSON_ROOT);
                     // Get the array first JSONObject
-                    List<Recruitment> recruitmentList = new ArrayList<Recruitment>();
 
                     for (int x = 0; x < recs.length(); x++){
-                        Registration registration=new Registration();
-                        registration.setId(recs.getJSONObject(x).getString(RegistrationTable.ID));
-                        registration.setName(recs.getJSONObject(x).getString(RegistrationTable.NAME));
-                        registration.setPhone(recs.getJSONObject(x).getString(RegistrationTable.PHONE));
-                        registration.setGender(recs.getJSONObject(x).getString(RegistrationTable.GENDER));
-                        registration.setDob(recs.getJSONObject(x).getLong(RegistrationTable.DOB));
-                        registration.setDistrict(recs.getJSONObject(x).getString(RegistrationTable.DISTRICT));
-                        registration.setCountry(recs.getJSONObject(x).getString(RegistrationTable.COUNTRY));
-                        registration.setRecruitment(recs.getJSONObject(x).getString(RegistrationTable.RECRUITMENT));
-                        registration.setSubcounty(recs.getJSONObject(x).getString(RegistrationTable.SUB_COUNTY));
-                        registration.setDivision(recs.getJSONObject(x).getString(RegistrationTable.DIVISION));
-                        registration.setVillage(recs.getJSONObject(x).getString(RegistrationTable.VILLAGE));
-                        registration.setMark(recs.getJSONObject(x).getString(RegistrationTable.MARK));
-                        registration.setReadEnglish(recs.getJSONObject(x).getInt(RegistrationTable.READ_ENGLISH));
-                        registration.setDateMoved(recs.getJSONObject(x).getLong(RegistrationTable.DATE_MOVED));
-                        registration.setLangs(recs.getJSONObject(x).getString(RegistrationTable.LANGS));
-                        registration.setBrac(recs.getJSONObject(x).getInt(RegistrationTable.BRAC));
-                        registration.setBracChp(recs.getJSONObject(x).getInt(RegistrationTable.BRAC_CHP));
-                        registration.setEducation(recs.getJSONObject(x).getString(RegistrationTable.EDUCATION));
-                        registration.setOccupation(recs.getJSONObject(x).getString(RegistrationTable.OCCUPATION));
-                        registration.setCommunity(recs.getJSONObject(x).getInt(RegistrationTable.COMMUNITY));
-                        registration.setAddedBy(recs.getJSONObject(x).getInt(RegistrationTable.ADDED_BY));
-                        registration.setComment(recs.getJSONObject(x).getString(RegistrationTable.COMMENT));
-                        registration.setProceed(recs.getJSONObject(x).getInt(RegistrationTable.PROCEED));
-                        registration.setDateAdded(recs.getJSONObject(x).getLong(RegistrationTable.DATE_ADDED));
-                        registration.setSynced(recs.getJSONObject(x).getInt(RegistrationTable.SYNCED));
-                        registration.setChewName(recs.getJSONObject(x).getString(RegistrationTable.CHEW_NAME));
-                        registration.setChewNumber(recs.getJSONObject(x).getString(RegistrationTable.CHEW_NUMBER));
-                        registration.setWard(recs.getJSONObject(x).getString(RegistrationTable.WARD));
-                        registration.setCuName(recs.getJSONObject(x).getString(RegistrationTable.CU_NAME));
-                        registration.setLinkFacility(recs.getJSONObject(x).getString(RegistrationTable.LINK_FACILITY));
-                        registration.setNoOfHouseholds(recs.getJSONObject(x).getLong(RegistrationTable.HOUSEHOLDS));
-                        registration.setOtherTrainings(recs.getJSONObject(x).getString(RegistrationTable.TRAININGS));
-                        registration.setChv(recs.getJSONObject(x).getInt(RegistrationTable.CHV) == 1);
-                        registration.setGokTrained(recs.getJSONObject(x).getInt(RegistrationTable.GOK_TRAINED) == 1);
-                        registration.setReferralName(recs.getJSONObject(x).getString(RegistrationTable.REFERRAL_NAME));
-                        registration.setReferralPhone(recs.getJSONObject(x).getString(RegistrationTable.REFERRAL_NUMBER));
-                        registration.setReferralTitle(recs.getJSONObject(x).getString(RegistrationTable.REFERRAL_TITLE));
-                        registration.setVht(recs.getJSONObject(x).getInt(RegistrationTable.VHT) == 1);
-                        registration.setParish(recs.getJSONObject(x).getString(RegistrationTable.PARISH));
-                        registration.setAccounts(recs.getJSONObject(x).getInt(RegistrationTable.ACCOUNTS) ==1);
-                        registration.setPicture("");
-                        registration.setPicture("");
-
-                        // add recruitment
-                        RegistrationTable registrationTable = new RegistrationTable(context);
-                        registrationTable.addData(registration);
-
+                        new RegistrationTable(context).fromJsonObject(recs.getJSONObject(x));
                     }
-
-
-
-                    // process other data as this way..............
 
                 }catch(JSONException e){
                     e.printStackTrace();
@@ -340,39 +267,11 @@ public class HttpClient {
 
 
                     for (int x = 0; x < recs.length(); x++){
-                        Recruitment recruitment = new Recruitment();
-
-
-
-
-                        recruitment.setId(recs.getJSONObject(x).getString(RecruitmentTable.ID));
-                        recruitment.setName(recs.getJSONObject(x).getString(RecruitmentTable.NAME));
-                        recruitment.setDistrict(recs.getJSONObject(x).getString(RecruitmentTable.DISTRICT));
-                        recruitment.setSubcounty(recs.getJSONObject(x).getString(RecruitmentTable.SUB_COUNTY));
-                        recruitment.setDivision(recs.getJSONObject(x).getString(RecruitmentTable.DIVISION));
-                        recruitment.setCountry(recs.getJSONObject(x).getString(RecruitmentTable.COUNTRY));
-                        recruitment.setLat(recs.getJSONObject(x).getString(RecruitmentTable.LAT));
-                        recruitment.setLon(recs.getJSONObject(x).getString(RecruitmentTable.LON));
-                        recruitment.setAddedBy(Integer.parseInt(recs.getJSONObject(x).getString(RecruitmentTable.ADDED_BY)));
-                        recruitment.setComment(recs.getJSONObject(x).getString(RecruitmentTable.COMMENT));
-                        recruitment.setDateAdded(Long.parseLong(recs.getJSONObject(x).getString(RecruitmentTable.DATE_ADDED)));
-                        recruitment.setSynced(Integer.parseInt(recs.getJSONObject(x).getString(RecruitmentTable.SYNCED)));
-                        recruitment.setCounty(recs.getJSONObject(x).getString(RecruitmentTable.COUNTY));
-
-                        // add recruitment
-                        RecruitmentTable recruitmentTable = new RecruitmentTable(context);
-                        recruitmentTable.addData(recruitment);
-
+                        new RecruitmentTable(context).fromJson(recs.getJSONObject(x));
                     }
-
-
-
-                    // process other data as this way..............
-
                 }catch(JSONException e){
                     e.printStackTrace();
                 }
-
             } // if statement end
         } // onPostExecute() end
     } // ProcessJSON class end
@@ -399,38 +298,8 @@ public class HttpClient {
                     // Get the array first JSONObject
                     List<Recruitment> recruitmentList = new ArrayList<Recruitment>();
                     for (int x = 0; x < recs.length(); x++){
-
-                        Interview interview = new Interview();
-
-                        interview.setId(recs.getJSONObject(x).getString(InterviewTable.ID));
-                        interview.setApplicant(recs.getJSONObject(x).getString(InterviewTable.APPLICANT));
-                        interview.setRecruitment(recs.getJSONObject(x).getString(InterviewTable.RECRUITMENT));
-                        interview.setMotivation(recs.getJSONObject(x).getInt(InterviewTable.MOTIVATION));
-                        interview.setCommunity(recs.getJSONObject(x).getInt(InterviewTable.COMMUNITY));
-                        interview.setMentality(recs.getJSONObject(x).getInt(InterviewTable.MENTALITY));
-                        interview.setSelling(recs.getJSONObject(x).getInt(InterviewTable.SELLING));
-                        interview.setHealth(recs.getJSONObject(x).getInt(InterviewTable.HEALTH));
-                        interview.setInvestment(recs.getJSONObject(x).getInt(InterviewTable.INVESTMENT));
-                        interview.setCountry(recs.getJSONObject(x).getString(InterviewTable.COUNTRY));
-                        interview.setInterpersonal(recs.getJSONObject(x).getInt(InterviewTable.INTERPERSONAL));
-                        interview.setSelected(recs.getJSONObject(x).getInt(InterviewTable.SELECTED) == 1);
-                        interview.setAddedBy(recs.getJSONObject(x).getInt(InterviewTable.ADDED_BY));
-                        interview.setComment(recs.getJSONObject(x).getString(InterviewTable.COMMENT));
-                        interview.setCommitment(recs.getJSONObject(x).getInt(InterviewTable.COMMITMENT));
-                        interview.setDateAdded(recs.getJSONObject(x).getLong(InterviewTable.DATE_ADDED));
-                        interview.setSynced(recs.getJSONObject(x).getInt(InterviewTable.SYNCED));
-                        interview.setCanJoin(recs.getJSONObject(x).getInt(InterviewTable.CANJOIN) ==1);
-
-                        // add recruitment
-                        InterviewTable interviewTable = new InterviewTable(context);
-                        interviewTable.addData(interview);
-
+                        new InterviewTable(context).fromJson(recs.getJSONObject(x));
                     }
-
-
-
-                    // process other data as this way..............
-
                 }catch(JSONException e){
                     e.printStackTrace();
                 }

@@ -10,7 +10,7 @@ import java.util.Date;
 public class DisplayDate {
 
     Long epoch;
-    SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy");
+    SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
     SimpleDateFormat selectFormatter = new SimpleDateFormat("yyyy/M/d");
     SimpleDateFormat timeFormatter = new SimpleDateFormat("hh/mm/a");
     SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("MM/dd/yyyy hh/mm/a");

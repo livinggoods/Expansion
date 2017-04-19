@@ -207,13 +207,24 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         return recruitmentList;
     }
 
-    public void syncRecruitment(Recruitment recruitment){
-        //In order to make it unique, we shall be checking the recruitments as follows
-        // a) The recruitment must be created by someone else (addedby != currentUserID)
-        // b) Recruitment Name is not the same as the one we have in the DB
-        // c) Recruitment added_date should not be the same
-
-
+    public void fromJson(JSONObject jsonObject){
+        try{
+            Recruitment recruitment = new Recruitment();
+            recruitment.setId(jsonObject.getString(RecruitmentTable.ID));
+            recruitment.setName(jsonObject.getString(RecruitmentTable.NAME));
+            recruitment.setDistrict(jsonObject.getString(RecruitmentTable.DISTRICT));
+            recruitment.setSubcounty(jsonObject.getString(RecruitmentTable.SUB_COUNTY));
+            recruitment.setDivision(jsonObject.getString(RecruitmentTable.DIVISION));
+            recruitment.setCountry(jsonObject.getString(RecruitmentTable.COUNTRY));
+            recruitment.setLat(jsonObject.getString(RecruitmentTable.LAT));
+            recruitment.setLon(jsonObject.getString(RecruitmentTable.LON));
+            recruitment.setAddedBy(jsonObject.getInt(RecruitmentTable.ADDED_BY));
+            recruitment.setComment(jsonObject.getString(RecruitmentTable.COMMENT));
+            recruitment.setDateAdded(jsonObject.getLong(RecruitmentTable.DATE_ADDED));
+            recruitment.setSynced(jsonObject.getInt(RecruitmentTable.SYNCED));
+            recruitment.setCounty(jsonObject.getString(RecruitmentTable.COUNTY));
+            this.addData(recruitment);
+        } catch (Exception e){}
     }
 
     public List<Recruitment> getRecruitmentbyQuery(String whereClause){
