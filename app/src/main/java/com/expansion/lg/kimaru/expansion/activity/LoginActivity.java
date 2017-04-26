@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.sync.LocationDataSync;
 import com.expansion.lg.kimaru.expansion.tables.UserTable;
 import com.expansion.lg.kimaru.expansion.sync.HttpServer;
 import com.expansion.lg.kimaru.expansion.sync.UserDataSync;
@@ -84,10 +85,13 @@ public class LoginActivity extends Activity {
         server.startServer();
         UserDataSync dSync = new UserDataSync(getBaseContext());
         dSync.pollNewUsers();
+
+        //LocationDataSync locationDataSync = new LocationDataSync(getBaseContext());
+        //locationDataSync.pollLocations();
     }
     @Override
     public void onBackPressed() {
-//        finish();
+        finish();
     }
 
     public void startServer(){
