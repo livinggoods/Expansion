@@ -46,6 +46,7 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
     SessionManagement sessionManagement;
     Registration registration;
     TextView interviewResults, examResults, selectedStatus;
+    boolean selected = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -125,6 +126,7 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
         selectedStatus = (TextView) v.findViewById(R.id.selectedStatus);
         interviewResults.setText("");
         selectedStatus.setText("");
+        selectedStatus.setOnClickListener(this);
         if (interview != null){
             String interviewScores = "Interview Results \n\n" +
                         "Motivation: " +interview.getMotivation() + "\t" +
@@ -139,10 +141,11 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
                         "Status "+ interview.getSelling();
             interviewResults.setText(interviewScores);
             if (interview.getSelected()){
+                selected = true;
                 selectedStatus.setText("Selected for training");
             }else{
+                selected = false;
                 selectedStatus.setText("Not selected for training");
-                selectedStatus.setOnClickListener(this);
             }
         }else{
             //Allow adding new Interview
@@ -240,13 +243,23 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
                 break;
             case R.id.selectedStatus:
                 //get the interview
-                Interview interview = new Interview();
+                Interview interview;
                 InterviewTable interviewTable = new InterviewTable(getContext());
                 interview = interviewTable.getInterviewByRegistrationId(sessionManagement.getSavedRegistration().getId());
-                interview.setSelected(true);
-                interviewTable.addData(interview);
-                selectedStatus.setText("Selected for training");
-                //Toast.makeText(getContext(), "Selected "+sessionManagement.getSavedRegistration().getName(), Toast.LENGTH_SHORT).show();
+                if (interview != null){
+                    if (selected){
+                        selected = false;
+                        interview.setSelected(false);
+                        interviewTable.addData(interview);
+                        selectedStatus.setText("Not selected for training \n Click to select");
+                    }else{
+                        selected = true;
+                        interview.setSelected(true);
+                        interviewTable.addData(interview);
+                        selectedStatus.setText("Selected for training \n Click to deselect");
+                    }
+                }
+
         }
     }
 
