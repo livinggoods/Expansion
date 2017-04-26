@@ -34,5 +34,6 @@ public class SpinnersCursorAdapter extends CursorAdapter {
 
         shownText.setText(textToShow);
         idTracker.setText(String.valueOf(idToShow));
+        idTracker.setVisibility(View.INVISIBLE);
     }
 }
