@@ -422,20 +422,56 @@ public class Registration {
         this.transportCostToBranch = transportCostToBranch;
     }
 
+//    public boolean hasPassed(){
+//        Integer age = getAge().intValue();
+//        if ( age < 30 || age > 55){
+//            return false;
+//        }else if (this.readEnglish.equals(0)) {
+//            return false;
+//        }else if (this.dateMoved < 2) {
+//            return false;
+//        }else if (brac.equals(1) && bracChp.equals(1)){
+//            return false;
+//        }else if (this.country.equalsIgnoreCase("UG")){
+//            // if the education is less than P7
+//            if (Integer.valueOf(this.education) < 2 || Integer.valueOf(this.education) > 7 ){
+//                return false;
+//            }else {
+//                return true;
+//            }
+//
+//        }else {
+//            if (Integer.valueOf(this.education) < 10 || Integer.valueOf(this.education) > 14 ){
+//                return false;
+//            }else {
+//                return true;
+//            }
+//        }
+//    }
+
     public boolean hasPassed(){
-        Long age = this.getAge();
-        if ( 30 < age || age > 55){
+        Integer age = getAge().intValue();
+        if ( age < 30 || age > 55){
             return false;
-        }else if (this.readEnglish == 0) {
+        }else if (this.readEnglish.equals(0)) {
             return false;
-        }else if (this.dateMoved < 2) {
+        }else if (this.dateMoved < 2){
             return false;
-        }else if (brac == 1 && bracChp == 1){
+        }else if (this.bracChp.equals(1)){
             return false;
-        }else if (Integer.valueOf(this.education) < 7 || Integer.valueOf(this.education) > 12){
-            return false;
-        }else {
-            return true;
+        }else if (this.country.equalsIgnoreCase("UG")){
+            // if the education is less than P7
+            if (Integer.valueOf(this.education) < 2 || Integer.valueOf(this.education) > 7 ){
+                return false;
+            }else {
+                return true;
+            }
+        }else{
+            if (Integer.valueOf(this.education) < 10 || Integer.valueOf(this.education) > 14 ){
+                return false;
+            }else {
+                return true;
+            }
         }
     }
 

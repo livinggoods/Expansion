@@ -441,16 +441,14 @@ public class RegistrationsFragment extends Fragment  {
             }
             File file;
             PrintWriter printWriter = null;
+            file = new File(exportDir, recruitment.getName()+" Scoring Tool.csv");
             try {
-                file = new File(exportDir, recruitment.getName()+" Scoring Tool.csv");
                 file.createNewFile();
                 printWriter = new PrintWriter(new FileWriter(file));
 
                 //here we get the cursor that contains our records
                 RegistrationTable registrationTable = new RegistrationTable(getContext());
 
-                //Write the name of the table and the name of the columns (comma separated values) in the .csv file.
-                printWriter.println(recruitment.getName()+" Scoring tool");
 
                 if (country.equalsIgnoreCase("KE")){
                         String keHeader = "CHEW Name," +
@@ -544,7 +542,6 @@ public class RegistrationsFragment extends Fragment  {
                             userNames = new UserTable(getContext()).getUserById(interview.getAddedBy()).getName();
                         }catch (Exception e){}
 
-                        Toast.makeText(getContext(), "Create string ans start", Toast.LENGTH_SHORT).show();
                         String strRegistration = registration.getChewName() +","+
                                 registration.getChewNumber()+","+
                                 registration.getName() +","+
@@ -608,6 +605,7 @@ public class RegistrationsFragment extends Fragment  {
                             "Landmark, " +
                             "Read/Speak English, " +
                             "Other Languages," +
+                            "Years at this location," +
                             "Ever worked with BRAC?," +
                             "If yes as BRAC CHP?," +
                             "Highest Educational," +
@@ -616,6 +614,7 @@ public class RegistrationsFragment extends Fragment  {
                             "Reading Comprehension,"+
                             "About You," +
                             "Total Marks," +
+                            "Eligible for Interview," +
                             "Interview Completed by," +
                             "Interview: Overall Motivation," +
                             "Interview: Ability to work with communities," +
@@ -643,11 +642,17 @@ public class RegistrationsFragment extends Fragment  {
                         String qualify = "N";
 
                         Double math = 0D, english = 0D, personality = 0D, total = 0D;
+                        boolean passedRegistrationAndExam = false;
                         if (exam != null){
                             math = exam.getMath();
                             english = exam.getEnglish();
                             personality = exam.getPersonality();
                             total = math + english + personality;
+                            if (registration.hasPassed() && exam.hasPassed()){
+                                passedRegistrationAndExam = true;
+                            }else{
+                                passedRegistrationAndExam = false;
+                            }
 
                         }
                         if (interview != null){
@@ -682,6 +687,7 @@ public class RegistrationsFragment extends Fragment  {
                                 registration.getMark() +","+
                                 (registration.getReadEnglish().equals(1) ? "Y" : "N") +","+
                                 registration.getLangs().replaceAll(",",";") +"," +
+                                registration.getDateMoved() +"," +
                                 (registration.getBrac().equals(1) ? "Y" : "N") +","+
                                 (registration.getBracChp().equals(1) ? "Y": "N") +","+
                                 registration.getEducation() +","+
@@ -690,6 +696,7 @@ public class RegistrationsFragment extends Fragment  {
                                 english.toString() + ","+
                                 personality.toString() + ","+
                                 total+","+
+                                (passedRegistrationAndExam ? "Y" : "N")+ "," +  // Has passed Interview and Exam
                                 userNames+","+
                                 motivation+","+
                                 community+","+
@@ -701,7 +708,7 @@ public class RegistrationsFragment extends Fragment  {
                                 commitment+","+
                                 totalI+","+
                                 canJoin+","+
-                                comments+","+
+                                comments.replaceAll(",", ";")+","+
                                 qualify+","+
                                 invite;
                         printWriter.println(record);
@@ -711,8 +718,8 @@ public class RegistrationsFragment extends Fragment  {
             } catch (Exception e){}
             finally {
                 if(printWriter != null) printWriter.close();
-                Toast.makeText(getContext(), "Tool exported to Downloads Folder", Toast.LENGTH_SHORT).show();
             }
+            Toast.makeText(getContext(), "Tool exported to "+ file.getAbsolutePath() +" Folder", Toast.LENGTH_LONG).show();
         }
 
     }
