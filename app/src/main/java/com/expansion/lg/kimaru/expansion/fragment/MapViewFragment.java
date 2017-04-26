@@ -16,8 +16,10 @@ import android.widget.TextView;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
+import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.DefaultListMenu;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
+import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
 import com.poliveira.parallaxrecycleradapter.ParallaxRecyclerAdapter;
 
 import java.util.ArrayList;
@@ -51,6 +53,10 @@ public class MapViewFragment extends Fragment {
         content.add(new DefaultListMenu("SubCounties",null,  new SubCountiesFragment()));
         content.add(new DefaultListMenu("Link Facilities", null, new LinkFacilitiesFragment()));
         // content.add(new DefaultListMenu("View Villages", null, new NewInterviewFragment()));
+        //List<Mapping> mappingList = new ArrayList<>();
+        List<SubCounty> subCounties = new ArrayList<>();
+        SubCountyTable subCountyTable = new SubCountyTable(getContext());
+        subCounties = subCountyTable.getSubCountiesByCounty();
 
         final ParallaxRecyclerAdapter<DefaultListMenu> adapter = new ParallaxRecyclerAdapter<>(content);
 
