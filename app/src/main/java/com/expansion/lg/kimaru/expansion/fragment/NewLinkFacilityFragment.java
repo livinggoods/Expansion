@@ -470,7 +470,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         void onFragmentInteraction(Uri uri);
     }
 
-    //Location Methods
+    //CountyLocation Methods
     @Override
     public void onLocationChanged(Location location){
 
