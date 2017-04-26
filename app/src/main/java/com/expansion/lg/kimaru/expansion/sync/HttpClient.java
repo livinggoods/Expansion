@@ -3,6 +3,7 @@ package com.expansion.lg.kimaru.expansion.sync;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
@@ -58,6 +59,7 @@ public class HttpClient {
             postResults = this.ApiClient(registrationTable.getRegistrationJson(),
                     RegistrationTable.JSON_ROOT, HttpServer.REGISTRATION_URL);
         } catch (Exception e){
+            Log.d("ERROR : Sync Regs", e.getMessage());
             postResults = null;
         }
         return postResults;
@@ -69,6 +71,7 @@ public class HttpClient {
             postResults = this.ApiClient(interviewTable.getInterviewJson(),
                     InterviewTable.JSON_ROOT, HttpServer.INTERVIEW_URL);
         } catch (Exception e){
+            Log.d("ERROR : Sync Inter", e.getMessage());
             postResults = null;
         }
         return postResults;
@@ -80,6 +83,7 @@ public class HttpClient {
             postResults = this.ApiClient(examTable.getExamJson(), ExamTable.JSON_ROOT,
                     HttpServer.EXAM_URL);
         } catch (Exception e){
+            Log.d("ERROR : Sync Exams", e.getMessage());
             postResults = null;
         }
         return postResults;
@@ -92,6 +96,7 @@ public class HttpClient {
             postResults = this.ApiClient(recruitmentTable.getRecruitmentJson(),
                     RecruitmentTable.JSON_ROOT, HttpServer.RECRUIRMENT_URL);
         } catch (Exception e){
+            Log.d("ERROR : Sync Recs", e.getMessage());
             postResults = null;
         }
         return postResults;
@@ -114,6 +119,8 @@ public class HttpClient {
         p.setBody(new JSONObjectBody(json));
         JSONObject ret = AsyncHttpClient.getDefaultInstance().executeJSONObject(p, null).get();
 //        return ret.getString(expectedJsonRoot);
+        Log.d("RESULTS : Sync", ret.toString());
+        Log.d("API  : Url", Constants.API_SERVER+apiEndpoint);
         return ret.toString();
     }
 

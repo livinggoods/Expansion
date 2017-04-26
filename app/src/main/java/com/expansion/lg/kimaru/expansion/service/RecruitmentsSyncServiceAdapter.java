@@ -44,8 +44,11 @@ public class RecruitmentsSyncServiceAdapter extends AbstractThreadedSyncAdapter 
         // syncRecruitments
         HttpClient client = new HttpClient(getContext());
         client.syncRecruitments();
+
         client.syncRegistrations();
+
         client.syncExams();
+
         client.syncInterviews();
 
         // notifyDataDownloaded();
