@@ -145,7 +145,7 @@ public class Exam {
         if (this.math == 0 || this.english == 0 || this.personality ==0){
             return false;
         }else{
-            if (this.country == "KE"){
+            if (this.country.equalsIgnoreCase("KE")){
                 if ((this.math + this.english + this.personality) < 10){
                     return false;
                 }else{
