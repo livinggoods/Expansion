@@ -121,7 +121,7 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
         mInterpersonal = (RadioGroup) v.findViewById(R.id.editInterpersonal);
         mCommitment = (RadioGroup) v.findViewById(R.id.editCommitment);
         mConditionsPreventing = (RadioGroup) v.findViewById(R.id.conditionsPreventing);
-        mSelected = (RadioGroup) v.findViewById(R.id.editSelected);
+        //mSelected = (RadioGroup) v.findViewById(R.id.editSelected);
         mComment = (EditText) v.findViewById(R.id.editComment);
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
@@ -152,8 +152,6 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
                 dateMovedFragment.show(getFragmentManager(), "Datepicker");
                 break;
             case R.id.buttonSave:
-                // set date as integers
-                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
                 Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
                 Long currentDate =  new Date().getTime();
@@ -204,62 +202,6 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
                         fragmentTransaction.replace(R.id.frame, fragment, MainActivity.REGISTRATION_VIEW);
                         fragmentTransaction.commitAllowingStateLoss();
                     }
-
-
-                // Do some validations
-//                if (applicantMotivation.toString().trim().equals("")){
-//                    Toast.makeText(getContext(), "Enter the Score for Motivation", Toast.LENGTH_SHORT).show();
-//                }
-//
-//                else if (applicantCommunity.toString().trim().equals("")){
-//                    Toast.makeText(getContext(), "Enter the Score for community involvement", Toast.LENGTH_SHORT).show();
-//                }
-//
-//                else if(applicantMentality.toString().trim().equals("")){
-//                    Toast.makeText(getContext(), "Enter the Score for the applicant's mentality", Toast.LENGTH_SHORT).show();
-//                }
-//                else if(applicantSelling.toString().trim().equals("")){
-//                    Toast.makeText(getContext(), "Enter the Score for the applicant's selling skills", Toast.LENGTH_SHORT).show();
-//                }
-//                else if(applicantHealth.toString().trim().equals("")){
-//                    Toast.makeText(getContext(), "Enter the Score for the applicant's rating for interest in health", Toast.LENGTH_SHORT).show();
-//                }
-//                else if(applicantInvestment.toString().trim().equals("")){
-//                    Toast.makeText(getContext(), "Enter the Score for the applicant's ability to invest", Toast.LENGTH_SHORT).show();
-//                }
-//                else if(applicantInterpersonal.toString().trim().equals("")){
-//                    Toast.makeText(getContext(), "Enter the Score for the applicant's interpersonal skills", Toast.LENGTH_SHORT).show();
-//                }
-//                else if(applicantCommitment.toString().trim().equals("")){
-//                    Toast.makeText(getContext(), "Enter the Score for the applicant's commitment ability", Toast.LENGTH_SHORT).show();
-//                } else{
-//                    // Save Exam Details
-//                    Interview interview = new Interview(uuid, applicantId, recruitment, applicantMotivation,
-//                            applicantCommunity, applicantMentality, applicantSelling, applicantHealth,
-//                            applicantInvestment, applicantInterpersonal, applicantCommitment, 0,
-//                            applicantAddedBy, applicantDateAdded, 0, applicantComment);
-//                    InterviewTable interviewTable = new InterviewTable(getContext());
-//                    long id = interviewTable.addData(interview);
-//
-//                    if (id ==-1){
-//                        Toast.makeText(getContext(), "Could not save the results", Toast.LENGTH_SHORT).show();
-//                    }
-//                    else{
-//                        Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
-//
-//                        // Clear boxes
-//                        mMotivation.clearCheck();
-//                        mCommunity.clearCheck();
-//                        mMentality.clearCheck();
-//                        mSelling.clearCheck();
-//                        mHealth.clearCheck();
-//                        mInvestment.clearCheck();
-//                        mInterpersonal.clearCheck();
-//                        mCommitment.clearCheck();
-//                    }
-//
-//                }
-
         }
     }
 
@@ -297,14 +239,164 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
     }
     public void setupEditingMode(){
         if (editingInterview != null){
-//            mMotivation.setText(editingInterview.getMotivation());
-//            mCommunity.setText(editingInterview.getCommunity());
-//            mMentality.setText(editingInterview.getMentality());
-//            mSelling.setText(editingInterview.getSelling());
-//            mHealth.setText(editingInterview.getHealth());
-//            mInvestment.setText(editingInterview.getInvestment());
-//            mInterpersonal.setText(editingInterview.getInterpersonal());
-//            mCommitment.setText(editingInterview.getCommitment());
+            mComment.setText(editingInterview.getComment());
+
+            //check motivation
+            int motivation = editingInterview.getMotivation();
+            mMotivation.clearCheck();
+            switch (motivation){
+                case 1:
+                    mMotivation.check(R.id.motivation1);
+                    break;
+                case 2:
+                    mMotivation.check(R.id.motivation2);
+                    break;
+                case 3:
+                    mMotivation.check(R.id.motivation3);
+                    break;
+                case 4:
+                    mMotivation.check(R.id.motivation4);
+                    break;
+                case 5:
+                    mMotivation.check(R.id.motivation5);
+                    break;
+            }
+            int community = editingInterview.getCommunity();
+            mCommunity.clearCheck();
+            switch (community){
+                case 1:
+                    mCommunity.check(R.id.community1);
+                    break;
+                case 2:
+                    mCommunity.check(R.id.community2);
+                    break;
+                case 3:
+                    mCommunity.check(R.id.community3);
+                    break;
+                case 4:
+                    mCommunity.check(R.id.community4);
+                    break;
+                case 5:
+                    mCommunity.check(R.id.community5);
+                    break;
+            }
+            int mentality = editingInterview.getMentality();
+            mMentality.clearCheck();
+            switch (mentality){
+                case 1:
+                    mMentality.check(R.id.mentality1);
+                    break;
+                case 2:
+                    mMentality.check(R.id.mentality2);
+                    break;
+                case 3:
+                    mMentality.check(R.id.mentality3);
+                    break;
+                case 4:
+                    mMentality.check(R.id.mentality4);
+                    break;
+                case 5:
+                    mMentality.check(R.id.mentality5);
+                    break;
+            }
+            int selling = editingInterview.getSelling();//
+            mSelling.clearCheck();
+            switch (selling){
+                case 1:
+                    mSelling.check(R.id.selling1);
+                    break;
+                case 2:
+                    mSelling.check(R.id.selling2);
+                    break;
+                case 3:
+                    mSelling.check(R.id.selling3);
+                    break;
+                case 4:
+                    mSelling.check(R.id.selling4);
+                    break;
+                case 5:
+                    mSelling.check(R.id.selling5);
+                    break;
+            }
+            int health = editingInterview.getHealth();
+            mHealth.clearCheck();
+            switch (health){
+                case 1:
+                    mHealth.check(R.id.health1);
+                    break;
+                case 2:
+                    mHealth.check(R.id.health2);
+                    break;
+                case 3:
+                    mHealth.check(R.id.health3);
+                    break;
+                case 4:
+                    mHealth.check(R.id.health4);
+                    break;
+                case 5:
+                    mHealth.check(R.id.health5);
+                    break;
+            }
+            int investment = editingInterview.getInvestment();
+            mInvestment.clearCheck();
+            switch (investment){
+                case 1:
+                    mInvestment.check(R.id.investment1);
+                    break;
+                case 2:
+                    mInvestment.check(R.id.investment2);
+                    break;
+                case 3:
+                    mInvestment.check(R.id.investment3);
+                    break;
+                case 4:
+                    mInvestment.check(R.id.investment4);
+                    break;
+                case 5:
+                    mInvestment.check(R.id.investment5);
+                    break;
+            }
+            int interpersonal = editingInterview.getInterpersonal();
+            mInterpersonal.clearCheck();
+            switch (interpersonal){
+                case 1:
+                    mInterpersonal.check(R.id.interpersonal1);
+                    break;
+                case 2:
+                    mInterpersonal.check(R.id.interpersonal2);
+                    break;
+                case 3:
+                    mInterpersonal.check(R.id.interpersonal3);
+                    break;
+                case 4:
+                    mInterpersonal.check(R.id.interpersonal4);
+                    break;
+                case 5:
+                    mInterpersonal.check(R.id.interpersonal5);
+                    break;
+            }
+            int commitment = editingInterview.getCommitment();
+            mCommitment.clearCheck();
+            switch (commitment){
+                case 1:
+                    mCommitment.check(R.id.commitment1);
+                    break;
+                case 2:
+                    mCommitment.check(R.id.commitment2);
+                    break;
+                case 3:
+                    mCommitment.check(R.id.commitment3);
+                    break;
+                case 4:
+                    mCommitment.check(R.id.commitment4);
+                    break;
+                case 5:
+                    mCommitment.check(R.id.commitment5);
+                    break;
+            }
+            mConditionsPreventing.clearCheck();
+            mConditionsPreventing.check(editingInterview.isCanJoin() ? R.id.coditions1 : R.id.conditions2);
+
         }
     }
 
