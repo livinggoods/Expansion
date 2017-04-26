@@ -100,7 +100,7 @@ public class NewKeMappingFragment extends Fragment implements OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_new_mapping, container, false);
+        View v =  inflater.inflate(R.layout.fragment_new_ke_mapping, container, false);
         session = new SessionManagement(getContext());
         //Initialize the UI Components
         // mMappingName, mMappingContactPerson, mMappingContactPersonPhone, mCounty, mComment;
@@ -111,7 +111,7 @@ public class NewKeMappingFragment extends Fragment implements OnClickListener {
 
 
 
-                mMappingName = (EditText) v.findViewById(R.id.editMappingName);
+        mMappingName = (EditText) v.findViewById(R.id.editMappingName);
         mMappingContactPerson = (EditText) v.findViewById(R.id.editContactPerson);
         mMappingContactPersonPhone = (EditText) v.findViewById(R.id.editContactPersonPhone);
         mCounty = (EditText) v.findViewById(R.id.editMappingCounty);
@@ -169,7 +169,7 @@ public class NewKeMappingFragment extends Fragment implements OnClickListener {
                 } else{
                     // Save Exam Details
                     Mapping mapping = new Mapping(id, mappingName, "UG", mappingCounty, dateAdded,
-                            applicantAddedBy, contactPerson,contactPersonPhone, sync, comment);
+                            applicantAddedBy, contactPerson,contactPersonPhone, sync, comment, "");
 
                     MappingTable mappingTable = new MappingTable(getContext());
                     String createdMap = mappingTable.addData(mapping);
