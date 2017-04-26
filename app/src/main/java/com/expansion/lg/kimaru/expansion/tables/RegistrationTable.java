@@ -65,7 +65,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public static final String ADDED_BY = "added_by";
     public static final String COMMENT = "comment";
     public static final String PROCEED = "proceed";
-    public static final String DATE_ADDED = "date_added";
+    public static final String DATE_ADDED = "client_time";
     public static final String SYNCED = "synced";
     public static final String CHEW_NAME = "chew_name";
     public static final String CHEW_NUMBER = "chew_number";

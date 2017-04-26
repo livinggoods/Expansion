@@ -56,7 +56,7 @@ public class InterviewTable extends SQLiteOpenHelper {
     public static final String SYNCED = "synced";
     public static final String ADDED_BY = "added_by";
     public static final String COMMENT = "comment";
-    public static final String DATE_ADDED = "date_added";
+    public static final String DATE_ADDED = "client_time";
     String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MOTIVATION, COMMUNITY,MENTALITY,
             SELLING, HEALTH, INVESTMENT, INTERPERSONAL, TOTAL, SELECTED, ADDED_BY, COMMENT,
             COMMITMENT, DATE_ADDED, SYNCED, CANJOIN, COUNTRY};
@@ -227,6 +227,7 @@ public class InterviewTable extends SQLiteOpenHelper {
             interview.setDateAdded(cursor.getLong(15));
             interview.setSynced(cursor.getInt(16));
             interview.setCanJoin(cursor.getInt(17) == 1);
+            interview.setCountry(cursor.getString(18));
             return interview;
         }
     }
@@ -263,6 +264,7 @@ public class InterviewTable extends SQLiteOpenHelper {
             interview.setDateAdded(cursor.getLong(15));
             interview.setSynced(cursor.getInt(16));
             interview.setCanJoin(cursor.getInt(17) == 1);
+            interview.setCountry(cursor.getString(18));
             return interview;
         }
     }
@@ -273,7 +275,7 @@ public class InterviewTable extends SQLiteOpenHelper {
 
         SQLiteDatabase db=getReadableDatabase();
         String orderBy = DATE_ADDED + " desc";
-        String whereClause = APPLICANT+" = ?";
+        String whereClause = RECRUITMENT+" = ?";
         String[] whereArgs = new String[] {
                 recruitment.getId(),
         };

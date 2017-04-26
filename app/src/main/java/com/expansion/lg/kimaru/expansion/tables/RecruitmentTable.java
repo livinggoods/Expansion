@@ -34,7 +34,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
-    public static final String ID = "_id";
+    public static final String ID = "id";
     public static final String NAME= "name";
     public static final String LON = "lon";
     public static final String LAT = "lat";
@@ -45,7 +45,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     public static final String COUNTRY = "country";
     public static final String ADDED_BY = "added_by";
     public static final String COMMENT = "comment";
-    public static final String DATE_ADDED = "date_added";
+    public static final String DATE_ADDED = "client_time";
     public static final String SYNCED = "synced";
 
     String [] columns=new String[]{ID, NAME, DISTRICT, SUB_COUNTY, DIVISION, LAT, LON, ADDED_BY,

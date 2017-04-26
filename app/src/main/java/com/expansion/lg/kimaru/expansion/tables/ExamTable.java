@@ -46,7 +46,7 @@ public class ExamTable extends SQLiteOpenHelper {
     public static final String ENGLISH = "english";
     public static final String ADDED_BY = "added_by";
     public static final String COMMENT = "comment";
-    public static final String DATE_ADDED = "date_added";
+    public static final String DATE_ADDED = "client_time";
     public static final String SYNCED = "synced";
     String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MATH, PERSONALITY, ENGLISH,
             ADDED_BY, COMMENT, DATE_ADDED, SYNCED, COUNTRY};
@@ -135,6 +135,7 @@ public class ExamTable extends SQLiteOpenHelper {
             exam.setComment(cursor.getString(7));
             exam.setDateAdded(cursor.getLong(8));
             exam.setSynced(cursor.getInt(9));
+            exam.setCountry(cursor.getString(10));
 
             examList.add(exam);
         }
@@ -166,6 +167,7 @@ public class ExamTable extends SQLiteOpenHelper {
             exam.setComment(cursor.getString(7));
             exam.setDateAdded(cursor.getLong(8));
             exam.setSynced(cursor.getInt(9));
+            exam.setCountry(cursor.getString(10));
             return exam;
         }
 
@@ -212,6 +214,7 @@ public class ExamTable extends SQLiteOpenHelper {
             exam.setComment(cursor.getString(7));
             exam.setDateAdded(cursor.getLong(8));
             exam.setSynced(cursor.getInt(9));
+            exam.setCountry(cursor.getString(10));
             return exam;
         }
 
@@ -246,6 +249,7 @@ public class ExamTable extends SQLiteOpenHelper {
             exam.setComment(cursor.getString(7));
             exam.setDateAdded(cursor.getLong(8));
             exam.setSynced(cursor.getInt(9));
+            exam.setCountry(cursor.getString(10));
 
             examList.add(exam);
         }

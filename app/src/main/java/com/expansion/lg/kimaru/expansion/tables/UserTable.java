@@ -30,7 +30,7 @@ public class UserTable extends SQLiteOpenHelper {
     //String email, username, password, name;
 
     public static String varchar_field = " varchar(512) ";
-    public static String primary_field = " _id INTEGER PRIMARY KEY AUTOINCREMENT ";
+    public static String primary_field = " id INTEGER PRIMARY KEY AUTOINCREMENT ";
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
@@ -42,7 +42,7 @@ public class UserTable extends SQLiteOpenHelper {
     public static final String COUNTRY = "country";
     String [] columns=new String[]{ID, EMAIL, USERNAME, PASSWORD, NAME, COUNTRY};
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
-            + primary_field + ", "
+            + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + EMAIL + varchar_field + ", "
             + USERNAME + varchar_field + ", "
             + PASSWORD + varchar_field + ", "
@@ -119,14 +119,20 @@ public class UserTable extends SQLiteOpenHelper {
                 String.valueOf(id),
         };
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
-        User user = new User();
-        user.setId(cursor.getInt(0));
-        user.setEmail(cursor.getString(1));
-        user.setUsername(cursor.getString(2));
-        user.setPassword(cursor.getString(3));
-        user.setName(cursor.getString(4));
-        user.setCountry(cursor.getString(5));
-        return user;
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else{
+            User user = new User();
+            user.setId(cursor.getInt(0));
+            user.setEmail(cursor.getString(1));
+            user.setUsername(cursor.getString(2));
+            user.setPassword(cursor.getString(3));
+            user.setName(cursor.getString(4));
+            user.setCountry(cursor.getString(5));
+            db.close();
+            return user;
+        }
+
     }
 
     public Cursor getUserCursor() {

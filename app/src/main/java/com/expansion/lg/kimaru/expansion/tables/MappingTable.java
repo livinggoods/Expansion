@@ -29,10 +29,11 @@ public class MappingTable extends SQLiteOpenHelper {
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
-    public static final String ID = "_id";
+    public static final String ID = "id";
     public static final String MAPPINGNAME= "name";
     public static final String COUNTRY = "country";
     public static final String COUNTY = "county";
+    public static final String DISTRICT = "district";
     public static final String ADDED_BY = "added_by";
     public static final String CONTACTPERSON = "contact_person";
     public static final String CONTACTPERSONPHONE = "phone";
@@ -45,12 +46,16 @@ public class MappingTable extends SQLiteOpenHelper {
             + MAPPINGNAME + varchar_field + ", "
             + COUNTRY + varchar_field + ", "
             + COUNTY + varchar_field + ", "
+            + DISTRICT + varchar_field + ", "
             + ADDED_BY + integer_field + ", "
             + CONTACTPERSON + varchar_field + ", "
             + CONTACTPERSONPHONE + varchar_field + ", "
             + COMMENT + text_field + ", "
             + SYNCED + integer_field + ", "
             + DATE_ADDED + integer_field + "); ";
+
+    String [] columns=new String[]{ID, MAPPINGNAME, COUNTRY, COUNTY, ADDED_BY, CONTACTPERSON,
+            CONTACTPERSONPHONE, COMMENT, DATE_ADDED, SYNCED, DISTRICT};
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
 
@@ -80,6 +85,7 @@ public class MappingTable extends SQLiteOpenHelper {
         cv.put(MAPPINGNAME, mapping.getMappingName());
         cv.put(COUNTRY, mapping.getCountry());
         cv.put(COUNTY, mapping.getCounty());
+        cv.put(DISTRICT, mapping.getDistrict());
         cv.put(ADDED_BY, mapping.getAddedBy());
         cv.put(CONTACTPERSON, mapping.getContactPerson());
         cv.put(CONTACTPERSONPHONE, mapping.getContactPersonPhone());
@@ -96,9 +102,6 @@ public class MappingTable extends SQLiteOpenHelper {
     public List<Mapping> getMappingData() {
 
         SQLiteDatabase db=getReadableDatabase();
-
-        String [] columns=new String[]{ID, MAPPINGNAME, COUNTRY, COUNTY, ADDED_BY, CONTACTPERSON,
-                CONTACTPERSONPHONE, COMMENT, DATE_ADDED, SYNCED};
 
         Cursor cursor = db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
@@ -120,6 +123,7 @@ public class MappingTable extends SQLiteOpenHelper {
             mapping.setComment(cursor.getString(7));
             mapping.setDateAdded(cursor.getInt(8));
             mapping.setSynced(cursor.getInt(9) == 1);
+            mapping.setDistrict(cursor.getString(10));
 
             mappingList.add(mapping);
         }
@@ -128,12 +132,10 @@ public class MappingTable extends SQLiteOpenHelper {
         return mappingList;
     }
 
-    public Mapping getMapping(String uuid){
+    public Mapping getMappingById(String uuid){
         Mapping mapping = new Mapping();
         String [] selection = new String[]{uuid};
         SQLiteDatabase db = getReadableDatabase();
-        String [] columns=new String[]{ID, MAPPINGNAME, COUNTRY, COUNTY, ADDED_BY, CONTACTPERSON,
-                CONTACTPERSONPHONE, COMMENT, DATE_ADDED, SYNCED};
         Cursor cursor = db.query(TABLE_NAME, columns,ID, selection, null,null,null,null);
         mapping.setId(cursor.getString(0));
         mapping.setMappingName(cursor.getString(1));
@@ -145,18 +147,73 @@ public class MappingTable extends SQLiteOpenHelper {
         mapping.setComment(cursor.getString(7));
         mapping.setDateAdded(cursor.getInt(8));
         mapping.setSynced(cursor.getInt(9) == 1);
+        mapping.setDistrict(cursor.getString(10));
         return mapping;
     }
-
-    public Cursor getExamDataCursor() {
+    public List<Mapping> getMappingsByCountry(String countryCode) {
 
         SQLiteDatabase db=getReadableDatabase();
+        String orderBy = DATE_ADDED + " desc";
+        String whereClause = COUNTRY+" = ?";
+        String[] whereArgs = new String[] {
+                countryCode,
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
+        List<Mapping> mappingList=new ArrayList<>();
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            Mapping mapping=new Mapping();
+            mapping.setId(cursor.getString(0));
+            mapping.setMappingName(cursor.getString(1));
+            mapping.setCountry(cursor.getString(2));
+            mapping.setCounty(cursor.getString(3));
+            mapping.setAddedBy(cursor.getInt(4));
+            mapping.setContactPerson(cursor.getString(5));
+            mapping.setContactPersonPhone(cursor.getString(6));
+            mapping.setComment(cursor.getString(7));
+            mapping.setDateAdded(cursor.getInt(8));
+            mapping.setSynced(cursor.getInt(9) == 1);
+            mapping.setDistrict(cursor.getString(10));
 
-        String [] columns=new String[]{ID, MAPPINGNAME, COUNTRY, COUNTY, ADDED_BY, CONTACTPERSON,
-                CONTACTPERSONPHONE, COMMENT, DATE_ADDED, SYNCED};
+            mappingList.add(mapping);
+        }
+        db.close();
 
-        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
-
-        return cursor;
+        return mappingList;
+    }
+    public Mapping getMappingByCounty(String uuid){
+        Mapping mapping = new Mapping();
+        String [] selection = new String[]{uuid};
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME, columns,ID, selection, null,null,null,null);
+        mapping.setId(cursor.getString(0));
+        mapping.setMappingName(cursor.getString(1));
+        mapping.setCountry(cursor.getString(2));
+        mapping.setCounty(cursor.getString(3));
+        mapping.setAddedBy(cursor.getInt(4));
+        mapping.setContactPerson(cursor.getString(5));
+        mapping.setContactPersonPhone(cursor.getString(6));
+        mapping.setComment(cursor.getString(7));
+        mapping.setDateAdded(cursor.getInt(8));
+        mapping.setSynced(cursor.getInt(9) == 1);
+        mapping.setDistrict(cursor.getString(10));
+        return mapping;
+    }
+    public Mapping getMappingByDistrict(String uuid){
+        Mapping mapping = new Mapping();
+        String [] selection = new String[]{uuid};
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME, columns,ID, selection, null,null,null,null);
+        mapping.setId(cursor.getString(0));
+        mapping.setMappingName(cursor.getString(1));
+        mapping.setCountry(cursor.getString(2));
+        mapping.setCounty(cursor.getString(3));
+        mapping.setAddedBy(cursor.getInt(4));
+        mapping.setContactPerson(cursor.getString(5));
+        mapping.setContactPersonPhone(cursor.getString(6));
+        mapping.setComment(cursor.getString(7));
+        mapping.setDateAdded(cursor.getInt(8));
+        mapping.setSynced(cursor.getInt(9) == 1);
+        mapping.setDistrict(cursor.getString(10));
+        return mapping;
     }
 }

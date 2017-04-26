@@ -33,7 +33,7 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
-    public static final String ID = "_id";
+    public static final String ID = "id";
     public static final String NAME = "facility_name";
     public static final String COUNTY = "county";
     public static final String LAT = "lat";

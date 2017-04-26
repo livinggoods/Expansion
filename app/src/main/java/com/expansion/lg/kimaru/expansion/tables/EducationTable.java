@@ -30,7 +30,7 @@ public class EducationTable extends SQLiteOpenHelper {
     //String id, level_name, level_type, hierachy, country;
 
     public static String varchar_field = " varchar(512) ";
-    public static String primary_field = " _id INTEGER PRIMARY KEY AUTOINCREMENT ";
+    public static String primary_field = " id INTEGER PRIMARY KEY AUTOINCREMENT ";
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
@@ -41,7 +41,7 @@ public class EducationTable extends SQLiteOpenHelper {
     public static final String COUNTRY = "country";
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
-            + primary_field + ", "
+            + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + LEVEL_NAME + varchar_field + ", "
             + TYPE + varchar_field + ", "
             + COUNTRY + varchar_field + ", "
@@ -148,14 +148,15 @@ public class EducationTable extends SQLiteOpenHelper {
         return results;
     }
 
-    public Cursor getEducationDataCursor() {
+    public Cursor getEducationDataCursor(String country) {
 
         SQLiteDatabase db=getReadableDatabase();
-
+        String whereClause = COUNTRY+" = ?";
+        String[] whereArgs = new String[] {
+                country,
+        };
         String [] columns=new String[]{ID, LEVEL_NAME, TYPE, HIERACHY, COUNTRY};
-
-        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
-
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
         return cursor;
     }
 
@@ -163,18 +164,40 @@ public class EducationTable extends SQLiteOpenHelper {
         //P1 to 8
         // id, hierachy;
         String levelName, levelType, country;
-        for (int x = 1; x <= 16; x++){
+        // set Ugandan Education System
+        for (int y=1; y <= 8; y++){
             Education education = new Education();
-            education.setId(x);
-            education.setHierachy(x);
-            if (x > 12) {
-                education.setLevelName("Tertiary (Year " + (x - 12) + ")");
+            education.setId(y);
+            education.setCountry("UG");
+            education.setHierachy(y);
+            if (y > 7 ){
+                education.setLevelName("Tertiary");
                 education.setLevelType("tertiary");
-            }else if (x > 8){
-                education.setLevelName("Secondary (Form) " + (x - 8));
+            }else if(y > 1){
+                education.setLevelName("S"+(y-1));
                 education.setLevelType("secondary");
             }else {
-                education.setLevelName("Primary (Class) " + x);
+                education.setLevelName("Less than P7");
+                education.setLevelType("primary");
+            }
+            this.addEducation(education);
+        }
+        for (int x = 9; x <= 15; x++){
+            Education education = new Education();
+            education.setId(x);
+            education.setHierachy(x-8);
+            education.setCountry("KE");
+            if (x > 14) {
+                education.setLevelName("Tertiary");
+                education.setLevelType("tertiary");
+            }else if (x > 10){
+                education.setLevelName("Form " + (x - 10));
+                education.setLevelType("secondary");
+            } else if (x == 10){
+                education.setLevelName("P" + (x-2));
+                education.setLevelType("primary");
+            }else {
+                education.setLevelName("Less than P" + (x-2));
                 education.setLevelType("primary");
             }
             this.addEducation(education);
