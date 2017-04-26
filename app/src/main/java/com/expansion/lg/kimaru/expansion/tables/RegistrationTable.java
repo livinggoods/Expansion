@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -370,6 +371,82 @@ public class RegistrationTable extends SQLiteOpenHelper {
         long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME);
         db.close();
         return cnt;
+    }
+
+    public List<Registration> getPassedRegistrations(Recruitment recruitment, boolean passed) {
+
+        SQLiteDatabase db=getReadableDatabase();
+        String orderBy = DATE_ADDED + " desc";
+        String whereClause = PROCEED+" = ? AND " +RECRUITMENT+" = ? " ;
+
+        Cursor cursor;
+        if (passed){
+            String[] whereArgs = new String[] {
+                    "1", recruitment.getId()
+            };
+            cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
+        }else {
+            String[] whereArgs = new String[] {
+                    "0", recruitment.getId()
+            };
+            cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
+        }
+
+        List<Registration> registrationList=new ArrayList<>();
+
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+
+
+            Registration registration=new Registration();
+
+            registration.setId(cursor.getString(0));
+            registration.setName(cursor.getString(1));
+            registration.setPhone(cursor.getString(2));
+            registration.setGender(cursor.getString(3));
+            registration.setDob(cursor.getLong(4));
+            registration.setDistrict(cursor.getString(5));
+            registration.setSubcounty(cursor.getString(6));
+            registration.setDivision(cursor.getString(7));
+            registration.setVillage(cursor.getString(8));
+            registration.setMark(cursor.getString(9));
+            registration.setReadEnglish(cursor.getInt(10));
+            registration.setDateMoved(cursor.getLong(11));
+            registration.setLangs(cursor.getString(12));
+            registration.setBrac(cursor.getInt(13));
+            registration.setBracChp(cursor.getInt(14));
+            registration.setEducation(cursor.getString(15));
+            registration.setOccupation(cursor.getString(16));
+            registration.setCommunity(cursor.getInt(17));
+            registration.setAddedBy(cursor.getInt(18));
+            registration.setComment(cursor.getString(19));
+            registration.setProceed(cursor.getInt(20));
+            registration.setDateAdded(cursor.getLong(21));
+            registration.setSynced(cursor.getInt(22));
+            registration.setRecruitment(cursor.getString(23));
+            registration.setCountry(cursor.getString(24));
+            registration.setChewName(cursor.getString(25));
+            registration.setChewNumber(cursor.getString(26));
+            registration.setWard(cursor.getString(27));
+            registration.setCuName(cursor.getString(28));
+            registration.setLinkFacility(cursor.getString(29));
+            registration.setNoOfHouseholds(cursor.getLong(30));
+            registration.setOtherTrainings(cursor.getString(31));
+            registration.setChv(cursor.getInt(32) == 1);
+            registration.setGokTrained(cursor.getInt(33) == 1);
+            registration.setReferralName(cursor.getString(34));
+            registration.setReferralPhone(cursor.getString(35));
+            registration.setReferralTitle(cursor.getString(36));
+            registration.setVht(cursor.getInt(37) == 1);
+            registration.setParish(cursor.getString(38));
+            registration.setAccounts(cursor.getInt(39) == 1);
+            registration.setRecruitmentTransportCost(cursor.getLong(40));
+            registration.setTransportCostToBranch(cursor.getLong(41));
+            registration.setPicture("");
+            registrationList.add(registration);
+        }
+        db.close();
+        return registrationList;
     }
 
     public List<Registration> getRegistrationsByRecruitment(Recruitment recruitment) {

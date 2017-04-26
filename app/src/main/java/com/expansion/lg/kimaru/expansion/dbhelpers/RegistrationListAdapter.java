@@ -223,7 +223,7 @@ public class RegistrationListAdapter extends RecyclerView.Adapter<RegistrationLi
     }
 
     private void applyReadStatus(ListHolder holder, Registration message) {
-        if (message.hasPassed()) {
+        if (message.getProceed() == 1) {
             holder.from.setTypeface(null, Typeface.BOLD);
             holder.subject.setTypeface(null, Typeface.BOLD);
             holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.from));

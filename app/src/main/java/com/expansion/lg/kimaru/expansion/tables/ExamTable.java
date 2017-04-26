@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
+import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +30,8 @@ public class ExamTable extends SQLiteOpenHelper {
     public static final String JSON_ROOT="exams";
     public static final String DATABASE_NAME="expansion";
     public static final int DATABASE_VERSION=1;
+
+    Context context;
 
 
     public static String varchar_field = " varchar(512) ";
@@ -68,6 +71,7 @@ public class ExamTable extends SQLiteOpenHelper {
 
     public ExamTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -100,6 +104,7 @@ public class ExamTable extends SQLiteOpenHelper {
         cv.put(DATE_ADDED, exam.getDateAdded());
         cv.put(SYNCED, exam.getSynced());
 
+
         long id;
         if (isExist(exam)){
             cv.put(SYNCED, 0);
@@ -108,6 +113,16 @@ public class ExamTable extends SQLiteOpenHelper {
             id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
         }
         db.close();
+
+        // When one passes the interview, we need to update the registration
+        RegistrationTable registrationTable = new RegistrationTable(context);
+        Registration registration = registrationTable.getRegistrationById(exam.getApplicant());
+        if (registration.hasPassed() && exam.hasPassed()){
+            registration.setProceed(1);
+        }else{
+            registration.setProceed(0);
+        }
+        registrationTable.addData(registration);
         return id;
 
     }

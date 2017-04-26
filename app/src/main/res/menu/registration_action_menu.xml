@@ -8,4 +8,25 @@
         android:icon="@drawable/ic_file_download_black_24dp"
         android:tint="@color/colorAccent"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/action_passed"
+        android:orderInCategory="100"
+        android:title="@string/passed"
+        android:icon="@drawable/ic_file_download_black_24dp"
+        android:tint="@color/colorAccent"
+        app:showAsAction="collapseActionView" />
+    <item
+        android:id="@+id/action_failed"
+        android:orderInCategory="100"
+        android:title="@string/failed"
+        android:icon="@drawable/ic_file_download_black_24dp"
+        android:tint="@color/colorAccent"
+        app:showAsAction="collapseActionView" />
+    <item
+        android:id="@+id/action_all"
+        android:orderInCategory="100"
+        android:title="@string/all"
+        android:icon="@drawable/ic_file_download_black_24dp"
+        android:tint="@color/colorAccent"
+        app:showAsAction="collapseActionView" />
 </menu>

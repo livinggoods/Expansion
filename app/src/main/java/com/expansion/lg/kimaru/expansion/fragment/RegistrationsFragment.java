@@ -380,10 +380,12 @@ public class RegistrationsFragment extends Fragment  {
         // clear the registrations
         try {
             // get the registrations
+            // Depending on the mode
             RegistrationTable registrationTable = new RegistrationTable(getContext());
             List<Registration> registrationList = new ArrayList<>();
 
             registrationList = registrationTable.getRegistrationsByRecruitment(session.getSavedRecruitment());
+
             for (Registration registration:registrationList){
                 registration.setColor(getRandomMaterialColor("400"));
                 registrations.add(registration);
@@ -397,6 +399,40 @@ public class RegistrationsFragment extends Fragment  {
         }
         swipeRefreshLayout.setRefreshing(false);
     }
+
+    private void getFilteredRegistrations(String which) {
+        swipeRefreshLayout.setRefreshing(true);
+
+        registrations.clear();
+
+        // clear the registrations
+        RegistrationTable registrationTable = new RegistrationTable(getContext());
+        List<Registration> registrationList = new ArrayList<>();
+        try {
+            // get the registrations
+            // Depending on the mode
+            if (which == "passed"){
+                registrationList = registrationTable.getPassedRegistrations(session.getSavedRecruitment(), true);
+            }else if (which == "failed"){
+                registrationList = registrationTable.getPassedRegistrations(session.getSavedRecruitment(), false);
+            }else{
+                registrationList = registrationTable.getRegistrationsByRecruitment(session.getSavedRecruitment());
+            }
+
+            for (Registration registration:registrationList){
+                registration.setColor(getRandomMaterialColor("400"));
+                registrations.add(registration);
+            }
+            rAdapter.notifyDataSetChanged();
+            swipeRefreshLayout.setRefreshing(false);
+        } catch (Exception error){
+            Toast.makeText(getContext(), "No Registrations", Toast.LENGTH_SHORT).show();
+
+            textshow.setText(" No registration recorded");
+        }
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         inflater.inflate(R.menu.registration_action_menu, menu);
@@ -415,9 +451,21 @@ public class RegistrationsFragment extends Fragment  {
 
                 break;
             // action with ID action_settings was selected
-            case R.id.action_exam:
-
+            case R.id.action_passed:
+                // refresh the registrations
+                getFilteredRegistrations("passed");
                 break;
+
+            case R.id.action_failed:
+                // refresh the registrations
+                getFilteredRegistrations("failed");
+                break;
+
+            case R.id.action_all:
+                // refresh the registrations
+                getFilteredRegistrations("all");
+                break;
+
             default:
                 break;
         }
