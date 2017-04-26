@@ -12,20 +12,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.CountyLocation;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
+import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
 import com.expansion.lg.kimaru.expansion.tables.MappingTable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -49,7 +56,8 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
 
     private OnFragmentInteractionListener mListener;
 
-    EditText mMappingName, mMappingContactPerson, mMappingContactPersonPhone, mCounty, mComment;
+    EditText mMappingName, mMappingContactPerson, mMappingContactPersonPhone, mComment;
+    Spinner mCounty;
 
 
     Button buttonSave, buttonList;
@@ -60,6 +68,10 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
 
     SessionManagement session;
     HashMap<String, String> user;
+
+    List<CountyLocation> counties;
+
+    List<String> listCounties = new ArrayList<String>();
 
 
 
@@ -109,12 +121,29 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_MAPPING;
         MainActivity.backFragment = new MappingFragment();
 
+        mCounty = (Spinner) v.findViewById(R.id.editCounty);
+        //populate the Counties
+        CountyLocationTable countyLocationTable = new CountyLocationTable(getContext());
+        counties = countyLocationTable.getCounties();
+
+
+        for (CountyLocation location: counties){
+            listCounties.add(location.getName());
+        }
+
+
+        ArrayAdapter<String> adapter0 = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, listCounties);
+        adapter0.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mCounty.setAdapter(adapter0);
+        mCounty.setOnItemSelectedListener(onCountySelectedListener);
+
 
 
         mMappingName = (EditText) v.findViewById(R.id.editMappingName);
         mMappingContactPerson = (EditText) v.findViewById(R.id.editContactPerson);
         mMappingContactPersonPhone = (EditText) v.findViewById(R.id.editContactPersonPhone);
-        mCounty = (EditText) v.findViewById(R.id.editMappingCounty);
+
         mComment = (EditText) v.findViewById(R.id.editComment);
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
@@ -125,6 +154,19 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
 
         return v;
     }
+
+    AdapterView.OnItemSelectedListener onCountySelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            String S0 = String.valueOf(counties.get(position).getName());
+            Toast.makeText(getContext(), S0 + " And ID is " + counties.get(position).getId() , Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -149,7 +191,8 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
 
                 String id = UUID.randomUUID().toString();
                 String mappingName = mMappingName.getText().toString();
-                String mappingCounty = mCounty.getText().toString();
+                //String mappingCounty = mCounty.getText().toString();
+                String mappingCounty = "";
                 String contactPerson = mMappingContactPerson.getText().toString();
                 String contactPersonPhone = mMappingContactPersonPhone.getText().toString();
                 String comment = mComment.getText().toString();
@@ -169,17 +212,15 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
                 } else{
                     // Save Exam Details
                     Mapping mapping = new Mapping(id, mappingName, "UG", mappingCounty, dateAdded,
-                            applicantAddedBy, contactPerson,contactPersonPhone, sync, comment);
+                            applicantAddedBy, contactPerson,contactPersonPhone, sync, comment, "");
 
                     MappingTable mappingTable = new MappingTable(getContext());
                     String createdMap = mappingTable.addData(mapping);
-                    Toast.makeText(getContext(), createdMap + " Is the ID", Toast.LENGTH_LONG).show();
                     // Clear boxes
                     mMappingContactPerson.setText("");
                     mMappingContactPersonPhone.setText("");
                     mMappingName.setText("");
                     mComment.setText("");
-                    mCounty.setText("");
                     mMappingName.requestFocus();
 
                 }
