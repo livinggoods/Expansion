@@ -68,6 +68,7 @@ public class MappingFragment extends Fragment  {
     private ActionModeCallback actionModeCallback;
 
     SessionManagement session;
+    String country;
 
 
     // I cant seem to get the context working
@@ -115,6 +116,7 @@ public class MappingFragment extends Fragment  {
         View v =  inflater.inflate(R.layout.fragment_mapping, container, false);
         // //add session
         session = new SessionManagement(getContext());
+        country = session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY);
         textshow = (TextView) v.findViewById(R.id.textShow);
         MainActivity.CURRENT_TAG =MainActivity.TAG_MAPPINGS;
         MainActivity.backFragment = new HomeFragment();
@@ -135,17 +137,12 @@ public class MappingFragment extends Fragment  {
         rAdapter = new MappingListAdapter(this.getContext(), mappings, new MappingListAdapter.MappingListAdapterListener() {
             @Override
             public void onIconClicked(int position) {
-                if (actionMode == null) {
-//                    actionMode = startSupportActionMode(actionModeCallback);
-                    Toast.makeText(getContext(), "An Icon is clicked "+ position, Toast.LENGTH_SHORT).show();
-                }
-
-//                toggleSelection(position);
+                // acto when Icon is clicked (Maybe show details of the mapping
             }
 
             @Override
             public void onIconImportantClicked(int position) {
-                Toast.makeText(getContext(), "An iconImportant is clicked", Toast.LENGTH_SHORT).show();
+                // show starred
             }
 
             @Override
@@ -157,8 +154,22 @@ public class MappingFragment extends Fragment  {
                 mappings.set(position, mapping);
                 rAdapter.notifyDataSetChanged();
 
-                MapViewFragment mappingViewFragment = new MapViewFragment();
-                Fragment fragment = mappingViewFragment;
+                // show relevant view based on the country
+                // can be done better here to avoid writing a lot of code.
+                // I was tring to get the shortcut since the app was getting launched the following day
+
+
+                Fragment fragment;
+                if (country.equalsIgnoreCase("KE")){
+                    //show ke fragment
+                    MapKeViewFragment mapKeViewFragment = new MapKeViewFragment();
+                    fragment = mapKeViewFragment;
+                } else{
+                    //UG is the default
+                    MapViewFragment mappingViewFragment = new MapViewFragment();
+                    fragment = mappingViewFragment;
+                }
+
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
@@ -339,7 +350,7 @@ public class MappingFragment extends Fragment  {
             MappingTable mappingTable = new MappingTable(getContext());
             List<Mapping> mappingList = new ArrayList<>();
 
-            mappingList = mappingTable.getMappingData();
+            mappingList = mappingTable.getMappingsByCountry(country);
             for (Mapping mapping:mappingList){
                 mapping.setColor(getRandomMaterialColor("400"));
                 mappings.add(mapping);
