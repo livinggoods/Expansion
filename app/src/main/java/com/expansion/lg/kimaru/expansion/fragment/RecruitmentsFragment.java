@@ -174,11 +174,17 @@ public class RecruitmentsFragment extends Fragment  {
                 //extract the clicked recruitment
                 Recruitment recruitment = recruitments.get(position);
                 session.saveRecruitment(recruitment);
-
-                NewRecruitmentFragment newRecruitmentFragment = new NewRecruitmentFragment();
-                newRecruitmentFragment.editingRecruitment = recruitment;
-
-                Fragment fragment = newRecruitmentFragment;
+                Fragment fragment;
+                String country = user.get(SessionManagement.KEY_USER_COUNTRY);
+                if (country.equalsIgnoreCase("KE")){
+                    NewKeRecruitmentFragment newKeRecruitmentFragment = new NewKeRecruitmentFragment();
+                    newKeRecruitmentFragment.editingRecruitment = recruitment;
+                    fragment = newKeRecruitmentFragment;
+                }else{
+                    NewRecruitmentFragment newRecruitmentFragment = new NewRecruitmentFragment();
+                    newRecruitmentFragment.editingRecruitment = recruitment;
+                    fragment = newRecruitmentFragment;
+                }
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, "registrations");
