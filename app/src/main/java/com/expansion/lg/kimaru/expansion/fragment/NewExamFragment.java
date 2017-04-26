@@ -153,15 +153,11 @@ public class NewExamFragment extends Fragment implements OnClickListener {
                 if (editingExam == null){
                     uuid = UUID.randomUUID().toString();
                 }else{
-                    uuid = UUID.randomUUID().toString();
+                    uuid = editingExam.getId();
                 }
 
                 String applicantId = sessionManagement.getSavedRegistration().getId();
                 String recruitment = sessionManagement.getSavedRecruitment().getId();
-
-                Double applicantMathsScore = Double.parseDouble(mMaths.getText().toString());
-                Double applicantEnglishScore = Double.parseDouble(mEnglish.getText().toString());
-                Double applicantSelfAssessmentScore = Double.parseDouble(mSelfAssessment.getText().toString());
 
                 String applicantComment = "";
                 Integer applicantAddedBy = Integer.valueOf(user.get(SessionManagement.KEY_USERID));
@@ -170,34 +166,45 @@ public class NewExamFragment extends Fragment implements OnClickListener {
                 Integer applicantSync = 0;
                 String country = user.get(SessionManagement.KEY_USER_COUNTRY);
 
-
+                String mathsScore = mMaths.getText().toString();
+                String englishScore = mEnglish.getText().toString();
+                String selfAssessmentScore = mSelfAssessment.getText().toString();
                 // Do some validations
-                if (applicantMathsScore.toString().trim().equals("")){
+                if (mathsScore.toString().trim().equals("")){
                     Toast.makeText(getContext(), "Enter the Score for Maths", Toast.LENGTH_SHORT).show();
+                    mMaths.requestFocus();
                     return;
                 }
-                if (applicantMathsScore > 10 && country == "KE"){
+                if (Double.valueOf(mathsScore) > 10 && country.equalsIgnoreCase("KE")){
                     Toast.makeText(getContext(), "Marks cannot be more than 10", Toast.LENGTH_SHORT).show();
+                    mMaths.requestFocus();
                     return;
                 }
 
-                if (applicantEnglishScore.toString().trim().equals("")){
+                if (englishScore.toString().trim().equals("")){
                     Toast.makeText(getContext(), "Enter the Score for English", Toast.LENGTH_SHORT).show();
+                    mEnglish.requestFocus();
                     return;
                 }
-                if (applicantEnglishScore > 10 && country == "KE"){
+                if (Double.valueOf(englishScore) > 10 && country.equalsIgnoreCase("KE")){
                     Toast.makeText(getContext(), "Marks cannot be more than 10", Toast.LENGTH_SHORT).show();
+                    mEnglish.requestFocus();
                     return;
                 }
 
-                if(applicantSelfAssessmentScore.toString().trim().equals("")){
+                if(selfAssessmentScore.toString().trim().equals("")){
                     Toast.makeText(getContext(), "Enter the Score for Self Assessment", Toast.LENGTH_SHORT).show();
+                    mSelfAssessment.requestFocus();
                     return;
                 }
-                if (applicantSelfAssessmentScore > 10 && country == "KE"){
+                if (Double.valueOf(selfAssessmentScore) > 10 && country.equalsIgnoreCase("KE")){
                     Toast.makeText(getContext(), "Marks cannot be more than 10", Toast.LENGTH_SHORT).show();
+                    mSelfAssessment.requestFocus();
                     return;
                 }
+                Double applicantMathsScore = Double.parseDouble(mMaths.getText().toString());
+                Double applicantEnglishScore = Double.parseDouble(mEnglish.getText().toString());
+                Double applicantSelfAssessmentScore = Double.parseDouble(mSelfAssessment.getText().toString());
 
                 // Save Exam Details
                 Exam exam;
