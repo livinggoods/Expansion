@@ -454,7 +454,8 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
 
     public void addEducationSelectList() {
         EducationTable educationTable = new EducationTable(getContext());
-        SpinnersCursorAdapter cursorAdapter = new SpinnersCursorAdapter(getContext(), educationTable.getEducationDataCursor());
+        SpinnersCursorAdapter cursorAdapter = new SpinnersCursorAdapter(getContext(),
+                educationTable.getEducationDataCursor(user.get(SessionManagement.KEY_USER_COUNTRY)));
         educationLevel.setAdapter(cursorAdapter);
 
     }
