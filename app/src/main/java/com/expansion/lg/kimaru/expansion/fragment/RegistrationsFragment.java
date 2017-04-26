@@ -442,7 +442,7 @@ public class RegistrationsFragment extends Fragment  {
             File file;
             PrintWriter printWriter = null;
             try {
-                file = new File(exportDir, recruitment.getName()+" ScoringTool.csv");
+                file = new File(exportDir, recruitment.getName()+" Scoring Tool.csv");
                 file.createNewFile();
                 printWriter = new PrintWriter(new FileWriter(file));
 
@@ -453,7 +453,7 @@ public class RegistrationsFragment extends Fragment  {
                 printWriter.println(recruitment.getName()+" Scoring tool");
 
                 if (country.equalsIgnoreCase("KE")){
-                        String ugHeader = "CHEW Name," +
+                        String keHeader = "CHEW Name," +
                             "CHEW Contact," +
                             "Candidate Name," +
                             "Candidate Mobile," +
@@ -468,7 +468,7 @@ public class RegistrationsFragment extends Fragment  {
                             "Link Facility, " +
                             "No of Households," +
                             "Read/speak English," +
-                            "Years at this Location," +
+                            "Years at this CountyLocation," +
                             "Other Languages," +
                             "CHV," +
                             "GOK Training," +
@@ -494,20 +494,26 @@ public class RegistrationsFragment extends Fragment  {
                             "DO NOT ASK OUTLOUD: Any conditions to prevent joining?," + //canJoin
                             "Tranport as Per Recruitment," + //canJoin
                             "Comments," +
-                            "Qualify for Training," + //Interview pass or not
+                            "Qualify for Training," +
+                            "Completed By," +
                             "Invite for Training";  //selected
 
                     // add for interview and exam
-                    printWriter.println(ugHeader);
+                    printWriter.println(keHeader);
                     // Print the rows
                     for (Registration registration:registrations){
                         Exam exam = new ExamTable(getContext()).getExamByRegistration(registration.getId());
                         Interview interview = new InterviewTable(getContext()).getInterviewByRegistrationId(registration.getId());
-                        Integer motivation = 0, community = 0, mentality = 0, selling=0, recruitmentTransport = 0;
+                        Integer motivation = 0, community = 0, mentality = 0, selling=0;
+                        Long recruitmentTransport = 0L;
                         Integer health = 0, investment = 0, interpersonal = 0, commitment = 0, totalI = 0;
                         String invite = "N", canJoin="N", userNames ="", comments = "";
                         String qualify = "N";
-
+                        recruitmentTransport = registration.getRecruitmentTransportCost();
+                        if (recruitmentTransport == null){
+                            recruitmentTransport = 0L;
+                        }
+                        Toast.makeText(getContext(),"REG "+registrations.size(), Toast.LENGTH_SHORT).show();
                         Double math = 0D, english = 0D, personality = 0D, total = 0D;
                         if (exam != null){
                             math = exam.getMath();
@@ -517,23 +523,29 @@ public class RegistrationsFragment extends Fragment  {
 
                         }
                         if (interview != null){
-                            motivation = interview.getMotivation();
-                            community = interview.getCommunity();
-                            mentality = interview.getMentality();
-                            selling = interview.getSelling();
-                            health = interview.getHealth();
-                            investment = interview.getInvestment();
-                            interpersonal = interview.getInterpersonal();
-                            commitment = interview.getCommitment();
-                            totalI = interview.getTotal();
-                            canJoin = interview.isCanJoin() ? "Y" : "N";
-                            comments = interview.getComment();
-                            qualify = interview.hasPassed() ? "Y" : "N";
-                            invite = interview.getSelected() ? "Y" : "N";
-                            userNames = new UserTable(getContext()).getUserById(interview.getAddedBy()).getName();
-                        }
+                            try {
+                                motivation = interview.getMotivation();
+                                community = interview.getCommunity();
+                                mentality = interview.getMentality();
+                                selling = interview.getSelling();
+                                health = interview.getHealth();
+                                investment = interview.getInvestment();
+                                interpersonal = interview.getInterpersonal();
+                                commitment = interview.getCommitment();
+                                totalI = interview.getTotal();
+                                canJoin = interview.isCanJoin() ? "Y" : "N";
+                                comments = interview.getComment();
+                                qualify = interview.hasPassed() ? "Y" : "N";
+                                invite = interview.getSelected() ? "Y" : "N";
 
-                        String record = registration.getChewName() +","+
+                            }catch (Exception e){}
+                        }
+                        try {
+                            userNames = new UserTable(getContext()).getUserById(interview.getAddedBy()).getName();
+                        }catch (Exception e){}
+
+                        Toast.makeText(getContext(), "Create string ans start", Toast.LENGTH_SHORT).show();
+                        String strRegistration = registration.getChewName() +","+
                                 registration.getChewNumber()+","+
                                 registration.getName() +","+
                                 registration.getPhone() +","+
@@ -560,24 +572,24 @@ public class RegistrationsFragment extends Fragment  {
                                 math.toString() + ","+
                                 english.toString() + ","+
                                 personality.toString() + ","+
-                                total+","+
-                                total+","+ // has passed
-                                motivation+","+
-                                community+","+
-                                mentality+","+
-                                selling+","+
-                                health+","+
-                                investment+","+
-                                interpersonal+","+
-                                commitment+","+
-                                totalI+","+
-                                canJoin+","+
-                                registration.getRecruitmentTransportCost() +","+
+                                total.toString()+","+
+                                total.toString()+","+ // has passed
+                                motivation.toString()+","+
+                                community.toString()+","+
+                                mentality.toString()+","+
+                                selling.toString()+","+
+                                health.toString()+","+
+                                investment.toString()+","+
+                                interpersonal.toString()+","+
+                                commitment.toString()+","+
+                                totalI.toString()+","+
+                                canJoin.toString()+","+
+                                recruitmentTransport.toString() +","+
                                 comments+","+
-                                qualify+","+
-                                userNames+","+
-                                invite;
-                        printWriter.println(record);
+                                qualify.toString()+","+
+                                userNames.toString()+","+
+                                invite.toString();
+                        printWriter.println(strRegistration);
                     }
 
                 }else{
