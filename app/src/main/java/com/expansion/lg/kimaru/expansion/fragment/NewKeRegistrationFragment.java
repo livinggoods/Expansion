@@ -457,7 +457,8 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
 
     public void addEducationSelectList() {
         EducationTable educationTable = new EducationTable(getContext());
-        SpinnersCursorAdapter cursorAdapter = new SpinnersCursorAdapter(getContext(), educationTable.getEducationDataCursor());
+        SpinnersCursorAdapter cursorAdapter = new SpinnersCursorAdapter(getContext(),
+                educationTable.getEducationDataCursor(user.get(SessionManagement.KEY_USER_COUNTRY)));
         educationLevel.setAdapter(cursorAdapter);
 
     }
@@ -495,9 +496,9 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
             }
             mAccounts.check(editingRegistration.isAccounts() ? R.id.editAccountsYes : R.id.editAccountsNo);
             editIsGokTrained.check(editingRegistration.isGokTrained() ? R.id.editIsGokTrainedYes : R.id.editIsGokTrainedNo);
-            mReadEnglish.check(editingRegistration.getReadEnglish() == 1 ? R.id.radioCanReadEnglish : R.id.radioCannotReadEnglish);
+            mReadEnglish.check(editingRegistration.getReadEnglish().equals(1) ? R.id.radioCanReadEnglish : R.id.radioCannotReadEnglish);
             mDateMoved.setText(editingRegistration.getDateMoved().toString());
-            mCommunity.check(editingRegistration.getCommunity() == 1 ? R.id.radioCommMbrYes : R.id.radioCommMbrNo);
+            mCommunity.check(editingRegistration.getCommunity().equals(1) ? R.id.radioCommMbrYes : R.id.radioCommMbrNo);
             mName.requestFocus();
         }
     }
