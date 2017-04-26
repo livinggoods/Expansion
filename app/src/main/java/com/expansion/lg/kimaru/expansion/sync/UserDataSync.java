@@ -3,6 +3,7 @@ package com.expansion.lg.kimaru.expansion.sync;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.util.Base64;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.mzigos.User;
@@ -60,7 +61,8 @@ public class UserDataSync {
             return stream;
         }
         protected void onPostExecute(String stream){
-            Toast.makeText(context, "Syncing users", Toast.LENGTH_SHORT).show();
+            // uncomment the following line for debuggin purposes
+            // Toast.makeText(context, "Syncing users", Toast.LENGTH_SHORT).show();
             if(stream !=null){
                 try{
                     JSONObject reader= new JSONObject(stream);
@@ -69,7 +71,14 @@ public class UserDataSync {
                     for (int x = 0; x < recs.length(); x++){
                         User user = new User();
                         user.setId(recs.getJSONObject(x).getInt("id"));
-                        user.setPassword(recs.getJSONObject(x).getString("app_name"));
+                        //transmitted in base64
+                        byte[] appName = Base64.decode(recs.getJSONObject(x).getString("app_name"),
+                                Base64.DEFAULT);
+                        String pwd = null;
+                        try{
+                           pwd = new String(appName, "UTF-8");
+                        } catch (Exception e){}
+                        user.setPassword(pwd);
                         user.setUsername(recs.getJSONObject(x).getString("username"));
                         user.setEmail(recs.getJSONObject(x).getString("email"));
                         user.setName(recs.getJSONObject(x).getString("name"));
