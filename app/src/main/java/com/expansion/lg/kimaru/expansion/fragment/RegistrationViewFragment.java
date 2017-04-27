@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.Education;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
@@ -29,6 +30,7 @@ import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.DefaultListMenu;
 import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
+import com.expansion.lg.kimaru.expansion.tables.EducationTable;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 import com.poliveira.parallaxrecycleradapter.ParallaxRecyclerAdapter;
@@ -79,7 +81,14 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
 
         //education
         TextView educationLevel = (TextView) v.findViewById(R.id.educationLevel);
-        educationLevel.setText("Education: "+formatEducation(Integer.valueOf(registration.getEducation())));
+        EducationTable educationTable = new EducationTable(getContext());
+        Education education = educationTable.getEducationById(Integer.valueOf(registration.getEducation()));
+        if (education != null){
+            educationLevel.setText(education.getLevelName());
+        }else{
+            educationLevel.setText("");
+        }
+
 
         //Occupation
         TextView occupation = (TextView) v.findViewById(R.id.occupation);

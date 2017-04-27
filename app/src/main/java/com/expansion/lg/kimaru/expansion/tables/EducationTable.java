@@ -47,6 +47,8 @@ public class EducationTable extends SQLiteOpenHelper {
             + COUNTRY + varchar_field + ", "
             + HIERACHY + integer_field + "); ";
 
+    String [] columns=new String[]{ID, LEVEL_NAME, TYPE, HIERACHY, COUNTRY};
+
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
 
     public EducationTable(Context context) {
@@ -87,8 +89,6 @@ public class EducationTable extends SQLiteOpenHelper {
 
         SQLiteDatabase db=getReadableDatabase();
 
-        String [] columns=new String[]{ID, LEVEL_NAME, TYPE, HIERACHY, COUNTRY};
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
         List<Education> educationList=new ArrayList<>();
@@ -106,13 +106,34 @@ public class EducationTable extends SQLiteOpenHelper {
         db.close();
         return educationList;
     }
+    public Education getEducationById(int id) {
+
+        SQLiteDatabase db = getReadableDatabase();
+        String whereClause = ID +" = ?";
+        String[] whereArgs = new String[] {
+                String.valueOf(id),
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else{
+            Education education=new Education();
+
+            education.setId(cursor.getInt(0));
+            education.setLevelName(cursor.getString(1));
+            education.setLevelType(cursor.getString(2));
+            education.setHierachy(cursor.getInt(3));
+            education.setCountry(cursor.getString(4));
+            db.close();
+            return education;
+        }
+    }
 
 
     public JSONObject getEducationJson() {
 
         SQLiteDatabase db=getReadableDatabase();
-
-        String [] columns=new String[]{ID, LEVEL_NAME, TYPE, HIERACHY, COUNTRY};
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
@@ -173,9 +194,12 @@ public class EducationTable extends SQLiteOpenHelper {
             if (y > 7 ){
                 education.setLevelName("Tertiary");
                 education.setLevelType("tertiary");
-            }else if(y > 1){
-                education.setLevelName("S"+(y-1));
+            }else if(y > 2) {
+                education.setLevelName("S" + (y - 1));
                 education.setLevelType("secondary");
+            }else if (y == 2){
+                education.setLevelName("P7");
+                education.setLevelType("primary");
             }else {
                 education.setLevelName("Less than P7");
                 education.setLevelType("primary");
