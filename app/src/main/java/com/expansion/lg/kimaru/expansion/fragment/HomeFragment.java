@@ -18,6 +18,7 @@ import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.HttpServerActivity;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 
 import java.util.HashMap;
 
@@ -39,6 +40,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private String mParam1;
     private String mParam2;
     private Handler mHandler;
+
+    Recruitment recruitment;
+
 
     Button mapping, recruitments, registrations, exams, interviews, sharing;
     SessionManagement sessionManagement;
@@ -154,28 +158,43 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 fragmentTransaction.commitAllowingStateLoss();
                 break;
             case R.id.btnRegistrations:
-                fragment = new RegistrationsFragment();
+                if (sessionManagement.isRecruitmentSet()){
+                    fragment = new RegistrationsFragment();
+                }else{
+                    fragment = new RecruitmentsFragment();
+                }
                 fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
                 fragmentTransaction.commitAllowingStateLoss();
+
                 break;
             case R.id.btnExams:
-                fragment = new ExamsFragment();
+                if (sessionManagement.isRecruitmentSet()){
+                    fragment = new ExamsFragment();
+                }else{
+                    fragment = new RecruitmentsFragment();
+                }
                 fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
                 fragmentTransaction.commitAllowingStateLoss();
+
                 break;
             case R.id.btnInterviews:
-                fragment = new InterviewsFragment();
+                if (sessionManagement.isRecruitmentSet()){
+                    fragment = new InterviewsFragment();
+                }else{
+                    fragment = new RecruitmentsFragment();
+                }
                 fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
                 fragmentTransaction.commitAllowingStateLoss();
+
                 break;
             case R.id.btnSharing:
                 startActivity(new Intent(getActivity(), HttpServerActivity.class));
