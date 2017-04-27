@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
@@ -126,6 +127,7 @@ public class RegistrationsFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        setHasOptionsMenu(true);
         View v =  inflater.inflate(R.layout.fragment_registrations, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_REGISTRATIONS;
         MainActivity.backFragment = new RecruitmentsFragment();
@@ -400,6 +402,8 @@ public class RegistrationsFragment extends Fragment  {
         swipeRefreshLayout.setRefreshing(false);
     }
 
+
+
     private void getFilteredRegistrations(String which) {
         swipeRefreshLayout.setRefreshing(true);
 
@@ -433,10 +437,72 @@ public class RegistrationsFragment extends Fragment  {
         swipeRefreshLayout.setRefreshing(false);
     }
 
+    private void getSearchedRegistrations(String query) {
+        swipeRefreshLayout.setRefreshing(true);
+
+        // clear the registrations
+        registrations.clear();
+        RegistrationTable registrationTable = new RegistrationTable(getContext());
+        List<Registration> registrationList = new ArrayList<>();
+        try {
+            // get the registrations
+            registrationList = registrationTable.searchRegistrations(session.getSavedRecruitment(), query);
+            for (Registration registration:registrationList){
+                registration.setColor(getRandomMaterialColor("400"));
+                registrations.add(registration);
+            }
+            rAdapter.notifyDataSetChanged();
+            swipeRefreshLayout.setRefreshing(false);
+        } catch (Exception error){
+            Toast.makeText(getContext(), "No Registrations", Toast.LENGTH_SHORT).show();
+            textshow.setText(" No registration recorded");
+        }
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         inflater.inflate(R.menu.registration_action_menu, menu);
     }
+    @Override
+    public void onPrepareOptionsMenu(Menu menu)
+    {
+        final SearchView searchView = (SearchView)menu.findItem(R.id.action_search).getActionView();
+        // searchView.setSuggestionsAdapter(new SearchSuggestionsAdapter(this));
+//        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener()
+//        {
+//            @Override
+//            public boolean onSuggestionClick(int position)
+//            {
+//                Toast.makeText(SearchActivity.this, "Position: " + position, Toast.LENGTH_SHORT).show();
+//                searchView.clearFocus();
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onSuggestionSelect(int position)
+//            {
+//                return false;
+//            }
+//        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
+        {
+            @Override
+            public boolean onQueryTextSubmit(String query)
+            {
+                getSearchedRegistrations(query);
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText)
+            {
+                return false;
+            }
+        });
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
