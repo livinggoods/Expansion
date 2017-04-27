@@ -15,42 +15,42 @@
 
     <!--  Mapping Button -->
     <Button
-        android:id="@+id/btn_news_feed"
+        android:id="@+id/btnMapping"
         style="@style/DashboardButton"
         android:drawableTop="@drawable/ic_map_black_24dp"
         android:text="Mapping" />
 
     <!--  Recruitments Button -->
     <Button
-        android:id="@+id/btn_friends"
+        android:id="@+id/btnRecruitments"
         style="@style/DashboardButton"
         android:drawableTop="@drawable/ic_photo_library_black_24dp"
         android:text="Recruitments" />
 
     <!--  Registrations Button -->
     <Button
-        android:id="@+id/btn_messages"
+        android:id="@+id/btnRegistrations"
         style="@style/DashboardButton"
         android:drawableTop="@drawable/ic_registrations_24dp"
         android:text="Registrations" />
 
     <!--  Exams Button -->
     <Button
-        android:id="@+id/btn_places"
+        android:id="@+id/btnExams"
         style="@style/DashboardButton"
         android:drawableTop="@drawable/ic_exam_black_24dp"
         android:text="Exams" />
 
     <!--  Interviews Button -->
     <Button
-        android:id="@+id/btn_events"
+        android:id="@+id/btnInterviews"
         style="@style/DashboardButton"
         android:drawableTop="@drawable/ic_local_library_black_24dp"
         android:text="Interviews" />
 
     <!--  Sharing Button -->
     <Button
-        android:id="@+id/btn_photos"
+        android:id="@+id/btnSharing"
         style="@style/DashboardButton"
         android:drawableTop="@drawable/ic_share_black_24dp"
         android:text="Sharing" />
