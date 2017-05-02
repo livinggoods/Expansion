@@ -106,9 +106,9 @@ public class InterviewListAdapter extends RecyclerView.Adapter<InterviewListAdap
         // Display the applicant Name
         registration = registrationTable.getRegistrationById(interview.getApplicant());
         holder.from.setText(registration.getName());
-        holder.subject.setText(interview.getApplicant());
-        holder.message.setText(interview.getId());
-        holder.timestamp.setText(interview.getSelling().toString());
+        holder.subject.setText("Village : " + registration.getVillage());
+        holder.message.setText(registration.getSubcounty());
+        holder.timestamp.setText("Total "+interview.getTotal().toString());
 
         // displaying the first letter of From in icon text
         holder.iconText.setText(String.valueOf(registration.getName().substring(0,1)));
