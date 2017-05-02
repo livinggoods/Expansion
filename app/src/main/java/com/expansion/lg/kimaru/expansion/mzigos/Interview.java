@@ -10,10 +10,10 @@ import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 public class Interview {
 
     Integer motivation, community, mentality, selling, health, investment;
-    Integer interpersonal, commitment, total, addedBy, synced;
+    Integer interpersonal, commitment, total, addedBy, synced, selected;
     String comment, id, applicant, recruitment, country;
     Long dateAdded;
-    boolean isRead, isImportant, canJoin, selected;
+    boolean isRead, isImportant, canJoin;
     int color = -1;
     String picture =  "";
 
@@ -23,7 +23,7 @@ public class Interview {
 
     public Interview(String id, String applicant, String recruitment, Integer motivation, Integer community,
                      Integer mentality, Integer selling, Integer health, Integer investment,
-                     Integer interpersonal, Integer commitment, boolean selected, Integer addedBy,
+                     Integer interpersonal, Integer commitment, Integer selected, Integer addedBy,
                      Long dateAdded, Integer synced, String comment, boolean canJoin, String country) {
         this.applicant = applicant;
         this.recruitment = recruitment;
@@ -89,7 +89,7 @@ public class Interview {
         return commitment;
     }
 
-    public boolean getSelected() {
+    public Integer getSelected() {
         return selected;
     }
 
@@ -204,7 +204,7 @@ public class Interview {
         this.motivation = motivation;
     }
 
-    public void setSelected(boolean selected) {
+    public void setSelected(Integer selected) {
         this.selected = selected;
     }
 

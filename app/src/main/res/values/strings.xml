@@ -40,6 +40,12 @@
     </string-array>
 
 
+    <string-array name="interview_selection_status">
+        <item>Selected</item>
+        <item>Waiting List</item>
+        <item>Not Selected</item>
+    </string-array>
+
     <string-array name="population_density_types">
         <item>Urban / Upper Income</item>
         <item>Urban/informal</item>

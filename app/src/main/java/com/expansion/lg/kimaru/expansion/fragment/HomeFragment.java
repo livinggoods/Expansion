@@ -88,6 +88,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         MainActivity.CURRENT_TAG = MainActivity.TAG_HOME;
         MainActivity.backFragment = null;
+        mHandler = new Handler();
         sessionManagement = new SessionManagement(getContext());
         user = sessionManagement.getUserDetails();
         country = sessionManagement.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY);
@@ -140,8 +141,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view){
         Fragment fragment;
         FragmentTransaction fragmentTransaction;
+        Runnable mPendingRunnable;
         switch (view.getId()){
             case R.id.btnMapping:
+                MainActivity.navItemIndex = 5; //navItemIndex
+                MainActivity.CURRENT_TAG = MainActivity.TAG_MAPPING;
                 fragment = new MappingFragment();
                 fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
@@ -149,7 +153,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
                 fragmentTransaction.commitAllowingStateLoss();
                 break;
+
             case R.id.btnRecruitments:
+                MainActivity.navItemIndex = 1;
+                MainActivity.CURRENT_TAG = MainActivity.TAG_RECRUITMENTS;
                 fragment = new RecruitmentsFragment();
                 fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
@@ -157,10 +164,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
                 fragmentTransaction.commitAllowingStateLoss();
                 break;
+
             case R.id.btnRegistrations:
                 if (sessionManagement.isRecruitmentSet()){
+                    MainActivity.navItemIndex = 2;
                     fragment = new RegistrationsFragment();
                 }else{
+                    MainActivity.navItemIndex = 1;
+                    MainActivity.CURRENT_TAG = MainActivity.TAG_RECRUITMENTS;
                     fragment = new RecruitmentsFragment();
                 }
                 fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -168,12 +179,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
                 fragmentTransaction.commitAllowingStateLoss();
-
                 break;
+
             case R.id.btnExams:
                 if (sessionManagement.isRecruitmentSet()){
+                    MainActivity.navItemIndex = 3;
                     fragment = new ExamsFragment();
                 }else{
+                    MainActivity.navItemIndex = 1;
+                    MainActivity.CURRENT_TAG = MainActivity.TAG_RECRUITMENTS;
                     fragment = new RecruitmentsFragment();
                 }
                 fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -181,21 +195,37 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                         android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
                 fragmentTransaction.commitAllowingStateLoss();
-
                 break;
+
             case R.id.btnInterviews:
+                //
                 if (sessionManagement.isRecruitmentSet()){
-                    fragment = new InterviewsFragment();
+                    MainActivity.navItemIndex =4;
+                    mPendingRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            // update the main content by replacing fragments
+                            Fragment fragment;
+                            InterviewsFragment interviewsFragment = new InterviewsFragment();
+                            fragment = interviewsFragment;
+                            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                    android.R.anim.fade_out);
+                            fragmentTransaction.replace(R.id.frame, fragment, MainActivity.CURRENT_TAG);
+
+                            fragmentTransaction.commitAllowingStateLoss();
+                        }
+                    };
+                    if (mPendingRunnable != null) {
+                        mHandler.post(mPendingRunnable);
+                    }
                 }else{
+                    MainActivity.navItemIndex = 1;
+                    MainActivity.CURRENT_TAG = MainActivity.TAG_RECRUITMENTS;
                     fragment = new RecruitmentsFragment();
                 }
-                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
-                fragmentTransaction.commitAllowingStateLoss();
-
                 break;
+
             case R.id.btnSharing:
                 startActivity(new Intent(getActivity(), HttpServerActivity.class));
                 break;

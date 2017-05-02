@@ -686,9 +686,6 @@ public class MainActivity extends AppCompatActivity {
             drawer.closeDrawers();
             return;
         }
-
-
-
         Runnable mPendingRunnable;
         if (backFragment != null){
             mPendingRunnable = new Runnable() {
@@ -700,7 +697,6 @@ public class MainActivity extends AppCompatActivity {
                     fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                             android.R.anim.fade_out);
                     fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
-
                     fragmentTransaction.commitAllowingStateLoss();
                 }
             };

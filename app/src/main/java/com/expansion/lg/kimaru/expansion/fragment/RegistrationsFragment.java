@@ -648,7 +648,7 @@ public class RegistrationsFragment extends Fragment  {
                                 canJoin = interview.isCanJoin() ? "Y" : "N";
                                 comments = interview.getComment();
                                 qualify = interview.hasPassed() ? "Y" : "N";
-                                invite = interview.getSelected() ? "Y" : "N";
+                                invite = interview.getSelected().equals(1) ? "Y" : interview.getSelected().equals(0) ? "N" : "Waiting";
 
                             }catch (Exception e){}
                         }
@@ -782,7 +782,7 @@ public class RegistrationsFragment extends Fragment  {
                             canJoin = interview.isCanJoin() ? "Y" : "N";
                             comments = interview.getComment();
                             qualify = interview.hasPassed() ? "Y" : "N";
-                            invite = interview.getSelected() ? "Y" : "N";
+                            invite = interview.getSelected().equals(1) ? "Y" : interview.getSelected().equals(0) ? "N" : "Waiting";
                             userNames = new UserTable(getContext()).getUserById(interview.getAddedBy()).getName();
                         }
 

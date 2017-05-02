@@ -119,7 +119,7 @@ public class InterviewTable extends SQLiteOpenHelper {
         cv.put(INVESTMENT, interview.getInvestment());
         cv.put(INTERPERSONAL, interview.getInterpersonal());
         cv.put(TOTAL, interview.getTotal());
-        cv.put(SELECTED, interview.getSelected()? 1 : 0);
+        cv.put(SELECTED, interview.getSelected());
         cv.put(CANJOIN, interview.isCanJoin() ? 1 : 0);
         cv.put(ADDED_BY, interview.getAddedBy());
         cv.put(COMMENT, interview.getComment());
@@ -172,7 +172,7 @@ public class InterviewTable extends SQLiteOpenHelper {
             interview.setHealth(cursor.getInt(7));
             interview.setInvestment(cursor.getInt(8));
             interview.setInterpersonal(cursor.getInt(9));
-            interview.setSelected(cursor.getInt(11) == 1);
+            interview.setSelected(cursor.getInt(11));
             interview.setAddedBy(cursor.getInt(12));
             interview.setComment(cursor.getString(13));
             interview.setCommitment(cursor.getInt(14));
@@ -220,7 +220,7 @@ public class InterviewTable extends SQLiteOpenHelper {
             interview.setInvestment(cursor.getInt(8));
             interview.setInterpersonal(cursor.getInt(9));
             // interview.setTotal(cursor.getInt(10));
-            interview.setSelected(cursor.getInt(11) == 1);
+            interview.setSelected(cursor.getInt(11));
             interview.setAddedBy(cursor.getInt(12));
             interview.setComment(cursor.getString(13));
             interview.setCommitment(cursor.getInt(14));
@@ -257,7 +257,7 @@ public class InterviewTable extends SQLiteOpenHelper {
             interview.setInvestment(cursor.getInt(8));
             interview.setInterpersonal(cursor.getInt(9));
             // interview.setTotal(cursor.getInt(10));
-            interview.setSelected(cursor.getInt(11) == 1);
+            interview.setSelected(cursor.getInt(11));
             interview.setAddedBy(cursor.getInt(12));
             interview.setComment(cursor.getString(13));
             interview.setCommitment(cursor.getInt(14));
@@ -300,7 +300,7 @@ public class InterviewTable extends SQLiteOpenHelper {
             interview.setHealth(cursor.getInt(7));
             interview.setInvestment(cursor.getInt(8));
             interview.setInterpersonal(cursor.getInt(9));
-            interview.setSelected(cursor.getInt(11) == 1);
+            interview.setSelected(cursor.getInt(11));
             interview.setAddedBy(cursor.getInt(12));
             interview.setComment(cursor.getString(13));
             interview.setCommitment(cursor.getInt(14));
@@ -331,7 +331,7 @@ public class InterviewTable extends SQLiteOpenHelper {
             interview.setInvestment(jsonObject.getInt(InterviewTable.INVESTMENT));
             interview.setCountry(jsonObject.getString(InterviewTable.COUNTRY));
             interview.setInterpersonal(jsonObject.getInt(InterviewTable.INTERPERSONAL));
-            interview.setSelected(jsonObject.getInt(InterviewTable.SELECTED) == 1);
+            interview.setSelected(jsonObject.getInt(SELECTED));
             interview.setAddedBy(jsonObject.getInt(InterviewTable.ADDED_BY));
             interview.setComment(jsonObject.getString(InterviewTable.COMMENT));
             interview.setCommitment(jsonObject.getInt(InterviewTable.COMMITMENT));

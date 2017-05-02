@@ -154,6 +154,17 @@
                     android:id="@+id/selectedStatus"
                     android:padding="20dp"
                     android:text="Add New Registration" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <Spinner
+                        android:id="@+id/editSelectedStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/interview_selection_status"
+                        android:prompt="@string/select_prompt" />
+                </android.support.design.widget.TextInputLayout>
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="fill_parent"

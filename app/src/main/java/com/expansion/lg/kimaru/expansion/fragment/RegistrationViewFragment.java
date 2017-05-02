@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +49,8 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
     SessionManagement sessionManagement;
     Registration registration;
     TextView interviewResults, examResults, selectedStatus;
-    boolean selected = false;
+    Spinner selectionStatus;
+    Integer selected = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,6 +70,9 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
         registration = sessionManagement.getSavedRegistration();
 
         TextView profileName = (TextView) v.findViewById(R.id.user_profile_name);
+        selectionStatus = (Spinner) v.findViewById(R.id.editSelectedStatus);
+
+
         profileName.setText(registration.getName() + "( " + registration.getGender() + ")");
         //user_profile_short_bio
         TextView bio = (TextView) v.findViewById(R.id.user_profile_short_bio);
@@ -149,12 +154,15 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
                         "Selling Skills "+ interview.getSelling() + "\n" +
                         "Status "+ interview.getSelling();
             interviewResults.setText(interviewScores);
-            if (interview.getSelected()){
-                selected = true;
+            if (interview.getSelected().equals(1)){
+                selected = 1;
                 selectedStatus.setText("Selected for training");
-            }else{
-                selected = false;
+            }else if (interview.getSelected().equals(0)){
+                selected = 0;
                 selectedStatus.setText("Not selected for training");
+            }else{
+                selected = 2;
+                selectedStatus.setText("Waiting List");
             }
         }else{
             //Allow adding new Interview
@@ -256,14 +264,14 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
                 InterviewTable interviewTable = new InterviewTable(getContext());
                 interview = interviewTable.getInterviewByRegistrationId(sessionManagement.getSavedRegistration().getId());
                 if (interview != null){
-                    if (selected){
-                        selected = false;
-                        interview.setSelected(false);
+                    if (selected.equals(1)){
+                        selected = 0;
+                        interview.setSelected(0);
                         interviewTable.addData(interview);
                         selectedStatus.setText("Not selected for training \n Click to select");
                     }else{
-                        selected = true;
-                        interview.setSelected(true);
+                        selected = 1;
+                        interview.setSelected(1);
                         interviewTable.addData(interview);
                         selectedStatus.setText("Selected for training \n Click to deselect");
                     }

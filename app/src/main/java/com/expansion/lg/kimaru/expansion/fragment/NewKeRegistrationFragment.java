@@ -4,6 +4,7 @@ package com.expansion.lg.kimaru.expansion.fragment;
  */
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.Education;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.other.DisplayDate;
@@ -99,6 +101,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
     Registration editingRegistration = null;
 
     List<EditText> kenyanFieldsCreated = new ArrayList<EditText>();
+    List<Education> educationList = new ArrayList<Education>();
     private LinearLayout parentLayout;
 
     public NewKeRegistrationFragment() {
@@ -181,6 +184,8 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         educationLevel = (Spinner) v.findViewById(R.id.selectEdducation);
 
         addEducationSelectList();
+
+
         setUpEditingMode();
 
         /*
@@ -262,8 +267,25 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 String noOfHouseholds = editNoOfHouseholds.getText().toString();
                 String applicantOtherTrainings = editOtherTrainings.getText().toString();
                 //recruitmentTransportCost,transportCostToBranch
-                Long transportCostToBranch = Long.valueOf(editBranchTransportCost.getText().toString());
-                Long recruitmentTransportCost = Long.valueOf(editRecruitmentTransportCost.getText().toString());
+
+                // Transport From branch
+                String transportCostBranch = editBranchTransportCost.getText().toString();
+                Long transportCostToBranch;
+                if (transportCostBranch.trim().equals("")){
+                    transportCostToBranch = 0L;
+                }else{
+                    transportCostToBranch = Long.valueOf(transportCostBranch);
+                }
+
+                // recruitment Transport
+                String recruitmentTransportCostI = editRecruitmentTransportCost.getText().toString();
+                Long recruitmentTransportCost;
+                if (recruitmentTransportCostI.trim().equals("")){
+                    recruitmentTransportCost = 0L;
+                }else{
+                    recruitmentTransportCost = Long.valueOf(recruitmentTransportCostI);
+                }
+
                 //////////////
                 Long applicantNoOfHouseholds;
                 if (noOfHouseholds.toString().trim().equals("")){
@@ -460,6 +482,19 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         SpinnersCursorAdapter cursorAdapter = new SpinnersCursorAdapter(getContext(),
                 educationTable.getEducationDataCursor(user.get(SessionManagement.KEY_USER_COUNTRY)));
         educationLevel.setAdapter(cursorAdapter);
+        // add education details
+        Cursor cursor = educationTable.getEducationDataCursor(user.get(SessionManagement.KEY_USER_COUNTRY));
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            Education education=new Education();
+            education.setId(cursor.getInt(0));
+            education.setLevelName(cursor.getString(1));
+            education.setLevelType(cursor.getString(2));
+            education.setHierachy(cursor.getInt(3));
+            education.setCountry(cursor.getString(4));
+            educationList.add(education);
+        }
+
+
 
     }
     public void setUpEditingMode(){
@@ -479,7 +514,20 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
             mVillage.setText(editingRegistration.getVillage());
             mMark.setText(editingRegistration.getMark());
             mLangs.setText(editingRegistration.getLangs());
-            educationLevel.setSelection(Integer.valueOf(editingRegistration.getEducation()) - 1, true);
+
+//            // A dirty Hack
+            int x = 0;
+            for (Education e : educationList) {
+                if (e.getId().equals(Integer.valueOf(editingRegistration.getEducation()))) {
+                    educationLevel.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
+
+            // educationLevel.setSelection(Integer.valueOf(editingRegistration.getEducation()) - 1, true);
+
+
             mOccupation.setText(editingRegistration.getOccupation());
             mDob.setText(new DisplayDate(Long.valueOf(editingRegistration.getDob())).widgetDateOnly());
             editChewName.setText(editingRegistration.getChewName());
