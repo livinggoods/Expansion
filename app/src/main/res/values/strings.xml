@@ -41,9 +41,9 @@
 
 
     <string-array name="interview_selection_status">
+        <item>Not Selected</item>
         <item>Selected</item>
         <item>Waiting List</item>
-        <item>Not Selected</item>
     </string-array>
 
     <string-array name="population_density_types">

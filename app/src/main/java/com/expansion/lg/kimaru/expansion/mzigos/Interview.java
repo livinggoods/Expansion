@@ -254,7 +254,7 @@ public class Interview {
     }
 
     public boolean hasPassed(){
-        if (this.commitment > 1 && this.getTotal() > 24 && this.canJoin ){
+        if (this.commitment > 1 && getTotal() > 24 && canJoin ){
             return true;
         }else{
             return false;

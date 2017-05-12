@@ -160,7 +160,8 @@ public class RecruitmentsFragment extends Fragment  {
                 Recruitment recruitment = recruitments.get(position);
                 session.saveRecruitment(recruitment);
 
-                Fragment fragment = new RegistrationsFragment();
+                //Fragment fragment = new RegistrationsFragment();
+                Fragment fragment = new RecruitmentViewFragment();
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, "registrations");
@@ -205,11 +206,6 @@ public class RecruitmentsFragment extends Fragment  {
                     }
                 }
         );
-
-//        actionModeCallback = new ActionMode().Callback;
-
-
-        //===========Gmail View Ends here ============================
         return v;
     }
 

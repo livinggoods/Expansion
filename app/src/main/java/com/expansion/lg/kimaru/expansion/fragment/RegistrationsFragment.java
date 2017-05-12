@@ -35,11 +35,13 @@ import android.view.MenuItem;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.Education;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.other.DisplayDate;
+import com.expansion.lg.kimaru.expansion.tables.EducationTable;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
@@ -562,6 +564,7 @@ public class RegistrationsFragment extends Fragment  {
 
                 //here we get the cursor that contains our records
                 RegistrationTable registrationTable = new RegistrationTable(getContext());
+                EducationTable educationTable = new EducationTable(getContext());
 
 
                 if (country.equalsIgnoreCase("KE")){
@@ -589,6 +592,7 @@ public class RegistrationsFragment extends Fragment  {
                             "Previous/Current health or business experience," +
                             "Community group membership," +
                             "Financial Accounts," +
+                            "Recruitment Comments," +
                             "Math Score," +
                             "Reading Comprehension," +
                             "About you," +
@@ -615,24 +619,24 @@ public class RegistrationsFragment extends Fragment  {
                     // Print the rows
                     for (Registration registration:registrations){
                         Exam exam = new ExamTable(getContext()).getExamByRegistration(registration.getId());
+                        Education education = educationTable.getEducationById(Integer.valueOf(registration.getEducation()));
                         Interview interview = new InterviewTable(getContext()).getInterviewByRegistrationId(registration.getId());
                         Integer motivation = 0, community = 0, mentality = 0, selling=0;
                         Long recruitmentTransport = 0L;
                         Integer health = 0, investment = 0, interpersonal = 0, commitment = 0, totalI = 0;
                         String invite = "N", canJoin="N", userNames ="", comments = "";
-                        String qualify = "N";
+                        String qualify = "N", hasPassedExam="N";
                         recruitmentTransport = registration.getRecruitmentTransportCost();
                         if (recruitmentTransport == null){
                             recruitmentTransport = 0L;
                         }
-                        Toast.makeText(getContext(),"REG "+registrations.size(), Toast.LENGTH_SHORT).show();
                         Double math = 0D, english = 0D, personality = 0D, total = 0D;
                         if (exam != null){
                             math = exam.getMath();
                             english = exam.getEnglish();
                             personality = exam.getPersonality();
                             total = math + english + personality;
-
+                            hasPassedExam = exam.hasPassed() ? "Y" : "N";
                         }
                         if (interview != null){
                             try {
@@ -659,16 +663,16 @@ public class RegistrationsFragment extends Fragment  {
                         String strRegistration = registration.getChewName() +","+
                                 registration.getChewNumber()+","+
                                 registration.getName() +","+
-                                registration.getPhone() +","+
+                                registration.getPhone().replaceAll(",", ";") +","+
                                 registration.getGender() +","+
                                 new DisplayDate(registration.getDob()).dateOnly() +","+  //dd/mm/yyyy format
                                 registration.getAge() +","+
                                 registration.getSubcounty() +","+
                                 registration.getWard()+","+
                                 registration.getVillage()+","+
-                                registration.getMark() +","+
-                                registration.getCuName() +","+
-                                registration.getLinkFacility() +","+
+                                registration.getMark().replaceAll(",", ";") +","+
+                                registration.getCuName().replaceAll(",", ";") +","+
+                                registration.getLinkFacility().replaceAll(",", ";") +","+
                                 registration.getNoOfHouseholds() +","+
                                 (registration.getReadEnglish().equals(1) ? "Y" : "N") +","+
                                 registration.getDateMoved() +","+
@@ -676,15 +680,16 @@ public class RegistrationsFragment extends Fragment  {
                                 (registration.isChv() ? "Y" : "N") +","+
                                 (registration.isGokTrained() ? "Y": "N") +","+
                                 registration.getOtherTrainings().replaceAll(",", ";") +","+
-                                registration.getEducation()+ "," +
-                                registration.getOccupation()+ "," +
+                                education.getLevelName()+ "," +
+                                registration.getOccupation().replaceAll(",", ";")+ "," +
                                 (registration.getCommunity().equals(1) ? "Y" : "N")+ "," +
                                 (registration.isAccounts() ? "Y" : "N")+ "," +
+                                registration.getComment().replaceAll(",", ";")+ "," +
                                 math.toString() + ","+
                                 english.toString() + ","+
                                 personality.toString() + ","+
                                 total.toString()+","+
-                                total.toString()+","+ // has passed
+                                hasPassedExam+","+ // has passed
                                 motivation.toString()+","+
                                 community.toString()+","+
                                 mentality.toString()+","+
@@ -696,7 +701,7 @@ public class RegistrationsFragment extends Fragment  {
                                 totalI.toString()+","+
                                 canJoin.toString()+","+
                                 recruitmentTransport.toString() +","+
-                                comments+","+
+                                comments.replaceAll(",",";")+","+
                                 qualify.toString()+","+
                                 userNames.toString()+","+
                                 invite.toString();

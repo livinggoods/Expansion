@@ -62,8 +62,9 @@ public class UserDataSync {
         }
         protected void onPostExecute(String stream){
             // uncomment the following line for debuggin purposes
-            // Toast.makeText(context, "Syncing users", Toast.LENGTH_SHORT).show();
+             Toast.makeText(context, "Syncing users", Toast.LENGTH_SHORT).show();
             if(stream !=null){
+                Toast.makeText(context, "Stream is not null", Toast.LENGTH_SHORT).show();
                 try{
                     JSONObject reader= new JSONObject(stream);
                     JSONArray recs = reader.getJSONArray("users");
@@ -95,6 +96,9 @@ public class UserDataSync {
                 }
 
             } // if statement end
+            else{
+                Toast.makeText(context, "Stream is NULL null", Toast.LENGTH_SHORT).show();
+            }
         } // onPostExecute() end
     }
 }

@@ -299,9 +299,17 @@ public class RegistrationTable extends SQLiteOpenHelper {
 
         SQLiteDatabase db=getReadableDatabase();
         String orderBy = "id desc";
-        String whereClause = NAME+" LIKE ? AND " +RECRUITMENT+" = ? " ;
+        String whereClause = NAME+" LIKE ? OR " +
+                VILLAGE+ " LIKE ? OR " +
+                WARD+ " LIKE ? OR " +
+                COMMUNITY+ " LIKE ? " +
+                "AND " +RECRUITMENT+" = ? " ;
         String[] whereArgs = new String[] {
-                "%"+query+"%", recruitment.getId()
+                "%"+query+"%",
+                "%"+query+"%",
+                "%"+query+"%",
+                "%"+query+"%",
+                recruitment.getId()
         };
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
 

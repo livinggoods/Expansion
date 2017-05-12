@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +52,7 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
     TextView interviewResults, examResults, selectedStatus;
     Spinner selectionStatus;
     Integer selected = 0;
+    Boolean examPass = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,7 +91,14 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
         EducationTable educationTable = new EducationTable(getContext());
         Education education = educationTable.getEducationById(Integer.valueOf(registration.getEducation()));
         if (education != null){
-            educationLevel.setText(education.getLevelName());
+
+            if (registration.getCountry().equalsIgnoreCase("KE")){
+                educationLevel.setText("Education Level: "+ education.getLevelName() + "\n\n" +
+                        "Other Trainings\n" +registration.getOtherTrainings());
+
+            }else{
+                educationLevel.setText("Education Level: "+education.getLevelName());
+            }
         }else{
             educationLevel.setText("");
         }
@@ -101,14 +110,23 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
 
         //brac
         TextView bracChp = (TextView) v.findViewById(R.id.bracChp);
-        if (registration.getBrac() == 1 ){
-            if (registration.getBracChp() == 1){
-                bracChp.setText("Has worked as BRAC CHP");
-            }else{
-                bracChp.setText("Has worked at BRAC");
+        if (registration.getCountry().equalsIgnoreCase("UG")){
+            if (registration.getBrac() == 1 ){
+                if (registration.getBracChp() == 1){
+                    bracChp.setText("Has worked as BRAC CHP");
+                }else{
+                    bracChp.setText("Has worked at BRAC");
+                }
+            }else {
+                bracChp.setText("Hasn't worked at BRAC");
             }
-        }else {
-            bracChp.setText("Hasn't worked at BRAC");
+        }else{
+            String txt="";
+            txt += (registration.isGokTrained() ? "GoK Trained\n" : "Not a GoK Trained\n");
+            txt += (registration.isChv() ? "Currently a CHV\n" : "Not a CHV\n");
+            txt += ("Households " +registration.getNoOfHouseholds()+"\n");
+            bracChp.setText(txt);
+
         }
         Exam exam = new Exam();
         ExamTable examTable = new ExamTable(getContext());
@@ -124,7 +142,10 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
                         "About: " + exam.getPersonality() + "\n" +
                         "Total " + total +"\n\n"+
                         "Status " + (exam.hasPassed() ? "Passed" : "Failed");
-            examResults.setText(ex);
+
+            String regComment = registration.getComment();
+            examResults.setText(regComment + "\n\n\n" +ex);
+            examPass = exam.hasPassed();
 
         }else{
             //Allow adding new Exam
@@ -143,7 +164,8 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
         selectedStatus.setOnClickListener(this);
         if (interview != null){
             String interviewScores = "Interview Results \n\n" +
-                        "Motivation: " +interview.getMotivation() + "\t" +
+                        "Comments\n\n: " +interview.getComment() + "\n\n" +
+                        "Motivation: " +interview.getMotivation() + "\n" +
                         "Community engagement: "+ interview.getCommunity() + "\n" +
                         "Mentality: " + interview.getMentality() + "\n" +
                         "Selling Skills: " + interview.getSelling() + "\n" +
@@ -151,8 +173,9 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
                         "Investment: " + interview.getInvestment() + "\n" +
                         "Interpersonal Skills: " + interview.getInterpersonal()+ "\n" +
                         "Commitment: " + interview.getCommitment() + "\n" +
-                        "Selling Skills "+ interview.getSelling() + "\n" +
-                        "Status "+ interview.getSelling();
+                        "Selling Skills "+ interview.getSelling() + "\n\n" +
+                        "Interview Status "+ (interview.hasPassed() ? "Passed":"Failed")+"\n\n\n"+
+                        "Overall Status "+ (interview.hasPassed() ? "Passed":"Failed");
             interviewResults.setText(interviewScores);
             if (interview.getSelected().equals(1)){
                 selected = 1;
@@ -164,11 +187,24 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
                 selected = 2;
                 selectedStatus.setText("Waiting List");
             }
+            selectionStatus.setSelection(interview.getSelected());
         }else{
             //Allow adding new Interview
             interviewResults.setText("No Interview. Click to interview");
             interviewResults.setOnClickListener(this);
         }
+        selectionStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                toggleCandidateSelectionStatus(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         return v;
     }
     public String formatEducation(int educationLevel){
@@ -279,6 +315,30 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
 
         }
     }
+    public void toggleCandidateSelectionStatus(Integer status){
+        Interview interview;
+        InterviewTable interviewTable = new InterviewTable(getContext());
+        interview = interviewTable.getInterviewByRegistrationId(sessionManagement.getSavedRegistration().getId());
+        if (interview != null){
+            if (status.equals(1)){ // the person has been selected
+                selected = 1;
+                interview.setSelected(1);
+                interviewTable.addData(interview);
+                selectedStatus.setText("Selected for Training");
+            }else if (status.equals(0)){
+                selected = 0;
+                interview.setSelected(0);
+                interviewTable.addData(interview);
+                selectedStatus.setText("Not selected for training");
+            } else {
+                selected = 2;
+                interview.setSelected(2);
+                interviewTable.addData(interview);
+                selectedStatus.setText("Waiting List");
+            }
+        }
+    }
+
 
 
 }
