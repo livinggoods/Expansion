@@ -4,12 +4,12 @@ package com.expansion.lg.kimaru.expansion.mzigos;
  * Created by kimaru on 5/12/17.
  */
 
-public class ChewReference {
+public class ChewReferral {
     String uuid, name, phone, title, country;
 
-    public ChewReference(){}
+    public ChewReferral(){}
 
-    public ChewReference(String uuid, String name, String phone, String title, String country){
+    public ChewReferral(String uuid, String name, String phone, String title, String country){
         this.uuid = uuid;
         this.name = name;
         this.phone = phone;
