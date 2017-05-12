@@ -5,16 +5,18 @@ package com.expansion.lg.kimaru.expansion.mzigos;
  */
 
 public class ChewReferral {
-    String uuid, name, phone, title, country;
+    String uuid, name, phone, title, country, recruitmentId;
 
     public ChewReferral(){}
 
-    public ChewReferral(String uuid, String name, String phone, String title, String country){
+    public ChewReferral(String uuid, String name, String phone, String title, String country,
+                        String recruitmentId){
         this.uuid = uuid;
         this.name = name;
         this.phone = phone;
         this.title = title;
         this.country = country;
+        this.recruitmentId = recruitmentId;
     }
 
     public String getUuid() {
@@ -55,5 +57,13 @@ public class ChewReferral {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getRecruitmentId() {
+        return recruitmentId;
+    }
+
+    public void setRecruitmentId(String recruitmentId) {
+        this.recruitmentId = recruitmentId;
     }
 }
