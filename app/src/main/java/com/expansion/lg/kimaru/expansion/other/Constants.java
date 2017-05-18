@@ -11,7 +11,7 @@ public class Constants {
     public static final String API_SERVER = CLOUD_ADDRESS + "/api/v1/sync/";
     public static final String PEER_SERVER = "http://192.168.43.1";
     public static final int PEER_SERVER_PORT = 8090;
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "expansion";
 
 

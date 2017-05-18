@@ -10,7 +10,7 @@ public class Registration {
 
     String recruitment, name, phone, gender, district, subcounty, division, village, mark, langs, education;
     String id, occupation, comment, picture, country, chewName, chewNumber, ward, cuName, linkFacility;
-    String otherTrainings, referralName, referralTitle, referralPhone, parish;
+    String otherTrainings, referralName, referralTitle, referralPhone, parish, chewUuid;
     Integer readEnglish, brac, bracChp, community, addedBy, proceed, synced;
     Long dob, dateMoved, dateAdded, noOfHouseholds, recruitmentTransportCost, transportCostToBranch;
     boolean chv, gokTrained, vht, accounts;
@@ -31,7 +31,7 @@ public class Registration {
                         String linkFacility, long noOfHouseholds, boolean isChv, boolean gokTrained,
                         String otherTrainings, String referralName, String referralTitle,
                         String referralPhone, boolean vht, boolean accounts, String parish,
-                        Long recruitmentTransportCost, Long transportCostToBranch) {
+                        Long recruitmentTransportCost, Long transportCostToBranch, String chewUuid) {
         this.name = mName;
         this.phone = mPhone;
         this.recruitment = mRecruitment;
@@ -74,6 +74,7 @@ public class Registration {
         this.parish = parish;
         this.recruitmentTransportCost = recruitmentTransportCost;
         this.transportCostToBranch = transportCostToBranch;
+        this.chewUuid = chewUuid;
     }
 
 
@@ -81,6 +82,11 @@ public class Registration {
     public String getName() {
         return name;
     }
+
+    public String getChewUuid() {
+        return chewUuid;
+    }
+
     public String getPhone() {
         return phone;
     }
@@ -400,6 +406,10 @@ public class Registration {
 
     public void setRead(Boolean read) {
         this.read = read;
+    }
+
+    public void setChewUuid(String chewUuid) {
+        this.chewUuid = chewUuid;
     }
 
     public void setWard(String ward) {

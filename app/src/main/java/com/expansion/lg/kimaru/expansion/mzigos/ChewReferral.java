@@ -6,13 +6,17 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 
 public class ChewReferral {
     String id, name, phone, title, country, recruitmentId;
+    //Some mapping Details that we shall use, esp for UG
+    String county, district, subCounty, communityUnit, village, mapping, lat, lon, mobilization;
     Integer synced;
     int color = -1;
 
     public ChewReferral(){}
 
     public ChewReferral(String id, String name, String phone, String title, String country,
-                        String recruitmentId, Integer synced){
+                        String recruitmentId, Integer synced, String county, String district,
+                        String subCounty, String communityUnit, String village, String mapping,
+                        String lat, String lon, String mobilization){
         this.id = id;
         this.name = name;
         this.phone = phone;
@@ -20,6 +24,51 @@ public class ChewReferral {
         this.country = country;
         this.recruitmentId = recruitmentId;
         this.synced = synced;
+        this.county = county;
+        this.district = district;
+        this.subCounty = subCounty;
+        this.communityUnit = communityUnit;
+        this.village = village;
+        this.mapping = mapping;
+        this.lat = lat;
+        this.lon = lon;
+        this.mobilization = mobilization;
+    }
+
+    public String getCommunityUnit() {
+        return communityUnit;
+    }
+
+    public String getCounty() {
+        return county;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public String getLon() {
+        return lon;
+    }
+
+    public String getMapping() {
+        return mapping;
+    }
+
+    public String getSubCounty() {
+        return subCounty;
+    }
+
+    public String getVillage() {
+        return village;
+    }
+
+    public String getMobilization() {
+        return mobilization;
     }
 
     public Integer getSynced() {
@@ -84,5 +133,41 @@ public class ChewReferral {
 
     public void setColor(int color) {
         this.color = color;
+    }
+
+    public void setCommunityUnit(String communityUnit) {
+        this.communityUnit = communityUnit;
+    }
+
+    public void setCounty(String county) {
+        this.county = county;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public void setLon(String lon) {
+        this.lon = lon;
+    }
+
+    public void setMapping(String mapping) {
+        this.mapping = mapping;
+    }
+
+    public void setSubCounty(String subCounty) {
+        this.subCounty = subCounty;
+    }
+
+    public void setVillage(String village) {
+        this.village = village;
+    }
+
+    public void setMobilization(String mobilization) {
+        this.mobilization = mobilization;
     }
 }

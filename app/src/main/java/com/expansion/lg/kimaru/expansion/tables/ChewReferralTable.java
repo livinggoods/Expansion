@@ -43,8 +43,18 @@ public class ChewReferralTable extends SQLiteOpenHelper {
     public static final String RECRUITMENT = "recruitment";
     public static final String NAME = "name";
     public static final String COUNTRY = "country";
+    public static final String COUNTY = "county";
+    public static final String DISTRICT = "district";
+    public static final String SUBCOUNTY = "subcounty";
+    public static final String COMMUNITY_UNIT = "community_unit";
+    public static final String VILLAGE = "village";
+    public static final String MAPPING = "mapping";
+    public static final String LAT = "lat";
+    public static final String LON = "lon";
+    public static final String MOBILIZATION = "mobilization";
     public static final String SYNCED = "synced";
-    String [] columns=new String[]{ID, NAME, PHONE, TITLE, COUNTRY, RECRUITMENT, SYNCED};
+    String [] columns=new String[]{ID, NAME, PHONE, TITLE, COUNTRY, RECRUITMENT, SYNCED,
+            COUNTY, DISTRICT, SUBCOUNTY, COMMUNITY_UNIT, VILLAGE, MAPPING, MOBILIZATION, LAT, LON};
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ","
             + NAME + varchar_field + ", "
@@ -52,6 +62,15 @@ public class ChewReferralTable extends SQLiteOpenHelper {
             + TITLE + varchar_field + ", "
             + COUNTRY + varchar_field + ", "
             + SYNCED + integer_field + ", "
+            + COUNTY + varchar_field + ", "
+            + DISTRICT + varchar_field + ", "
+            + SUBCOUNTY + varchar_field + ", "
+            + COMMUNITY_UNIT + varchar_field + ", "
+            + VILLAGE + varchar_field + ", "
+            + MAPPING + varchar_field + ", "
+            + MOBILIZATION + varchar_field + ", "
+            + LAT + varchar_field + ", "
+            + LON + varchar_field + ", "
             + RECRUITMENT + varchar_field + "); ";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
@@ -73,7 +92,10 @@ public class ChewReferralTable extends SQLiteOpenHelper {
         // We need to select all of them, and for each, we shall create the referrals and return the
         //IDs. Then we update the registration
         Log.w("referral", "upgrading database from" + oldVersion + "to" + newVersion);
-        db.execSQL(DATABASE_DROP);
+
+        if (oldVersion < 2){
+            upgradeVersion2(db);
+        }
     }
 
     public long addChewReferral(ChewReferral chewReferral) {
@@ -87,6 +109,16 @@ public class ChewReferralTable extends SQLiteOpenHelper {
         cv.put(COUNTRY, chewReferral.getCountry());
         cv.put(RECRUITMENT, chewReferral.getRecruitmentId());
         cv.put(SYNCED, chewReferral.getSynced());
+        cv.put(COUNTY, chewReferral.getCounty());
+        cv.put(DISTRICT, chewReferral.getDistrict());
+        cv.put(SUBCOUNTY, chewReferral.getSubCounty());
+        cv.put(COMMUNITY_UNIT, chewReferral.getCommunityUnit());
+        cv.put(VILLAGE, chewReferral.getVillage());
+        cv.put(MAPPING, chewReferral.getMapping());
+        cv.put(MOBILIZATION, chewReferral.getMobilization());
+        cv.put(LAT, chewReferral.getLat());
+        cv.put(LON, chewReferral.getLon());
+        //COUNTY, DISTRICT, SUBCOUNTY, COMMUNITY_UNIT, VILLAGE, MAPPING, MOBILIZATION, LAT, LON
         long id;
         if (isExist(chewReferral)){
             cv.put(SYNCED, 0);
@@ -128,6 +160,53 @@ public class ChewReferralTable extends SQLiteOpenHelper {
             chewReferral.setCountry(cursor.getString(4));
             chewReferral.setRecruitmentId(cursor.getString(5));
             chewReferral.setSynced(cursor.getInt(6));
+            //COUNTY, DISTRICT, SUBCOUNTY, COMMUNITY_UNIT, VILLAGE, MAPPING, MOBILIZATION, LAT, LON
+            chewReferral.setCounty(cursor.getString(7));
+            chewReferral.setDistrict(cursor.getString(8));
+            chewReferral.setSubCounty(cursor.getString(9));
+            chewReferral.setCommunityUnit(cursor.getString(10));
+            chewReferral.setVillage(cursor.getString(11));
+            chewReferral.setMapping(cursor.getString(12));
+            chewReferral.setMobilization(cursor.getString(13));
+            chewReferral.setLat(cursor.getString(14));
+            chewReferral.setLon(cursor.getString(15));
+
+            chewReferralList.add(chewReferral);
+        }
+        db.close();
+        return chewReferralList;
+    }
+
+    public List<ChewReferral> getChewReferralByPhone(String phone) {
+
+        SQLiteDatabase db=getReadableDatabase();
+
+        String whereClause = PHONE+" = ?";
+        String[] whereArgs = new String[] {
+                String.valueOf(phone),
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        List<ChewReferral> chewReferralList = new ArrayList<>();
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            ChewReferral chewReferral = new ChewReferral();
+
+            chewReferral.setId(cursor.getString(0));
+            chewReferral.setName(cursor.getString(1));
+            chewReferral.setPhone(cursor.getString(2));
+            chewReferral.setTitle(cursor.getString(3));
+            chewReferral.setCountry(cursor.getString(4));
+            chewReferral.setRecruitmentId(cursor.getString(5));
+            chewReferral.setSynced(cursor.getInt(6));
+            chewReferral.setCounty(cursor.getString(7));
+            chewReferral.setDistrict(cursor.getString(8));
+            chewReferral.setSubCounty(cursor.getString(9));
+            chewReferral.setCommunityUnit(cursor.getString(10));
+            chewReferral.setVillage(cursor.getString(11));
+            chewReferral.setMapping(cursor.getString(12));
+            chewReferral.setMobilization(cursor.getString(13));
+            chewReferral.setLat(cursor.getString(14));
+            chewReferral.setLon(cursor.getString(15));
 
             chewReferralList.add(chewReferral);
         }
@@ -152,6 +231,15 @@ public class ChewReferralTable extends SQLiteOpenHelper {
             chewReferral.setCountry(cursor.getString(4));
             chewReferral.setRecruitmentId(cursor.getString(5));
             chewReferral.setSynced(cursor.getInt(6));
+            chewReferral.setCounty(cursor.getString(7));
+            chewReferral.setDistrict(cursor.getString(8));
+            chewReferral.setSubCounty(cursor.getString(9));
+            chewReferral.setCommunityUnit(cursor.getString(10));
+            chewReferral.setVillage(cursor.getString(11));
+            chewReferral.setMapping(cursor.getString(12));
+            chewReferral.setMobilization(cursor.getString(13));
+            chewReferral.setLat(cursor.getString(14));
+            chewReferral.setLon(cursor.getString(15));
 
             chewReferralList.add(chewReferral);
         }
@@ -178,6 +266,15 @@ public class ChewReferralTable extends SQLiteOpenHelper {
             chewReferral.setCountry(cursor.getString(4));
             chewReferral.setRecruitmentId(cursor.getString(5));
             chewReferral.setSynced(cursor.getInt(6));
+            chewReferral.setCounty(cursor.getString(7));
+            chewReferral.setDistrict(cursor.getString(8));
+            chewReferral.setSubCounty(cursor.getString(9));
+            chewReferral.setCommunityUnit(cursor.getString(10));
+            chewReferral.setVillage(cursor.getString(11));
+            chewReferral.setMapping(cursor.getString(12));
+            chewReferral.setMobilization(cursor.getString(13));
+            chewReferral.setLat(cursor.getString(14));
+            chewReferral.setLon(cursor.getString(15));
 
             db.close();
 
@@ -237,5 +334,6 @@ public class ChewReferralTable extends SQLiteOpenHelper {
         db.close();
         return results;
     }
+    private void upgradeVersion2(SQLiteDatabase db) {}
 }
 

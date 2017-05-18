@@ -116,7 +116,6 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
     List<String> chewReferrals = new ArrayList<String>();
 
     List<Education> educationList = new ArrayList<Education>();
-    private LinearLayout parentLayout;
 
     public NewKeRegistrationFragment() {
         // Required empty public constructor
@@ -262,8 +261,6 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 layout.addView(refPhone);
 
                 builder.setView(layout);
-
-
 
                 // Set up the buttons
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -431,6 +428,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
 
                 Integer applicantBracChp = 0; // = hasApplicantWorkedAsBracChp == "Yes" ? 1 : 0;
 
+                String chewUuid = chewReferralList.get(selectChew.getSelectedItemPosition()).getId();
 
                 Integer communityParticipation = mCommunity.getCheckedRadioButtonId();
                 RadioButton hasCommunityParticipation =(RadioButton) mCommunity.findViewById(communityParticipation);
@@ -491,7 +489,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                         applicantAddedBy, applicantProceed, applicantDateAdded, applicantSync, applicantChewName,
                         applicantChewNumber, applicantWard, applicantCuName, applicantLinkFacility,
                         applicantNoOfHouseholds, applicantIsChv, isGokTrained, applicantOtherTrainings,
-                        "", "","",false, applicantAccounts, "", recruitmentTransportCost,transportCostToBranch);
+                        "", "","",false, applicantAccounts, "", recruitmentTransportCost,transportCostToBranch, chewUuid);
 
                 // Before saving, do some validations
                 // Years in location should always be less than age
@@ -515,7 +513,8 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                     mVillage.setText("");
                     mMark.setText("");
                     mLangs.setText("");
-                    //educationLevel
+                    educationLevel.setSelection(0);
+                    selectChew.setSelection(0);
                     mOccupation.setText("");
                     mDob.setText("");
                     editChewName.setText("");
@@ -532,7 +531,11 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                     mDateMoved.setText("");
                     mCommunity.clearCheck();
                     editingRegistration = null;
+                    editBranchTransportCost.setText("");
+                    mComment.setText("");
+                    editRecruitmentTransportCost.setText("");
                     mName.requestFocus();
+
 
                 }
                 break;
@@ -629,10 +632,14 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 }
                 x++;
             }
-
-            // educationLevel.setSelection(Integer.valueOf(editingRegistration.getEducation()) - 1, true);
-
-
+            x = 0;
+            for (ChewReferral c : chewReferralList){
+                if (c.getId().equalsIgnoreCase(editingRegistration.getChewUuid())){
+                    selectChew.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
             mOccupation.setText(editingRegistration.getOccupation());
             mDob.setText(new DisplayDate(Long.valueOf(editingRegistration.getDob())).widgetDateOnly());
             editChewName.setText(editingRegistration.getChewName());
@@ -653,6 +660,8 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
             mDateMoved.setText(editingRegistration.getDateMoved().toString());
             mCommunity.check(editingRegistration.getCommunity().equals(1) ? R.id.radioCommMbrYes : R.id.radioCommMbrNo);
             mName.requestFocus();
+            editBranchTransportCost.setText(String.valueOf(editingRegistration.getTransportCostToBranch()));
+            editRecruitmentTransportCost.setText(String.valueOf(editingRegistration.getRecruitmentTransportCost()));
         }
     }
 }

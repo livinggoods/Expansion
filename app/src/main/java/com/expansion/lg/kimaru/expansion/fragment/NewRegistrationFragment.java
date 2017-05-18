@@ -2,15 +2,20 @@ package com.expansion.lg.kimaru.expansion.fragment;
 /**
  * Created by kimaru on 3/11/17.
  */
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.telephony.PhoneNumberUtils;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -24,10 +29,12 @@ import android.support.v4.app.DialogFragment;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.other.SpinnersCursorAdapter;
+import com.expansion.lg.kimaru.expansion.tables.ChewReferralTable;
 import com.expansion.lg.kimaru.expansion.tables.EducationTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 
@@ -64,9 +71,9 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     EditText mName;
     EditText mPhone;
     RadioGroup mGender;
-    EditText editReferralName;
-    EditText editReferralNumber;
-    EditText editReferralTitle;
+    //EditText editReferralName;
+    //EditText editReferralNumber;
+    //EditText editReferralTitle;
     RadioGroup editVht;
     EditText editSubCounty;
     EditText editParish;
@@ -89,7 +96,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     EditText mProceed;
     EditText mDateAdded;
     EditText mSync;
-    Spinner educationLevel;
+    Spinner educationLevel, selectChew;
 
     Button buttonSave, buttonList;
 
@@ -106,8 +113,13 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     Integer userId;
     Registration editingRegistration = null;
 
-    List<EditText> kenyanFieldsCreated = new ArrayList<EditText>();
-    private LinearLayout parentLayout;
+    List<ChewReferral> chewReferralList = new ArrayList<ChewReferral>();
+    List<String> chewReferrals = new ArrayList<String>();
+
+    private String referralTitle = "";
+    private String referralName = "";
+    private String referralPhone = "";
+
 
     public NewRegistrationFragment() {
         // Required empty public constructor
@@ -171,6 +183,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         mLangs = (EditText) v.findViewById(R.id.editOtherlanguages);
         mOccupation = (EditText) v.findViewById(R.id.editOccupation);
         mDob = (EditText) v.findViewById(R.id.editDob);
+        selectChew = (Spinner) v.findViewById(R.id.selectChewReferral);
         mComment = (EditText) v.findViewById(R.id.editComment);
         mReadEnglish = (RadioGroup) v.findViewById(R.id.editReadEnglish);
         mDateMoved = (EditText) v.findViewById(R.id.editRelocated);
@@ -179,29 +192,24 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         mBracChp = (RadioGroup) v.findViewById(R.id.editBracChp);
         mCommunity = (RadioGroup) v.findViewById(R.id.editCommunityMembership);
         educationLevel = (Spinner) v.findViewById(R.id.selectEdducation);
-        editReferralName = (EditText) v.findViewById(R.id.editReferralName);
-        editReferralNumber = (EditText) v.findViewById(R.id.editReferralNumber);
-        editReferralTitle = (EditText) v.findViewById(R.id.editReferralTitle);
+        //editReferralName = (EditText) v.findViewById(R.id.editReferralName);
+        //editReferralNumber = (EditText) v.findViewById(R.id.editReferralNumber);
+        //editReferralTitle = (EditText) v.findViewById(R.id.editReferralTitle);
         editSubCounty = (EditText) v.findViewById(R.id.editSubCounty);
         editParish = (EditText) v.findViewById(R.id.editParish);
         editVht = (RadioGroup) v.findViewById(R.id.editVht);
 
 
+        addChewReferrals();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, chewReferrals);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        selectChew.setAdapter(adapter);
+        selectChew.setOnItemSelectedListener(onSelectedChewListener);
 
         addEducationSelectList();
         setUpEditingMode();
-
-        /*
-        Th
-        mySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Object item = parent.getItemAtPosition(position);
-    }
-    public void onNothingSelected(AdapterView<?> parent) {
-    }
-});
-         */
-
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
@@ -212,6 +220,87 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         mDob.setOnClickListener(this);
         return v;
     }
+    AdapterView.OnItemSelectedListener onSelectedChewListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (position > chewReferralList.size() -1){
+                Toast.makeText(getContext(), "Add new Referral" , Toast.LENGTH_SHORT).show();
+                // Show Dialog to add the Referral
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Add new Referral");
+
+                // Set up the input
+                final EditText title = new EditText(getContext());
+                final EditText name = new EditText(getContext());
+                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                // Context context = mapView.getContext();
+                LinearLayout layout = new LinearLayout(getContext());
+                layout.setOrientation(LinearLayout.VERTICAL);
+
+                final EditText titleBox = new EditText(getContext());
+                titleBox.setHint("Title");
+                layout.addView(titleBox);
+
+                final EditText refName = new EditText(getContext());
+                refName.setHint("Referral Name");
+                layout.addView(refName);
+
+                final EditText refPhone = new EditText(getContext());
+                refPhone.setHint("Phone");
+                refPhone.setInputType(InputType.TYPE_CLASS_PHONE);
+                layout.addView(refPhone);
+
+                builder.setView(layout);
+
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        referralTitle = titleBox.getText().toString();
+                        referralName = refName.getText().toString();
+                        referralPhone = refPhone.getText().toString();
+                        // we save the referral, refresh the list and rebind the Spinner, and set selected
+                        String uuid = UUID.randomUUID().toString();
+                        ChewReferral chew = new ChewReferral(uuid, referralName, referralPhone, referralTitle,
+                                session.getSavedRecruitment().getCountry(), session.getSavedRecruitment().getId(), 0);
+                        ChewReferralTable chewTb = new ChewReferralTable(getContext());
+                        chewTb.addChewReferral(chew);
+
+                        // clear chews
+                        chewReferralList.clear();
+                        chewReferrals.clear();
+                        addChewReferrals();
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                                android.R.layout.simple_spinner_item, chewReferrals);
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        selectChew.setAdapter(adapter);
+
+                        //lets set the selected
+                        int x = 0;
+                        for (ChewReferral e : chewReferralList) {
+                            if (e.getId().equalsIgnoreCase(uuid)){
+                                selectChew.setSelection(x, true);
+                                break;
+                            }
+                            x++;
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -235,14 +324,6 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 newFragment.show(getFragmentManager(), "DatePicker");
                 break;
 
-//            case R.id.editRelocated:
-//                DialogFragment dateMovedFragment = new DatePickerFragment().newInstance(R.id.editRelocated);
-//                dateMovedFragment.show(getFragmentManager(), "Datepicker");
-//                break;
-//            mName, mPhone, mGender, mDistrict,
-//                    mSubcounty, mDivision, mVillage, mMark, mLangs, mEducation, mOccupation,
-//                    mComment, mDob, mReadEnglish, mRecruitment, mDateMoved,
-//                    mBrac, mBracChp, mCommunity, mAddedBy, mProceed, mDateAdded, mSynced
             case R.id.buttonSaveRegistration:
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                 Long currentDate =  new Date().getTime();
@@ -266,9 +347,9 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 boolean isVht = vht.getText().toString().equalsIgnoreCase("Yes");
 
 
-                String referralName = editReferralName.getText().toString();
-                String referralNumber = editReferralNumber.getText().toString();
-                String referralTitle = editReferralTitle.getText().toString();
+                String referralName = ""; //editReferralName.getText().toString();
+                String referralNumber = ""; //editReferralNumber.getText().toString();
+                String referralTitle = ""; //editReferralTitle.getText().toString();
                 String applicantParish = editParish.getText().toString();
 
                 String applicantDistrict = "";
@@ -368,6 +449,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                     Toast.makeText(getContext(), "Education is required", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                String chewUuid = chewReferralList.get(selectChew.getSelectedItemPosition()).getId();
 
                 // Save Registration
 //                    Registration registration = new Registration(mName, mNumber, mEmail);
@@ -379,7 +461,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                         country, applicantDateMoved, applicantBrac, applicantBracChp, applicantCommunity,
                         applicantAddedBy, applicantProceed, applicantDateAdded, applicantSync, "",
                         "", "", "", "", 0L, false, false, "", referralName, referralTitle,
-                        referralNumber, isVht, false, applicantParish, 0L, 0L);
+                        referralNumber, isVht, false, applicantParish, 0L, 0L, chewUuid);
 
                 // Before saving, do some validations
                 // Years in location should always be less than age
@@ -407,9 +489,9 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                     mDob.setText("");
                     mDateMoved.setText("");
                     mName.requestFocus();
-                    editReferralName.setText("");
-                    editReferralTitle.setText("");
-                    editReferralNumber.setText("");
+                    // editReferralName.setText("");
+                    // editReferralTitle.setText("");
+                    // editReferralNumber.setText("");
                     editParish.setText("");
                     editVht.clearCheck();
                 }
@@ -469,9 +551,9 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
             mOccupation.setText(editingRegistration.getOccupation());
             mDob.setText(new DisplayDate(Long.valueOf(editingRegistration.getDob())).widgetDateOnly());
             mDateMoved.setText(editingRegistration.getDateMoved().toString());
-            editReferralName.setText(editingRegistration.getReferralName());
-            editReferralTitle.setText(editingRegistration.getReferralTitle());
-            editReferralNumber.setText(editingRegistration.getReferralPhone());
+            //editReferralName.setText(editingRegistration.getReferralName());
+            //editReferralTitle.setText(editingRegistration.getReferralTitle());
+            //editReferralNumber.setText(editingRegistration.getReferralPhone());
             editParish.setText(editingRegistration.getParish());
             editSubCounty.setText(editingRegistration.getSubcounty());
             mComment.setText(editingRegistration.getComment());
@@ -500,6 +582,22 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                     R.id.radioCommMbrYes : R.id.radioCommMbrNo);
 
             educationLevel.setSelection(Integer.valueOf(editingRegistration.getEducation()) - 1, true);
+            int x = 0;
+            for (ChewReferral c : chewReferralList){
+                if (c.getId().equalsIgnoreCase(editingRegistration.getChewUuid())){
+                    selectChew.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
         }
+    }
+    public void addChewReferrals() {
+        ChewReferralTable chewReferralTable = new ChewReferralTable(getContext());
+        chewReferralList = chewReferralTable.getChewReferralByRecruitmentId(session.getSavedRecruitment().getId());
+        for (ChewReferral chewReferral: chewReferralList){
+            chewReferrals.add(chewReferral.getName());
+        }
+        chewReferrals.add("Add New");
     }
 }
