@@ -6,7 +6,7 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 
 public class KeCounty {
 
-    String id;
+    Integer id;
     String countyName;
     String country;
     String lat;
@@ -46,7 +46,7 @@ public class KeCounty {
 
     }
 
-    public KeCounty(String id, String countyName, String countyCode, String country, String lat,
+    public KeCounty(Integer id, String countyName, String countyCode, String country, String lat,
                     String lon, String contactPerson, String contactPersonPhone, String mainTown,
                     String countySupport, String chvActivityLevel, String countyPopulation,
                     String noOfVillages, String mainTownPopulation, String servicePopulation,
@@ -131,11 +131,11 @@ public class KeCounty {
         this.country = country;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
