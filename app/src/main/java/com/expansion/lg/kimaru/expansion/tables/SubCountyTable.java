@@ -119,7 +119,9 @@ public class SubCountyTable extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w("VillageTable", "upgrading database from" + oldVersion + "to" + newVersion);
-        db.execSQL(DATABASE_DROP);
+        if (oldVersion < 2){
+            upgradeVersion2(db);
+        }
     }
 
     public long addData(SubCounty subCounty) {
@@ -316,6 +318,6 @@ public class SubCountyTable extends SQLiteOpenHelper {
 
         return subCounties;
     }
-
+    private void upgradeVersion2(SQLiteDatabase db) {}
 }
 

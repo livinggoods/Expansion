@@ -130,7 +130,9 @@ public class VillageTable extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w("VillageTable", "upgrading database from" + oldVersion + "to" + newVersion);
-        db.execSQL(DATABASE_DROP);
+        if (oldVersion < 2){
+            upgradeVersion2(db);
+        }
     }
 
     public long addData(Village village) {
@@ -273,5 +275,6 @@ public class VillageTable extends SQLiteOpenHelper {
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
         return cursor;
     }
+    private void upgradeVersion2(SQLiteDatabase db) {}
 }
 

@@ -67,7 +67,9 @@ public class UserTable extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         Log.w("RegistrationTable", "upgrading database from" + oldVersion + "to" + newVersion);
-        db.execSQL(DATABASE_DROP);
+        if (oldVersion < 2){
+            upgradeVersion2(db);
+        }
     }
 
     public long addUser(User user) {
@@ -192,5 +194,6 @@ public class UserTable extends SQLiteOpenHelper {
         db.close();
         return results;
     }
+    private void upgradeVersion2(SQLiteDatabase db) {}
 }
 

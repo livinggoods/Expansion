@@ -158,9 +158,9 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w("RegistrationTable", "upgrading database from" + oldVersion + "to" + newVersion);
-        db.execSQL(DATABASE_DROP);
-        db.execSQL(PARTNERS_DROP);
-        db.execSQL(PARTNERS_CU_DROP);
+        if (oldVersion < 2){
+            upgradeVersion2(db);
+        }
     }
 
     public long addCommunityUnitData(CommunityUnit communityUnit) {
@@ -353,5 +353,6 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
         return cursor;
     }
+    private void upgradeVersion2(SQLiteDatabase db) {}
 }
 
