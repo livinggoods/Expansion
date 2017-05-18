@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by kimaru on 3/11/17.
@@ -164,7 +165,16 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         Log.w("RegistrationTable", "upgrading database from" + oldVersion + "to" + newVersion);
-        db.execSQL(DATABASE_DROP);
+        // need to sequentially upgrade the database
+        if (oldVersion < 2){
+            upgradeVersion2(db);
+        }
+        //if (oldVersion < 3){
+        //    upgradeVersion3(db);
+        //}
+        //if (oldVersion < 3){
+        //    upgradeVersion3(db);
+        //}
     }
 
     public long addData(Registration registration) {
@@ -214,6 +224,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
         cv.put(ACCOUNTS, registration.isAccounts() ? 1 : 0);
         cv.put(REC_TRANSPORT, registration.getRecruitmentTransportCost());
         cv.put(BRANCH_TRANPORT, registration.getTransportCostToBranch());
+        cv.put(CHEW_ID, registration.getChewUuid());
 
         long id;
         if (isExist(registration)){
@@ -294,6 +305,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setRecruitmentTransportCost(cursor.getLong(40));
             registration.setTransportCostToBranch(cursor.getLong(41));
             registration.setPicture("");
+            registration.setChewUuid(cursor.getString(42));
             registrationList.add(registration);
         }
         db.close();
@@ -367,6 +379,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setAccounts(cursor.getInt(39) == 1);
             registration.setRecruitmentTransportCost(cursor.getLong(40));
             registration.setTransportCostToBranch(cursor.getLong(41));
+            registration.setChewUuid(cursor.getString(42));
             registration.setPicture("");
             registrationList.add(registration);
         }
@@ -429,6 +442,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setAccounts(cursor.getInt(39) == 1);
             registration.setRecruitmentTransportCost(cursor.getLong(40));
             registration.setTransportCostToBranch(cursor.getLong(41));
+            registration.setChewUuid(cursor.getString(42));
             registration.setPicture("");
             db.close();
             return registration;
@@ -477,7 +491,6 @@ public class RegistrationTable extends SQLiteOpenHelper {
 
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
 
-
             Registration registration=new Registration();
 
             registration.setId(cursor.getString(0));
@@ -522,6 +535,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setAccounts(cursor.getInt(39) == 1);
             registration.setRecruitmentTransportCost(cursor.getLong(40));
             registration.setTransportCostToBranch(cursor.getLong(41));
+            registration.setChewUuid(cursor.getString(42));
             registration.setPicture("");
             registrationList.add(registration);
         }
@@ -589,6 +603,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setAccounts(cursor.getInt(39) == 1);
             registration.setRecruitmentTransportCost(cursor.getLong(40));
             registration.setTransportCostToBranch(cursor.getLong(41));
+            registration.setChewUuid(cursor.getString(42));
             registration.setPicture("");
             registrationList.add(registration);
         }
@@ -656,6 +671,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setAccounts(cursor.getInt(39) == 1);
             registration.setRecruitmentTransportCost(cursor.getLong(40));
             registration.setTransportCostToBranch(cursor.getLong(41));
+            registration.setChewUuid(cursor.getString(42));
             registration.setPicture("");
             registrationList.add(registration);
         }
@@ -709,6 +725,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setAccounts(jsonObject.getInt(ACCOUNTS) == 1);
             registration.setRecruitmentTransportCost(jsonObject.getLong(REC_TRANSPORT));
             registration.setTransportCostToBranch(jsonObject.getLong(BRANCH_TRANPORT));
+            registration.setChewUuid(jsonObject.getString(CHEW_ID));
             registration.setPicture("");
             this.addData(registration);
         }catch (Exception e){}
@@ -791,5 +808,120 @@ public class RegistrationTable extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return results;
+    }
+
+    //I will keep migration code in functions
+    private void upgradeVersion2(SQLiteDatabase db) {
+        db.execSQL(DB_UPDATE_V2);
+
+        String [] columns=new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
+                VILLAGE, MARK, READ_ENGLISH, DATE_MOVED, LANGS, BRAC, BRAC_CHP, EDUCATION, OCCUPATION,
+                COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED, RECRUITMENT, COUNTRY,
+                CHEW_NAME, CHEW_NUMBER, WARD, CU_NAME, LINK_FACILITY, HOUSEHOLDS, TRAININGS, CHV,
+                GOK_TRAINED, REFERRAL_NAME, REFERRAL_NUMBER, REFERRAL_TITLE, VHT, PARISH, ACCOUNTS,
+                REC_TRANSPORT, BRANCH_TRANPORT};
+        Cursor cursor = db.query(TABLE_NAME, columns, null, null, null, null, null, null);
+        ChewReferralTable chewReferralTable = new ChewReferralTable(context);
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            // with this selection, let us extract the details
+            //
+            // IF CHEW EXISTS DO NOT CREATE< JUST UPDATE THE REGISTRATION
+            //
+            //getChewByPhone();
+            //getChewbyName();
+            String country = cursor.getString(24);
+            if (country.equalsIgnoreCase("UG")){
+                String id, name, phone, title, recruitmentID;
+                id = UUID.randomUUID().toString();
+                name = cursor.getString(34);
+                phone = cursor.getString(35);
+                title = cursor.getString(36);
+                recruitmentID = cursor.getString(23);
+                // check if the referral is already in the DB
+                List<ChewReferral> chews = chewReferralTable.getChewReferralByPhone(phone);
+                Integer savedChews = chews.size();
+                ContentValues cv = new ContentValues();
+                if (savedChews.equals(0)){
+                    //does not exist
+                    ChewReferral chew = new ChewReferral(id, name, phone, title, country, recruitmentID, 0,
+                            "", "", "", "", "", "", "", "", "");
+                    chewReferralTable.addChewReferral(chew);
+                    cv.put(CHEW_ID, id);
+                    db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+
+                }else if(savedChews.equals(1)) {
+                    //exists, and it is the only one, get it and
+                    ChewReferral c = chews.get(0);
+                    cv.put(CHEW_ID, c.getId());
+                    db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+
+                }else {
+                    // it is more than one
+                    // we compare the names, if match, we update, if not, we create a new one
+                    for (ChewReferral c : chews){
+                        if (c.getName().equalsIgnoreCase(name)){
+                            // we have a match
+                            id = c.getId();
+                            name = c.getName();
+                            phone = c.getPhone();
+                            title = c.getTitle();
+                            recruitmentID = c.getRecruitmentId();
+                            break;
+                        }
+                    }
+                    ChewReferral chew = new ChewReferral(id, name, phone, title, country, recruitmentID, 0,
+                            "", "", "", "", "", "", "", "", "");
+                    chewReferralTable.addChewReferral(chew);
+                    cv.put(CHEW_ID, id);
+                    db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                }
+
+            }else{
+                //we call them CHEW
+                String id, name, phone, title, recruitmentID, synced;
+                id = UUID.randomUUID().toString();
+                name = cursor.getString(25);
+                phone = cursor.getString(26);
+                title = "CHEW";
+                recruitmentID = cursor.getString(23);
+                List<ChewReferral> chews = chewReferralTable.getChewReferralByPhone(phone);
+                Integer savedChews = chews.size();
+                ContentValues cv = new ContentValues();
+                if (savedChews.equals(0)){
+                    ChewReferral chew = new ChewReferral(id, name, phone, title, country, recruitmentID, 0,
+                            "", "", "", "", "", "", "", "", "");
+                    chewReferralTable.addChewReferral(chew);
+                    cv.put(CHEW_ID, id);
+                    db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                }else if(savedChews.equals(1)) {
+                    //exists, and it is the only one, get it and
+                    ChewReferral c = chews.get(0);
+                    cv.put(CHEW_ID, c.getId());
+                    db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                }else {
+                    // it is more than one
+                    // we compare the names, if match, we update, if not, we create a new one
+                    for (ChewReferral c : chews){
+                        if (c.getName().equalsIgnoreCase(name)){
+                            // we have a match
+                            id = c.getId();
+                            name = c.getName();
+                            phone = c.getPhone();
+                            title = c.getTitle();
+                            recruitmentID = c.getRecruitmentId();
+                            break;
+                        }
+                    }
+                    ChewReferral chew = new ChewReferral(id, name, phone, title, country, recruitmentID, 0,
+                            "", "", "", "", "", "", "", "", "");
+                    chewReferralTable.addChewReferral(chew);
+                    cv.put(CHEW_ID, id);
+                    db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                }
+            }
+        }
+        // we can remove the unnecessary fields
+        // but SQLite does not allow deleting the rows, too bad
+
     }
 }
