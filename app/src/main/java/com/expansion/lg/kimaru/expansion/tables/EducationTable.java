@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.Education;
+import com.expansion.lg.kimaru.expansion.other.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,8 +25,8 @@ import java.util.List;
 public class EducationTable extends SQLiteOpenHelper {
 
     public static final String TABLE_NAME="education";
-    public static final String DATABASE_NAME="expansion";
-    public static final int DATABASE_VERSION=1;
+    public static final String DATABASE_NAME= Constants.DATABASE_NAME;
+    public static final int DATABASE_VERSION= Constants.DATABASE_VERSION;
 
     //String id, level_name, level_type, hierachy, country;
 
@@ -49,7 +50,7 @@ public class EducationTable extends SQLiteOpenHelper {
 
     String [] columns=new String[]{ID, LEVEL_NAME, TYPE, HIERACHY, COUNTRY};
 
-    public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
+    public static final String DATABASE_DROP="DROP TABLE IF EXISTS " + TABLE_NAME;
 
     public EducationTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);

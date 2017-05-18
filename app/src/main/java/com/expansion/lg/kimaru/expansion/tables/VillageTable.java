@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.Village;
+import com.expansion.lg.kimaru.expansion.other.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +21,8 @@ import java.util.List;
 public class VillageTable extends SQLiteOpenHelper {
 
     public static final String TABLE_NAME="village";
-    public static final String DATABASE_NAME="expansion";
-    public static final int DATABASE_VERSION=1;
+    public static final String DATABASE_NAME= Constants.DATABASE_NAME;
+    public static final int DATABASE_VERSION= Constants.DATABASE_VERSION;
 
 
     public static String varchar_field = " varchar(512) ";

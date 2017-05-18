@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
+import com.expansion.lg.kimaru.expansion.other.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,8 +27,8 @@ public class InterviewTable extends SQLiteOpenHelper {
 
     public static final String TABLE_NAME="interview";
     public static final String JSON_ROOT="interviews";
-    public static final String DATABASE_NAME="expansion";
-    public static final int DATABASE_VERSION=1;
+    public static final String DATABASE_NAME= Constants.DATABASE_NAME;
+    public static final int DATABASE_VERSION= Constants.DATABASE_VERSION;
 
     public static String varchar_field = " varchar(512) ";
     public static String primary_field = " _id INTEGER PRIMARY KEY AUTOINCREMENT ";

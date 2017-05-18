@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Partners;
+import com.expansion.lg.kimaru.expansion.other.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +24,8 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
     public static final String TABLE_NAME="community_unit";
     public static final String PARTNERS_TABLE="partners";
     public static final String CU_PARTNERS_TABLE="cu_partners";
-    public static final String DATABASE_NAME="expansion";
-    public static final int DATABASE_VERSION=1;
+    public static final String DATABASE_NAME= Constants.DATABASE_NAME;
+    public static final int DATABASE_VERSION= Constants.DATABASE_VERSION;
 
 
     public static String varchar_field = " varchar(512) ";

@@ -5,26 +5,37 @@ package com.expansion.lg.kimaru.expansion.mzigos;
  */
 
 public class ChewReferral {
-    String uuid, name, phone, title, country, recruitmentId;
+    String id, name, phone, title, country, recruitmentId;
+    Integer synced;
+    int color = -1;
 
     public ChewReferral(){}
 
-    public ChewReferral(String uuid, String name, String phone, String title, String country,
-                        String recruitmentId){
-        this.uuid = uuid;
+    public ChewReferral(String id, String name, String phone, String title, String country,
+                        String recruitmentId, Integer synced){
+        this.id = id;
         this.name = name;
         this.phone = phone;
         this.title = title;
         this.country = country;
         this.recruitmentId = recruitmentId;
+        this.synced = synced;
     }
 
-    public String getUuid() {
-        return uuid;
+    public Integer getSynced() {
+        return synced;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setSynced(Integer synced) {
+        this.synced = synced;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -65,5 +76,13 @@ public class ChewReferral {
 
     public void setRecruitmentId(String recruitmentId) {
         this.recruitmentId = recruitmentId;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 }
