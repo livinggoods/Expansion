@@ -36,6 +36,7 @@ public class KeCounty {
     boolean recommended;
     Integer dateAdded;
     Integer addedBy;
+    boolean lgPresent;
 
     //boolean isRead, isImportant;
     int color = -1;
@@ -45,14 +46,15 @@ public class KeCounty {
 
     }
 
-    public KeCounty(String id, String countyName, String countyCode, String country, String lat, String lon, String contactPerson,
-                    String contactPersonPhone, String mainTown, String countySupport,
-                    String chvActivityLevel, String countyPopulation, String noOfVillages,
-                    String mainTownPopulation, String servicePopulation, String populationDensity,
-                    String transportCost, String majorRoads, String healtFacilities,
-                    String privateClinicsInTown, String privateClinicsInRadius, String communityUnits,
-                    String mainSupermarkets, String mainBanks, String anyMajorBusiness,
-                    String comments, boolean recommended, Integer dateAdded, Integer addedBy) {
+    public KeCounty(String id, String countyName, String countyCode, String country, String lat,
+                    String lon, String contactPerson, String contactPersonPhone, String mainTown,
+                    String countySupport, String chvActivityLevel, String countyPopulation,
+                    String noOfVillages, String mainTownPopulation, String servicePopulation,
+                    String populationDensity, String transportCost, String majorRoads,
+                    String healtFacilities, String privateClinicsInTown, String privateClinicsInRadius,
+                    String communityUnits, String mainSupermarkets, String mainBanks,
+                    String anyMajorBusiness, String comments, boolean recommended,
+                    Integer dateAdded, Integer addedBy, Boolean lgPresent) {
 
         this.id = id;
         this.countyName = countyName;
@@ -322,6 +324,14 @@ public class KeCounty {
 
     public void setServicePopulation(String servicePopulation) {
         this.servicePopulation = servicePopulation;
+    }
+
+    public boolean isLgPresent() {
+        return lgPresent;
+    }
+
+    public void setLgPresent(boolean lgPresent) {
+        this.lgPresent = lgPresent;
     }
 
     public void setTransportCost(String transportCost) {
