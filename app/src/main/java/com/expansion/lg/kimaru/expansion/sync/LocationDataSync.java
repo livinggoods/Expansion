@@ -3,6 +3,7 @@ package com.expansion.lg.kimaru.expansion.sync;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Base64;
 import android.widget.Toast;
 
@@ -32,21 +33,9 @@ public class LocationDataSync {
     }
 
     public void pollLocations(){
-        final Handler handler = new Handler();
-        Timer timer = new Timer();
-        TimerTask getLocationsTask = new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        String url = Constants.CLOUD_ADDRESS+"/api/v1/sync/locations";
-                        new syncLocations().execute(url);
-                    }
-                });
-            }
-        };
-        timer.schedule(getLocationsTask, 0, 60*1000 * 30); //every 30 minutes
+
+                String url = Constants.CLOUD_ADDRESS+"/api/v1/sync/locations";
+                new syncLocations().execute(url);
     }
 
 
@@ -60,8 +49,6 @@ public class LocationDataSync {
             return stream;
         }
         protected void onPostExecute(String stream){
-            // uncomment the following line for debuggin purposes
-            Toast.makeText(context, "Syncing Locations", Toast.LENGTH_SHORT).show();
             if(stream !=null){
                 try{
                     JSONObject reader= new JSONObject(stream);
@@ -71,8 +58,6 @@ public class LocationDataSync {
                         countyLocationTable.fromJson(recs.getJSONObject(x));
                     }
                 }catch(JSONException e){
-                    Toast.makeText(context, "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
                 }
 
             } // if statement end

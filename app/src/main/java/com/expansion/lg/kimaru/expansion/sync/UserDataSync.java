@@ -3,6 +3,7 @@ package com.expansion.lg.kimaru.expansion.sync;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Base64;
 import android.widget.Toast;
 
@@ -32,7 +33,7 @@ public class UserDataSync {
     }
 
     public void pollNewUsers(){
-        final Handler handler = new Handler();
+        final Handler handler = new Handler(Looper.getMainLooper());
         Timer timer = new Timer();
         TimerTask getUsersTask = new TimerTask() {
             @Override
@@ -58,13 +59,7 @@ public class UserDataSync {
 
             ApiClient hh = new ApiClient();
             stream = hh.GetHTTPData(urlString);
-            return stream;
-        }
-        protected void onPostExecute(String stream){
-            // uncomment the following line for debuggin purposes
-             Toast.makeText(context, "Syncing users", Toast.LENGTH_SHORT).show();
             if(stream !=null){
-                Toast.makeText(context, "Stream is not null", Toast.LENGTH_SHORT).show();
                 try{
                     JSONObject reader= new JSONObject(stream);
                     JSONArray recs = reader.getJSONArray("users");
@@ -77,7 +72,7 @@ public class UserDataSync {
                                 Base64.DEFAULT);
                         String pwd = null;
                         try{
-                           pwd = new String(appName, "UTF-8");
+                            pwd = new String(appName, "UTF-8");
                         } catch (Exception e){}
                         user.setPassword(pwd);
                         user.setUsername(recs.getJSONObject(x).getString("username"));
@@ -91,14 +86,12 @@ public class UserDataSync {
                     // process other data as this way..............
 
                 }catch(JSONException e){
-                    Toast.makeText(context, "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
                 }
 
-            } // if statement end
-            else{
-                Toast.makeText(context, "Stream is NULL null", Toast.LENGTH_SHORT).show();
             }
+            return stream;
+        }
+        protected void onPostExecute(String stream){
         } // onPostExecute() end
     }
 }
