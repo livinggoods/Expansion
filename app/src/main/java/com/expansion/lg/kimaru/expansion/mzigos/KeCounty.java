@@ -9,8 +9,8 @@ public class KeCounty {
     Integer id;
     String countyName;
     String country;
-    String lat;
-    String lon;
+    Double lat;
+    Double lon;
     String contactPerson;
     String countyCode;
     String contactPersonPhone;
@@ -19,11 +19,11 @@ public class KeCounty {
     boolean chvActivity;
     String chvActivityLevel;
     String countyPopulation;
-    String noOfVillages;
-    String mainTownPopulation;
-    String servicePopulation;
-    String populationDensity;
-    String transportCost;
+    Long noOfVillages;
+    Long mainTownPopulation;
+    Long servicePopulation;
+    Long populationDensity;
+    Integer transportCost;
     String majorRoads;
     String healtFacilities;
     String privateClinicsInTown;
@@ -31,10 +31,11 @@ public class KeCounty {
     String communityUnits;
     String mainSupermarkets;
     String mainBanks;
-    String anyMajorBusiness;
+    Integer anyMajorBusiness;
     String comments;
     boolean recommended;
-    Integer dateAdded;
+    boolean synced;
+    Long dateAdded;
     Integer addedBy;
     boolean lgPresent;
 
@@ -46,15 +47,15 @@ public class KeCounty {
 
     }
 
-    public KeCounty(Integer id, String countyName, String countyCode, String country, String lat,
-                    String lon, String contactPerson, String contactPersonPhone, String mainTown,
+    public KeCounty(Integer id, String countyName, String countyCode, String country, Double lat,
+                    Double lon, String contactPerson, String contactPersonPhone, String mainTown,
                     String countySupport, String chvActivityLevel, String countyPopulation,
-                    String noOfVillages, String mainTownPopulation, String servicePopulation,
-                    String populationDensity, String transportCost, String majorRoads,
+                    Long noOfVillages, Long mainTownPopulation, Long servicePopulation,
+                    Long populationDensity, Integer transportCost, String majorRoads,
                     String healtFacilities, String privateClinicsInTown, String privateClinicsInRadius,
                     String communityUnits, String mainSupermarkets, String mainBanks,
-                    String anyMajorBusiness, String comments, boolean recommended,
-                    Integer dateAdded, Integer addedBy, Boolean lgPresent) {
+                    Integer anyMajorBusiness, String comments, boolean recommended,
+                    Long dateAdded, Integer addedBy, Boolean lgPresent, boolean synced) {
 
         this.id = id;
         this.countyName = countyName;
@@ -86,10 +87,20 @@ public class KeCounty {
         this.dateAdded = dateAdded;
         this.addedBy = addedBy;
         this.countyCode = countyCode;
+        this.lgPresent = lgPresent;
+        this.synced = synced;
     }
 
     // Get Methods
 
+
+    public boolean isSynced() {
+        return synced;
+    }
+
+    public void setSynced(boolean synced) {
+        this.synced = synced;
+    }
 
     public String getCountyCode() {
         return countyCode;
@@ -111,11 +122,11 @@ public class KeCounty {
         return addedBy;
     }
 
-    public void setDateAdded(Integer dateAdded) {
+    public void setDateAdded(Long dateAdded) {
         this.dateAdded = dateAdded;
     }
 
-    public Integer getDateAdded() {
+    public Long getDateAdded() {
         return dateAdded;
     }
 
@@ -139,19 +150,19 @@ public class KeCounty {
         this.id = id;
     }
 
-    public String getLat() {
+    public Double getLat() {
         return lat;
     }
 
-    public String getLon() {
+    public Double getLon() {
         return lon;
     }
 
-    public void setLat(String lat) {
+    public void setLat(Double lat) {
         this.lat = lat;
     }
 
-    public void setLon(String lon) {
+    public void setLon(Double lon) {
         this.lon = lon;
     }
 
@@ -175,7 +186,7 @@ public class KeCounty {
         return mainBanks;
     }
 
-    public String getAnyMajorBusiness() {
+    public Integer getAnyMajorBusiness() {
         return anyMajorBusiness;
     }
 
@@ -223,16 +234,16 @@ public class KeCounty {
         return majorRoads;
     }
 
-    public String getMainTownPopulation() {
+    public Long getMainTownPopulation() {
         return mainTownPopulation;
     }
 
-    public String getNoOfVillages() {
+    public Long getNoOfVillages() {
         return noOfVillages;
     }
 
 
-    public String getPopulationDensity() {
+    public Long getPopulationDensity() {
         return populationDensity;
     }
 
@@ -248,16 +259,16 @@ public class KeCounty {
         return recommended;
     }
 
-    public String getServicePopulation() {
+    public Long getServicePopulation() {
         return servicePopulation;
     }
 
-    public String getTransportCost() {
+    public Integer getTransportCost() {
         return transportCost;
     }
 
 
-    public void setAnyMajorBusiness(String anyMajorBusiness) {
+    public void setAnyMajorBusiness(Integer anyMajorBusiness) {
         this.anyMajorBusiness = anyMajorBusiness;
     }
 
@@ -298,7 +309,7 @@ public class KeCounty {
         this.mainSupermarkets = mainSupermarkets;
     }
 
-    public void setMainTownPopulation(String mainTownPopulation) {
+    public void setMainTownPopulation(Long mainTownPopulation) {
         this.mainTownPopulation = mainTownPopulation;
     }
 
@@ -306,11 +317,11 @@ public class KeCounty {
         this.majorRoads = majorRoads;
     }
 
-    public void setNoOfVillages(String noOfVillages) {
+    public void setNoOfVillages(Long noOfVillages) {
         this.noOfVillages = noOfVillages;
     }
 
-    public void setPopulationDensity(String populationDensity) {
+    public void setPopulationDensity(Long populationDensity) {
         this.populationDensity = populationDensity;
     }
 
@@ -322,7 +333,7 @@ public class KeCounty {
         this.recommended = recommended;
     }
 
-    public void setServicePopulation(String servicePopulation) {
+    public void setServicePopulation(Long servicePopulation) {
         this.servicePopulation = servicePopulation;
     }
 
@@ -334,7 +345,7 @@ public class KeCounty {
         this.lgPresent = lgPresent;
     }
 
-    public void setTransportCost(String transportCost) {
+    public void setTransportCost(Integer transportCost) {
         this.transportCost = transportCost;
     }
 
