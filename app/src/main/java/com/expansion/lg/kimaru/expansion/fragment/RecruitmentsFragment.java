@@ -10,6 +10,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -62,6 +63,7 @@ public class RecruitmentsFragment extends Fragment  {
 
     private OnFragmentInteractionListener mListener;
     TextView textshow;
+    FloatingActionButton fab;
 
     // to show list in Gmail Mode
     private List<Recruitment> recruitments = new ArrayList<>();
@@ -126,6 +128,22 @@ public class RecruitmentsFragment extends Fragment  {
                 //session Management
         session = new SessionManagement(getContext());
         user = session.getUserDetails();
+        fab = (FloatingActionButton) v.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment;
+                if (user.get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("KE")){
+                    fragment = new NewKeRecruitmentFragment();
+                }else{
+                    fragment = new NewRecruitmentFragment();
+                }
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "villages");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        });
 
         // ============Gmail View starts here =======================
         // Gmail View.
@@ -341,23 +359,34 @@ public class RecruitmentsFragment extends Fragment  {
 
         recruitments.clear();
 
-        // clear the registrations
-        try {
-            // get the registrations
-            RecruitmentTable recruitmentTable = new RecruitmentTable(getContext());
-            List<Recruitment> recruitmentList = new ArrayList<>();
+        RecruitmentTable recruitmentTable = new RecruitmentTable(getContext());
+        List<Recruitment> recruitmentList = new ArrayList<>();
 
-            recruitmentList = recruitmentTable.getRecruitmentDataByCountryCode(user.get(SessionManagement.KEY_USER_COUNTRY));
-            for (Recruitment recruitment : recruitmentList){
-                recruitment.setColor(getRandomMaterialColor("400"));
-                recruitments.add(recruitment);
-            }
-            rAdapter.notifyDataSetChanged();
-            swipeRefreshLayout.setRefreshing(false);
-        } catch (Exception error){
-            Toast.makeText(getContext(), "No Recruitments", Toast.LENGTH_SHORT).show();
-            textshow.setText("No recruitments added. Please create one");
+        recruitmentList = recruitmentTable.getRecruitmentDataByCountryCode(user.get(SessionManagement.KEY_USER_COUNTRY));
+        for (Recruitment recruitment : recruitmentList){
+            recruitment.setColor(getRandomMaterialColor("400"));
+            recruitments.add(recruitment);
         }
+        rAdapter.notifyDataSetChanged();
+        swipeRefreshLayout.setRefreshing(false);
+
+
+//        try {
+//            // get the registrations
+//            RecruitmentTable recruitmentTable = new RecruitmentTable(getContext());
+//            List<Recruitment> recruitmentList = new ArrayList<>();
+//
+//            recruitmentList = recruitmentTable.getRecruitmentDataByCountryCode(user.get(SessionManagement.KEY_USER_COUNTRY));
+//            for (Recruitment recruitment : recruitmentList){
+//                recruitment.setColor(getRandomMaterialColor("400"));
+//                recruitments.add(recruitment);
+//            }
+//            rAdapter.notifyDataSetChanged();
+//            swipeRefreshLayout.setRefreshing(false);
+//        } catch (Exception error){
+//            Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+//            textshow.setText(error.getMessage());
+//        }
         swipeRefreshLayout.setRefreshing(false);
     }
 

@@ -5,17 +5,26 @@ import android.content.Intent;
 
 import android.database.Cursor;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.other.Constants;
+import com.expansion.lg.kimaru.expansion.sync.ApiClient;
 import com.expansion.lg.kimaru.expansion.sync.LocationDataSync;
+import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
 import com.expansion.lg.kimaru.expansion.tables.UserTable;
 import com.expansion.lg.kimaru.expansion.sync.HttpServer;
 import com.expansion.lg.kimaru.expansion.sync.UserDataSync;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * A login screen that offers login via email/password.
@@ -72,6 +81,11 @@ public class LoginActivity extends Activity {
         if (user != null){
             if (user.getCount() > 0){
                 session.createLoginSesstion(user.getString(4), user.getString(1), user.getInt(0), user.getString(5));
+                // at this point, let us sync the locations
+                Toast.makeText(getBaseContext(), "Please wait ...", Toast.LENGTH_SHORT).show();
+                if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+                    new syncLocations().execute(Constants.CLOUD_ADDRESS+"/api/v1/sync/locations");
+                }
                 return true;
             }
         }
@@ -81,23 +95,45 @@ public class LoginActivity extends Activity {
     @Override
     public void onResume (){
         super.onResume();
-        HttpServer server = new HttpServer(getBaseContext());
-        server.startServer();
-        UserDataSync dSync = new UserDataSync(getBaseContext());
-        dSync.pollNewUsers();
 
-        //LocationDataSync locationDataSync = new LocationDataSync(getBaseContext());
-        //locationDataSync.pollLocations();
+        Thread userThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                UserDataSync dSync = new UserDataSync(getBaseContext());
+                dSync.pollNewUsers();
+            }
+        });
+        userThread.start();
+
     }
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
     }
+    private class syncLocations extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+            if(stream !=null){
+                try{
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray("locations");
+                    CountyLocationTable countyLocationTable = new CountyLocationTable(getBaseContext());
+                    for (int x = 0; x < recs.length(); x++){
+                        countyLocationTable.fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                }
 
-    public void startServer(){
+            }
+            return stream;
+        }
+        protected void onPostExecute(String stream){
 
+        } // onPostExecute() end
     }
-
 }
 

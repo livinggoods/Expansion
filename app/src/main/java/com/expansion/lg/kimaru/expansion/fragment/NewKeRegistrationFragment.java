@@ -179,8 +179,8 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         mOccupation = (EditText) v.findViewById(R.id.editOccupation);
         mDob = (EditText) v.findViewById(R.id.editDob);
         mReadEnglish = (RadioGroup) v.findViewById(R.id.editReadEnglish);
-        editChewName = (EditText) v.findViewById(R.id.editChewName);
-        editChewNumber = (EditText) v.findViewById(R.id.editChewNumber);
+//        editChewName = (EditText) v.findViewById(R.id.editChewName);
+//        editChewNumber = (EditText) v.findViewById(R.id.editChewNumber);
         selectChew = (Spinner) v.findViewById(R.id.selectChewReferral);
         mComment = (EditText) v.findViewById(R.id.editComment);
         editWard = (EditText) v.findViewById(R.id.editWard);
@@ -272,7 +272,8 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                         // we save the referral, refresh the list and rebind the Spinner, and set selected
                         String uuid = UUID.randomUUID().toString();
                         ChewReferral chew = new ChewReferral(uuid, referralName, referralPhone, "CHEW",
-                                session.getSavedRecruitment().getCountry(), session.getSavedRecruitment().getId(), 0);
+                                session.getSavedRecruitment().getCountry(),
+                                session.getSavedRecruitment().getId(), 0, "", "", "", "", "", "", "", "", "");
                         ChewReferralTable chewTb = new ChewReferralTable(getContext());
                         chewTb.addChewReferral(chew);
 
@@ -344,7 +345,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 String applicantGender = genderRadioButton.getText().toString();
 
                 String applicantDistrict = "";
-                String applicantSubcounty = "";
+                String applicantSubcounty = session.getSavedRecruitment().getSubcounty();
                 String applicantDivision = "";
                 String applicantVillage = mVillage.getText().toString();
                 String applicantMark = mMark.getText().toString();

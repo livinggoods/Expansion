@@ -14,6 +14,11 @@ public class Recruitment {
     int color = -1;
     String picture =  "";
 
+    CountyLocation countyLocation;
+    KeCounty keCounty;
+
+    SubCounty subCountyObj;
+
     public Recruitment(){
 
     }
@@ -146,6 +151,30 @@ public class Recruitment {
 
     public void setImportant(boolean important) {
         isImportant = important;
+    }
+
+    public CountyLocation getCountyLocation() {
+        return countyLocation;
+    }
+
+    public void setCountyLocation(CountyLocation countyLocation) {
+        this.countyLocation = countyLocation;
+    }
+
+    public KeCounty getKeCounty() {
+        return keCounty;
+    }
+
+    public SubCounty getSubCountyObj() {
+        return subCountyObj;
+    }
+
+    public void setSubCountyObj(SubCounty subCountyObj) {
+        this.subCountyObj = subCountyObj;
+    }
+
+    public void setKeCounty(KeCounty keCounty) {
+        this.keCounty = keCounty;
     }
 
     public void setPicture(String picture) {

@@ -211,6 +211,62 @@ public class SubCountyTable extends SQLiteOpenHelper {
         return id;
     }
 
+    public SubCounty getSubCountyByCountyAndName(String countyId, String country, String subCountyName) {
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        String whereClause = COUNTYID+" = ? AND " +
+                COUNTRY+ " = ? AND " +
+                SUBCOUNTYNAME+ " = ? ";
+
+        String[] whereArgs = new String[] {
+                String.valueOf(countyId),
+                String.valueOf(country),
+                String.valueOf(subCountyName),
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else {
+            SubCounty subCounty = new SubCounty();
+
+            subCounty.setId(cursor.getString(0));
+            subCounty.setSubCountyName(cursor.getString(1));
+            subCounty.setCountyID(cursor.getString(2));
+            subCounty.setCountry(cursor.getString(3));
+            subCounty.setMappingId(cursor.getString(4));
+            subCounty.setLat(cursor.getString(5));
+            subCounty.setLon(cursor.getString(6));
+            subCounty.setContactPerson(cursor.getString(7));
+            subCounty.setContactPersonPhone(cursor.getString(8));
+            subCounty.setMainTown(cursor.getString(9));
+            subCounty.setCountySupport(cursor.getString(10));
+            subCounty.setSubcountySupport(cursor.getString(11));
+            subCounty.setChvActivityLevel(cursor.getString(12));
+            subCounty.setCountyPopulation(cursor.getString(13));
+            subCounty.setSubCountyPopulation(cursor.getString(14));
+            subCounty.setNoOfVillages(cursor.getString(15));
+            subCounty.setMainTownPopulation(cursor.getString(16));
+            subCounty.setServicePopulation(cursor.getString(17));
+            subCounty.setPopulationDensity(cursor.getString(18));
+            subCounty.setTransportCost(cursor.getString(19));
+            subCounty.setMajorRoads(cursor.getString(20));
+            subCounty.setHealtFacilities(cursor.getString(21));
+            subCounty.setPrivateClinicsInTown(cursor.getString(22));
+            subCounty.setPrivateClinicsInRadius(cursor.getString(23));
+            subCounty.setCommunityUnits(cursor.getString(24));
+            subCounty.setMainSupermarkets(cursor.getString(25));
+            subCounty.setMainBanks(cursor.getString(26));
+            subCounty.setAnyMajorBusiness(cursor.getString(27));
+            subCounty.setComments(cursor.getString(28));
+            subCounty.setRecommended((cursor.getInt(29) == 1));
+            subCounty.setDateAdded(cursor.getInt(30));
+            subCounty.setAddedBy(cursor.getInt(31));
+            db.close();
+            return subCounty;
+        }
+    }
+
 
     public List<SubCounty> getSubCountyData() {
 
@@ -271,10 +327,14 @@ public class SubCountyTable extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public List<SubCounty> getSubCountiesByCounty() {
-
+    public List<SubCounty> getSubCountiesByCounty(Integer countyId) {
         SQLiteDatabase db=getReadableDatabase();
-        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+        String whereClause = COUNTYID+" = ? ";
+        String[] whereArgs = new String[] {
+                String.valueOf(countyId)
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
         List<SubCounty> subCounties = new ArrayList<>();
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
             SubCounty subCounty = new SubCounty();
@@ -317,6 +377,56 @@ public class SubCountyTable extends SQLiteOpenHelper {
         db.close();
 
         return subCounties;
+    }
+    public SubCounty getSubCountyById(String subCountyId) {
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        String whereClause = ID+" = ? ";
+
+        String[] whereArgs = new String[] {
+                String.valueOf(subCountyId)
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else {
+            SubCounty subCounty = new SubCounty();
+            subCounty.setId(cursor.getString(0));
+            subCounty.setSubCountyName(cursor.getString(1));
+            subCounty.setCountyID(cursor.getString(2));
+            subCounty.setCountry(cursor.getString(3));
+            subCounty.setMappingId(cursor.getString(4));
+            subCounty.setLat(cursor.getString(5));
+            subCounty.setLon(cursor.getString(6));
+            subCounty.setContactPerson(cursor.getString(7));
+            subCounty.setContactPersonPhone(cursor.getString(8));
+            subCounty.setMainTown(cursor.getString(9));
+            subCounty.setCountySupport(cursor.getString(10));
+            subCounty.setSubcountySupport(cursor.getString(11));
+            subCounty.setChvActivityLevel(cursor.getString(12));
+            subCounty.setCountyPopulation(cursor.getString(13));
+            subCounty.setSubCountyPopulation(cursor.getString(14));
+            subCounty.setNoOfVillages(cursor.getString(15));
+            subCounty.setMainTownPopulation(cursor.getString(16));
+            subCounty.setServicePopulation(cursor.getString(17));
+            subCounty.setPopulationDensity(cursor.getString(18));
+            subCounty.setTransportCost(cursor.getString(19));
+            subCounty.setMajorRoads(cursor.getString(20));
+            subCounty.setHealtFacilities(cursor.getString(21));
+            subCounty.setPrivateClinicsInTown(cursor.getString(22));
+            subCounty.setPrivateClinicsInRadius(cursor.getString(23));
+            subCounty.setCommunityUnits(cursor.getString(24));
+            subCounty.setMainSupermarkets(cursor.getString(25));
+            subCounty.setMainBanks(cursor.getString(26));
+            subCounty.setAnyMajorBusiness(cursor.getString(27));
+            subCounty.setComments(cursor.getString(28));
+            subCounty.setRecommended((cursor.getInt(29) == 1));
+            subCounty.setDateAdded(cursor.getInt(30));
+            subCounty.setAddedBy(cursor.getInt(31));
+            db.close();
+            return subCounty;
+        }
     }
     private void upgradeVersion2(SQLiteDatabase db) {}
 }

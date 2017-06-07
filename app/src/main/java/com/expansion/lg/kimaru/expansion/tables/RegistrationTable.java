@@ -11,9 +11,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
+import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
+import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.other.FileUtils;
 
@@ -917,6 +920,63 @@ public class RegistrationTable extends SQLiteOpenHelper {
                     chewReferralTable.addChewReferral(chew);
                     cv.put(CHEW_ID, id);
                     db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                }
+                // Update the Community Unit.
+                // Update the Link Facility
+
+                // Check if there is a Link Facility
+                LinkFacilityTable lFTbl = new LinkFacilityTable(context);
+                CommunityUnitTable cuTbl = new CommunityUnitTable(context);
+                String linkFacilityUuid = UUID.randomUUID().toString();
+                String communityUnitUuid = UUID.randomUUID().toString();
+                if (!cursor.getString(cursor.getColumnIndex(LINK_FACILITY)).equalsIgnoreCase("")){
+                    LinkFacility linkFacility = lFTbl.getLinkFacilityByName(cursor.getString(cursor.getColumnIndex(LINK_FACILITY)));
+                    if (linkFacility != null){
+                        cv.put(LINK_FACILITY, linkFacility.getId());
+                        db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                    }else{
+                        // create the Link Facility
+                        LinkFacility newLinkFacility = new LinkFacility();
+                        newLinkFacility.setId(linkFacilityUuid);
+                        newLinkFacility.setFacilityName(cursor.getString(29));
+                        newLinkFacility.setMappingId(cursor.getString(23));
+                        newLinkFacility.setLat("");
+                        newLinkFacility.setLon("");
+                        newLinkFacility.setSubCountyId(cursor.getString(6));
+                        newLinkFacility.setDateAdded(cursor.getLong(21));
+                        newLinkFacility.setAddedBy(cursor.getInt(18));
+                        newLinkFacility.setMrdtLevels(0);
+                        newLinkFacility.setActLevels(0);
+                        newLinkFacility.setCountry(cursor.getString(24));
+                        lFTbl.addData(newLinkFacility);
+                        cv.put(LINK_FACILITY, linkFacilityUuid);
+                        db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                    }
+                }
+                if (!cursor.getString(cursor.getColumnIndex(COMMUNITY)).equalsIgnoreCase("")){
+                    CommunityUnit communityUnit = cuTbl.getCommunityUnitByName(cursor
+                            .getString(cursor.getColumnIndex(CU_NAME)));
+                    if (communityUnit != null){
+                        cv.put(CU_NAME, communityUnit.getId());
+                        db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                    }else{
+                        // create the Link Facility
+                        RecruitmentTable  recruitmentTable = new RecruitmentTable(context);
+
+                        Recruitment recruitment = recruitmentTable.getRecruitmentById(recruitmentID);
+                        CommunityUnit newCommunityUnit = new CommunityUnit();
+                        newCommunityUnit.setId(communityUnitUuid);
+                        newCommunityUnit.setCommunityUnitName(cursor.getString(cursor.getColumnIndex(CU_NAME)));
+                        newCommunityUnit.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+                        newCommunityUnit.setSubCountyId(recruitment.getSubcounty());
+                        newCommunityUnit.setLinkFacilityId(linkFacilityUuid);
+                        newCommunityUnit.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATE_ADDED)));
+                        newCommunityUnit.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
+                        cuTbl.addCommunityUnitData(newCommunityUnit);
+
+                        cv.put(CU_NAME, communityUnitUuid);
+                        db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                    }
                 }
             }
         }

@@ -1,18 +1,28 @@
 package com.expansion.lg.kimaru.expansion.activity;
 
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -22,6 +32,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.fragment.HomeFragment;
 import com.expansion.lg.kimaru.expansion.fragment.InterviewsFragment;
@@ -40,10 +52,18 @@ import com.expansion.lg.kimaru.expansion.fragment.NewUgMappingFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RegistrationsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.ExamsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
+import com.expansion.lg.kimaru.expansion.other.CircleTransform;
+import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.other.SetUpApp;
 import com.expansion.lg.kimaru.expansion.service.RecruitmentsSyncServiceAdapter;
+import com.expansion.lg.kimaru.expansion.sync.ApiClient;
+import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
 import com.expansion.lg.kimaru.expansion.tables.MappingTable;
 
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -61,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imgNavHeaderBg, imgProfile;
     private TextView txtName, txtWebsite;
     public Toolbar toolbar;
-    public FloatingActionButton fab;
 
     // index to identify current nav menu item
     public static int navItemIndex = 0;
@@ -120,6 +139,14 @@ public class MainActivity extends AppCompatActivity {
     String name, email;
     String country;
 
+    private static final int PERMISSION_CALLBACK_CONSTANT = 101;
+    private static final int REQUEST_PERMISSION_SETTING = 102;
+    String[] permissionsRequired = new String[]{
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private SharedPreferences permissionStatus;
+    private boolean sentToSettings = false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,6 +177,11 @@ public class MainActivity extends AppCompatActivity {
         email = user.get(SessionManagement.KEY_EMAIL);
         country = user.get(SessionManagement.KEY_USER_COUNTRY);
 
+        if (country.equalsIgnoreCase("UG")){
+            CountyLocationTable countyLocationTable = new CountyLocationTable(getBaseContext());
+            countyLocationTable.createLocations();
+        }
+
 
         setSupportActionBar(toolbar);
 
@@ -157,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+
 
         // Navigation view header
         navHeader = navigationView.getHeaderView(0);
@@ -168,15 +200,6 @@ public class MainActivity extends AppCompatActivity {
 
         // load toolbar titles from string resources
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String clickedView = Integer.toString(view.getId());
-                mView = view;
-                loadFragment(view);
-            }
-        });
 
         // load nav menu header data
         loadNavHeader();
@@ -299,7 +322,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case TAG_MAPPINGS:
-                if (country == "KE") {
+                Toast.makeText(getBaseContext(), "Countyr is "+ country, Toast.LENGTH_SHORT).show();
+                if (country.equalsIgnoreCase("KE")) {
                     mPendingRunnable = new Runnable() {
                         @Override
                         public void run() {
@@ -411,14 +435,18 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        // show or hide the fab button
-        toggleFab();
-
         //Closing drawer on item click
         drawer.closeDrawers();
 
         // refresh toolbar menu
         invalidateOptionsMenu();
+    }
+
+    public int getImage(String imageName) {
+
+        int drawableResourceId = this.getResources().getIdentifier(imageName, "drawable", this.getPackageName());
+
+        return drawableResourceId;
     }
 
     /***
@@ -430,8 +458,21 @@ public class MainActivity extends AppCompatActivity {
         // name, website
         txtName.setText(name);
         txtWebsite.setText(email);
-        imgNavHeaderBg.setImageResource(R.drawable.nav_menu_header_bg);
-        imgProfile.setImageResource(R.drawable.lg_bg);
+        Glide.with(this).load(getImage("nav_menu_header_bg"))
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(imgNavHeaderBg);
+
+
+        //imgNavHeaderBg.setImageResource(R.drawable.nav_menu_header_bg);
+
+        Glide.with(this).load(getImage("lg_bg"))
+                .crossFade()
+                .thumbnail(0.5f)
+                .bitmapTransform(new CircleTransform(this))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(imgProfile);
+        //imgProfile.setImageResource(R.drawable.lg_bg);
 
         // showing dot next to notifications label
         navigationView.getMenu().getItem(3).setActionView(R.layout.menu_dot);
@@ -452,9 +493,6 @@ public class MainActivity extends AppCompatActivity {
         // just close the navigation drawer
         if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
             drawer.closeDrawers();
-
-            // show or hide the fab button
-            toggleFab();
             return;
         }
 
@@ -480,10 +518,6 @@ public class MainActivity extends AppCompatActivity {
         if (mPendingRunnable != null) {
             mHandler.post(mPendingRunnable);
         }
-
-        // show or hide the fab button
-        toggleFab();
-
         //Closing drawer on item click
         drawer.closeDrawers();
 
@@ -742,7 +776,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if (id == R.id.backup_db) {
             Toast.makeText(getApplicationContext(), "Backing up the DB!", Toast.LENGTH_LONG).show();
-            exportDB();
+            checkPermissions();
 
 
 //            try {
@@ -797,12 +831,128 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // show or hide the fab
-    private void toggleFab() {
-        if (navItemIndex == 1 || navItemIndex == 2 || navItemIndex == 5)
-            fab.show();
-        else
-            fab.hide();
+    public void checkPermissions(){
+        try{
+            if(ActivityCompat.checkSelfPermission(this, permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED){
+                if(ActivityCompat.shouldShowRequestPermissionRationale(this,permissionsRequired[0])){
+                    //Show Information about why you need the permission
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Multiple Permissions Request");
+                    builder.setMessage("This app needs Location permissions");
+                    builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            ActivityCompat.requestPermissions(MainActivity.this,permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+                }else if (permissionStatus.getBoolean(permissionsRequired[0], false)){
+                    //Previously Permission Request was cancelled with 'Dont Ask Again',
+                    // Redirect to Settings after showing Information about why you need the permission
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Multiple Permissions Request");
+                    builder.setMessage("This app needs Location permissions");
+                    builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            sentToSettings = true;
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            intent.setData(uri);
+                            startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
+                            Toast.makeText(getBaseContext(), "Go to Permissions to Grant Location Permissions",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+                }else {
+                    ActivityCompat.requestPermissions(this, permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
+                }
+                SharedPreferences.Editor editor = permissionStatus.edit();
+                editor.putBoolean(permissionsRequired[0],true);
+                editor.commit();
+            }else{
+                proceedAfterPermission();
+            }
+        }catch (Exception e){}
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == PERMISSION_CALLBACK_CONSTANT){
+            //check if all permissions are granted
+            boolean allgranted = false;
+            for(int i=0;i<grantResults.length;i++){
+                if(grantResults[i]==PackageManager.PERMISSION_GRANTED){
+                    allgranted = true;
+                } else {
+                    allgranted = false;
+                    break;
+                }
+            }
+
+            if(allgranted){
+                proceedAfterPermission();
+            } else if(ActivityCompat.shouldShowRequestPermissionRationale(this,permissionsRequired[0])){
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Need Multiple Permissions");
+                builder.setMessage("This app needs Location permissions.");
+                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        ActivityCompat.requestPermissions(MainActivity.this,permissionsRequired,PERMISSION_CALLBACK_CONSTANT);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            } else {
+                Toast.makeText(this,"Unable to get Permission",Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_PERMISSION_SETTING) {
+            if (ActivityCompat.checkSelfPermission(this, permissionsRequired[0]) == PackageManager.PERMISSION_GRANTED) {
+                //Got Permission
+                proceedAfterPermission();
+            }
+        }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (sentToSettings) {
+            if (ActivityCompat.checkSelfPermission(this, permissionsRequired[0]) == PackageManager.PERMISSION_GRANTED) {
+                //Got Permission
+                proceedAfterPermission();
+            }
+        }
+    }
+    private void proceedAfterPermission() {
+        exportDB();
     }
 
     private void exportDB(){
@@ -827,5 +977,30 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
             Toast.makeText(this, "Error in backing up the db!\n"+e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private class syncLocations extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+            if(stream !=null){
+                try{
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray("locations");
+                    CountyLocationTable countyLocationTable = new CountyLocationTable(getBaseContext());
+                    for (int x = 0; x < recs.length(); x++){
+                        countyLocationTable.fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                }
+
+            }
+            return stream;
+        }
+        protected void onPostExecute(String stream){
+
+        } // onPostExecute() end
     }
 }

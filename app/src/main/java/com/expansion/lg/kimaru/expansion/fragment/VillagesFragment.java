@@ -10,8 +10,11 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -65,10 +68,9 @@ public class VillagesFragment extends Fragment  {
     private SwipeRefreshLayout swipeRefreshLayout;
     private ActionMode actionMode;
     private ActionModeCallback actionModeCallback;
+    public FloatingActionButton fab;
 
     SessionManagement session;
-
-
 
     // I cant seem to get the context working
     Context mContext = getContext();
@@ -112,62 +114,64 @@ public class VillagesFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_communityunits, container, false);
+        View v =  inflater.inflate(R.layout.fragment_villages, container, false);
         MainActivity.CURRENT_TAG = MainActivity.TAG_VILLAGES;
-        MainActivity.backFragment = new SubCountyFragment();
+        MainActivity.backFragment = new MapViewFragment();
         textshow = (TextView) v.findViewById(R.id.textShow);
         //session Management
         session = new SessionManagement(getContext());
-
-
-        // ============Gmail View starts here =======================
-        // Gmail View.
+        fab = (FloatingActionButton) v.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = new NewVillageFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "villages");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        });
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // onRefresh action here
-                Toast.makeText(getContext(), "Refreshing the list", Toast.LENGTH_SHORT).show();
+                getVillages();
             }
         });
 
         rAdapter = new VillageListAdapter(this.getContext(), villages, new VillageListAdapter.VillageListAdapterListener() {
             @Override
             public void onIconClicked(int position) {
-                if (actionMode == null) {
-//                    actionMode = startSupportActionMode(actionModeCallback);
-                    Toast.makeText(getContext(), "An Icon is clicked "+ position, Toast.LENGTH_SHORT).show();
-                }
 
-//                toggleSelection(position);
             }
 
             @Override
             public void onIconImportantClicked(int position) {
-                Toast.makeText(getContext(), "An iconImportant is clicked", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void onMessageRowClicked(int position) {
                 // read the message which removes bold from the row
                 Village village = villages.get(position);
+                session.saveVillage(village);
+                // go to village view
 
-                village.setRead(true);
-                villages.set(position, village);
-                rAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onRowLongClicked(int position) {
-                // When one long presses a registration, we give them a chance to
-                // Interview the selected applicant
-
-                //extract the clicked recruitment
-
-
-
+                // when long press, show for editing
+                NewVillageFragment newVillageFragment = new NewVillageFragment();
+                newVillageFragment.editingVillage = villages.get(position);
+                session.saveVillage(villages.get(position));
+                Fragment fragment = newVillageFragment;
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "villages");
+                fragmentTransaction.commitAllowingStateLoss();
             }
 
         });
@@ -186,10 +190,6 @@ public class VillagesFragment extends Fragment  {
                 }
         );
 
-//        actionModeCallback = new ActionMode().Callback;
-
-
-        //===========Gmail View Ends here ============================
         return v;
     }
 
@@ -343,7 +343,12 @@ public class VillagesFragment extends Fragment  {
         }
         swipeRefreshLayout.setRefreshing(false);
     }
-
-    //====================================== End Gmail Methods======================================
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        SessionManagement s = new SessionManagement(getContext());
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(s.getSavedParish()
+                .getName() +" - Villages ");
+    }
 
 }

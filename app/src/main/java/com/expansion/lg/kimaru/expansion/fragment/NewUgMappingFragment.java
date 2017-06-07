@@ -57,7 +57,7 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
     private OnFragmentInteractionListener mListener;
 
     EditText mMappingName, mMappingContactPerson, mMappingContactPersonPhone, mComment;
-    Spinner mCounty;
+    Spinner mCounty, mSubCounty;
 
 
     Button buttonSave, buttonList;
@@ -70,8 +70,11 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
     HashMap<String, String> user;
 
     List<CountyLocation> counties;
-
     List<String> listCounties = new ArrayList<String>();
+
+    List<CountyLocation> subCounties;
+    List<String> listSubCounties = new ArrayList<String>();
+    ArrayAdapter<String> subCountyAdapter;
 
 
 
@@ -137,6 +140,23 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
         adapter0.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mCounty.setAdapter(adapter0);
         mCounty.setOnItemSelectedListener(onCountySelectedListener);
+        //counties.get(position).getName();; get postion, then extract item at pos
+        try{
+            subCounties = countyLocationTable.getChildrenLocations(counties.get(mCounty.getSelectedItemPosition()));
+        }catch(Exception e){}
+
+        for (CountyLocation subCounty: subCounties){
+            listSubCounties.add(subCounty.getName());
+        }
+        mSubCounty = (Spinner) v.findViewById(R.id.editSubCounty);
+        subCountyAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, listSubCounties);
+        subCountyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSubCounty.setAdapter(subCountyAdapter);
+
+
+        //initialize the array adapter
+
 
 
 
@@ -158,8 +178,18 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
     AdapterView.OnItemSelectedListener onCountySelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            String S0 = String.valueOf(counties.get(position).getName());
-            Toast.makeText(getContext(), S0 + " And ID is " + counties.get(position).getId() , Toast.LENGTH_SHORT).show();
+            // with the ID selected, we will populate the subcounty
+            CountyLocationTable countyLocationTable = new CountyLocationTable(getContext());
+            listSubCounties.clear();
+            subCounties.clear();
+            subCounties = countyLocationTable.getChildrenLocations(counties.get(position));
+            for (CountyLocation subCounty: subCounties){
+                listSubCounties.add(subCounty.getName());
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                    android.R.layout.simple_spinner_item, listSubCounties);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mSubCounty.setAdapter(adapter);
         }
 
         @Override
@@ -191,8 +221,8 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
 
                 String id = UUID.randomUUID().toString();
                 String mappingName = mMappingName.getText().toString();
-                //String mappingCounty = mCounty.getText().toString();
-                String mappingCounty = "";
+                String mappingCounty = String.valueOf(counties.get(mCounty.getSelectedItemPosition()).getId());
+                String subCounty = String.valueOf(subCounties.get(mSubCounty.getSelectedItemPosition()).getId());
                 String contactPerson = mMappingContactPerson.getText().toString();
                 String contactPersonPhone = mMappingContactPersonPhone.getText().toString();
                 String comment = mComment.getText().toString();
@@ -212,7 +242,7 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
                 } else{
                     // Save Exam Details
                     Mapping mapping = new Mapping(id, mappingName, "UG", mappingCounty, dateAdded,
-                            applicantAddedBy, contactPerson,contactPersonPhone, sync, comment, "");
+                            applicantAddedBy, contactPerson,contactPersonPhone, sync, comment, "", subCounty);
 
                     MappingTable mappingTable = new MappingTable(getContext());
                     String createdMap = mappingTable.addData(mapping);

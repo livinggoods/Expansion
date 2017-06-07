@@ -214,7 +214,7 @@ public class VillageListAdapter extends RecyclerView.Adapter<VillageListAdapter.
     }
 
     private void applyImportant(ListHolder holder, Village village) {
-        if (village.isNgoDoingIccm()) {
+        if (village.getNgoDoingIccm()) {
             holder.iconImp.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_star_black_24dp));
             holder.iconImp.setColorFilter(ContextCompat.getColor(mContext, R.color.icon_tint_selected));
         } else {
@@ -224,7 +224,7 @@ public class VillageListAdapter extends RecyclerView.Adapter<VillageListAdapter.
     }
 
     private void applyReadStatus(ListHolder holder, Village village) {
-        if (village.isChvsTrained()) {
+        if (village.getChvsTrained()) {
             holder.from.setTypeface(null, Typeface.NORMAL);
             holder.subject.setTypeface(null, Typeface.NORMAL);
             holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.subject));

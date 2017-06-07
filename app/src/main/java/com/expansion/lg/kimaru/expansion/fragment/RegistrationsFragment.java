@@ -4,14 +4,24 @@ package com.expansion.lg.kimaru.expansion.fragment;
  * Created by kimaru on 3/11/17.
  */
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
@@ -85,11 +95,20 @@ public class RegistrationsFragment extends Fragment  {
     private SwipeRefreshLayout swipeRefreshLayout;
     private ActionMode actionMode;
     private ActionModeCallback actionModeCallback;
+    FloatingActionButton fab;
 
     SessionManagement session;
     Recruitment recruitment;
     HashMap <String, String> user;
     String country;
+
+    private static final int PERMISSION_CALLBACK_CONSTANT = 101;
+    private static final int REQUEST_PERMISSION_SETTING = 102;
+    String[] permissionsRequired = new String[]{
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION};
+    private SharedPreferences permissionStatus;
+    private boolean sentToSettings = false;
 
 
     // I cant seem to get the context working
@@ -139,6 +158,22 @@ public class RegistrationsFragment extends Fragment  {
         recruitment = session.getSavedRecruitment();
         user = session.getUserDetails();
         country = user.get(SessionManagement.KEY_USER_COUNTRY);
+        fab = (FloatingActionButton) v.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment;
+                if (user.get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("KE")){
+                    fragment = new NewKeRegistrationFragment();
+                }else{
+                    fragment = new NewRegistrationFragment();
+                }
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "villages");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        });
 
         // ============Gmail View starts here =======================
         // Gmail View.
@@ -153,7 +188,7 @@ public class RegistrationsFragment extends Fragment  {
                 getRegistrations();
             }
         });
-        rAdapter = new RegistrationListAdapter(this.getContext(), registrations, new RegistrationListAdapter.RegistrationListAdapterListener() {
+        rAdapter = new RegistrationListAdapter(getContext(), registrations, new RegistrationListAdapter.RegistrationListAdapterListener() {
             @Override
             public void onIconClicked(int position) {
                 Registration registration = registrations.get(position);
@@ -515,7 +550,7 @@ public class RegistrationsFragment extends Fragment  {
             case R.id.action_export_scoring_tool:
                 // export scoring tool
                 Toast.makeText(getContext(), "Exporting Scoring tool", Toast.LENGTH_SHORT).show();
-                exportScoringTool();
+                checkPermissions();
 
                 break;
             // action with ID action_settings was selected
@@ -841,6 +876,129 @@ public class RegistrationsFragment extends Fragment  {
             Toast.makeText(getContext(), "Tool exported to "+ file.getAbsolutePath() +" Folder", Toast.LENGTH_LONG).show();
         }
 
+    }
+    public void checkPermissions(){
+        try{
+            if(ActivityCompat.checkSelfPermission(getContext(), permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED){
+                if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),permissionsRequired[0])){
+                    //Show Information about why you need the permission
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Multiple Permissions Request");
+                    builder.setMessage("This app needs Location permissions");
+                    builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            ActivityCompat.requestPermissions(getActivity(),permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+                }else if (permissionStatus.getBoolean(permissionsRequired[0], false)){
+                    //Previously Permission Request was cancelled with 'Dont Ask Again',
+                    // Redirect to Settings after showing Information about why you need the permission
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Multiple Permissions Request");
+                    builder.setMessage("This app needs Location permissions");
+                    builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            sentToSettings = true;
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getContext().getPackageName(), null);
+                            intent.setData(uri);
+                            startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
+                            Toast.makeText(getContext(), "Go to Permissions to Grant Location Permissions",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+                }else {
+                    ActivityCompat.requestPermissions(getActivity(), permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
+                }
+                SharedPreferences.Editor editor = permissionStatus.edit();
+                editor.putBoolean(permissionsRequired[0],true);
+                editor.commit();
+            }else{
+                proceedAfterPermission();
+            }
+        }catch (Exception e){}
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == PERMISSION_CALLBACK_CONSTANT){
+            //check if all permissions are granted
+            boolean allgranted = false;
+            for(int i=0;i<grantResults.length;i++){
+                if(grantResults[i]==PackageManager.PERMISSION_GRANTED){
+                    allgranted = true;
+                } else {
+                    allgranted = false;
+                    break;
+                }
+            }
+
+            if(allgranted){
+                proceedAfterPermission();
+            } else if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),permissionsRequired[0])){
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Need Multiple Permissions");
+                builder.setMessage("This app needs Location permissions.");
+                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        ActivityCompat.requestPermissions(getActivity(),permissionsRequired,PERMISSION_CALLBACK_CONSTANT);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            } else {
+                Toast.makeText(getContext(),"Unable to get Permission",Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_PERMISSION_SETTING) {
+            if (ActivityCompat.checkSelfPermission(getContext(), permissionsRequired[0]) == PackageManager.PERMISSION_GRANTED) {
+                //Got Permission
+                proceedAfterPermission();
+            }
+        }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (sentToSettings) {
+            if (ActivityCompat.checkSelfPermission(getContext(), permissionsRequired[0]) == PackageManager.PERMISSION_GRANTED) {
+                //Got Permission
+                proceedAfterPermission();
+            }
+        }
+    }
+    private void proceedAfterPermission() {
+        exportScoringTool();
     }
 
 }

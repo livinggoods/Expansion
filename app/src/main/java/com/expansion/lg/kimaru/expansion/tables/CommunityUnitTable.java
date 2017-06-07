@@ -79,6 +79,16 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
     public static final String COMMENT = "comment";
     public static final String PARTNERID = "partner_id";
     public static final String CUID = "cu_id";
+    String [] columns=new String[]{ID, NAME, MAPPINGID, LAT, LON, COUNTRY,
+            SUBCOUNTYID, LINKFACILITYID, AREACHIEFNAME, WARD, ECONOMICSTATUS,
+            PRIVATEFACILITYFORACT, PRIVATEFACILITYFORMRDT, NAMEOFNGODOINGICCM,
+            NAMEOFNGODOINGMHEALTH, DATEADDED, ADDEDBY, NUMBEROFCHVS, HOUSEHOLDPERCHV,
+            NUMBEROFVILLAGES, DISTANCETOBRANCH, TRANSPORTCOST, DISTANCETOMAINROAD,
+            NOOFHOUSEHOLDS, MOHPOPLATIONDENSITY, ESTIMATEDPOPULATIONDENSITY,
+            DISTANCETONEARESTHEALTHFACILITY, ACTLEVELS, ACTPRICE, MRDTLEVELS,
+            MRDTPRICE, NOOFDISTIBUTORS, CHVSTRAINED, PRESENCEOFESTATES, PRESENCEOFFACTORIES,
+            PRESENCEOFHOSTELS, TRADERMARKET, LARGESUPERMARKET, NGOSGIVINGFREEDRUGS,
+            NGODOINGICCM, NGODOINGMHEALTH};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + " varchar(36)" + ","
@@ -270,17 +280,6 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
 
         SQLiteDatabase db=getReadableDatabase();
 
-        String [] columns=new String[]{ID, NAME, MAPPINGID, LAT, LON, COUNTRY,
-                SUBCOUNTYID, LINKFACILITYID, AREACHIEFNAME, WARD, ECONOMICSTATUS,
-                PRIVATEFACILITYFORACT, PRIVATEFACILITYFORMRDT, NAMEOFNGODOINGICCM,
-                NAMEOFNGODOINGMHEALTH, DATEADDED, ADDEDBY, NUMBEROFCHVS, HOUSEHOLDPERCHV,
-                NUMBEROFVILLAGES, DISTANCETOBRANCH, TRANSPORTCOST, DISTANCETOMAINROAD,
-                NOOFHOUSEHOLDS, MOHPOPLATIONDENSITY, ESTIMATEDPOPULATIONDENSITY,
-                DISTANCETONEARESTHEALTHFACILITY, ACTLEVELS, ACTPRICE, MRDTLEVELS,
-                MRDTPRICE, NOOFDISTIBUTORS, CHVSTRAINED, PRESENCEOFESTATES, PRESENCEOFFACTORIES,
-                PRESENCEOFHOSTELS, TRADERMARKET, LARGESUPERMARKET, NGOSGIVINGFREEDRUGS,
-                NGODOINGICCM, NGODOINGMHEALTH};
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
         List<CommunityUnit> communityUnitList = new ArrayList<>();
@@ -338,18 +337,200 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
         return communityUnitList;
     }
 
+    public CommunityUnit getCommunityUnitById(String uuid) {
+
+        SQLiteDatabase db=getReadableDatabase();
+
+        String whereClause = ID+" = ? ";
+
+        String[] whereArgs = new String[] {
+                uuid
+        };
+
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else {
+            CommunityUnit communityUnit = new CommunityUnit();
+
+            communityUnit.setId(cursor.getString(0));
+            communityUnit.setCommunityUnitName(cursor.getString(1));
+            communityUnit.setMappingId(cursor.getString(2));
+            communityUnit.setLat(cursor.getString(3));
+            communityUnit.setLon(cursor.getString(4));
+            communityUnit.setCountry(cursor.getString(5));
+            communityUnit.setSubCountyId(cursor.getString(6));
+            communityUnit.setLinkFacilityId(cursor.getString(7));
+            communityUnit.setAreaChiefName(cursor.getString(8));
+            communityUnit.setWard(cursor.getString(9));
+            communityUnit.setEconomicStatus(cursor.getString(10));
+            communityUnit.setPrivateFacilityForAct(cursor.getString(11));
+            communityUnit.setPrivateFacilityForMrdt(cursor.getString(12));
+            communityUnit.setNameOfNgoDoingIccm(cursor.getString(13));
+            communityUnit.setNameOfNgoDoingMhealth(cursor.getString(14));
+            communityUnit.setDateAdded(cursor.getInt(15));
+            communityUnit.setAddedBy(cursor.getInt(16));
+            communityUnit.setNumberOfChvs(cursor.getInt(17));
+            communityUnit.setHouseholdPerChv(cursor.getInt(18));
+            communityUnit.setNumberOfVillages(cursor.getInt(19));
+            communityUnit.setDistanceToBranch(cursor.getInt(20));
+            communityUnit.setTransportCost(cursor.getInt(21));
+            communityUnit.setDistanceTOMainRoad(cursor.getInt(22));
+            communityUnit.setNoOfHouseholds(cursor.getInt(23));
+            communityUnit.setMohPoplationDensity(cursor.getInt(24));
+            communityUnit.setEstimatedPopulationDensity(cursor.getInt(25));
+            communityUnit.setDistanceTONearestHealthFacility(cursor.getInt(26));
+            communityUnit.setActLevels(cursor.getInt(27));
+            communityUnit.setActPrice(cursor.getInt(28));
+            communityUnit.setMrdtLevels(cursor.getInt(29));
+            communityUnit.setMrdtPrice(cursor.getInt(30));
+            communityUnit.setNoOfDistibutors(cursor.getInt(31));
+            communityUnit.setChvsTrained((cursor.getInt(32) ==  1));
+            communityUnit.setPresenceOfEstates((cursor.getInt(33) == 1));
+            communityUnit.setPresenceOfFactories((cursor.getInt(34) ==  1));
+            communityUnit.setPresenceOfHostels((cursor.getInt(35) ==  1));
+            communityUnit.setTraderMarket((cursor.getInt(36) ==  1));
+            communityUnit.setLargeSupermarket((cursor.getInt(37) ==  1));
+            communityUnit.setNgosGivingFreeDrugs((cursor.getInt(38) ==  1));
+            communityUnit.setNgoDoingIccm((cursor.getInt(39) ==  1));
+            communityUnit.setNgoDoingMhealth((cursor.getInt(40) ==  1));
+
+            db.close();
+            return communityUnit;
+        }
+    }
+
+    public CommunityUnit getCommunityUnitByName(String communityUnitName) {
+
+        SQLiteDatabase db=getReadableDatabase();
+
+        String whereClause = NAME+" = ? ";
+
+        String[] whereArgs = new String[] {
+                communityUnitName
+        };
+
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else {
+            CommunityUnit communityUnit = new CommunityUnit();
+
+            communityUnit.setId(cursor.getString(0));
+            communityUnit.setCommunityUnitName(cursor.getString(1));
+            communityUnit.setMappingId(cursor.getString(2));
+            communityUnit.setLat(cursor.getString(3));
+            communityUnit.setLon(cursor.getString(4));
+            communityUnit.setCountry(cursor.getString(5));
+            communityUnit.setSubCountyId(cursor.getString(6));
+            communityUnit.setLinkFacilityId(cursor.getString(7));
+            communityUnit.setAreaChiefName(cursor.getString(8));
+            communityUnit.setWard(cursor.getString(9));
+            communityUnit.setEconomicStatus(cursor.getString(10));
+            communityUnit.setPrivateFacilityForAct(cursor.getString(11));
+            communityUnit.setPrivateFacilityForMrdt(cursor.getString(12));
+            communityUnit.setNameOfNgoDoingIccm(cursor.getString(13));
+            communityUnit.setNameOfNgoDoingMhealth(cursor.getString(14));
+            communityUnit.setDateAdded(cursor.getInt(15));
+            communityUnit.setAddedBy(cursor.getInt(16));
+            communityUnit.setNumberOfChvs(cursor.getInt(17));
+            communityUnit.setHouseholdPerChv(cursor.getInt(18));
+            communityUnit.setNumberOfVillages(cursor.getInt(19));
+            communityUnit.setDistanceToBranch(cursor.getInt(20));
+            communityUnit.setTransportCost(cursor.getInt(21));
+            communityUnit.setDistanceTOMainRoad(cursor.getInt(22));
+            communityUnit.setNoOfHouseholds(cursor.getInt(23));
+            communityUnit.setMohPoplationDensity(cursor.getInt(24));
+            communityUnit.setEstimatedPopulationDensity(cursor.getInt(25));
+            communityUnit.setDistanceTONearestHealthFacility(cursor.getInt(26));
+            communityUnit.setActLevels(cursor.getInt(27));
+            communityUnit.setActPrice(cursor.getInt(28));
+            communityUnit.setMrdtLevels(cursor.getInt(29));
+            communityUnit.setMrdtPrice(cursor.getInt(30));
+            communityUnit.setNoOfDistibutors(cursor.getInt(31));
+            communityUnit.setChvsTrained((cursor.getInt(32) ==  1));
+            communityUnit.setPresenceOfEstates((cursor.getInt(33) == 1));
+            communityUnit.setPresenceOfFactories((cursor.getInt(34) ==  1));
+            communityUnit.setPresenceOfHostels((cursor.getInt(35) ==  1));
+            communityUnit.setTraderMarket((cursor.getInt(36) ==  1));
+            communityUnit.setLargeSupermarket((cursor.getInt(37) ==  1));
+            communityUnit.setNgosGivingFreeDrugs((cursor.getInt(38) ==  1));
+            communityUnit.setNgoDoingIccm((cursor.getInt(39) ==  1));
+            communityUnit.setNgoDoingMhealth((cursor.getInt(40) ==  1));
+
+            db.close();
+            return communityUnit;
+        }
+    }
+
+    public List<CommunityUnit> getCommunityUnitBySubCounty(String subCountyUUID) {
+
+        SQLiteDatabase db=getReadableDatabase();
+
+        String whereClause = SUBCOUNTYID+" = ? ";
+
+        String[] whereArgs = new String[] {
+                subCountyUUID
+        };
+
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        List<CommunityUnit> communityUnitList = new ArrayList<>();
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            CommunityUnit communityUnit = new CommunityUnit();
+
+            communityUnit.setId(cursor.getString(0));
+            communityUnit.setCommunityUnitName(cursor.getString(1));
+            communityUnit.setMappingId(cursor.getString(2));
+            communityUnit.setLat(cursor.getString(3));
+            communityUnit.setLon(cursor.getString(4));
+            communityUnit.setCountry(cursor.getString(5));
+            communityUnit.setSubCountyId(cursor.getString(6));
+            communityUnit.setLinkFacilityId(cursor.getString(7));
+            communityUnit.setAreaChiefName(cursor.getString(8));
+            communityUnit.setWard(cursor.getString(9));
+            communityUnit.setEconomicStatus(cursor.getString(10));
+            communityUnit.setPrivateFacilityForAct(cursor.getString(11));
+            communityUnit.setPrivateFacilityForMrdt(cursor.getString(12));
+            communityUnit.setNameOfNgoDoingIccm(cursor.getString(13));
+            communityUnit.setNameOfNgoDoingMhealth(cursor.getString(14));
+            communityUnit.setDateAdded(cursor.getInt(15));
+            communityUnit.setAddedBy(cursor.getInt(16));
+            communityUnit.setNumberOfChvs(cursor.getInt(17));
+            communityUnit.setHouseholdPerChv(cursor.getInt(18));
+            communityUnit.setNumberOfVillages(cursor.getInt(19));
+            communityUnit.setDistanceToBranch(cursor.getInt(20));
+            communityUnit.setTransportCost(cursor.getInt(21));
+            communityUnit.setDistanceTOMainRoad(cursor.getInt(22));
+            communityUnit.setNoOfHouseholds(cursor.getInt(23));
+            communityUnit.setMohPoplationDensity(cursor.getInt(24));
+            communityUnit.setEstimatedPopulationDensity(cursor.getInt(25));
+            communityUnit.setDistanceTONearestHealthFacility(cursor.getInt(26));
+            communityUnit.setActLevels(cursor.getInt(27));
+            communityUnit.setActPrice(cursor.getInt(28));
+            communityUnit.setMrdtLevels(cursor.getInt(29));
+            communityUnit.setMrdtPrice(cursor.getInt(30));
+            communityUnit.setNoOfDistibutors(cursor.getInt(31));
+            communityUnit.setChvsTrained((cursor.getInt(32) ==  1));
+            communityUnit.setPresenceOfEstates((cursor.getInt(33) == 1));
+            communityUnit.setPresenceOfFactories((cursor.getInt(34) ==  1));
+            communityUnit.setPresenceOfHostels((cursor.getInt(35) ==  1));
+            communityUnit.setTraderMarket((cursor.getInt(36) ==  1));
+            communityUnit.setLargeSupermarket((cursor.getInt(37) ==  1));
+            communityUnit.setNgosGivingFreeDrugs((cursor.getInt(38) ==  1));
+            communityUnit.setNgoDoingIccm((cursor.getInt(39) ==  1));
+            communityUnit.setNgoDoingMhealth((cursor.getInt(40) ==  1));
+
+            communityUnitList.add(communityUnit);
+        }
+        db.close();
+
+        return communityUnitList;
+    }
+
+
     public Cursor getCommunityUnitDataCursor() {
         SQLiteDatabase db=getReadableDatabase();
-        String [] columns=new String[]{ID, NAME, MAPPINGID, LAT, LON, COUNTRY,
-                SUBCOUNTYID, LINKFACILITYID, AREACHIEFNAME, WARD, ECONOMICSTATUS,
-                PRIVATEFACILITYFORACT, PRIVATEFACILITYFORMRDT, NAMEOFNGODOINGICCM,
-                NAMEOFNGODOINGMHEALTH, DATEADDED, ADDEDBY, NUMBEROFCHVS, HOUSEHOLDPERCHV,
-                NUMBEROFVILLAGES, DISTANCETOBRANCH, TRANSPORTCOST, DISTANCETOMAINROAD,
-                NOOFHOUSEHOLDS, MOHPOPLATIONDENSITY, ESTIMATEDPOPULATIONDENSITY,
-                DISTANCETONEARESTHEALTHFACILITY, ACTLEVELS, ACTPRICE, MRDTLEVELS, MRDTPRICE,
-                NOOFDISTIBUTORS, CHVSTRAINED, PRESENCEOFESTATES, PRESENCEOFFACTORIES,
-                PRESENCEOFHOSTELS, TRADERMARKET, LARGESUPERMARKET, NGOSGIVINGFREEDRUGS,
-                NGODOINGICCM, NGODOINGMHEALTH};
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
         return cursor;
     }

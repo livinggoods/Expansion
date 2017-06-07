@@ -19,8 +19,8 @@ import java.util.List;
  */
 
 public class KeCountyTable extends SQLiteOpenHelper {
-    public static final String TABLE_NAME="interview";
-    public static final String JSON_ROOT="interviews";
+    public static final String TABLE_NAME="ke_counties";
+    public static final String JSON_ROOT="ke_counties";
     public static final String DATABASE_NAME= Constants.DATABASE_NAME;
     public static final int DATABASE_VERSION= Constants.DATABASE_VERSION;
 
@@ -78,7 +78,7 @@ public class KeCountyTable extends SQLiteOpenHelper {
             PRIVATECLINICSINRADIUS, COMMUNITYUNITS, MAINSUPERMARKETS, MAINBANKS, ANYMAJORBUSINESS,
             COMMENTS, RECOMMENDED, DATEADDED, ADDEDBY, LGPRESENT, SYNCED};
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
-            + ID + primary_field + ", "
+            + primary_field + ", "
             + COUNTYNAME + varchar_field + ", "
             + COUNTRY + varchar_field + ", "
             + LAT + real_field + ", "
@@ -120,7 +120,7 @@ public class KeCountyTable extends SQLiteOpenHelper {
     @Override
     public void  onCreate (SQLiteDatabase db){
         db.execSQL(CREATE_DATABASE);
-        createKeCounties();
+        createKeCounties(db);
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
@@ -225,25 +225,131 @@ public class KeCountyTable extends SQLiteOpenHelper {
             keCounty.setAddedBy(cursor.getInt(29));
             keCounty.setLgPresent(cursor.getInt(30) ==1);
             keCounty.setSynced(cursor.getInt(31) == 1);
-
             keCountyList.add(keCounty);
         }
         db.close();
         return keCountyList;
     }
 
+    public KeCounty getCountyById(int id) {
 
-    public void createKeCounties(){
+        SQLiteDatabase db = getReadableDatabase();
+        String whereClause = ID +" = ? ";
+        String[] whereArgs = new String[] {
+                String.valueOf(id),
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else{
+            KeCounty keCounty=new KeCounty();
+
+            keCounty.setId(cursor.getInt(0));
+            keCounty.setCountyName(cursor.getString(1));
+            keCounty.setCountry(cursor.getString(2));
+            keCounty.setLat(cursor.getDouble(3));
+            keCounty.setLon(cursor.getDouble(4));
+            keCounty.setContactPerson(cursor.getString(5));
+            keCounty.setCountyCode(cursor.getString(6));
+            keCounty.setContactPersonPhone(cursor.getString(7));
+            keCounty.setMainTown(cursor.getString(8));
+            keCounty.setCountySupport(cursor.getString(9));
+            keCounty.setChvActivityLevel(cursor.getString(11));
+            keCounty.setCountyPopulation(cursor.getString(12));
+            keCounty.setNoOfVillages(cursor.getLong(13));
+            keCounty.setMainTownPopulation(cursor.getLong(14));
+            keCounty.setServicePopulation(cursor.getLong(15));
+            keCounty.setPopulationDensity(cursor.getLong(16));
+            keCounty.setTransportCost(cursor.getInt(17));
+            keCounty.setMajorRoads(cursor.getString(18));
+            keCounty.setHealtFacilities(cursor.getString(19));
+            keCounty.setPrivateClinicsInTown(cursor.getString(20));
+            keCounty.setPrivateClinicsInRadius(cursor.getString(21));
+            keCounty.setCommunityUnits(cursor.getString(22));
+            keCounty.setMainSupermarkets(cursor.getString(23));
+            keCounty.setMainBanks(cursor.getString(24));
+            keCounty.setAnyMajorBusiness(cursor.getInt(25));
+            keCounty.setComments(cursor.getString(26));
+            keCounty.setRecommended(cursor.getInt(27) == 1);
+            keCounty.setDateAdded(cursor.getLong(28));
+            keCounty.setAddedBy(cursor.getInt(29));
+            keCounty.setLgPresent(cursor.getInt(30) ==1);
+            keCounty.setSynced(cursor.getInt(31) == 1);
+            db.close();
+            return keCounty;
+        }
+    }
+
+    public KeCounty getKeCountyByName(String countyName) {
+
+        SQLiteDatabase db = getReadableDatabase();
+        String whereClause = COUNTYNAME +" = ?";
+        String[] whereArgs = new String[] {
+                String.valueOf(countyName),
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else{
+            KeCounty keCounty=new KeCounty();
+
+            keCounty.setId(cursor.getInt(0));
+            keCounty.setCountyName(cursor.getString(1));
+            keCounty.setCountry(cursor.getString(2));
+            keCounty.setLat(cursor.getDouble(3));
+            keCounty.setLon(cursor.getDouble(4));
+            keCounty.setContactPerson(cursor.getString(5));
+            keCounty.setCountyCode(cursor.getString(6));
+            keCounty.setContactPersonPhone(cursor.getString(7));
+            keCounty.setMainTown(cursor.getString(8));
+            keCounty.setCountySupport(cursor.getString(9));
+            keCounty.setChvActivityLevel(cursor.getString(11));
+            keCounty.setCountyPopulation(cursor.getString(12));
+            keCounty.setNoOfVillages(cursor.getLong(13));
+            keCounty.setMainTownPopulation(cursor.getLong(14));
+            keCounty.setServicePopulation(cursor.getLong(15));
+            keCounty.setPopulationDensity(cursor.getLong(16));
+            keCounty.setTransportCost(cursor.getInt(17));
+            keCounty.setMajorRoads(cursor.getString(18));
+            keCounty.setHealtFacilities(cursor.getString(19));
+            keCounty.setPrivateClinicsInTown(cursor.getString(20));
+            keCounty.setPrivateClinicsInRadius(cursor.getString(21));
+            keCounty.setCommunityUnits(cursor.getString(22));
+            keCounty.setMainSupermarkets(cursor.getString(23));
+            keCounty.setMainBanks(cursor.getString(24));
+            keCounty.setAnyMajorBusiness(cursor.getInt(25));
+            keCounty.setComments(cursor.getString(26));
+            keCounty.setRecommended(cursor.getInt(27) == 1);
+            keCounty.setDateAdded(cursor.getLong(28));
+            keCounty.setAddedBy(cursor.getInt(29));
+            keCounty.setLgPresent(cursor.getInt(30) ==1);
+            keCounty.setSynced(cursor.getInt(31) == 1);
+            db.close();
+            return keCounty;
+        }
+    }
+
+
+    public void createKeCounties(SQLiteDatabase db){
         // this should be called once during the installation process.
         int x = 1;
         Long currentDate =  new Date().getTime();
         for (String county: counties) {
             KeCounty countyDetails = new KeCounty(x, county, String.valueOf(x), "KE", 0D, 0D, "", "","","","","",0L
                     ,0L,0L,0L,0,"","","","","","","",0,"",false,currentDate, 1, true, false);
-            this.addKeCounty(countyDetails);
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(ID, x);
+            contentValues.put(COUNTYNAME,county);
+            contentValues.put(COUNTYCODE, x);
+            contentValues.put(DATEADDED, currentDate);
+            long id = db.insertWithOnConflict(TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
             x++;
         }
 
     }
-    private void upgradeVersion2(SQLiteDatabase db){}
+    private void upgradeVersion2(SQLiteDatabase db){
+        createKeCounties(db);
+    }
 }

@@ -10,6 +10,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -61,6 +62,7 @@ public class InterviewsFragment extends Fragment implements Callback {
 
     private OnFragmentInteractionListener mListener;
     TextView textshow;
+    FloatingActionButton fab;
 
     // to show list in Gmail Mode
     private List<Interview> interviews = new ArrayList<>();
@@ -118,6 +120,24 @@ public class InterviewsFragment extends Fragment implements Callback {
         MainActivity.CURRENT_TAG =MainActivity.TAG_INTERVIEWS;
         MainActivity.backFragment = new RegistrationViewFragment();
         session = new SessionManagement(getContext());
+        fab = (FloatingActionButton) v.findViewById(R.id.fab);
+        fab.hide();
+        final Fragment fragment;
+        if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("KE")){
+            fragment = new NewInterviewFragment();
+        }else {
+            fragment = new NewInterviewFragment();
+        }
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "villages");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        });
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);

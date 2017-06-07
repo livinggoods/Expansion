@@ -4,11 +4,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.CountyLocation;
 import com.expansion.lg.kimaru.expansion.other.Constants;
+import com.expansion.lg.kimaru.expansion.sync.ApiClient;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -22,6 +26,7 @@ import java.util.List;
 
 public class CountyLocationTable extends SQLiteOpenHelper {
 
+    Context context;
     public static final String TABLE_NAME="location";
     public static final String JSON_ROOT="locations";
     public static final String DATABASE_NAME= Constants.DATABASE_NAME;
@@ -49,7 +54,7 @@ public class CountyLocationTable extends SQLiteOpenHelper {
             PARENT, POLYGON, ARCHIVED};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
-            + ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + ", "
+            + ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL " + ", "
             + NAME + varchar_field + ", "
             + ADMIN_NAME + varchar_field + ", "
             + CODE + varchar_field + ", "
@@ -65,13 +70,12 @@ public class CountyLocationTable extends SQLiteOpenHelper {
 
     public CountyLocationTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
         db.execSQL(CREATE_DATABASE);
-
     }
 
     @Override
@@ -101,9 +105,11 @@ public class CountyLocationTable extends SQLiteOpenHelper {
 
         long id;
         if (isExist(countyLocation)){
-            id = db.update(TABLE_NAME, cv, ID+"='"+ countyLocation.getId()+"'", null);
+            id = db.update(TABLE_NAME, cv, ID+"='"+countyLocation.getId()+"'", null);
+            Log.e("expansion ugcountytable", "Updated ID : " + String.valueOf(id));
         }else{
-            id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+            id = db.insert(TABLE_NAME, null, cv);
+            Log.e("expansion ugcountytable", "New record - ID is " + String.valueOf(id));
         }
         db.close();
         return id;
@@ -187,9 +193,111 @@ public class CountyLocationTable extends SQLiteOpenHelper {
         }
 
     }
+    public CountyLocation getDistrictByName(String name){
+        SQLiteDatabase db = getReadableDatabase();
+        String whereClause = NAME+" = ? AND (" +
+                ADMIN_NAME +" = ? OR " +
+                ADMIN_NAME +" = ? ) ";
+        String[] whereArgs = new String[] {
+                name,
+                "District",
+                "County"
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else{
+            String [] columns=new String[]{ID, NAME, ADMIN_NAME, CODE, COUNTRY, LAT, LON, META,
+                    PARENT, POLYGON, ARCHIVED};
+            CountyLocation countyLocation = new CountyLocation();
+            countyLocation.setId(cursor.getInt(0));
+            countyLocation.setName(cursor.getString(1));
+            countyLocation.setAdminName(cursor.getString(2));
+            countyLocation.setCode(cursor.getString(3));
+            countyLocation.setCountry(cursor.getString(4));
+            countyLocation.setLat(cursor.getString(5));
+            countyLocation.setLon(cursor.getString(6));
+            countyLocation.setMeta(cursor.getString(7));
+            countyLocation.setParent(cursor.getInt(8));
+            countyLocation.setPolygon(cursor.getString(9));
+            countyLocation.setArchived(cursor.getInt(10));
+            cursor.close();
+            return countyLocation;
+        }
+
+    }
+    public CountyLocation getCountyOrDistrictByName(String name){
+        SQLiteDatabase db = getReadableDatabase();
+        String whereClause = NAME+" = ? AND (" +
+                ADMIN_NAME +" = ? OR " +
+                ADMIN_NAME +" = ? ) ";
+        String[] whereArgs = new String[] {
+                name,
+                "County",
+                "DISTRICT"
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else{
+            String [] columns=new String[]{ID, NAME, ADMIN_NAME, CODE, COUNTRY, LAT, LON, META,
+                    PARENT, POLYGON, ARCHIVED};
+            CountyLocation countyLocation = new CountyLocation();
+            countyLocation.setId(cursor.getInt(0));
+            countyLocation.setName(cursor.getString(1));
+            countyLocation.setAdminName(cursor.getString(2));
+            countyLocation.setCode(cursor.getString(3));
+            countyLocation.setCountry(cursor.getString(4));
+            countyLocation.setLat(cursor.getString(5));
+            countyLocation.setLon(cursor.getString(6));
+            countyLocation.setMeta(cursor.getString(7));
+            countyLocation.setParent(cursor.getInt(8));
+            countyLocation.setPolygon(cursor.getString(9));
+            countyLocation.setArchived(cursor.getInt(10));
+            cursor.close();
+            return countyLocation;
+        }
+
+    }
+
+    public CountyLocation getCountyByName(String name){
+        SQLiteDatabase db = getReadableDatabase();
+        String whereClause = NAME+" = ? AND " +
+                            ADMIN_NAME +" = ? ";
+        String[] whereArgs = new String[] {
+                name,
+                "County"
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else{
+            String [] columns=new String[]{ID, NAME, ADMIN_NAME, CODE, COUNTRY, LAT, LON, META,
+                    PARENT, POLYGON, ARCHIVED};
+            CountyLocation countyLocation = new CountyLocation();
+            countyLocation.setId(cursor.getInt(0));
+            countyLocation.setName(cursor.getString(1));
+            countyLocation.setAdminName(cursor.getString(2));
+            countyLocation.setCode(cursor.getString(3));
+            countyLocation.setCountry(cursor.getString(4));
+            countyLocation.setLat(cursor.getString(5));
+            countyLocation.setLon(cursor.getString(6));
+            countyLocation.setMeta(cursor.getString(7));
+            countyLocation.setParent(cursor.getInt(8));
+            countyLocation.setPolygon(cursor.getString(9));
+            countyLocation.setArchived(cursor.getInt(10));
+            cursor.close();
+            return countyLocation;
+        }
+
+    }
+
     public List<CountyLocation> getChildrenLocations(CountyLocation parentCountyLocation){
         SQLiteDatabase db=getReadableDatabase();
-        String whereClause = ID+" = ?";
+        String whereClause = PARENT+" = ?";
         String[] whereArgs = new String[] {
                 String.valueOf(parentCountyLocation.getId())
         };
@@ -257,6 +365,54 @@ public class CountyLocationTable extends SQLiteOpenHelper {
         cur.close();
         return exist;
     }
-    private void upgradeVersion2(SQLiteDatabase db) {}
+    public long nextIncrementValue (){
+        SQLiteDatabase db = getReadableDatabase();
+        Long id = 0L;
+        Cursor c = db.rawQuery("select seq from sqlite_sequence WHERE name = '" +TABLE_NAME+"'", null);
+        if (c.moveToFirst()){
+            do {
+                id = c.getLong(0);
+            } while (c.moveToNext());
+        }
+        return id +1;
+    }
+
+    public void insertRawSql(String name,String admin_name, String code, String country, String lat,
+                             String lon, String meta, Long parent, String polygon){
+        SQLiteDatabase db = getReadableDatabase();
+        db.rawQuery("INSERT INTO `location`(`id`,`name`,`admin_name`,`code`,`country`," +
+                "`lat`,`lon`,`meta`,`parent`,`polygon`) VALUES (NULL,'"+name+"','"+admin_name+"','"
+                +code+"','"+country+"','"+ lat+"','"+lon+"','"+meta+"','"+parent+"','"+polygon+"');", null);
+    }
+    private void upgradeVersion2(SQLiteDatabase db) {
+        createLocations();
+    }
+    public void createLocations(){
+        new syncLocations().execute(Constants.CLOUD_ADDRESS+"/api/v1/sync/locations");
+    }
+    private class syncLocations extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+            if(stream !=null){
+                try{
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray("locations");
+                    CountyLocationTable countyLocationTable = new CountyLocationTable(context);
+                    for (int x = 0; x < recs.length(); x++){
+                        countyLocationTable.fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                }
+
+            }
+            return stream;
+        }
+        protected void onPostExecute(String stream){
+
+        } // onPostExecute() end
+    }
 }
 

@@ -1,5 +1,7 @@
 package com.expansion.lg.kimaru.expansion.mzigos;
 
+import android.support.annotation.Nullable;
+
 /**
  * Created by kimaru on 3/28/17.
  */
@@ -9,7 +11,7 @@ public class CountyLocation {
     String name;
     int archived;
     String code;
-    int id;
+    Integer id;
     String lat;
     String country;
     String lon;
@@ -20,7 +22,7 @@ public class CountyLocation {
     //empty constructor
     public CountyLocation(){}
 
-    public CountyLocation(String adminName, String name, String country, int archived, String code, int id, String lat,
+    public CountyLocation(String adminName, String name, String country, int archived, String code, @Nullable  Integer id, String lat,
                           String lon, String meta, int parent, String polygon){
         this.adminName = adminName;
         this.name =  name;
@@ -54,7 +56,7 @@ public class CountyLocation {
         this.code = code;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -88,7 +90,7 @@ public class CountyLocation {
         return archived;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

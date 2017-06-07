@@ -7,8 +7,8 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 public class LinkFacility {
 
     String id, facilityName, mappingId, lat, lon, country, subCountyId;
-    Integer dateAdded, addedBy;
-    long actLevels, mrdtLevels;
+    Integer addedBy;
+    Long actLevels, mrdtLevels, dateAdded;
 
     String picture="";
     int color = -1;
@@ -20,7 +20,7 @@ public class LinkFacility {
     }
 
     public LinkFacility(String id, String facilityName, String country, String mappingId, String lat,
-                        String lon, String subCountyId, Integer dateAdded, Integer addedBy,
+                        String lon, String subCountyId, Long dateAdded, Integer addedBy,
                         long actLevels, long mrdtLevels) {
         this.id = id;
         this.facilityName = facilityName;
@@ -50,11 +50,11 @@ public class LinkFacility {
         return addedBy;
     }
 
-    public void setDateAdded(Integer dateAdded) {
+    public void setDateAdded(Long dateAdded) {
         this.dateAdded = dateAdded;
     }
 
-    public Integer getDateAdded() {
+    public Long getDateAdded() {
         return dateAdded;
     }
 

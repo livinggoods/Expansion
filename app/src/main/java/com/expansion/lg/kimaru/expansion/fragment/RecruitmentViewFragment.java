@@ -43,16 +43,20 @@ import com.expansion.lg.kimaru.expansion.dbhelpers.CommunityUnitListAdapter;
 import com.expansion.lg.kimaru.expansion.dbhelpers.RecruitmentListAdapter;
 import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
+import com.expansion.lg.kimaru.expansion.mzigos.CountyLocation;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.DefaultListMenu;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 import com.expansion.lg.kimaru.expansion.tables.ChewReferralTable;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
+import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
+import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
 import com.poliveira.parallaxrecycleradapter.ParallaxRecyclerAdapter;
 
 import java.util.ArrayList;
@@ -71,7 +75,8 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
     public SwipeRefreshLayout swipeRefreshLayout;
 
     private List<ChewReferral> chewReferrals = new ArrayList<>();
-    private ListView mListView;
+    private List<CommunityUnit> communityUnits = new ArrayList<>();
+    private ListView mListView, cuListView;
 
 
     // TODO: Rename and change types of parameters
@@ -192,13 +197,35 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
 
 
         if (session.getSavedRecruitment().getCountry().equalsIgnoreCase("UG")){
+            getCommunityUnits();
+            cuListView = (ListView) v.findViewById(R.id.cu_list_view);
+            String[] cuItems = new String[communityUnits.size()];
+            for (int i = 0; i < communityUnits.size(); i++){
+                CommunityUnit communityUnit = communityUnits.get(i);
+                listItems[i] = communityUnit.getCommunityUnitName();
+            }
+            CuAdapter cuAdapter = new CuAdapter(getContext(), communityUnits);
+
+            cuListView.setAdapter(adapter);
+
             recruitmentMainLocation.setText(session.getSavedRecruitment().getName());
-            recruitmentSecondaryLocation.setText(session.getSavedRecruitment().getDistrict());
+            CountyLocation district = new CountyLocationTable(getContext())
+                    .getLocationById(session.getSavedRecruitment().getDistrict());
+            //recruitmentSecondaryLocation.setText(session.getSavedRecruitment().getDistrict());
+            recruitmentSecondaryLocation.setText(district.getName());
             addReferrals.setText("+ ADD REFERRAL");
+            //Hide KE
+            RelativeLayout keCuList = (RelativeLayout) v.findViewById(R.id.ke_cu_list);
+            RelativeLayout keCuView = (RelativeLayout) v.findViewById(R.id.ke_cu_view);
+            keCuList.setVisibility(View.INVISIBLE);
+            keCuView.setVisibility(View.INVISIBLE);
         }else{
-            recruitmentMainLocation.setText(session.getSavedRecruitment().getSubcounty());
-            recruitmentSecondaryLocation.setText(session.getSavedRecruitment().getCounty());
+            recruitmentMainLocation.setText(session.getSavedRecruitment().getName());
+            recruitmentSecondaryLocation.setText(new SubCountyTable(getContext())
+                    .getSubCountyById(session.getSavedRecruitment().getSubcounty())
+                    .getSubCountyName());
             addReferrals.setText("+ ADD A CHEW");
+
         }
         addReferrals.setOnClickListener(this);
 
@@ -253,10 +280,25 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
                 chewReferrals.add(chewReferral);
             }
         }catch (Exception e){
-            ivReferrals.setText("No recruitments added. Please create one");
+           // ivReferrals.setText("No recruitments added. Please create one");
         }
 
     }
+    private void getCommunityUnits(){
+        communityUnits.clear();
+        try{
+            List<CommunityUnit> communityUnitList = new CommunityUnitTable(getContext())
+                    .getCommunityUnitBySubCounty(session.getSavedRecruitment().getCounty());
+            for (CommunityUnit cu : communityUnitList){
+                cu.setColor(getRandomMaterialColor("400"));
+                communityUnits.add(cu);
+            }
+        }catch (Exception e){
+
+        }
+
+    }
+
     private int getRandomMaterialColor(String typeColor) {
         int returnColor = Color.GRAY;
         int arrayId = getResources().getIdentifier("mdcolor_" + typeColor, "array", getContext().getPackageName());
@@ -302,29 +344,6 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
                 break;
 
         }
-    }
-    private void getChewReferral(){
-        swipeRefreshLayout.setRefreshing(true);
-
-        chewReferrals.clear();
-
-        // clear the registrations
-        try {
-            // get the registrations
-            ChewReferralTable chewReferralTable = new ChewReferralTable(getContext());
-            List<ChewReferral> chewReferralList = new ArrayList<>();
-
-            chewReferralList = chewReferralTable.getChewReferralByRecruitmentId(session.getSavedRecruitment().getId());
-            for (ChewReferral chewReferral:chewReferralList){
-                chewReferral.setColor(getRandomMaterialColor("400"));
-                chewReferrals.add(chewReferral);
-            }
-            rAdapter.notifyDataSetChanged();
-            swipeRefreshLayout.setRefreshing(false);
-        } catch (Exception error){
-            Toast.makeText(getContext(), "No Registrations", Toast.LENGTH_SHORT).show();
-        }
-        swipeRefreshLayout.setRefreshing(false);
     }
 
     private class ChewAdapter extends ArrayAdapter<ChewReferral>{
@@ -380,6 +399,48 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
 
 
 
+
+            return rowView;
+        }
+    }
+
+    private class CuAdapter extends ArrayAdapter<CommunityUnit>{
+        private final Context context;
+        private final List <CommunityUnit> communityUnitss;
+
+        public CuAdapter( Context context, List<CommunityUnit> values){
+            super(context, -1, values);
+            this.communityUnitss = values;
+            this.context = context;
+        }
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent){
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
+            subject = (TextView) rowView.findViewById(R.id.txt_primary);
+            message = (TextView) rowView.findViewById(R.id.txt_secondary);
+            iconText = (TextView) rowView.findViewById(R.id.icon_text);
+            timestamp = (TextView) rowView.findViewById(R.id.timestamp);
+            iconBack = (RelativeLayout) rowView.findViewById(R.id.icon_back);
+            iconFront = (RelativeLayout) rowView.findViewById(R.id.icon_front);
+            iconImp = (ImageView) rowView.findViewById(R.id.icon_star);
+            imgProfile = (ImageView) rowView.findViewById(R.id.icon_profile);
+            registrationContainser = (LinearLayout) rowView.findViewById(R.id.message_container);
+            iconContainer = (RelativeLayout) rowView.findViewById(R.id.icon_container);
+
+            CommunityUnit community = communityUnitss.get(position);
+            subject.setText(community.getCommunityUnitName());
+            subject.getLayoutParams().width = RecyclerView.LayoutParams.WRAP_CONTENT;
+
+            message.setText(community.getLinkFacilityId());
+            message.getLayoutParams().width = RecyclerView.LayoutParams.WRAP_CONTENT;
+
+            iconText.setText(String.valueOf(community.getCommunityUnitName().substring(0,1)));
+            imgProfile.setImageResource(R.drawable.bg_circle);
+            imgProfile.setColorFilter(community.getColor());
+            iconText.setVisibility(View.VISIBLE);
+            iconImp.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_black_24dp));
+            iconImp.setColorFilter(ContextCompat.getColor(getContext(), R.color.icon_tint_selected));
 
             return rowView;
         }

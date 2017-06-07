@@ -33,34 +33,7 @@ public class LocationDataSync {
     }
 
     public void pollLocations(){
-
-                String url = Constants.CLOUD_ADDRESS+"/api/v1/sync/locations";
-                new syncLocations().execute(url);
-    }
-
-
-
-    private class syncLocations extends AsyncTask<String, Void, String> {
-        protected String doInBackground(String... strings){
-            String stream = null;
-            String urlString = strings[0];
-            ApiClient hh = new ApiClient();
-            stream = hh.GetHTTPData(urlString);
-            return stream;
-        }
-        protected void onPostExecute(String stream){
-            if(stream !=null){
-                try{
-                    JSONObject reader= new JSONObject(stream);
-                    JSONArray recs = reader.getJSONArray("locations");
-                    CountyLocationTable countyLocationTable = new CountyLocationTable(context);
-                    for (int x = 0; x < recs.length(); x++){
-                        countyLocationTable.fromJson(recs.getJSONObject(x));
-                    }
-                }catch(JSONException e){
-                }
-
-            } // if statement end
-        } // onPostExecute() end
+        CountyLocationTable countyLocationTable = new CountyLocationTable(context);
+        countyLocationTable.createLocations();
     }
 }

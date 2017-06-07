@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.other.Constants;
+import com.expansion.lg.kimaru.expansion.sync.LocationDataSync;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,8 @@ import java.util.List;
 
 
 public class MappingTable extends SQLiteOpenHelper {
+
+    Context context;
 
     public static final String TABLE_NAME="mapping";
     public static final String DATABASE_NAME= Constants.DATABASE_NAME;
@@ -34,6 +37,7 @@ public class MappingTable extends SQLiteOpenHelper {
     public static final String MAPPINGNAME= "name";
     public static final String COUNTRY = "country";
     public static final String COUNTY = "county";
+    public static final String SUBCOUNTY = "subcounty";
     public static final String DISTRICT = "district";
     public static final String ADDED_BY = "added_by";
     public static final String CONTACTPERSON = "contact_person";
@@ -48,6 +52,7 @@ public class MappingTable extends SQLiteOpenHelper {
             + COUNTRY + varchar_field + ", "
             + COUNTY + varchar_field + ", "
             + DISTRICT + varchar_field + ", "
+            + SUBCOUNTY + varchar_field + ", "
             + ADDED_BY + integer_field + ", "
             + CONTACTPERSON + varchar_field + ", "
             + CONTACTPERSONPHONE + varchar_field + ", "
@@ -56,12 +61,15 @@ public class MappingTable extends SQLiteOpenHelper {
             + DATE_ADDED + integer_field + "); ";
 
     String [] columns=new String[]{ID, MAPPINGNAME, COUNTRY, COUNTY, ADDED_BY, CONTACTPERSON,
-            CONTACTPERSONPHONE, COMMENT, DATE_ADDED, SYNCED, DISTRICT};
+            CONTACTPERSONPHONE, COMMENT, DATE_ADDED, SYNCED, DISTRICT, SUBCOUNTY};
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
+    public static final String DB_UPDATE_V2 = "ALTER TABLE " + TABLE_NAME +
+            "  ADD "+ SUBCOUNTY + varchar_field +";";
 
     public MappingTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -73,8 +81,6 @@ public class MappingTable extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-        Log.w("RegistrationTable", "upgrading database from" + oldVersion + "to" + newVersion);
         if (oldVersion < 2){
             upgradeVersion2(db);
         }
@@ -93,6 +99,7 @@ public class MappingTable extends SQLiteOpenHelper {
         cv.put(CONTACTPERSON, mapping.getContactPerson());
         cv.put(CONTACTPERSONPHONE, mapping.getContactPersonPhone());
         cv.put(COMMENT, mapping.getComment());
+        cv.put(SUBCOUNTY, mapping.getSubCounty());
         cv.put(SYNCED, mapping.isSynced() ? 1 : 0);
         cv.put(DATE_ADDED, mapping.getDateAdded());
 
@@ -127,6 +134,7 @@ public class MappingTable extends SQLiteOpenHelper {
             mapping.setDateAdded(cursor.getInt(8));
             mapping.setSynced(cursor.getInt(9) == 1);
             mapping.setDistrict(cursor.getString(10));
+            mapping.setSubCounty(cursor.getString(11));
 
             mappingList.add(mapping);
         }
@@ -151,6 +159,7 @@ public class MappingTable extends SQLiteOpenHelper {
         mapping.setDateAdded(cursor.getInt(8));
         mapping.setSynced(cursor.getInt(9) == 1);
         mapping.setDistrict(cursor.getString(10));
+        mapping.setSubCounty(cursor.getString(11));
         return mapping;
     }
     public List<Mapping> getMappingsByCountry(String countryCode) {
@@ -176,6 +185,7 @@ public class MappingTable extends SQLiteOpenHelper {
             mapping.setDateAdded(cursor.getInt(8));
             mapping.setSynced(cursor.getInt(9) == 1);
             mapping.setDistrict(cursor.getString(10));
+            mapping.setSubCounty(cursor.getString(11));
 
             mappingList.add(mapping);
         }
@@ -199,6 +209,7 @@ public class MappingTable extends SQLiteOpenHelper {
         mapping.setDateAdded(cursor.getInt(8));
         mapping.setSynced(cursor.getInt(9) == 1);
         mapping.setDistrict(cursor.getString(10));
+        mapping.setSubCounty(cursor.getString(11));
         return mapping;
     }
     public Mapping getMappingByDistrict(String uuid){
@@ -217,7 +228,13 @@ public class MappingTable extends SQLiteOpenHelper {
         mapping.setDateAdded(cursor.getInt(8));
         mapping.setSynced(cursor.getInt(9) == 1);
         mapping.setDistrict(cursor.getString(10));
+        mapping.setSubCounty(cursor.getString(11));
         return mapping;
     }
-    private void upgradeVersion2(SQLiteDatabase db) {}
+    private void upgradeVersion2(SQLiteDatabase db) {
+        // add column
+        db.execSQL(DB_UPDATE_V2);
+        LocationDataSync locationDataSync = new LocationDataSync(context);
+        locationDataSync.pollLocations();
+    }
 }

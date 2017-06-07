@@ -19,9 +19,16 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.mzigos.CountyLocation;
+import com.expansion.lg.kimaru.expansion.mzigos.KeCounty;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
+import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
+import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.other.FlipAnimator;
+import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
+import com.expansion.lg.kimaru.expansion.tables.KeCountyTable;
+import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,10 +103,47 @@ public class RecruitmentListAdapter extends RecyclerView.Adapter<RecruitmentList
         Recruitment recruitment = recruitments.get(position);
 
         //// displaying text view data
-        holder.from.setText(recruitment.getName());
-        holder.subject.setText(recruitment.getDistrict());
-        holder.message.setText(recruitment.getDivision());
-        holder.timestamp.setText(recruitment.getSubcounty());
+        SubCountyTable subCountyTable = new SubCountyTable(mContext);
+        SubCounty subCounty = subCountyTable.getSubCountyById(recruitment.getSubcounty());
+        if (recruitment.getCountry().equalsIgnoreCase("UG")){
+            CountyLocationTable countyLocationTable = new CountyLocationTable(mContext);
+            CountyLocation district = countyLocationTable.getLocationById(recruitment.getDistrict());
+            holder.from.setText(recruitment.getName());
+            if (district != null){
+                holder.subject.setText(district.getName());
+            }else{
+                holder.subject.setText("");
+            }
+
+            if (subCounty != null){
+                holder.message.setText(subCounty.getSubCountyName());
+            }else{
+                holder.message.setText("");
+            }
+
+            holder.timestamp.setText(new DisplayDate(recruitment.getDateAdded()).dateAndTime());
+        }else{
+            holder.from.setText(recruitment.getName());
+            KeCountyTable keCountyTable = new KeCountyTable(mContext);
+            KeCounty keCounty = keCountyTable.getCountyById(Integer.valueOf(recruitment.getCounty()));
+            if (keCounty != null) {
+                holder.subject.setText(keCounty.getCountyName());
+            }else{
+                holder.subject.setText(recruitment.getCounty());
+            }
+
+            if (subCounty != null) {
+                holder.message.setText(subCounty.getSubCountyName());
+            }else{
+                holder.message.setText(recruitment.getSubcounty());
+            }
+
+            holder.timestamp.setText(new DisplayDate(recruitment.getDateAdded()).dateAndTime());
+        }
+//        holder.from.setText(recruitment.getName());
+//        holder.subject.setText(recruitment.getDistrict());
+//        holder.message.setText(recruitment.getDivision());
+//        holder.timestamp.setText(recruitment.getSubcounty());
 
         // displaying the first letter of From in icon text
         holder.iconText.setText(recruitment.getName().substring(0,1));

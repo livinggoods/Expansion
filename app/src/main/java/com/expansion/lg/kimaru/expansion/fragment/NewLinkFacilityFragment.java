@@ -367,7 +367,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
                 Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
-                Integer currentDate =  (int) (new Date().getTime()/1000);
+                Long currentDate =  new Date().getTime();
 
                 Mapping mapping = session.getSavedMapping();
                 String subCountyId = session.getSavedSubCounty().getId();

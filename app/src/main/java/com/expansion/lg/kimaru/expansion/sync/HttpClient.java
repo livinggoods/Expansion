@@ -153,34 +153,39 @@ public class HttpClient {
                             examUrl = url + "/" + HttpServer.EXAM_URL;
                             new ProcessExams().execute(examUrl);
 
+                            // Poll for records
+                            new PollRecords().execute();
 
-                            //Poll server for new records
-                            // Recruitments
-                            try {
-                                String status = postRecruitments();
-                            } catch (Exception e) {
-                            }
-
-                            try {
-                                String status = postRegistrations();
-                            } catch (Exception e) {
-                            }
-
-                            try {
-                                String status = postExams();
-                            } catch (Exception e) {
-                            }
-
-                            try {
-                                String status = postInterviews();
-                            } catch (Exception e) {
-                            }
                         }
                     }
                 });
             }
         };
         timer.schedule(task, 0, 60*1000);
+    }
+    private class PollRecords extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            try {
+                String status = postRecruitments();
+            } catch (Exception e) {
+            }
+
+            try {
+                String status = postRegistrations();
+            } catch (Exception e) {
+            }
+
+            try {
+                String status = postExams();
+            } catch (Exception e) {
+            }
+
+            try {
+                String status = postInterviews();
+            } catch (Exception e) {
+            }
+            return "";
+        }
     }
 
     private class ProcessExams extends AsyncTask<String, Void, String> {
@@ -190,12 +195,6 @@ public class HttpClient {
 
             ApiClient hh = new ApiClient();
             stream = hh.GetHTTPData(urlString);
-
-            // Return the data from specified url
-            return stream;
-        }
-
-        protected void onPostExecute(String stream){
             if(stream !=null){
                 try{
                     // Get the full HTTP Data as JSONObject
@@ -212,7 +211,13 @@ public class HttpClient {
                     e.printStackTrace();
                 }
 
-            } // if statement end
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+             // if statement end
         } // onPostExecute() end
     } // ProcessJSON class end
 
@@ -224,10 +229,6 @@ public class HttpClient {
 
             ApiClient hh = new ApiClient();
             stream = hh.GetHTTPData(urlString);
-            return stream;
-        }
-
-        protected void onPostExecute(String stream){
             if(stream !=null){
                 try{
                     // Get the full HTTP Data as JSONObject
@@ -244,7 +245,12 @@ public class HttpClient {
                     e.printStackTrace();
                 }
 
-            } // if statement end
+            }
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+             // if statement end
         } // onPostExecute() end
     } // ProcessJSON class end
 
@@ -256,12 +262,6 @@ public class HttpClient {
 
             ApiClient hh = new ApiClient();
             stream = hh.GetHTTPData(urlString);
-
-            // Return the data from specified url
-            return stream;
-        }
-
-        protected void onPostExecute(String stream){
             if(stream !=null){
                 try{
                     // Get the full HTTP Data as JSONObject
@@ -279,7 +279,13 @@ public class HttpClient {
                 }catch(JSONException e){
                     e.printStackTrace();
                 }
-            } // if statement end
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+             // if statement end
         } // onPostExecute() end
     } // ProcessJSON class end
 
@@ -290,12 +296,6 @@ public class HttpClient {
 
             ApiClient hh = new ApiClient();
             stream = hh.GetHTTPData(urlString);
-
-            // Return the data from specified url
-            return stream;
-        }
-
-        protected void onPostExecute(String stream){
             if(stream !=null){
                 try{
                     // Get the full HTTP Data as JSONObject
@@ -311,7 +311,13 @@ public class HttpClient {
                     e.printStackTrace();
                 }
 
-            } // if statement end
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+             // if statement end
         } // onPostExecute() end
     }
 

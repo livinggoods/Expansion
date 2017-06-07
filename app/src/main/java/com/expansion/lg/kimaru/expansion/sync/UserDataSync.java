@@ -87,7 +87,6 @@ public class UserDataSync {
 
                 }catch(JSONException e){
                 }
-
             }
             return stream;
         }

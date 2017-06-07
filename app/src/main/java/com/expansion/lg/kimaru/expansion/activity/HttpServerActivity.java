@@ -18,6 +18,7 @@ import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.sync.ApiClient;
 import com.expansion.lg.kimaru.expansion.sync.HttpClient;
 import com.expansion.lg.kimaru.expansion.sync.HttpServer;
+import com.expansion.lg.kimaru.expansion.sync.LocationDataSync;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
@@ -39,7 +40,7 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
 
 
     Button enableServer;
-    Button stopServer, shareRecords;
+    Button resyncLocations, shareRecords;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +49,12 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         enableServer = (Button) findViewById(R.id.buttonStartServer);
-        stopServer = (Button) findViewById(R.id.buttonStopServer);
+        resyncLocations = (Button) findViewById(R.id.buttonStopServer);
         shareRecords = (Button) findViewById(R.id.buttonShareRecords);
 
         enableServer.setOnClickListener(this);
         shareRecords.setOnClickListener(this);
+        resyncLocations.setOnClickListener(this);
 
     }
 
@@ -92,6 +94,15 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
 
                 break;
             case R.id.buttonStopServer:
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LocationDataSync locationDataSync = new LocationDataSync(getBaseContext());
+                        locationDataSync.pollLocations();
+                    }
+                });
+                thread.start();
+
                 break;
 
         }

@@ -220,11 +220,11 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         mDob.setOnClickListener(this);
         return v;
     }
+
     AdapterView.OnItemSelectedListener onSelectedChewListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             if (position > chewReferralList.size() -1){
-                Toast.makeText(getContext(), "Add new Referral" , Toast.LENGTH_SHORT).show();
                 // Show Dialog to add the Referral
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Add new Referral");
@@ -262,7 +262,8 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                         // we save the referral, refresh the list and rebind the Spinner, and set selected
                         String uuid = UUID.randomUUID().toString();
                         ChewReferral chew = new ChewReferral(uuid, referralName, referralPhone, referralTitle,
-                                session.getSavedRecruitment().getCountry(), session.getSavedRecruitment().getId(), 0);
+                                session.getSavedRecruitment().getCountry(),
+                                session.getSavedRecruitment().getId(), 0, "", "", "", "", "", "", "", "", "");
                         ChewReferralTable chewTb = new ChewReferralTable(getContext());
                         chewTb.addChewReferral(chew);
 
@@ -298,7 +299,9 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-
+            if (selectChew.getSelectedItemPosition() > chewReferralList.size() -1){
+                showDialog();
+            }
         }
     };
 
@@ -308,6 +311,79 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
             mListener.onFragmentInteraction(uri);
         }
     }
+
+    public void showDialog(){
+        // Show Dialog to add the Referral
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Add new Referral");
+
+        // Set up the input
+        final EditText title = new EditText(getContext());
+        final EditText name = new EditText(getContext());
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        // Context context = mapView.getContext();
+        LinearLayout layout = new LinearLayout(getContext());
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText titleBox = new EditText(getContext());
+        titleBox.setHint("Title");
+        layout.addView(titleBox);
+
+        final EditText refName = new EditText(getContext());
+        refName.setHint("Referral Name");
+        layout.addView(refName);
+
+        final EditText refPhone = new EditText(getContext());
+        refPhone.setHint("Phone");
+        refPhone.setInputType(InputType.TYPE_CLASS_PHONE);
+        layout.addView(refPhone);
+
+        builder.setView(layout);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                referralTitle = titleBox.getText().toString();
+                referralName = refName.getText().toString();
+                referralPhone = refPhone.getText().toString();
+                // we save the referral, refresh the list and rebind the Spinner, and set selected
+                String uuid = UUID.randomUUID().toString();
+                ChewReferral chew = new ChewReferral(uuid, referralName, referralPhone, referralTitle,
+                        session.getSavedRecruitment().getCountry(),
+                        session.getSavedRecruitment().getId(), 0, "", "", "", "", "", "", "", "", "");
+                ChewReferralTable chewTb = new ChewReferralTable(getContext());
+                chewTb.addChewReferral(chew);
+
+                // clear chews
+                chewReferralList.clear();
+                chewReferrals.clear();
+                addChewReferrals();
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                        android.R.layout.simple_spinner_item, chewReferrals);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                selectChew.setAdapter(adapter);
+
+                //lets set the selected
+                int x = 0;
+                for (ChewReferral e : chewReferralList) {
+                    if (e.getId().equalsIgnoreCase(uuid)){
+                        selectChew.setSelection(x, true);
+                        break;
+                    }
+                    x++;
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
     @Override
     public void onClick(View view){
         switch (view.getId()){
@@ -323,6 +399,11 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 DialogFragment newFragment = new DatePickerFragment().newInstance(R.id.editDob);
                 newFragment.show(getFragmentManager(), "DatePicker");
                 break;
+            case R.id.selectChewReferral:
+                if (selectChew.getSelectedItemPosition() > chewReferralList.size() -1){
+                    showDialog();
+                }
+
 
             case R.id.buttonSaveRegistration:
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");

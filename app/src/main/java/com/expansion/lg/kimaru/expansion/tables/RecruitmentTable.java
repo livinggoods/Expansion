@@ -6,8 +6,12 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.expansion.lg.kimaru.expansion.mzigos.CountyLocation;
+import com.expansion.lg.kimaru.expansion.mzigos.KeCounty;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
+import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 
 import org.json.JSONArray;
@@ -16,6 +20,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -49,6 +54,8 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     public static final String DATE_ADDED = "client_time";
     public static final String SYNCED = "synced";
 
+    Context context;
+
     String [] columns=new String[]{ID, NAME, DISTRICT, SUB_COUNTY, DIVISION, LAT, LON, ADDED_BY,
             COMMENT, DATE_ADDED, SYNCED, COUNTRY, COUNTY};
 
@@ -71,6 +78,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
 
     public RecruitmentTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -181,7 +189,6 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         };
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
         List<Recruitment> recruitmentList=new ArrayList<>();
-
 
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
 
@@ -305,32 +312,46 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     public Recruitment getRecruitmentById(String id) {
 
         SQLiteDatabase db=getReadableDatabase();
-        String orderBy = DATE_ADDED +" desc";
         String whereClause = ID+" = ?";
         String[] whereArgs = new String[] {
-                id,
+                id
         };
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
+        Log.e("expansion", "requested recruitment ID "+ id);
+        Cursor cursor = db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else {
 
-        Recruitment recruitment = new Recruitment();
+            Recruitment recruitment = new Recruitment();
 
-        recruitment.setId(cursor.getString(0));
-        recruitment.setName(cursor.getString(1));
-        recruitment.setDistrict(cursor.getString(2));
-        recruitment.setSubcounty(cursor.getString(3));
-        recruitment.setDivision(cursor.getString(4));
-        recruitment.setLat(cursor.getString(5));
-        recruitment.setLon(cursor.getString(6));
-        recruitment.setAddedBy(cursor.getInt(7));
-        recruitment.setComment(cursor.getString(8));
-        recruitment.setDateAdded(cursor.getLong(9));
-        recruitment.setSynced(cursor.getInt(10));
-        recruitment.setCountry(cursor.getString(11));
-        recruitment.setCounty(cursor.getString(12));
+            recruitment.setId(cursor.getString(0));
+            recruitment.setName(cursor.getString(1));
+            recruitment.setDistrict(cursor.getString(2));
+            recruitment.setSubcounty(cursor.getString(3));
+            recruitment.setDivision(cursor.getString(4));
+            recruitment.setLat(cursor.getString(5));
+            recruitment.setLon(cursor.getString(6));
+            recruitment.setAddedBy(cursor.getInt(7));
+            recruitment.setComment(cursor.getString(8));
+            recruitment.setDateAdded(cursor.getLong(9));
+            recruitment.setSynced(cursor.getInt(10));
+            recruitment.setCountry(cursor.getString(11));
+            recruitment.setCounty(cursor.getString(12));
+            SubCountyTable subCountyTable = new SubCountyTable(context);
+            KeCountyTable keCountyTable = new KeCountyTable(context);
 
-        db.close();
+            if (cursor.getString(11).equalsIgnoreCase("UG")) {
+                recruitment.setSubCountyObj(subCountyTable.getSubCountyById(cursor.getString(3)));
+            } else {
 
-        return recruitment;
+                recruitment.setKeCounty(keCountyTable.getCountyById(cursor.getInt(12)));
+                recruitment.setName(keCountyTable.getCountyById(cursor.getInt(12)).getCountyName());
+                recruitment.setSubCountyObj(subCountyTable.getSubCountyById(cursor.getString(3)));
+            }
+            db.close();
+
+            return recruitment;
+        }
     }
 
     public JSONObject getRecruitmentToSyncAsJson() {
@@ -384,6 +405,98 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
         return  cursor;
     }
-    private void upgradeVersion2(SQLiteDatabase db) {}
+    private void upgradeVersion2(SQLiteDatabase db) {
+        // For each recruitment, update the County Name with the County ID
+        // For each recruitment, update the Sub County Name with the County ID
+
+
+        String [] columns=new String[]{ID, NAME, DISTRICT, SUB_COUNTY, DIVISION, LAT, LON, ADDED_BY,
+                COMMENT, DATE_ADDED, SYNCED, COUNTRY, COUNTY};
+
+            Cursor cursor = db.query(TABLE_NAME, columns, null, null, null, null, null, null);
+
+            for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+                // with this selection, let us extract the details
+                //
+                //
+                String country = cursor.getString(cursor.getColumnIndex(COUNTRY));
+                if (country.equalsIgnoreCase("UG")){
+                    // get the county
+                    CountyLocationTable countyLocationTable = new CountyLocationTable(context);
+                    countyLocationTable.createLocations();
+                    //Thread.sleep(timeInMills);
+                    try {
+                        Thread.sleep(1500L);
+                    }catch (Exception e){}
+
+                    // also update the district
+                    String districtName = cursor.getString(cursor.getColumnIndex(DISTRICT));
+                    CountyLocation district = countyLocationTable.getDistrictByName(districtName);
+                    Long districtId;
+                    if (district == null){
+                        try {
+                            Log.e("expansion", "Creating New District "+ districtName);
+                            CountyLocation countyLocation = new CountyLocation("District", districtName,
+                                    "UG", 0, "", null, "", "", "", 2, "");
+
+                            Long id = countyLocationTable.addData(countyLocation);
+                            Log.e("expansion", "New district has been created and ID is: " + String.valueOf(id));
+                        }catch (Exception e){
+                            Log.e("expansion", e.getMessage());
+                        }
+                    }
+                    try {
+                        Thread.sleep(1000L);
+                    }catch (Exception e){}
+                    CountyLocation savedDistrict = countyLocationTable.getDistrictByName(districtName);
+                    if (savedDistrict != null){
+                        ContentValues cv = new ContentValues();
+                        cv.put(DISTRICT, String.valueOf(savedDistrict.getId()));
+                        db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                    }else{
+                        CountyLocation retrievedDistrict = countyLocationTable.getDistrictByName(districtName);
+                        Log.e("expansion", "Could not get the district with the name "+ districtName);
+                        if (retrievedDistrict != null){
+                            ContentValues cv = new ContentValues();
+                            cv.put(DISTRICT, String.valueOf(retrievedDistrict.getId()));
+                            db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                        }
+
+                    }
+                }else{
+                    //Get the county
+                    KeCountyTable keCountyTable = new KeCountyTable(context);
+                    KeCounty keCounty;
+                    keCounty = keCountyTable.getKeCountyByName(cursor.getString(cursor.getColumnIndex(COUNTY)));
+                    if (keCounty == null){
+                        // create a holding county
+                        KeCounty ke = new KeCounty();
+                        ke.setCountyName(cursor.getString(cursor.getColumnIndex(COUNTY)));
+                        ke.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+                        keCountyTable.addKeCounty(ke);
+                    }
+                    KeCounty addedKeCounty = keCountyTable.getKeCountyByName(cursor.getString(cursor.getColumnIndex(COUNTY)));
+                    // get subCounty
+                    SubCountyTable subCountyTable = new SubCountyTable(context);
+                    SubCounty subCounty = subCountyTable.getSubCountyByCountyAndName(String.valueOf(
+                            addedKeCounty.getId()), country, cursor.getString(cursor.getColumnIndex(SUB_COUNTY)));
+                    if (subCounty == null){
+                        // Create subcounty
+                        String uuid = UUID.randomUUID().toString();
+                        subCounty = new SubCounty(uuid, cursor.getString(cursor.getColumnIndex(SUB_COUNTY)),
+                                String.valueOf(keCounty.getId()), country, "", "", "", "", "", "",
+                                "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", false,0,0);
+                        subCountyTable.addData(subCounty);
+                    }
+                    SubCounty addedSubCounty = subCountyTable.getSubCountyByCountyAndName(String.valueOf(
+                            addedKeCounty.getId()), country, cursor.getString(cursor.getColumnIndex(SUB_COUNTY)));
+                    // noe we can update the Recruitment
+                    ContentValues cv = new ContentValues();
+                    cv.put(COUNTY, String.valueOf(addedKeCounty.getId()));
+                    cv.put(SUB_COUNTY, String.valueOf(addedSubCounty.getId()));
+                    db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                }
+            }
+        }
 }
 

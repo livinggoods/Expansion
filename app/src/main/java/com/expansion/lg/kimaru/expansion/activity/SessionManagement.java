@@ -8,6 +8,7 @@ import android.content.SharedPreferences.Editor;
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
+import com.expansion.lg.kimaru.expansion.mzigos.Parish;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
@@ -39,7 +40,9 @@ public class SessionManagement {
     public static final String RECRUITMENT = "recruitment";
     public static final String IS_RECRUITMENT = "isRecruitment";
 
-
+    //parish
+    public static final String PARISH = "parish";
+    public static final String IS_PARISH = "isParish";
 
     // Registration Details
     public static final String REGISTRATION = "registration";
@@ -120,6 +123,29 @@ public class SessionManagement {
         exam = gson.fromJson(examDetails, Exam.class);
 
         return exam;
+    }
+
+    public void saveParish(Parish parish){
+        Gson gson = new Gson();
+        String parishObject = gson.toJson(parish);
+        editor.putString(PARISH, parishObject);
+        editor.putBoolean(IS_PARISH, true);
+        editor.commit();
+    }
+
+    /**
+     *
+     * Get the stored Parish
+     *
+     * */
+    public Parish getSavedParish (){
+
+        Parish parish;
+        Gson gson = new Gson();
+        String parishDetails = pref.getString(PARISH, "");
+        parish = gson.fromJson(parishDetails, Parish.class);
+
+        return parish;
     }
 
 

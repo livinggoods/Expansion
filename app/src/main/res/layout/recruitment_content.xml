@@ -194,6 +194,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true"
+                android:id="@+id/ke_cu_view"
                 android:padding="@dimen/activity_horizontal_margin">
 
                 <ImageView
@@ -231,6 +232,7 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true"
+                android:id="@+id/ke_cu_list"
                 android:padding="@dimen/activity_horizontal_margin">
 
                 <ImageView
@@ -257,6 +259,7 @@
 
             <include layout="@layout/item_divider" />
 
+            <!--
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -509,7 +512,7 @@
                     android:layout_marginTop="@dimen/activity_horizontal_margin"
                     android:text="Remove Contact" />
 
-            </LinearLayout>
+            </LinearLayout> -->
         </LinearLayout>
 
 

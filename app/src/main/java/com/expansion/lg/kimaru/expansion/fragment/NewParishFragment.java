@@ -8,43 +8,37 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
-import com.expansion.lg.kimaru.expansion.mzigos.CountyLocation;
+import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
+import com.expansion.lg.kimaru.expansion.mzigos.Parish;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
-import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
+import com.expansion.lg.kimaru.expansion.tables.ParishTable;
 import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link NewRecruitmentFragment.OnFragmentInteractionListener} interface
+ * {@link NewParishFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link NewRecruitmentFragment#newInstance} factory method to
+ * Use the {@link NewParishFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewRecruitmentFragment extends Fragment implements OnClickListener {
+public class NewParishFragment extends Fragment implements OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -57,16 +51,14 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
     private OnFragmentInteractionListener mListener;
 
     EditText mName;
-    EditText mDivision;
-    EditText mSubCounty;
-    Spinner mDistrict;
+    EditText mContactPerson;
+    EditText mContactPersonPhone;
+    EditText mComment;
 
 
     Button buttonSave, buttonList;
-    public Recruitment editingRecruitment = null;
+    public Parish editingParish = null;
 
-    List<CountyLocation> countyLocationList = new ArrayList<>();
-    List<String> countyLocations = new ArrayList<>();
 
     private int mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 100;
@@ -76,7 +68,7 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
 
 
 
-    public NewRecruitmentFragment() {
+    public NewParishFragment() {
         // Required empty public constructor
     }
 
@@ -89,8 +81,8 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
      * @return A new instance of fragment RegistrationsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NewRecruitmentFragment newInstance(String param1, String param2) {
-        NewRecruitmentFragment fragment = new NewRecruitmentFragment();
+    public static NewParishFragment newInstance(String param1, String param2) {
+        NewParishFragment fragment = new NewParishFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -112,27 +104,17 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_new_recruitment, container, false);
+        View v =  inflater.inflate(R.layout.fragment_new_parish, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_RECRUITMENT;
-        MainActivity.backFragment = new RecruitmentsFragment();
+        MainActivity.backFragment = new MapViewFragment();
         session = new SessionManagement(getContext());
         user = session.getUserDetails();
+
                 //Initialize the UI Components
-        mName = (EditText) v.findViewById(R.id.editRecruitmentName);
-        mDistrict = (Spinner) v.findViewById(R.id.selectCounty);
-
-        //mDivision = (EditText) v.findViewById(R.id.editRecruitmentDivision);
-        //mSubCounty = (EditText) v.findViewById(R.id.editRecruitmentSubCounty);
-
-        countyLocationList = new CountyLocationTable(getContext()).getCounties();
-        for (CountyLocation county : countyLocationList){
-            countyLocations.add(county.getName());
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
-                android.R.layout.simple_spinner_item, countyLocations);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mDistrict.setAdapter(adapter);
-        // mDistrict.setOnItemSelectedListener(onSelectedChewListener);
+        mName = (EditText) v.findViewById(R.id.editParishName);
+        mContactPerson = (EditText) v.findViewById(R.id.editContactPerson);
+        mContactPersonPhone = (EditText) v.findViewById(R.id.editContactPersonPhone);
+        mComment = (EditText) v.findViewById(R.id.editComment);
 
         //in case we are editing
         setUpEditingMode();
@@ -157,7 +139,7 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
         switch (view.getId()){
             case R.id.buttonList:
 
-                Fragment fragment = new RecruitmentsFragment();
+                Fragment fragment = new MapViewFragment();
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
@@ -168,52 +150,44 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
 
                 // set date as integers
                 Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
-                Long currentDate =  new Date().getTime();
+
 
                 // Generate the uuid
                 String id;
-                if (editingRecruitment != null){
-                    id = editingRecruitment.getId();
+                if (editingParish != null){
+                    id = editingParish.getId();
                 }else {
                     id = UUID.randomUUID().toString();
                 }
-                String recruitmentName = mName.getText().toString();
-                String recruitmentDistrict = String.valueOf(countyLocationList.get(mDistrict
-                        .getSelectedItemPosition()).getId());
-                String recruitmentDivision = "";
-                String recruitmentSubCounty = "";
-                String recruitmentComment = "";
-                String recruitmentLat = "";
-                String recruitmentLon = "";
-                String country = user.get(SessionManagement.KEY_USER_COUNTRY);
+                String parishName = mName.getText().toString();
+                String contactPerson = mContactPerson.getText().toString();
+                String contactPersonPhone = mContactPersonPhone.getText().toString();
+                String comment = mComment.getText().toString();
 
-                Integer recruitmentAddedBy = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
-                Long recruitmentDateAdded = currentDate;
-                Integer recruitmentSync = 0;
+
+                String mapping = session.getSavedMapping().getId();
+                String parent = session.getSavedMapping().getSubCounty();
+                String country = user.get(SessionManagement.KEY_USER_COUNTRY);
+                Integer addedBy = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
+                Long dateAdded =  new Date().getTime();
+                Integer synced = 0;
 
 
                 // Do some validations
-                if (recruitmentName.toString().trim().equals("")){
+                if (parishName.toString().trim().equals("")){
                     Toast.makeText(getContext(), "Name cannot be blank", Toast.LENGTH_SHORT).show();
                     mName.requestFocus();
                     return;
                 }
 
-                if (recruitmentDistrict.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "District is required", Toast.LENGTH_SHORT).show();
-                    mDistrict.requestFocus();
-                    return;
-                }
-                // Save Recruitment
-                Recruitment recruitment;
-                recruitment = new Recruitment(id, recruitmentName, recruitmentDistrict,
-                        recruitmentSubCounty, recruitmentDivision, recruitmentLat,
-                        recruitmentLon, recruitmentComment, recruitmentAddedBy,
-                        recruitmentDateAdded, recruitmentSync, country, "");
-                RecruitmentTable recruitmentTable = new RecruitmentTable(getContext());
-                long statusId = recruitmentTable.addData(recruitment);
+                // Save Parish
+                Parish parish = new Parish(id, parishName, contactPerson, contactPersonPhone,
+                        parent, mapping, dateAdded, addedBy, synced, country, comment);
 
-                if (statusId ==-1){
+                ParishTable parishTable = new ParishTable(getContext());
+                String statusId = parishTable.addData(parish);
+
+                if (statusId.equals(-1)){
                     Toast.makeText(getContext(), "Could not save recruitment", Toast.LENGTH_SHORT).show();
                 }
                 else{
@@ -221,7 +195,9 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
 
                     // Clear boxes
                     mName.setText("");
-                    mDistrict.setSelection(0);
+                    mContactPerson.setText("");
+                    mContactPersonPhone.setText("");
+                    mComment.setText("");
                     //set Focus
                     mName.requestFocus();
                 }
@@ -263,18 +239,11 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
     }
 
     public void setUpEditingMode(){
-        if (editingRecruitment != null){
-            mName.setText(editingRecruitment.getName());
-            int x = 0;
-            for (CountyLocation c : countyLocationList){
-                if (!editingRecruitment.getDistrict().equalsIgnoreCase("")) {
-                    if (c.getId().equals(Integer.valueOf(editingRecruitment.getDistrict()))) {
-                        mDistrict.setSelection(x, true);
-                        break;
-                    }
-                }
-                x++;
-            }
+        if (editingParish != null){
+            mName.setText(editingParish.getName());
+            mContactPerson.setText(editingParish.getContactPerson());
+            mContactPersonPhone.setText(editingParish.getContactPersonPhone());
+            mComment.setText(editingParish.getComment());
             mName.requestFocus();
         }
     }

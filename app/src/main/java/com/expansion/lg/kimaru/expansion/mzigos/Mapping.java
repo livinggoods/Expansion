@@ -6,7 +6,7 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 
 public class Mapping {
 
-    String id, mappingName, country, contactPerson, contactPersonPhone, comment, county, district;
+    String id, mappingName, subCounty, country, contactPerson, contactPersonPhone, comment, county, district;
     Integer dateAdded, addedBy;
     boolean synced;
 
@@ -21,7 +21,7 @@ public class Mapping {
 
     public Mapping(String id, String mappingName, String country, String county, Integer dateAdded,
                    Integer addedBy, String contactPerson, String contactPersonPhone,
-                   boolean synced, String comment, String district) {
+                   boolean synced, String comment, String district, String subCounty) {
         this.id = id;
         this.mappingName = mappingName;
         this.country = country;
@@ -33,10 +33,20 @@ public class Mapping {
         this.county = county;
         this.comment = comment;
         this.district = district;
+        this.subCounty = subCounty;
     }
 
 
     // Get Methods
+
+
+    public String getSubCounty() {
+        return subCounty;
+    }
+
+    public void setSubCounty(String subCounty) {
+        this.subCounty = subCounty;
+    }
 
     public void setId(String id) {
         this.id = id;

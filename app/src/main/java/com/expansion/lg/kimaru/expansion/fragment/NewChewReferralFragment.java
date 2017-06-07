@@ -168,7 +168,8 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
                 }
 
                 // Save Recruitment
-                ChewReferral chewReferral = new ChewReferral(id, referralName, referralPhone, referralTitle, country, recruitment, 0);
+                ChewReferral chewReferral = new ChewReferral(id, referralName, referralPhone,
+                        referralTitle, country, recruitment, 0, "","","","","","","","","");
                 ChewReferralTable chewReferralTable = new ChewReferralTable(getContext());
                 long statusId = chewReferralTable.addChewReferral(chewReferral);
 

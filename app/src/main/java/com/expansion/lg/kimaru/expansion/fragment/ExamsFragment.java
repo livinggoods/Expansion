@@ -10,6 +10,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -61,6 +62,7 @@ public class ExamsFragment extends Fragment  {
 
     private OnFragmentInteractionListener mListener;
     TextView textshow;
+    FloatingActionButton fab;
 
     // to show list in Gmail Mode
     private List<Exam> exams = new ArrayList<>();
@@ -119,6 +121,7 @@ public class ExamsFragment extends Fragment  {
         MainActivity.CURRENT_TAG =MainActivity.TAG_EXAMS;
         MainActivity.backFragment = new RegistrationsFragment();
         session = new SessionManagement(getContext());
+
         if(!session.isRegistrationSet()){
             RegistrationsFragment newRegistrationsFragment = new RegistrationsFragment();
             Fragment fragment = newRegistrationsFragment;
@@ -134,7 +137,24 @@ public class ExamsFragment extends Fragment  {
         v =  inflater.inflate(R.layout.fragment_exams, container, false);
         textshow = (TextView) v.findViewById(R.id.textShow);
 
-
+        fab = (FloatingActionButton) v.findViewById(R.id.fab);
+        fab.hide();
+//        final Fragment fragment;
+//        if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("KE")){
+//            fragment = new NewExamFragment();
+//        }else {
+//            fragment = new NewExamFragment();
+//        }
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+//                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+//                fragmentTransaction.replace(R.id.frame, fragment, "villages");
+//                fragmentTransaction.commitAllowingStateLoss();
+//            }
+//        });
 
         // ============Gmail View starts here =======================
         // Gmail View.

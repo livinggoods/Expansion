@@ -3,26 +3,39 @@ package com.expansion.lg.kimaru.expansion.fragment;
  * Created by kimaru on 3/11/17.
  */
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.KeCounty;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
+import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
+import com.expansion.lg.kimaru.expansion.tables.KeCountyTable;
 import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
+import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -47,8 +60,14 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
     private OnFragmentInteractionListener mListener;
 
     EditText mName;
-    EditText mCounty;
-    EditText mSubCounty;
+    Spinner mCounty;
+    Spinner mSubCounty;
+
+    List<KeCounty> keCountyList = new ArrayList<>();
+    List<String> keCounties = new ArrayList<>();
+
+    List<SubCounty> subCountyList = new ArrayList<>();
+    List<String> subCounties = new ArrayList<>();
 
 
     Button buttonSave, buttonList;
@@ -60,6 +79,8 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
 
     SessionManagement session;
     HashMap<String, String> user;
+
+    String subCountyName, subCountyContactPerson, subCountyContactPhone;
 
 
 
@@ -106,8 +127,24 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
         user = session.getUserDetails();
                 //Initialize the UI Components
         mName = (EditText) v.findViewById(R.id.editRecruitmentName);
-        mCounty = (EditText) v.findViewById(R.id.editRecruitmentCounty);
-        mSubCounty = (EditText) v.findViewById(R.id.editRecruitmentSubCounty);
+        // mCounty = (EditText) v.findViewById(R.id.editRecruitmentCounty);
+        // mSubCounty = (EditText) v.findViewById(R.id.editRecruitmentSubCounty);
+
+        mCounty = (Spinner) v.findViewById(R.id.selectCounty);
+        mSubCounty = (Spinner) v.findViewById(R.id.selectSubCounty);
+
+        keCountyList = new KeCountyTable(getContext()).getCounties();
+        for (KeCounty k : keCountyList){
+            keCounties.add(k.getCountyName());
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, keCounties);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mCounty.setAdapter(adapter);
+        mCounty.setOnItemSelectedListener(onSelectedCountyListener);
+
+        // Subcounties
+
         //in case we are editing
         setUpEditingMode();
 
@@ -119,6 +156,115 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
 
         return v;
     }
+
+    //AdapterView.OnItemSelectedListener onSelectedChewListener = new AdapterView.OnItemSelectedListener() {
+    AdapterView.OnItemSelectedListener onSelectedCountyListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
+            // get subcounties
+            if (position > subCountyList.size() -1){
+                // Show Dialog to add the Referral
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Add new Sub County");
+
+                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                // Context context = mapView.getContext();
+                LinearLayout layout = new LinearLayout(getContext());
+                layout.setOrientation(LinearLayout.VERTICAL);
+
+                final EditText subCName = new EditText(getContext());
+                subCName.setHint("Sub County Name");
+                subCName.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                layout.addView(subCName);
+
+                final EditText refName = new EditText(getContext());
+                refName.setHint("Contact Person Name");
+                refName.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                layout.addView(refName);
+
+                final EditText refPhone = new EditText(getContext());
+                refPhone.setHint("Contact Person Phone");
+                refPhone.setInputType(InputType.TYPE_CLASS_PHONE);
+                layout.addView(refPhone);
+
+                builder.setView(layout);
+
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        subCountyName = subCName.getText().toString();
+                        subCountyContactPerson = refName.getText().toString();
+                        subCountyContactPhone = refPhone.getText().toString();
+                        // we save the referral, refresh the list and rebind the Spinner, and set selected
+                        String uuid = UUID.randomUUID().toString();
+                        SubCounty subCounty = new SubCounty();
+                        subCounty.setId(uuid);
+                        subCounty.setContactPersonPhone(subCountyContactPerson);
+                        subCounty.setSubCountyName(subCountyName);
+                        subCounty.setContactPerson(subCountyContactPerson);
+                        subCounty.setCountyID(String.valueOf(keCountyList.get(position).getId()));
+
+                        SubCountyTable scTbl = new SubCountyTable(getContext());
+                        scTbl.addData(subCounty);
+
+                        // clear subcounties
+
+                        subCountyList.clear();
+                        subCounties.clear();
+
+                        subCountyList = scTbl.getSubCountiesByCounty(keCountyList.get(position).getId());
+                        for (SubCounty s : subCountyList){
+                            subCounties.add(s.getSubCountyName());
+                        }
+                        subCounties.add("Add New");
+
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                                android.R.layout.simple_spinner_item, subCounties);
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        mSubCounty.setAdapter(adapter);
+
+                        //lets set the selected
+                        int x = 0;
+                        for (SubCounty s : subCountyList){
+                            if (s.getId().equalsIgnoreCase(uuid)){
+                                mSubCounty.setSelection(x, true);
+                                break;
+                            }
+                            x++;
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }else{
+                //populate subcounties
+                subCountyList.clear();
+                subCounties.clear();
+                SubCountyTable scTable = new SubCountyTable(getContext());
+                subCountyList = scTable.getSubCountiesByCounty(keCountyList.get(position).getId());
+                for (SubCounty s : subCountyList){
+                    subCounties.add(s.getSubCountyName());
+                }
+                subCounties.add("Add New");
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                        android.R.layout.simple_spinner_item, subCounties);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                mSubCounty.setAdapter(adapter);
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -145,8 +291,8 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
                 String recruitmentName = mName.getText().toString();
                 String recruitmentDistrict = "";
                 String recruitmentDivision = "";
-                String recruitmentSubCounty = mSubCounty.getText().toString();
-                String recruitmentCounty = mCounty.getText().toString();
+                String recruitmentSubCounty = subCountyList.get(mSubCounty.getSelectedItemPosition()).getId();
+                Integer recruitmentCounty = keCountyList.get(mCounty.getSelectedItemPosition()).getId();
                 String recruitmentComment = "";
                 String recruitmentLat = "";
                 String recruitmentLon = "";
@@ -159,44 +305,33 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
 
                 // Do some validations
                 if (recruitmentName.toString().trim().equals("")){
+                    mName.requestFocus();
                     Toast.makeText(getContext(), "Name cannot be blank", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
-                else if (recruitmentCounty.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "County is required", Toast.LENGTH_SHORT).show();
-                }
+                // Save Recruitment
+                Recruitment recruitment;
+                recruitment = new Recruitment(id, recruitmentName, recruitmentDistrict,
+                        recruitmentSubCounty, recruitmentDivision, recruitmentLat,
+                        recruitmentLon, recruitmentComment, recruitmentAddedBy,
+                        recruitmentDateAdded, recruitmentSync, country, String.valueOf(recruitmentCounty));
+                RecruitmentTable recruitmentTable = new RecruitmentTable(getContext());
+                long statusId = recruitmentTable.addData(recruitment);
 
-//                else if(recruitmentDivision.toString().trim().equals("")){
-//                    Toast.makeText(getContext(), "Division is required", Toast.LENGTH_SHORT).show();
-//                }
-                else if(recruitmentSubCounty.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Sub County is required", Toast.LENGTH_SHORT).show();
+                if (statusId == -1){
+                    Toast.makeText(getContext(), "Could not save recruitment", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    // Save Recruitment
-                    Recruitment recruitment;
-                    recruitment = new Recruitment(id, recruitmentName, recruitmentDistrict,
-                            recruitmentSubCounty, recruitmentDivision, recruitmentLat,
-                            recruitmentLon, recruitmentComment, recruitmentAddedBy,
-                            recruitmentDateAdded, recruitmentSync, country, recruitmentCounty);
-                    RecruitmentTable recruitmentTable = new RecruitmentTable(getContext());
-                    long statusId = recruitmentTable.addData(recruitment);
+                    Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
 
-                    if (statusId ==-1){
-                        Toast.makeText(getContext(), "Could not save recruitment", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
+                    // Clear boxes
+                    mName.setText("");
+                    mCounty.setSelection(0);
+                    mSubCounty.setSelection(0);
 
-                        // Clear boxes
-                        mName.setText("");
-                        mCounty.setText("");
-                        mSubCounty.setText("");
-
-                        //set Focus
-                        mName.requestFocus();
-                    }
-
+                    //set Focus
+                    mName.requestFocus();
                 }
 
         }
@@ -238,8 +373,22 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
     public void setUpEditingMode(){
         if (editingRecruitment != null){
             mName.setText(editingRecruitment.getName());
-            mCounty.setText(editingRecruitment.getCounty());
-            mSubCounty.setText(editingRecruitment.getSubcounty());
+            int x = 0;
+            for (KeCounty c : keCountyList){
+                if (c.getId().equals(Integer.valueOf(editingRecruitment.getCounty()))){
+                    mCounty.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
+            x = 0;
+            for (SubCounty sc : subCountyList){
+                if (sc.getId().equalsIgnoreCase(editingRecruitment.getSubcounty())){
+                    mSubCounty.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
         }
     }
 }

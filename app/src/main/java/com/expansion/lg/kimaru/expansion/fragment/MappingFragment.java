@@ -10,6 +10,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -58,6 +59,8 @@ public class MappingFragment extends Fragment  {
 
     private OnFragmentInteractionListener mListener;
     TextView textshow;
+
+    public FloatingActionButton fab;
 
     // to show list in Gmail Mode
     private List<Mapping> mappings = new ArrayList<>();
@@ -120,6 +123,23 @@ public class MappingFragment extends Fragment  {
         textshow = (TextView) v.findViewById(R.id.textShow);
         MainActivity.CURRENT_TAG =MainActivity.TAG_MAPPINGS;
         MainActivity.backFragment = new HomeFragment();
+        fab = (FloatingActionButton) v.findViewById(R.id.fab);
+        final Fragment fragment;
+        if (country.equalsIgnoreCase("KE")){
+            fragment = new NewKeMappingFragment();
+        }else {
+            fragment = new NewUgMappingFragment();
+        }
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "villages");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        });
 
                 // ============Gmail View starts here =======================
         // Gmail View.
@@ -184,6 +204,7 @@ public class MappingFragment extends Fragment  {
 
                 //getMapping
                 Mapping mapping = mappings.get(position);
+                session.saveMapping(mapping);
                 Toast.makeText(getContext(), mapping.getCounty(), Toast.LENGTH_SHORT).show();
 
 
