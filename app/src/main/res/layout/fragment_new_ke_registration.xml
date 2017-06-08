@@ -67,6 +67,10 @@
                     android:id="@+id/selectChewReferral"
                     />
             </android.support.design.widget.TextInputLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
 
             <!-- <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -159,7 +163,7 @@
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <!-- <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
@@ -170,7 +174,25 @@
                     android:imeOptions="actionUnspecified"
                     android:inputType="textCapWords"
                     android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout> -->
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_cu"/>
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editCuName"
+                    />
             </android.support.design.widget.TextInputLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
