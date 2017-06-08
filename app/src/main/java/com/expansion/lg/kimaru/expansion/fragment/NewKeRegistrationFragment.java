@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.telephony.PhoneNumberUtils;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -31,12 +32,14 @@ import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
+import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Education;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.other.SpinnersCursorAdapter;
 import com.expansion.lg.kimaru.expansion.tables.ChewReferralTable;
+import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.EducationTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 
@@ -88,7 +91,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
     EditText mDateMoved, editBranchTransportCost, editRecruitmentTransportCost;
     RadioGroup editIsChv, editIsGokTrained;
     RadioGroup mCommunity, mAccounts;
-    EditText editCuName;
+    Spinner editCuName;
     EditText editLinkFacility;
     EditText editNoOfHouseholds;
     EditText editOtherTrainings;
@@ -111,9 +114,12 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
     HashMap<String, String> user;
     Integer userId;
     Registration editingRegistration = null;
+    CommunityUnit cu = null;
 
     List<ChewReferral> chewReferralList = new ArrayList<ChewReferral>();
     List<String> chewReferrals = new ArrayList<String>();
+    List<CommunityUnit> communityUnitList = new ArrayList<CommunityUnit>();
+    List<String> communityUnits = new ArrayList<String>();
 
     List<Education> educationList = new ArrayList<Education>();
 
@@ -154,7 +160,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_new_ke_registration, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_REGISTRATION;
-        MainActivity.backFragment = new RegistrationsFragment();
+
                 //check if Recruitment is set
         session = new SessionManagement(getContext());
         session.checkRecruitment();
@@ -168,6 +174,14 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         userId = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
         Recruitment recruitment = session.getSavedRecruitment();
         recruitmentId = recruitment.getId();
+        cu = session.getSavedCommunityUnit();
+        if (cu == null){
+            MainActivity.backFragment = new RegistrationsFragment();
+        }else{
+            RegistrationsFragment registrationsFragment = new RegistrationsFragment();
+            registrationsFragment.communityUnit = cu;
+            MainActivity.backFragment = registrationsFragment;
+        }
 
         //Initialize the UI Components
         mName = (EditText) v.findViewById(R.id.editName);
@@ -184,7 +198,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         selectChew = (Spinner) v.findViewById(R.id.selectChewReferral);
         mComment = (EditText) v.findViewById(R.id.editComment);
         editWard = (EditText) v.findViewById(R.id.editWard);
-        editCuName = (EditText) v.findViewById(R.id.editCuName);
+        editCuName = (Spinner) v.findViewById(R.id.editCuName);
         editBranchTransportCost = (EditText) v.findViewById(R.id.editBranchTransportCost);
         editRecruitmentTransportCost = (EditText) v.findViewById(R.id.editRecruitmentTransportCost);
         editLinkFacility = (EditText) v.findViewById(R.id.editLinkFacility);
@@ -197,6 +211,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         mCommunity = (RadioGroup) v.findViewById(R.id.editCommunityMembership);
         educationLevel = (Spinner) v.findViewById(R.id.selectEdducation);
 
+        //
 
         addChewReferrals();
 
@@ -208,6 +223,25 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
 
         addEducationSelectList();
 
+        addCommunityUnits();
+        ArrayAdapter<String> cuAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, communityUnits);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        editCuName.setAdapter(cuAdapter);
+        // editCuName.setOnItemSelectedListener(onSelectedChewListener);
+
+        // set the selected CU
+        // In case there is no order followed
+        if (cu != null){
+            int x = 0;
+            for (CommunityUnit c : communityUnitList){
+                if (c.getId().equalsIgnoreCase(cu.getId())){
+                    editCuName.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
+        }
 
         setUpEditingMode();
 
@@ -322,6 +356,29 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
     @Override
     public void onClick(View view){
         switch (view.getId()){
+            case R.id.buttonList:
+                //
+                if (cu != null){
+                    RegistrationsFragment registrationsFragment = new RegistrationsFragment();
+                    registrationsFragment.communityUnit = cu;
+                    Fragment fragment = registrationsFragment;
+                    FragmentTransaction fragmentTransaction  = getActivity()
+                            .getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                            android.R.anim.fade_out);
+                    fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_REGISTRATIONS);
+                    fragmentTransaction.commitAllowingStateLoss();
+                }else{
+                    RegistrationsFragment registrationsFragment = new RegistrationsFragment();
+                    registrationsFragment.communityUnit = null;
+                    Fragment fragment = registrationsFragment;
+                    FragmentTransaction fragmentTransaction  = getActivity()
+                            .getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                            android.R.anim.fade_out);
+                    fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_REGISTRATIONS);
+                    fragmentTransaction.commitAllowingStateLoss();
+                }
             case R.id.editDob:
                 DialogFragment newFragment = new DatePickerFragment().newInstance(R.id.editDob);
                 newFragment.show(getFragmentManager(), "DatePicker");
@@ -357,7 +414,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 String applicantChewName = editChewName.getText().toString();
                 String applicantChewNumber = editChewNumber.getText().toString();
                 String applicantWard = editWard.getText().toString();
-                String applicantCuName = editCuName.getText().toString();
+                String applicantCuName = communityUnitList.get(editCuName.getSelectedItemPosition()).getId(); //editCuName.getText().toString();
                 String applicantLinkFacility = editLinkFacility.getText().toString();
                 String noOfHouseholds = editNoOfHouseholds.getText().toString();
                 String applicantOtherTrainings = editOtherTrainings.getText().toString();
@@ -521,7 +578,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                     editChewName.setText("");
                     editChewNumber.setText("");
                     editWard.setText("");
-                    editCuName.setText("");
+                    //editCuName.setSelection(0);
                     editLinkFacility.setText("");
                     editNoOfHouseholds.setText("");
                     editOtherTrainings.setText("");
@@ -606,6 +663,14 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         }
         chewReferrals.add("Add New");
     }
+    public void addCommunityUnits() {
+        CommunityUnitTable cuTable = new CommunityUnitTable(getContext());
+        //communityUnits communityUnitList
+        communityUnitList = cuTable.getCommunityUnitBySubCounty(session.getSavedRecruitment().getSubcounty());
+        for (CommunityUnit cUnit: communityUnitList){
+            communityUnits.add(cUnit.getCommunityUnitName());
+        }
+    }
     public void setUpEditingMode(){
         if (editingRegistration != null){
             mName.setText(editingRegistration.getName());
@@ -646,7 +711,14 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
             editChewName.setText(editingRegistration.getChewName());
             editChewNumber.setText(editingRegistration.getChewNumber());
             editWard.setText(editingRegistration.getWard());
-            editCuName.setText(editingRegistration.getCuName());
+            x = 0;
+            for (CommunityUnit cu : communityUnitList){
+                if (cu.getId().equalsIgnoreCase(editingRegistration.getCuName())){
+                    editCuName.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
             editLinkFacility.setText(editingRegistration.getLinkFacility());
             editNoOfHouseholds.setText(String.valueOf(editingRegistration.getNoOfHouseholds()));
             editOtherTrainings.setText(editingRegistration.getOtherTrainings());
