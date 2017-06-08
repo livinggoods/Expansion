@@ -160,12 +160,6 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
         txtRegistrations = (TextView) v.findViewById(R.id.registrations);
         txtRegistrations.setText(registrations.size()+" Registrations");
         txtRegistrations.setOnClickListener(this);
-//        txtRegistrations.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(getContext(), "REgistrations inasumbua", Toast.LENGTH_SHORT).show();
-//            }
-//        });
 
 
 
@@ -446,6 +440,7 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
                 public void onClick(View v) {
                     // Set the CU, and filter the registrations by CU
                     SessionManagement sessionManagement = new SessionManagement(getContext());
+                    sessionManagement.saveCommunityUnit(community);
                     RegistrationsFragment registrationsFragment = new RegistrationsFragment();
                     registrationsFragment.communityUnit = community;
                     Fragment fragment = registrationsFragment;
