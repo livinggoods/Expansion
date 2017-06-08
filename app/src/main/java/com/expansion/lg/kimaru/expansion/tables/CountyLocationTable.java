@@ -2,6 +2,7 @@ package com.expansion.lg.kimaru.expansion.tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
@@ -384,11 +385,20 @@ public class CountyLocationTable extends SQLiteOpenHelper {
                 "`lat`,`lon`,`meta`,`parent`,`polygon`) VALUES (NULL,'"+name+"','"+admin_name+"','"
                 +code+"','"+country+"','"+ lat+"','"+lon+"','"+meta+"','"+parent+"','"+polygon+"');", null);
     }
+    public long getProfilesCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME);
+        db.close();
+        return cnt;
+    }
     private void upgradeVersion2(SQLiteDatabase db) {
         createLocations();
     }
     public void createLocations(){
-        new syncLocations().execute(Constants.CLOUD_ADDRESS+"/api/v1/sync/locations");
+        if (getProfilesCount() < 1){
+            new syncLocations().execute(Constants.CLOUD_ADDRESS+"/api/v1/sync/locations");
+        }
+
     }
     private class syncLocations extends AsyncTask<String, Void, String> {
         protected String doInBackground(String... strings){
