@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
+import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.mzigos.Parish;
@@ -34,6 +35,7 @@ public class SessionManagement {
     public static final String KEY_EMAIL = "email";
     public static final String KEY_USERID = "userid";
     public static final String KEY_USER_COUNTRY = "country";
+    public static final String COMMUNITY_UNIT = "community_unit";
 
 
     // Recruitment Details
@@ -169,6 +171,27 @@ public class SessionManagement {
         registration = gson.fromJson(registrationDetails, Registration.class);
 
         return registration;
+    }
+
+    public void saveCommunityUnit(CommunityUnit communityUnit){
+        Gson gson = new Gson();
+        String cuObject = gson.toJson(communityUnit);
+        editor.putString(COMMUNITY_UNIT, cuObject);
+        editor.commit();
+    }
+    /**
+     *
+     * Get the stored CommunityUnit
+     *
+     * */
+    public CommunityUnit getSavedCommunityUnit (){
+
+        CommunityUnit communityUnit;
+        Gson gson = new Gson();
+        String cuDetails = pref.getString(COMMUNITY_UNIT, "");
+        communityUnit = gson.fromJson(cuDetails, CommunityUnit.class);
+
+        return communityUnit;
     }
 
     public void saveMapping(Mapping mapping){

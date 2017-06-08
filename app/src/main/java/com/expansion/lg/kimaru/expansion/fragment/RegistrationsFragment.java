@@ -45,6 +45,7 @@ import android.view.MenuItem;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Education;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
@@ -96,6 +97,8 @@ public class RegistrationsFragment extends Fragment  {
     private ActionMode actionMode;
     private ActionModeCallback actionModeCallback;
     FloatingActionButton fab;
+
+    CommunityUnit communityUnit = null;
 
     SessionManagement session;
     Recruitment recruitment;
@@ -151,7 +154,7 @@ public class RegistrationsFragment extends Fragment  {
         setHasOptionsMenu(true);
         View v =  inflater.inflate(R.layout.fragment_registrations, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_REGISTRATIONS;
-        MainActivity.backFragment = new RecruitmentsFragment();
+        MainActivity.backFragment = new RecruitmentViewFragment();
         textshow = (TextView) v.findViewById(R.id.textShow);
         //session Management
         session = new SessionManagement(getContext());
@@ -175,8 +178,6 @@ public class RegistrationsFragment extends Fragment  {
             }
         });
 
-        // ============Gmail View starts here =======================
-        // Gmail View.
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
@@ -422,8 +423,16 @@ public class RegistrationsFragment extends Fragment  {
             // Depending on the mode
             RegistrationTable registrationTable = new RegistrationTable(getContext());
             List<Registration> registrationList = new ArrayList<>();
-
-            registrationList = registrationTable.getRegistrationsByRecruitment(session.getSavedRecruitment());
+            if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("KE")){
+                if (communityUnit != null){
+                    registrationList = registrationTable.getRegistrationsByRecruitmentAndCommunityUnit(
+                            session.getSavedRecruitment(), communityUnit);
+                }else{
+                    registrationList = registrationTable.getRegistrationsByRecruitment(session.getSavedRecruitment());
+                }
+            }else{
+                registrationList = registrationTable.getRegistrationsByRecruitment(session.getSavedRecruitment());
+            }
 
             for (Registration registration:registrationList){
                 registration.setColor(getRandomMaterialColor("400"));

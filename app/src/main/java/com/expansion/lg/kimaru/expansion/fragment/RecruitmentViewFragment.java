@@ -19,6 +19,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.test.suitebuilder.TestMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -195,19 +196,9 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
         recruitmentRegSummary.setText(summary);
         recruitmentRegSummary.setOnClickListener(this);
 
-
+        RelativeLayout keCuList = (RelativeLayout) v.findViewById(R.id.ke_cu_list);
+        RelativeLayout keCuView = (RelativeLayout) v.findViewById(R.id.ke_cu_view);
         if (session.getSavedRecruitment().getCountry().equalsIgnoreCase("UG")){
-            getCommunityUnits();
-            cuListView = (ListView) v.findViewById(R.id.cu_list_view);
-            String[] cuItems = new String[communityUnits.size()];
-            for (int i = 0; i < communityUnits.size(); i++){
-                CommunityUnit communityUnit = communityUnits.get(i);
-                listItems[i] = communityUnit.getCommunityUnitName();
-            }
-            CuAdapter cuAdapter = new CuAdapter(getContext(), communityUnits);
-
-            cuListView.setAdapter(adapter);
-
             recruitmentMainLocation.setText(session.getSavedRecruitment().getName());
             CountyLocation district = new CountyLocationTable(getContext())
                     .getLocationById(session.getSavedRecruitment().getDistrict());
@@ -215,23 +206,31 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             recruitmentSecondaryLocation.setText(district.getName());
             addReferrals.setText("+ ADD REFERRAL");
             //Hide KE
-            RelativeLayout keCuList = (RelativeLayout) v.findViewById(R.id.ke_cu_list);
-            RelativeLayout keCuView = (RelativeLayout) v.findViewById(R.id.ke_cu_view);
             keCuList.setVisibility(View.INVISIBLE);
             keCuView.setVisibility(View.INVISIBLE);
         }else{
+            getCommunityUnits();
+            cuListView = (ListView) v.findViewById(R.id.cu_list_view);
+            String[] cuItems = new String[communityUnits.size()];
+            for (int i = 0; i < communityUnits.size(); i++){
+                CommunityUnit communityUnit = communityUnits.get(i);
+                cuItems[i] = communityUnit.getCommunityUnitName();
+            }
+            CuAdapter cuAdapter = new CuAdapter(getContext(), communityUnits);
+
+            cuListView.setAdapter(cuAdapter);
+
             recruitmentMainLocation.setText(session.getSavedRecruitment().getName());
             recruitmentSecondaryLocation.setText(new SubCountyTable(getContext())
                     .getSubCountyById(session.getSavedRecruitment().getSubcounty())
                     .getSubCountyName());
+            session.saveSubCounty(new SubCountyTable(getContext())
+                    .getSubCountyById(session.getSavedRecruitment().getSubcounty()));
             addReferrals.setText("+ ADD A CHEW");
+            keCuView.setOnClickListener(this);
 
         }
         addReferrals.setOnClickListener(this);
-
-
-
-
 
         return v;
     }
@@ -285,16 +284,17 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
 
     }
     private void getCommunityUnits(){
+        Toast.makeText(getContext(), "Getting the CUs", Toast.LENGTH_SHORT).show();
         communityUnits.clear();
         try{
             List<CommunityUnit> communityUnitList = new CommunityUnitTable(getContext())
-                    .getCommunityUnitBySubCounty(session.getSavedRecruitment().getCounty());
+                    .getCommunityUnitBySubCounty(session.getSavedRecruitment().getSubcounty());
             for (CommunityUnit cu : communityUnitList){
                 cu.setColor(getRandomMaterialColor("400"));
                 communityUnits.add(cu);
             }
         }catch (Exception e){
-
+            Toast.makeText(getContext(), "Error "+ e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -340,6 +340,16 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_REGISTRATIONS);
+                fragmentTransaction.commitAllowingStateLoss();
+                break;
+            case R.id.ke_cu_view:
+                NewCommunityUnitFragment newCommunityUnitFragment = new NewCommunityUnitFragment();
+                newCommunityUnitFragment.backFragment = new RecruitmentViewFragment();
+                fragment = newCommunityUnitFragment;
+                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                        android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
                 fragmentTransaction.commitAllowingStateLoss();
                 break;
 
@@ -389,17 +399,6 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             iconImp.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_black_24dp));
             iconImp.setColorFilter(ContextCompat.getColor(getContext(), R.color.icon_tint_selected));
 
-
-//            TextView firstLine = (TextView) rowView.findViewById(R.id.firstLine);
-//            TextView secondLine = (TextView) rowView.findViewById(R.id.secondLine);
-//            ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-//            imageView.setImageResource(R.drawable.ic_partners);
-//            ChewReferral chew = chewReferralss.get(position);
-//            firstLine.setText(chew.getTitle() + " " + chew.getName());
-
-
-
-
             return rowView;
         }
     }
@@ -428,7 +427,7 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             registrationContainser = (LinearLayout) rowView.findViewById(R.id.message_container);
             iconContainer = (RelativeLayout) rowView.findViewById(R.id.icon_container);
 
-            CommunityUnit community = communityUnitss.get(position);
+            final CommunityUnit community = communityUnitss.get(position);
             subject.setText(community.getCommunityUnitName());
             subject.getLayoutParams().width = RecyclerView.LayoutParams.WRAP_CONTENT;
 
@@ -441,6 +440,24 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             iconText.setVisibility(View.VISIBLE);
             iconImp.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_black_24dp));
             iconImp.setColorFilter(ContextCompat.getColor(getContext(), R.color.icon_tint_selected));
+
+            View.OnClickListener itemClickListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Set the CU, and filter the registrations by CU
+                    SessionManagement sessionManagement = new SessionManagement(getContext());
+                    RegistrationsFragment registrationsFragment = new RegistrationsFragment();
+                    registrationsFragment.communityUnit = community;
+                    Fragment fragment = registrationsFragment;
+                    FragmentTransaction fragmentTransaction  = getActivity()
+                            .getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                            android.R.anim.fade_out);
+                    fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_REGISTRATIONS);
+                    fragmentTransaction.commitAllowingStateLoss();
+                }
+            };
+            registrationContainser.setOnClickListener(itemClickListener);
 
             return rowView;
         }

@@ -74,6 +74,7 @@ public class CommunityUnitsFragment extends Fragment  {
 
     SessionManagement session;
     SubCounty subCounty;
+    Fragment backFragment = null;
 
 
 
@@ -124,7 +125,11 @@ public class CommunityUnitsFragment extends Fragment  {
         //session Management
         session = new SessionManagement(getContext());
         MainActivity.CURRENT_TAG =MainActivity.TAG_COMMUNITY_UNITS;
-        MainActivity.backFragment = new SubCountyFragment();
+        if (backFragment == null){
+            MainActivity.backFragment = new SubCountyFragment();
+        }else{
+            MainActivity.backFragment = backFragment;
+        }
         subCounty = session.getSavedSubCounty();
 
 

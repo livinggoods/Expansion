@@ -52,6 +52,8 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
     private String mParam1;
     private String mParam2;
 
+    Fragment backFragment = null;
+
     private OnFragmentInteractionListener mListener;
 
     EditText editName, editAreaChiefName, editAreaChiefPhone, editWard;
@@ -121,9 +123,13 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_new_sublocation, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_COMMUNITY_UNIT;
-        MainActivity.backFragment = new CommunityUnitsFragment();
+        if (backFragment == null){
+            MainActivity.backFragment = new CommunityUnitsFragment();
+        }else{
+            MainActivity.backFragment = backFragment;
+        }
 
-                session = new SessionManagement(getContext());
+        session = new SessionManagement(getContext());
         mapping = session.getSavedMapping();
         subCounty = session.getSavedSubCounty();
         user = session.getUserDetails();
@@ -204,21 +210,39 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
 
                 String privateFacilityForAct = editPrivateFacilityForAct.getText().toString();
                 String privateFacilityForMrdt = editPrivateFacilityForMrdt.getText().toString();
-                Long numberOfChvs = Long.valueOf(editNumberOfChvs.getText().toString());
-                Long chvHouseHold = Long.valueOf(editChvHouseHold.getText().toString());
 
-                Long numberOfHouseHolds = Long.valueOf(editNumberOfHouseHolds.getText().toString());
-                Long mohPopulation = Long.valueOf(editMohPopulation.getText().toString());
-                Long populationDensity = Long.valueOf(editPopulationDensity.getText().toString());
-                Long numberOfVillages = Long.valueOf(editNumberOfVillages.getText().toString());
+                Long numberOfChvs = Long.valueOf(editNumberOfChvs.getText().toString().trim()
+                        .equalsIgnoreCase("") ? "0" : editNumberOfChvs.getText().toString());
+                Long chvHouseHold = Long.valueOf(editChvHouseHold.getText().toString().trim()
+                        .equalsIgnoreCase("") ? "0" : editChvHouseHold.getText().toString());
 
-                Long distanceToBranch = Long.valueOf(editDistanceToBranch.getText().toString());
-                Long transportCost = Long.valueOf(editTransportCost.getText().toString());
-                Long distanceToMainRoad = Long.valueOf(editDistanceToMainRoad.getText().toString());
-                Long distanceToHealthFacility = Long.valueOf(editDistanceToHealthFacility.getText().toString());
+                Long numberOfHouseHolds = Long.valueOf(editNumberOfHouseHolds.getText().toString().trim()
+                        .equalsIgnoreCase("") ? "0" : editNumberOfHouseHolds.getText().toString());
 
-                String linkFacility = editLinkFacility.getText().toString();
-                Long distributors = Long.valueOf(editDistributors.getText().toString());
+                Long mohPopulation = Long.valueOf(editMohPopulation.getText().toString()
+                        .equalsIgnoreCase("") ? "0" : editMohPopulation.getText().toString());
+
+                Long populationDensity = Long.valueOf(editPopulationDensity.getText().toString()
+                        .equalsIgnoreCase("") ? "0" : editPopulationDensity.getText().toString());
+                Long numberOfVillages = Long.valueOf(editNumberOfVillages.getText().toString()
+                        .equalsIgnoreCase("") ? "0" : editNumberOfVillages.getText().toString());
+
+                Long distanceToBranch = Long.valueOf(editDistanceToBranch.getText().toString()
+                        .equalsIgnoreCase("") ? "0" : editDistanceToBranch.getText().toString());
+
+                Long transportCost = Long.valueOf(editTransportCost.getText().toString()
+                        .equalsIgnoreCase("") ? "0" : editTransportCost.getText().toString());
+
+                Long distanceToMainRoad = Long.valueOf(editDistanceToMainRoad.getText().toString()
+                        .equalsIgnoreCase("") ? "0" : editDistanceToMainRoad.getText().toString());
+                Long distanceToHealthFacility = Long.valueOf(editDistanceToHealthFacility.getText().toString()
+                        .equalsIgnoreCase("") ? "0" : editDistanceToHealthFacility.getText().toString());
+
+                String linkFacility = editLinkFacility.getText().toString(); // Change this to Spinner
+
+                Long distributors = Long.valueOf(editDistributors.getText().toString()
+                        .equalsIgnoreCase("") ? "0" : editDistributors.getText().toString());
+
                 boolean cHVsTrained = (editCHVsTrained.getText().toString() == "Yes");
 
 
@@ -247,25 +271,28 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                 // Do some validations
 
                 if (name.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Enter name of the Sublocation", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Enter name of the Community Unit", Toast.LENGTH_SHORT).show();
                     editName.requestFocus();
                 }
 
-                else if (areaChiefName.toString().trim().equals("")){
+                else if (areaChiefName.toString().trim().equals("") && mapping != null){
                     Toast.makeText(getContext(), "Enter the name of the Chief", Toast.LENGTH_SHORT).show();
                     editAreaChiefName.requestFocus();
                 }
 
-                else if(areaChiefPhone.toString().trim().equals("")){
+                else if(areaChiefPhone.toString().trim().equals("") && mapping != null){
                     Toast.makeText(getContext(), "Enter the contact details of the chief", Toast.LENGTH_SHORT).show();
                     editAreaChiefPhone.requestFocus();
                 } else{
-                    Toast.makeText(getContext(), "saved", Toast.LENGTH_SHORT).show();
                     String id = UUID.randomUUID().toString();
                     long userId = Long.valueOf(user.get(SessionManagement.KEY_USERID));
                     String country = user.get(SessionManagement.KEY_USER_COUNTRY);
+                    String mappingId = "";
+                    if (mapping != null){
+                        mappingId = mapping.getId();
+                    }
 
-                    CommunityUnit communityUnit = new CommunityUnit(id,name, mapping.getId(), latitude, longitude,
+                    CommunityUnit communityUnit = new CommunityUnit(id,name, mappingId, latitude, longitude,
                             country, subCounty.getId(),linkFacility , areaChiefName,
                             ward, economicStatus, privateFacilityForAct, privateFacilityForMrdt,
                             "", "", currentDate, userId, numberOfChvs, chvHouseHold, numberOfVillages,
@@ -275,10 +302,10 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                             presenceEstates, presenceOfFactories, presenceEstates, presenceOfTraderMarket,
                             presenceOfSuperMarket, ngosGivingFreeDrugs, false, false);
                     CommunityUnitTable communityUnitTable = new CommunityUnitTable(getContext());
-                    // long cid = communityUnitTable.addData(communityUnit);
-                    //if (cid != -1){
+                    long cid = communityUnitTable.addCommunityUnitData(communityUnit);
+                    if (cid != -1){
                         Toast.makeText(getContext(), "Community Unit saved successfuly", Toast.LENGTH_SHORT).show();
-                    //}
+                    }
                 }
 
         }

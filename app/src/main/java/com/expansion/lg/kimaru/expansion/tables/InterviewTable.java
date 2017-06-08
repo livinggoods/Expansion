@@ -195,7 +195,7 @@ public class InterviewTable extends SQLiteOpenHelper {
 
         SQLiteDatabase db=getReadableDatabase();
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
-
+        db.close();
         return cursor;
     }
     public Interview getInterviewByRegistrationId (String registrationUuid){
@@ -231,6 +231,7 @@ public class InterviewTable extends SQLiteOpenHelper {
             interview.setSynced(cursor.getInt(16));
             interview.setCanJoin(cursor.getInt(17) == 1);
             interview.setCountry(cursor.getString(18));
+            db.close();
             return interview;
         }
     }
@@ -268,6 +269,7 @@ public class InterviewTable extends SQLiteOpenHelper {
             interview.setSynced(cursor.getInt(16));
             interview.setCanJoin(cursor.getInt(17) == 1);
             interview.setCountry(cursor.getString(18));
+            db.close();
             return interview;
         }
     }

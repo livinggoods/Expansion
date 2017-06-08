@@ -226,6 +226,7 @@ public class SubCountyTable extends SQLiteOpenHelper {
         };
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            db.close();
             return null;
         }else {
             SubCounty subCounty = new SubCounty();
@@ -324,6 +325,7 @@ public class SubCountyTable extends SQLiteOpenHelper {
     public Cursor getSubCountyCursor() {
         SQLiteDatabase db=getReadableDatabase();
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+        db.close();
         return cursor;
     }
 

@@ -316,7 +316,6 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         String[] whereArgs = new String[] {
                 id
         };
-        Log.e("expansion", "requested recruitment ID "+ id);
         Cursor cursor = db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
             return null;
@@ -408,11 +407,6 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     private void upgradeVersion2(SQLiteDatabase db) {
         // For each recruitment, update the County Name with the County ID
         // For each recruitment, update the Sub County Name with the County ID
-
-
-        String [] columns=new String[]{ID, NAME, DISTRICT, SUB_COUNTY, DIVISION, LAT, LON, ADDED_BY,
-                COMMENT, DATE_ADDED, SYNCED, COUNTRY, COUNTY};
-
             Cursor cursor = db.query(TABLE_NAME, columns, null, null, null, null, null, null);
 
             for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
@@ -452,14 +446,14 @@ public class RecruitmentTable extends SQLiteOpenHelper {
                     if (savedDistrict != null){
                         ContentValues cv = new ContentValues();
                         cv.put(DISTRICT, String.valueOf(savedDistrict.getId()));
-                        db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                        db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(cursor.getColumnIndex(ID))+"'", null);
                     }else{
                         CountyLocation retrievedDistrict = countyLocationTable.getDistrictByName(districtName);
                         Log.e("expansion", "Could not get the district with the name "+ districtName);
                         if (retrievedDistrict != null){
                             ContentValues cv = new ContentValues();
                             cv.put(DISTRICT, String.valueOf(retrievedDistrict.getId()));
-                            db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                            db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(cursor.getColumnIndex(ID))+"'", null);
                         }
 
                     }
@@ -475,6 +469,9 @@ public class RecruitmentTable extends SQLiteOpenHelper {
                         ke.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
                         keCountyTable.addKeCounty(ke);
                     }
+                    try {
+                        Thread.sleep(1500L);
+                    }catch (Exception e){}
                     KeCounty addedKeCounty = keCountyTable.getKeCountyByName(cursor.getString(cursor.getColumnIndex(COUNTY)));
                     // get subCounty
                     SubCountyTable subCountyTable = new SubCountyTable(context);
@@ -488,13 +485,23 @@ public class RecruitmentTable extends SQLiteOpenHelper {
                                 "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", false,0,0);
                         subCountyTable.addData(subCounty);
                     }
+                    try {
+                        Thread.sleep(1500L);
+                    }catch (Exception e){}
                     SubCounty addedSubCounty = subCountyTable.getSubCountyByCountyAndName(String.valueOf(
                             addedKeCounty.getId()), country, cursor.getString(cursor.getColumnIndex(SUB_COUNTY)));
                     // noe we can update the Recruitment
-                    ContentValues cv = new ContentValues();
-                    cv.put(COUNTY, String.valueOf(addedKeCounty.getId()));
-                    cv.put(SUB_COUNTY, String.valueOf(addedSubCounty.getId()));
-                    db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                    ContentValues updateValues = new ContentValues();
+
+                    updateValues.put(ID, cursor.getString(cursor.getColumnIndex(ID)));
+                    updateValues.put(NAME, cursor.getString(cursor.getColumnIndex(NAME)));
+                    updateValues.put(COUNTY, String.valueOf(addedKeCounty.getId()));
+                    updateValues.put(SUB_COUNTY, String.valueOf(addedSubCounty.getId()));
+                    updateValues.put(COUNTRY, cursor.getString(cursor.getColumnIndex(COUNTRY)));
+                    db.update(TABLE_NAME, updateValues, ID+"='"+cursor.getString(cursor.getColumnIndex(ID))+"'", null);
+                    try {
+                        Thread.sleep(1000L);
+                    }catch (Exception e){}
                 }
             }
         }
