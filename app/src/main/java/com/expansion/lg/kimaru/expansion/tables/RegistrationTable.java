@@ -1006,13 +1006,17 @@ public class RegistrationTable extends SQLiteOpenHelper {
                         db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
                     }else{
                         // create the Link Facility
+                        // For some registration, Subcounty is missing.
+                        RecruitmentTable rctbl = new RecruitmentTable(context);
+                        Recruitment registrationRecruitment = rctbl.getRecruitmentById(cursor
+                                .getString(cursor.getColumnIndex(RECRUITMENT)));
                         LinkFacility newLinkFacility = new LinkFacility();
                         newLinkFacility.setId(linkFacilityUuid);
                         newLinkFacility.setFacilityName(cursor.getString(29));
                         newLinkFacility.setMappingId(cursor.getString(23));
-                        newLinkFacility.setLat("");
-                        newLinkFacility.setLon("");
-                        newLinkFacility.setSubCountyId(cursor.getString(6));
+                        newLinkFacility.setLat("0");
+                        newLinkFacility.setLon("0");
+                        newLinkFacility.setSubCountyId(registrationRecruitment.getSubcounty());
                         newLinkFacility.setDateAdded(cursor.getLong(21));
                         newLinkFacility.setAddedBy(cursor.getInt(18));
                         newLinkFacility.setMrdtLevels(0);
@@ -1053,6 +1057,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
         }
         // we can remove the unnecessary fields
         // but SQLite does not allow deleting the rows, too bad
-
+        // THe hack that is common is to copy the table onto another one, and deleting the old one
+        // with unwanted fields.
     }
 }
