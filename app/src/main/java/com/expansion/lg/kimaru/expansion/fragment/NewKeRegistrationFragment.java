@@ -34,6 +34,7 @@ import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Education;
+import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.other.DisplayDate;
@@ -41,6 +42,7 @@ import com.expansion.lg.kimaru.expansion.other.SpinnersCursorAdapter;
 import com.expansion.lg.kimaru.expansion.tables.ChewReferralTable;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.EducationTable;
+import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 
 import java.text.DateFormat;
@@ -77,8 +79,6 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
     EditText mPhone;
     RadioGroup mGender;
     RadioButton gender;
-    EditText editChewName;
-    EditText editChewNumber;
     EditText editWard;
     EditText mVillage;
     EditText mMark;
@@ -92,6 +92,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
     RadioGroup editIsChv, editIsGokTrained;
     RadioGroup mCommunity, mAccounts;
     Spinner editCuName;
+    Spinner selectLinkFacility;
     EditText editLinkFacility;
     EditText editNoOfHouseholds;
     EditText editOtherTrainings;
@@ -110,7 +111,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
 
 
     SessionManagement session;
-    String userName, userEmail, recruitmentId;
+    String userName, userEmail, recruitmentId, linkName;
     HashMap<String, String> user;
     Integer userId;
     Registration editingRegistration = null;
@@ -118,8 +119,12 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
 
     List<ChewReferral> chewReferralList = new ArrayList<ChewReferral>();
     List<String> chewReferrals = new ArrayList<String>();
+
     List<CommunityUnit> communityUnitList = new ArrayList<CommunityUnit>();
     List<String> communityUnits = new ArrayList<String>();
+
+    List<LinkFacility> linkFacilityList = new ArrayList<LinkFacility>();
+    List<String> linkFacilities = new ArrayList<String>();
 
     List<Education> educationList = new ArrayList<Education>();
 
@@ -193,12 +198,11 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         mOccupation = (EditText) v.findViewById(R.id.editOccupation);
         mDob = (EditText) v.findViewById(R.id.editDob);
         mReadEnglish = (RadioGroup) v.findViewById(R.id.editReadEnglish);
-//        editChewName = (EditText) v.findViewById(R.id.editChewName);
-//        editChewNumber = (EditText) v.findViewById(R.id.editChewNumber);
         selectChew = (Spinner) v.findViewById(R.id.selectChewReferral);
         mComment = (EditText) v.findViewById(R.id.editComment);
         editWard = (EditText) v.findViewById(R.id.editWard);
         editCuName = (Spinner) v.findViewById(R.id.editCuName);
+        selectLinkFacility = (Spinner) v.findViewById(R.id.selectLinkFacility);
         editBranchTransportCost = (EditText) v.findViewById(R.id.editBranchTransportCost);
         editRecruitmentTransportCost = (EditText) v.findViewById(R.id.editRecruitmentTransportCost);
         editLinkFacility = (EditText) v.findViewById(R.id.editLinkFacility);
@@ -226,10 +230,8 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         addCommunityUnits();
         ArrayAdapter<String> cuAdapter = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_spinner_item, communityUnits);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        cuAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         editCuName.setAdapter(cuAdapter);
-        // editCuName.setOnItemSelectedListener(onSelectedChewListener);
-
         // set the selected CU
         // In case there is no order followed
         if (cu != null){
@@ -243,6 +245,13 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
             }
         }
 
+        addLinkFacilities();
+        ArrayAdapter<String> linkFacilityAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, linkFacilities);
+        linkFacilityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        selectLinkFacility.setAdapter(linkFacilityAdapter);
+        selectLinkFacility.setOnItemSelectedListener(onSelectedLinkFacilityListener);
+
         setUpEditingMode();
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
@@ -255,11 +264,73 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         return v;
     }
 
+
+    AdapterView.OnItemSelectedListener onSelectedLinkFacilityListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (position > chewReferralList.size() -1){
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("New Link Facility");
+                // add Facility Name, the rest can be edited later
+                LinearLayout layout = new LinearLayout(getContext());
+                layout.setOrientation(LinearLayout.VERTICAL);
+                final EditText facilityName = new EditText(getContext());
+                facilityName.setHint("Link Facility Name");
+                layout.addView(facilityName);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        linkName = facilityName.getText().toString();
+                        // save the Link Facility
+                        String uuid = UUID.randomUUID().toString();
+                        LinkFacility lknFacility = new LinkFacility();
+                        lknFacility.setId(uuid);
+                        lknFacility.setFacilityName(linkName);
+                        lknFacility.setSubCountyId(session.getSavedRecruitment().getSubcounty());
+                        LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
+                        linkFacilityTable.addData(lknFacility);
+
+                        // clear chews
+                        linkFacilityList.clear();
+                        linkFacilities.clear();
+                        addLinkFacilities();
+                        ArrayAdapter<String> linkFacilityAdapter = new ArrayAdapter<String>(getContext(),
+                                android.R.layout.simple_spinner_item, linkFacilities);
+                        linkFacilityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        selectLinkFacility.setAdapter(linkFacilityAdapter);
+
+                        //lets set the selected
+                        int x = 0;
+                        for (LinkFacility e : linkFacilityList) {
+                            if (e.getId().equalsIgnoreCase(uuid)){
+                                selectLinkFacility.setSelection(x, true);
+                                break;
+                            }
+                            x++;
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
+
     AdapterView.OnItemSelectedListener onSelectedChewListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             if (position > chewReferralList.size() -1){
-                Toast.makeText(getContext(), "Add new Referral" , Toast.LENGTH_SHORT).show();
                 // Show Dialog to add the Referral
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Add new Referral");
@@ -275,10 +346,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 final EditText titleBox = new EditText(getContext());
                 titleBox.setHint("Title");
 
-
-
                 //name for both KE and UG
-
                 final EditText refName = new EditText(getContext());
                 if (session.getSavedRecruitment().getCountry().equalsIgnoreCase("UG")){
                     layout.addView(titleBox);
@@ -411,8 +479,8 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 String applicantOccupation = mOccupation.getText().toString();
                 String applicantComment = mComment.getText().toString();
                 String aDob = mDob.getText().toString();
-                String applicantChewName = editChewName.getText().toString();
-                String applicantChewNumber = editChewNumber.getText().toString();
+                String applicantChewName = "";
+                String applicantChewNumber = "";
                 String applicantWard = editWard.getText().toString();
                 String applicantCuName = communityUnitList.get(editCuName.getSelectedItemPosition()).getId(); //editCuName.getText().toString();
                 String applicantLinkFacility = editLinkFacility.getText().toString();
@@ -575,8 +643,6 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                     selectChew.setSelection(0);
                     mOccupation.setText("");
                     mDob.setText("");
-                    editChewName.setText("");
-                    editChewNumber.setText("");
                     editWard.setText("");
                     //editCuName.setSelection(0);
                     editLinkFacility.setText("");
@@ -663,6 +729,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         }
         chewReferrals.add("Add New");
     }
+
     public void addCommunityUnits() {
         CommunityUnitTable cuTable = new CommunityUnitTable(getContext());
         //communityUnits communityUnitList
@@ -671,6 +738,18 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
             communityUnits.add(cUnit.getCommunityUnitName());
         }
     }
+
+    public void addLinkFacilities() {
+        LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
+        //communityUnits communityUnitList
+        linkFacilityList = linkFacilityTable.getLinkFacilityBySubCounty(session
+                .getSavedRecruitment().getSubcounty());
+        for (LinkFacility lFacility: linkFacilityList){
+            linkFacilities.add(lFacility.getFacilityName());
+        }
+        linkFacilities.add("Add New");
+    }
+
     public void setUpEditingMode(){
         if (editingRegistration != null){
             mName.setText(editingRegistration.getName());
@@ -708,8 +787,6 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
             }
             mOccupation.setText(editingRegistration.getOccupation());
             mDob.setText(new DisplayDate(Long.valueOf(editingRegistration.getDob())).widgetDateOnly());
-            editChewName.setText(editingRegistration.getChewName());
-            editChewNumber.setText(editingRegistration.getChewNumber());
             editWard.setText(editingRegistration.getWard());
             x = 0;
             for (CommunityUnit cu : communityUnitList){
