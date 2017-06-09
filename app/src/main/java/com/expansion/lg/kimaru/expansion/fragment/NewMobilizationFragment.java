@@ -12,32 +12,38 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
-import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
+import com.expansion.lg.kimaru.expansion.mzigos.Mobilization;
+import com.expansion.lg.kimaru.expansion.mzigos.Parish;
 import com.expansion.lg.kimaru.expansion.tables.ChewReferralTable;
-import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
+import com.expansion.lg.kimaru.expansion.tables.MobilizationTable;
+import com.expansion.lg.kimaru.expansion.tables.ParishTable;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link NewChewReferralFragment.OnFragmentInteractionListener} interface
+ * {@link NewMobilizationFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link NewChewReferralFragment#newInstance} factory method to
+ * Use the {@link NewMobilizationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewChewReferralFragment extends Fragment implements OnClickListener {
+public class NewMobilizationFragment extends Fragment implements OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -49,13 +55,16 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
 
     private OnFragmentInteractionListener mListener;
 
-    EditText mName;
-    EditText mPhone;
-    EditText mTitle;
+    EditText editName;
+    EditText editComment;
+    Spinner selectParish;
 
 
     Button buttonSave, buttonList;
-    public ChewReferral editingChewReferral = null;
+    public Mobilization editingMobilization = null;
+
+    List<Parish> parishList = new ArrayList<>();
+    List<String> parishes = new ArrayList<>();
 
 
     private int mYear, mMonth, mDay;
@@ -64,11 +73,6 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
     SessionManagement session;
     HashMap<String, String> user;
 
-
-
-    public NewChewReferralFragment() {
-        // Required empty public constructor
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -79,8 +83,8 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
      * @return A new instance of fragment RegistrationsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NewChewReferralFragment newInstance(String param1, String param2) {
-        NewChewReferralFragment fragment = new NewChewReferralFragment();
+    public static NewMobilizationFragment newInstance(String param1, String param2) {
+        NewMobilizationFragment fragment = new NewMobilizationFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -102,17 +106,21 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_new_chewreferral, container, false);
+        View v =  inflater.inflate(R.layout.new_mobilization, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_RECRUITMENT;
-        MainActivity.backFragment = new RecruitmentsFragment();
+        MainActivity.backFragment = new MapViewFragment();
         session = new SessionManagement(getContext());
         user = session.getUserDetails();
-                //Initialize the UI Components editRecruitmentName editReferralTitle editReferralPhoneNumber
-        mName = (EditText) v.findViewById(R.id.editName);
-        mTitle = (EditText) v.findViewById(R.id.editReferralTitle);
-        mPhone = (EditText) v.findViewById(R.id.editReferralPhoneNumber);
+        editName = (EditText) v.findViewById(R.id.editName);
+        editComment = (EditText) v.findViewById(R.id.editComment);
+        selectParish = (Spinner) v.findViewById(R.id.selectParish);
 
-        // setUpEditingMode();
+        addParishes();
+        ArrayAdapter<String> parishesAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, parishes);
+        parishesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        selectParish.setAdapter(parishesAdapter);
+
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
@@ -123,18 +131,31 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
         return v;
     }
 
+    public void addParishes(){
+        ParishTable parishTable = new ParishTable(getContext());
+        //communityUnits communityUnitList
+        parishList = parishTable.getParishByMapping(session
+                .getSavedMapping().getId());
+        for (Parish p: parishList){
+            parishes.add(p.getName());
+        }
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
+
     @Override
     public void onClick(View view){
+        Fragment fragment;
+        FragmentTransaction fragmentTransaction;
         switch (view.getId()){
             case R.id.buttonList:
-                Fragment fragment = new RecruitmentViewFragment();
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragment = new MapViewFragment();
+                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
@@ -147,44 +168,56 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
 
                 // Generate the uuid
                 String id;
-                if (editingChewReferral != null){
-                    id = editingChewReferral.getId();
+                if (editingMobilization != null){
+                    id = editingMobilization.getId();
                 }else {
                     id = UUID.randomUUID().toString();
                 }
-                String referralName = mName.getText().toString();
-                String referralPhone = mPhone.getText().toString();
-                String referralTitle = mTitle.getText().toString();
+                String name = editName.getText().toString();
+                String comment = editComment.getText().toString();
 
-                String recruitment = session.getSavedRecruitment().getId();
+                String mappingId = session.getSavedMapping().getId();
+                // String county = session.getSavedMapping().getCounty(); // only for Kenya
+                String country = session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY);
+                String district = session.getSavedMapping().getDistrict();
+                String subCounty = session.getSavedMapping().getSubCounty();
 
-                String country = user.get(SessionManagement.KEY_USER_COUNTRY);
+
+                Mobilization mobilization = new Mobilization();
+                mobilization.setId(id);
+                mobilization.setName(name);
+                mobilization.setMappingId(mappingId);
+                mobilization.setCountry(country);
+                mobilization.setAddedBy(Integer.valueOf(user.get(SessionManagement.KEY_USERID)));
+                mobilization.setComment(comment);
+                mobilization.setDateAdded(currentDate);
+                mobilization.setSynced(false);
+                mobilization.setDistrict(district);
+                mobilization.setSubCounty(subCounty);
+                mobilization.setParish(parishList.get(selectParish.getSelectedItemPosition()).getId());
 
                 // Do some validations
-                if (referralName.toString().trim().equals("")){
+                if (editName.toString().trim().equals("")){
                     Toast.makeText(getContext(), "Name cannot be blank", Toast.LENGTH_SHORT).show();
-                    mName.requestFocus();
+                    editComment.requestFocus();
                     return;
                 }
 
-                // Save Recruitment
-                ChewReferral chewReferral = new ChewReferral(id, referralName, referralPhone,
-                        referralTitle, country, recruitment, 0, "","","","","","","","","");
-                ChewReferralTable chewReferralTable = new ChewReferralTable(getContext());
-                long statusId = chewReferralTable.addChewReferral(chewReferral);
+                // Save the Mobilization
+                MobilizationTable mobilizationTable = new MobilizationTable(getContext());
+                long statusId = mobilizationTable.addData(mobilization);
 
                 if (statusId ==-1){
-                    Toast.makeText(getContext(), "Could not save recruitment", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Could not save the mobilization", Toast.LENGTH_SHORT).show();
                 }
                 else{
                     Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
-
-                    // Clear boxes
-                    mName.setText("");
-                    mPhone.setText("");
-                    mTitle.setText("");
-                    //set Focus
-                    mName.requestFocus();
+                    fragment = new MapViewFragment();
+                    fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                            android.R.anim.fade_out);
+                    fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
+                    fragmentTransaction.commitAllowingStateLoss();
                 }
 
         }
@@ -224,11 +257,18 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
     }
 
     public void setUpEditingMode(){
-        if (editingChewReferral != null){
-            mName.setText(editingChewReferral.getName());
-            mTitle.setText(editingChewReferral.getTitle());
-            mPhone.setText(editingChewReferral.getTitle());
-            mName.requestFocus();
+        if (editingMobilization != null){
+            editName.setText(editingMobilization.getName());
+            editComment.setText(editingMobilization.getComment());
+            int x = 0;
+            for (Parish p : parishList){
+                if (p.getId().equalsIgnoreCase(editingMobilization.getParish())){
+                    selectParish.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
+            editName.requestFocus();
         }
     }
 }

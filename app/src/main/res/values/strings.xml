@@ -17,6 +17,7 @@
     <string name="all">All</string>
     <string name="search">Search</string>
     <string name="select_chew">Select CHEW</string>
+    <string name="select_parish">Select Mapped Parish</string>
     <string name="select_cu">Select Community Unit</string>
     <string name="select_link_Facility">Select Link Facility</string>
 

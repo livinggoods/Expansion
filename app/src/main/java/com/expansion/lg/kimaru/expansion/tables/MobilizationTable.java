@@ -7,9 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.expansion.lg.kimaru.expansion.mzigos.Exam;
-import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
-import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.mzigos.Mobilization;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 
 import org.json.JSONArray;
@@ -25,10 +23,10 @@ import java.util.List;
  */
 
 
-public class ExamTable extends SQLiteOpenHelper {
+public class MobilizationTable extends SQLiteOpenHelper {
 
-    public static final String TABLE_NAME="exam";
-    public static final String JSON_ROOT="exams";
+    public static final String TABLE_NAME="mobilization";
+    public static final String JSON_ROOT="mobilization";
     public static final String DATABASE_NAME= Constants.DATABASE_NAME;
     public static final int DATABASE_VERSION= Constants.DATABASE_VERSION;
 
@@ -42,44 +40,45 @@ public class ExamTable extends SQLiteOpenHelper {
     public static String text_field = " text ";
 
     public static final String ID= "id";
-    public static final String APPLICANT= "applicant";
-    public static final String RECRUITMENT = "recruitment";
+    public static final String NAME= "name";
+    public static final String MAPPING = "mapping";
     public static final String COUNTRY = "country";
-    public static final String MATH = "math";
-    public static final String PERSONALITY = "personality";
-    public static final String ENGLISH = "english";
     public static final String ADDED_BY = "added_by";
     public static final String COMMENT = "comment";
     public static final String DATE_ADDED = "client_time";
+    public static final String COUNTY = "county";
+    public static final String DISTRICT = "district";
+    public static final String SUB_COUNTY = "sub_county";
+    public static final String PARISH = "parish";
     public static final String SYNCED = "synced";
-    String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MATH, PERSONALITY, ENGLISH,
-            ADDED_BY, COMMENT, DATE_ADDED, SYNCED, COUNTRY};
+
+    String [] columns=new String[]{ID, NAME, MAPPING, COUNTRY, ADDED_BY, COMMENT,
+            DATE_ADDED, SYNCED, DISTRICT, COUNTY, SUB_COUNTY, PARISH};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ", "
-            + APPLICANT + varchar_field + ", "
-            + RECRUITMENT + varchar_field + ", "
+            + NAME + varchar_field + ", "
+            + MAPPING + varchar_field + ", "
             + COUNTRY + varchar_field + ", "
-            + MATH + real_field + ", "
-            + PERSONALITY + real_field + ", "
-            + ENGLISH + real_field + ", "
             + ADDED_BY + integer_field + ", "
             + COMMENT + text_field + ", "
-            + DATE_ADDED + integer_field + ", "
-            + SYNCED + integer_field + "); ";
+            + COUNTY + text_field + ", "
+            + DISTRICT + text_field + ", "
+            + SUB_COUNTY + text_field + ", "
+            + PARISH + text_field + ", "
+            + DATE_ADDED + real_field + ", "
+            + SYNCED + integer_field + ");";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
 
-    public ExamTable(Context context) {
+    public MobilizationTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);
         this.context = context;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
         db.execSQL(CREATE_DATABASE);
-
     }
 
     @Override
@@ -91,125 +90,126 @@ public class ExamTable extends SQLiteOpenHelper {
         }
     }
 
-    public long addData(Exam exam) {
+    public long addData(Mobilization mobilization) {
 
         SQLiteDatabase db=getWritableDatabase();
         ContentValues cv=new ContentValues();
-        cv.put(ID, exam.getId());
-        cv.put(APPLICANT, exam.getApplicant());
-        cv.put(RECRUITMENT, exam.getRecruitment());
-        cv.put(COUNTRY, exam.getCountry());
-        cv.put(MATH, exam.getMath());
-        cv.put(PERSONALITY, exam.getPersonality());
-        cv.put(ENGLISH, exam.getEnglish());
-        cv.put(ADDED_BY, exam.getAddedBy());
-        cv.put(COMMENT, exam.getComment());
-        cv.put(DATE_ADDED, exam.getDateAdded());
-        cv.put(SYNCED, exam.getSynced());
 
-
+        cv.put(ID, mobilization.getId());
+        cv.put(NAME, mobilization.getName());
+        cv.put(MAPPING, mobilization.getMappingId());
+        cv.put(COUNTRY, mobilization.getCountry());
+        cv.put(ADDED_BY, mobilization.getAddedBy());
+        cv.put(COMMENT, mobilization.getComment());
+        cv.put(DATE_ADDED, mobilization.getDateAdded());
+        cv.put(COUNTY, mobilization.getCounty());
+        cv.put(DISTRICT, mobilization.getDistrict());
+        cv.put(SUB_COUNTY, mobilization.getSubCounty());
+        cv.put(PARISH, mobilization.getParish());
+        cv.put(SYNCED, mobilization.getSynced());
         long id;
-        if (isExist(exam)){
+        if (isExist(mobilization)){
             cv.put(SYNCED, 0);
-            id = db.update(TABLE_NAME, cv, ID+"='"+exam.getId()+"'", null);
+            id = db.update(TABLE_NAME, cv, ID+"='"+mobilization.getId()+"'", null);
         }else{
             id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
         }
         db.close();
 
-        // When one passes the interview, we need to update the registration
-        RegistrationTable registrationTable = new RegistrationTable(context);
-        Registration registration = registrationTable.getRegistrationById(exam.getApplicant());
-        if (registration.hasPassed() && exam.hasPassed()){
-            registration.setProceed(1);
-        }else{
-            registration.setProceed(0);
-        }
-        registrationTable.addData(registration);
         return id;
 
     }
-    public List<Exam> getExamData() {
+
+    public List<Mobilization> getMobilizationData() {
 
         SQLiteDatabase db=getReadableDatabase();
 
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
 
-        List<Exam> examList=new ArrayList<>();
+        List<Mobilization> mobilizationList=new ArrayList<>();
 
 
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
 
 
-            Exam exam=new Exam();
+            Mobilization mobilization = new Mobilization();
 
-            exam.setId(cursor.getString(0));
-            exam.setApplicant(cursor.getString(1));
-            exam.setRecruitment(cursor.getString(2));
-            exam.setMath(cursor.getDouble(3));
-            exam.setPersonality(cursor.getDouble(4));
-            exam.setEnglish(cursor.getDouble(5));
-            exam.setAddedBy(cursor.getInt(6));
-            exam.setComment(cursor.getString(7));
-            exam.setDateAdded(cursor.getLong(8));
-            exam.setSynced(cursor.getInt(9));
-            exam.setCountry(cursor.getString(10));
+            mobilization.setId(cursor.getString(cursor.getColumnIndex(ID)));
+            mobilization.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+            mobilization.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPING)));
+            mobilization.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+            mobilization.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
+            mobilization.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+            mobilization.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATE_ADDED)));
+            mobilization.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED))== 1);
+            mobilization.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
+            mobilization.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
+            mobilization.setSubCounty(cursor.getString(cursor.getColumnIndex(SUB_COUNTY)));
+            mobilization.setParish(cursor.getString(cursor.getColumnIndex(PARISH)));
 
-            examList.add(exam);
+            mobilizationList.add(mobilization);
         }
         db.close();
 
-        return examList;
+        return mobilizationList;
     }
 
-    public Exam getExamByRegistration(String registrationUuid){
+    public List<Mobilization> getMobilizationByMappingId(String mappingId){
         SQLiteDatabase db = getReadableDatabase();
 
-        String whereClause = APPLICANT+" = ?";
+        String whereClause = MAPPING+" = ?";
         String[] whereArgs = new String[] {
-                registrationUuid,
+                mappingId,
         };
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
 
-        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
-            return null;
-        }else{
-            Exam exam=new Exam();
-            exam.setId(cursor.getString(0));
-            exam.setApplicant(cursor.getString(1));
-            exam.setRecruitment(cursor.getString(2));
-            exam.setMath(cursor.getDouble(3));
-            exam.setPersonality(cursor.getDouble(4));
-            exam.setEnglish(cursor.getDouble(5));
-            exam.setAddedBy(cursor.getInt(6));
-            exam.setComment(cursor.getString(7));
-            exam.setDateAdded(cursor.getLong(8));
-            exam.setSynced(cursor.getInt(9));
-            exam.setCountry(cursor.getString(10));
-            return exam;
-        }
+        List<Mobilization> mobilizationList=new ArrayList<>();
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
 
+
+            Mobilization mobilization = new Mobilization();
+
+            mobilization.setId(cursor.getString(cursor.getColumnIndex(ID)));
+            mobilization.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+            mobilization.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPING)));
+            mobilization.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+            mobilization.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
+            mobilization.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+            mobilization.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATE_ADDED)));
+            mobilization.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED))== 1);
+            mobilization.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
+            mobilization.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
+            mobilization.setSubCounty(cursor.getString(cursor.getColumnIndex(SUB_COUNTY)));
+            mobilization.setParish(cursor.getString(cursor.getColumnIndex(PARISH)));
+
+            mobilizationList.add(mobilization);
+        }
+        db.close();
+
+        return mobilizationList;
     }
+
 
     public void fromJson(JSONObject jsonObject){
         try{
-            Exam exam=new Exam();
-            exam.setId(jsonObject.getString(ExamTable.ID));
-            exam.setApplicant(jsonObject.getString(ExamTable.APPLICANT));
-            exam.setRecruitment(jsonObject.getString(ExamTable.RECRUITMENT));
-            exam.setCountry(jsonObject.getString(ExamTable.COUNTRY));
-            exam.setMath(jsonObject.getDouble(ExamTable.MATH));
-            exam.setPersonality(jsonObject.getDouble(ExamTable.PERSONALITY));
-            exam.setEnglish(jsonObject.getDouble(ExamTable.ENGLISH));
-            exam.setAddedBy(jsonObject.getInt(ExamTable.ADDED_BY));
-            exam.setComment(jsonObject.getString(ExamTable.COMMENT));
-            exam.setDateAdded(jsonObject.getLong(ExamTable.DATE_ADDED));
-            exam.setSynced(jsonObject.getInt(ExamTable.SYNCED));
-            this.addData(exam);
+            Mobilization mobilization = new Mobilization();
+            mobilization.setId(jsonObject.getString(ID));
+            mobilization.setName(jsonObject.getString(NAME));
+            mobilization.setMappingId(jsonObject.getString(MAPPING));
+            mobilization.setCountry(jsonObject.getString(COUNTRY));
+            mobilization.setAddedBy(jsonObject.getInt(ADDED_BY));
+            mobilization.setComment(jsonObject.getString(COMMENT));
+            mobilization.setDateAdded(jsonObject.getLong(DATE_ADDED));
+            mobilization.setSynced(jsonObject.getBoolean(SYNCED));
+            mobilization.setCounty(jsonObject.getString(COUNTY));
+            mobilization.setDistrict(jsonObject.getString(DISTRICT));
+            mobilization.setSubCounty(jsonObject.getString(SUB_COUNTY));
+            mobilization.setParish(jsonObject.getString(PARISH));
+            this.addData(mobilization);
         }catch (Exception e){}
     }
 
-    public Exam getExamById(String id){
+    public Mobilization getMobilizationById(String id){
         SQLiteDatabase db = getReadableDatabase();
 
         String whereClause = ID+" = ?";
@@ -221,86 +221,70 @@ public class ExamTable extends SQLiteOpenHelper {
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
             return null;
         }else{
-            Exam exam=new Exam();
-            exam.setId(cursor.getString(0));
-            exam.setApplicant(cursor.getString(1));
-            exam.setRecruitment(cursor.getString(2));
-            exam.setMath(cursor.getDouble(3));
-            exam.setPersonality(cursor.getDouble(4));
-            exam.setEnglish(cursor.getDouble(5));
-            exam.setAddedBy(cursor.getInt(6));
-            exam.setComment(cursor.getString(7));
-            exam.setDateAdded(cursor.getLong(8));
-            exam.setSynced(cursor.getInt(9));
-            exam.setCountry(cursor.getString(10));
-            return exam;
+            Mobilization mobilization = new Mobilization();
+            mobilization.setId(cursor.getString(cursor.getColumnIndex(ID)));
+            mobilization.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+            mobilization.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPING)));
+            mobilization.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+            mobilization.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
+            mobilization.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+            mobilization.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATE_ADDED)));
+            mobilization.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED))== 1);
+            mobilization.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
+            mobilization.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
+            mobilization.setSubCounty(cursor.getString(cursor.getColumnIndex(SUB_COUNTY)));
+            mobilization.setParish(cursor.getString(cursor.getColumnIndex(PARISH)));
+            db.close();
+            return mobilization;
         }
 
     }
 
-    public List<Exam> getExamsByRecruitment(Recruitment recruitment) {
+    public List<Mobilization> getMobilizationByCountyId(String countyId){
+        SQLiteDatabase db = getReadableDatabase();
 
-        SQLiteDatabase db=getReadableDatabase();
-        String orderBy = DATE_ADDED + " desc";
-        String whereClause = RECRUITMENT+" = ?";
+        String whereClause = COUNTY+" = ?";
         String[] whereArgs = new String[] {
-                recruitment.getId(),
+                countyId,
         };
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
 
-
-        List<Exam> examList=new ArrayList<>();
-
-
+        List<Mobilization> mobilizationList=new ArrayList<>();
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
 
 
-            Exam exam=new Exam();
+            Mobilization mobilization = new Mobilization();
 
-            exam.setId(cursor.getString(0));
-            exam.setApplicant(cursor.getString(1));
-            exam.setRecruitment(cursor.getString(2));
-            exam.setMath(cursor.getDouble(3));
-            exam.setPersonality(cursor.getDouble(4));
-            exam.setEnglish(cursor.getDouble(5));
-            exam.setAddedBy(cursor.getInt(6));
-            exam.setComment(cursor.getString(7));
-            exam.setDateAdded(cursor.getLong(8));
-            exam.setSynced(cursor.getInt(9));
-            exam.setCountry(cursor.getString(10));
+            mobilization.setId(cursor.getString(cursor.getColumnIndex(ID)));
+            mobilization.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+            mobilization.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPING)));
+            mobilization.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+            mobilization.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
+            mobilization.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+            mobilization.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATE_ADDED)));
+            mobilization.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED))== 1);
+            mobilization.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
+            mobilization.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
+            mobilization.setSubCounty(cursor.getString(cursor.getColumnIndex(SUB_COUNTY)));
+            mobilization.setParish(cursor.getString(cursor.getColumnIndex(PARISH)));
 
-            examList.add(exam);
+            mobilizationList.add(mobilization);
         }
         db.close();
 
-        return examList;
+        return mobilizationList;
     }
 
-    public boolean isExist(Exam exam) {
+    public boolean isExist(Mobilization mobilization) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cur = db.rawQuery("SELECT id FROM " + TABLE_NAME + " WHERE "+ID+" = '" + exam.getId() + "'", null);
+        Cursor cur = db.rawQuery("SELECT id FROM " + TABLE_NAME + " WHERE "+ID+" = '" + mobilization.getId() + "'", null);
         boolean exist = (cur.getCount() > 0);
         cur.close();
         return exist;
 
     }
 
-    public long getExamCount() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME);
-        db.close();
-        return cnt;
-    }
-
-    public Cursor getExamDataCursor() {
-
-        SQLiteDatabase db=getReadableDatabase();
-
-        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
-
-        return cursor;
-    }
-    public JSONObject getExamJson() {
+    public JSONObject getMobilizationJson() {
 
         SQLiteDatabase db=getReadableDatabase();
 
@@ -338,7 +322,7 @@ public class ExamTable extends SQLiteOpenHelper {
         return results;
     }
 
-    public JSONObject getExamsToSyncAsJson() {
+    public JSONObject getMobilizationToSyncAsJson() {
 
         SQLiteDatabase db=getReadableDatabase();
         String whereClause = SYNCED+" = ?";

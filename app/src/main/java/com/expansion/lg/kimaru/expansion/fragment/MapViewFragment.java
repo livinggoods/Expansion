@@ -53,11 +53,11 @@ public class MapViewFragment extends Fragment implements View.OnClickListener {
     private ListView mListView;
 
     TextView mappingMainLocation, mappingSecondaryLocation, contactPerson, contactPhone;
-    TextView mappingComment, ivReferrals, addParish;
+    TextView mappingComment, ivReferrals, addParish, textViewAddMobilization;
     public TextView subject, message, iconText, timestamp;
     public ImageView iconImp, imgProfile;
     public LinearLayout registrationContainser;
-    public RelativeLayout iconContainer, iconBack, iconFront;
+    public RelativeLayout iconContainer, iconBack, iconFront, relativeViewMobilizations;
 
     AppCompatActivity a = new AppCompatActivity();
     SessionManagement sessionManagement;
@@ -100,6 +100,10 @@ public class MapViewFragment extends Fragment implements View.OnClickListener {
         addParish = (TextView) v.findViewById(R.id.addParish);
         addParish.setText(" + ADD PARISH");
         addParish.setOnClickListener(this);
+        textViewAddMobilization = (TextView) v.findViewById(R.id.mobilizations);
+        textViewAddMobilization.setOnClickListener(this);
+        relativeViewMobilizations = (RelativeLayout) v.findViewById(R.id.relativeViewMobilizations);
+        relativeViewMobilizations.setOnClickListener(this);
 
         // get the parishes
         getParishes();
@@ -177,16 +181,29 @@ public class MapViewFragment extends Fragment implements View.OnClickListener {
     }
     @Override
     public void onClick (View view){
+        Fragment fragment;
+        FragmentTransaction fragmentTransaction;
         switch (view.getId()){
             case R.id.addParish:
                 // creating new Parish
-                Fragment fragment = new NewParishFragment();
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragment = new NewParishFragment();
+                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, "registrations");
                 fragmentTransaction.commitAllowingStateLoss();
                 break;
-
+            case R.id.mobilizations:
+                fragment = new NewMobilizationFragment();
+                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "mobilization");
+                fragmentTransaction.commitAllowingStateLoss();
+            case R.id.relativeViewMobilizations:
+                fragment = new NewMobilizationFragment();
+                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "mobilization");
+                fragmentTransaction.commitAllowingStateLoss();
         }
     }
     @Override
