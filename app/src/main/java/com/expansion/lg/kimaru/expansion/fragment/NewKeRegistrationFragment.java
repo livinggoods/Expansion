@@ -276,7 +276,9 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 layout.setOrientation(LinearLayout.VERTICAL);
                 final EditText facilityName = new EditText(getContext());
                 facilityName.setHint("Link Facility Name");
+                facilityName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
                 layout.addView(facilityName);
+                builder.setView(layout);
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -287,6 +289,16 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                         lknFacility.setId(uuid);
                         lknFacility.setFacilityName(linkName);
                         lknFacility.setSubCountyId(session.getSavedRecruitment().getSubcounty());
+
+                        lknFacility.setMappingId("");
+                        lknFacility.setLat("");
+                        lknFacility.setLon("");
+                        lknFacility.setDateAdded(new Date().getTime());
+                        lknFacility.setAddedBy(Integer.valueOf(session.getUserDetails().get(SessionManagement.KEY_USERID)));
+                        lknFacility.setMrdtLevels(0L);
+                        lknFacility.setActLevels(0L);
+                        lknFacility.setCountry(session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY));
+
                         LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
                         linkFacilityTable.addData(lknFacility);
 
