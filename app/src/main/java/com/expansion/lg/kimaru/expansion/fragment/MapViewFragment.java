@@ -30,11 +30,13 @@ import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.CountyLocation;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
+import com.expansion.lg.kimaru.expansion.mzigos.Mobilization;
 import com.expansion.lg.kimaru.expansion.mzigos.Parish;
 import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.DefaultListMenu;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
+import com.expansion.lg.kimaru.expansion.tables.MobilizationTable;
 import com.expansion.lg.kimaru.expansion.tables.ParishTable;
 import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
 import com.poliveira.parallaxrecycleradapter.ParallaxRecyclerAdapter;
@@ -50,7 +52,9 @@ import java.util.List;
 public class MapViewFragment extends Fragment implements View.OnClickListener {
 
     private  List<Parish> parishes = new ArrayList<>();
+    private  List<Mobilization> mobilizationList = new ArrayList<>();
     private ListView mListView;
+    private ListView mMobilizationListView;
 
     TextView mappingMainLocation, mappingSecondaryLocation, contactPerson, contactPhone;
     TextView mappingComment, ivReferrals, addParish, textViewAddMobilization;
@@ -117,6 +121,19 @@ public class MapViewFragment extends Fragment implements View.OnClickListener {
         MapAdapter adapter = new MapAdapter(getContext(), parishes);
         mListView.setAdapter(adapter);
 
+        getMobilization();
+
+        mMobilizationListView = (ListView) v.findViewById(R.id.mobilization_list_view);
+        String [] mobilizationItems = new String[mobilizationList.size()];
+        for (int i=0; i <mobilizationList.size(); i++){
+            Mobilization mobilization = mobilizationList.get(i);
+            mobilizationItems[i] = mobilization.getName();
+        }
+        MobilizationAdapter mobilizationAdapter = new MobilizationAdapter(getContext(), mobilizationList);
+        mMobilizationListView.setAdapter(mobilizationAdapter);
+        //.setLongClickable(true);
+        mMobilizationListView.setLongClickable(true);
+
 
 
         return v;
@@ -152,8 +169,11 @@ public class MapViewFragment extends Fragment implements View.OnClickListener {
             subject.setText(p.getName());
             //view_instance.getLayoutParams().width = LayoutParams.MATCH_PARENT
             subject.getLayoutParams().width = RecyclerView.LayoutParams.WRAP_CONTENT;
-
-            message.setText(p.getParent());
+            if (user.get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+                CountyLocationTable countyLocationTable = new CountyLocationTable(context);
+                message.setText(countyLocationTable.getLocationById(p.getParent()).getName());
+            }
+            //message.setText(p.getParent());
             message.getLayoutParams().width = RecyclerView.LayoutParams.WRAP_CONTENT;
             // timestamp.setText(chew.getRecruitmentId());
             // timestamp.getLayoutParams().width = RecyclerView.LayoutParams.MATCH_PARENT;
@@ -179,6 +199,85 @@ public class MapViewFragment extends Fragment implements View.OnClickListener {
             return rowView;
         }
     }
+
+    private class MobilizationAdapter extends ArrayAdapter<Mobilization> {
+        private final Context context;
+        private final List <Mobilization> mobilizationsList;
+
+        public MobilizationAdapter( Context context, List<Mobilization> values){
+            super(context, -1, values);
+            this.mobilizationsList = values;
+            this.context = context;
+        }
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent){
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
+            // name = (TextView) rowView.findViewById(R.id.from);
+            subject = (TextView) rowView.findViewById(R.id.txt_primary);
+            message = (TextView) rowView.findViewById(R.id.txt_secondary);
+            iconText = (TextView) rowView.findViewById(R.id.icon_text);
+            timestamp = (TextView) rowView.findViewById(R.id.timestamp);
+            iconBack = (RelativeLayout) rowView.findViewById(R.id.icon_back);
+            iconFront = (RelativeLayout) rowView.findViewById(R.id.icon_front);
+            iconImp = (ImageView) rowView.findViewById(R.id.icon_star);
+            imgProfile = (ImageView) rowView.findViewById(R.id.icon_profile);
+            registrationContainser = (LinearLayout) rowView.findViewById(R.id.message_container);
+            iconContainer = (RelativeLayout) rowView.findViewById(R.id.icon_container);
+
+            final Mobilization m = mobilizationsList.get(position);
+            // name.setText(chew.getTitle());
+            subject.setText(m.getName());
+            //view_instance.getLayoutParams().width = LayoutParams.MATCH_PARENT
+            subject.getLayoutParams().width = RecyclerView.LayoutParams.WRAP_CONTENT;
+            if (sessionManagement.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("KE")){
+                SubCountyTable subCountyTable = new SubCountyTable(context);
+                message.setText(subCountyTable.getSubCountyById(m.getSubCounty()).getSubCountyName());
+            }else{
+                CountyLocationTable countyLocationTable = new CountyLocationTable(context);
+                message.setText(countyLocationTable.getLocationById(m.getSubCounty()).getName());
+            }
+
+            message.getLayoutParams().width = RecyclerView.LayoutParams.WRAP_CONTENT;
+            // timestamp.setText(chew.getRecruitmentId());
+            // timestamp.getLayoutParams().width = RecyclerView.LayoutParams.MATCH_PARENT;
+            iconText.setText(String.valueOf(m.getName().substring(0,1)));
+            imgProfile.setImageResource(R.drawable.bg_circle);
+            imgProfile.setColorFilter(getRandomMaterialColor("400"));
+            iconText.setVisibility(View.VISIBLE);
+            iconImp.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_black_24dp));
+            iconImp.setColorFilter(ContextCompat.getColor(getContext(), R.color.icon_tint_selected));
+            registrationContainser.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    NewMobilizationFragment newMobilizationFragment = new NewMobilizationFragment();
+                    newMobilizationFragment.editingMobilization = m;
+
+                    Fragment fragment = newMobilizationFragment;
+                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                    fragmentTransaction.replace(R.id.frame, fragment, "villages");
+                    fragmentTransaction.commitAllowingStateLoss();
+                    return true;
+                }
+            });
+            registrationContainser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // go to the village listing
+                    sessionManagement.saveMobilization(m);
+                    Fragment fragment = new ReferralsFragment();
+                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                    fragmentTransaction.replace(R.id.frame, fragment, "villages");
+                    fragmentTransaction.commitAllowingStateLoss();
+                }
+            });
+
+            return rowView;
+        }
+    }
+
     @Override
     public void onClick (View view){
         Fragment fragment;
@@ -227,6 +326,20 @@ public class MapViewFragment extends Fragment implements View.OnClickListener {
             }
         }catch (Exception e){
             ivReferrals.setText("No recruitments added. Please create one");
+        }
+    }
+
+
+
+    private void getMobilization(){
+        mobilizationList.clear();
+        try{
+            List<Mobilization> mobList = new MobilizationTable(getContext())
+                    .getMobilizationByMappingId(sessionManagement.getSavedMapping().getId());
+            for (Mobilization mob : mobList){
+                mobilizationList.add(mob);
+            }
+        }catch (Exception e){
         }
     }
     private int getRandomMaterialColor(String typeColor) {

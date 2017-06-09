@@ -9,6 +9,7 @@ import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
+import com.expansion.lg.kimaru.expansion.mzigos.Mobilization;
 import com.expansion.lg.kimaru.expansion.mzigos.Parish;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
@@ -36,6 +37,7 @@ public class SessionManagement {
     public static final String KEY_USERID = "userid";
     public static final String KEY_USER_COUNTRY = "country";
     public static final String COMMUNITY_UNIT = "community_unit";
+    public static final String MOBILIZATION = "mobilization";
 
 
     // Recruitment Details
@@ -254,6 +256,27 @@ public class SessionManagement {
         String villageDetails = pref.getString(VILLAGE, "");
         village = gson.fromJson(villageDetails, Village.class);
         return village;
+    }
+
+
+    public void saveMobilization(Mobilization mobilization){
+        Gson gson = new Gson();
+        String mobilizationObject = gson.toJson(mobilization);
+        editor.putString(MOBILIZATION, mobilizationObject);
+        editor.commit();
+    }
+    /**
+     *
+     * Get the stored Mobilization
+     *
+     * */
+    public Mobilization getSavedMobilization (){
+
+        Mobilization mobilization;
+        Gson gson = new Gson();
+        String mobilizationDetails = pref.getString(MOBILIZATION, "");
+        mobilization = gson.fromJson(mobilizationDetails, Mobilization.class);
+        return mobilization;
     }
 
 

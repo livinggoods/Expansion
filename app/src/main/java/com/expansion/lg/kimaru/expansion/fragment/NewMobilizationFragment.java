@@ -121,7 +121,7 @@ public class NewMobilizationFragment extends Fragment implements OnClickListener
         parishesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         selectParish.setAdapter(parishesAdapter);
 
-
+        setUpEditingMode();
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
 

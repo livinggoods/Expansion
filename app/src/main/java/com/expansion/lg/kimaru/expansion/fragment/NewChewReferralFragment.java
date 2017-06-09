@@ -3,11 +3,22 @@ package com.expansion.lg.kimaru.expansion.fragment;
  * Created by kimaru on 3/11/17.
  */
 
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,6 +28,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.AlertDialogManager;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
@@ -37,7 +49,7 @@ import java.util.UUID;
  * Use the {@link NewChewReferralFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewChewReferralFragment extends Fragment implements OnClickListener {
+public class NewChewReferralFragment extends Fragment implements OnClickListener, LocationListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -57,6 +69,8 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
     Button buttonSave, buttonList;
     public ChewReferral editingChewReferral = null;
 
+    public Boolean createdFromRecruitment = false;
+
 
     private int mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 100;
@@ -64,6 +78,28 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
     SessionManagement session;
     HashMap<String, String> user;
 
+    double latitude, longitude;
+    boolean isGPSEnabled = false;
+    //flag for net status
+    boolean isNetworkEnabled = false;
+
+    boolean canGetLocation = false;
+    private int id = 0;
+
+    Location location; //location
+    // Due to Runtime Perms, let us declare some constants for the permissions
+    private static final int PERMISSION_CALLBACK_CONSTANT = 101;
+    private static final int REQUEST_PERMISSION_SETTING = 102;
+
+
+    // The minimum distance to change Updates in meters
+    public static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1; // 10 meters
+    // The minimum time between updates in milliseconds
+    public static final long MIN_TIME_BETWEEN_UPDATE = 1000 * 60 / 2; // 30 seconds
+
+    protected LocationManager locationManager;
+
+    AlertDialogManager alert = new AlertDialogManager();
 
 
     public NewChewReferralFragment() {
@@ -104,7 +140,7 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_new_chewreferral, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_RECRUITMENT;
-        MainActivity.backFragment = new RecruitmentsFragment();
+        MainActivity.backFragment = new ReferralsFragment();
         session = new SessionManagement(getContext());
         user = session.getUserDetails();
                 //Initialize the UI Components editRecruitmentName editReferralTitle editReferralPhoneNumber
@@ -119,6 +155,105 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
 
         buttonSave = (Button) v.findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(this);
+
+        // Location
+        try {
+            locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+            //is GPS Enabled or not?
+            isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            // Is network enabled
+            isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            //if both are off, we cannot get the GPS
+            if (!isGPSEnabled && !isNetworkEnabled){
+                //ask user to enable location
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+                // Setting Dialog Title
+                alertDialog.setTitle("GPS settings");
+
+                // Setting Dialog Message
+                alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
+
+                // On pressing Settings button
+                alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        getContext().startActivity(intent);
+                    }
+                });
+
+                // on pressing cancel button
+                alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                // Showing Alert Message
+                alertDialog.show();
+
+            }else{
+                this.canGetLocation = true;
+                // check for permissions
+                if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                    //show explanation for permissions
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Needs GPS Permission");
+                    builder.setMessage("In order to work properly, this app needs GPS permission");
+                    builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            ActivityCompat.requestPermissions(getActivity(), new String[]{
+                                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                                    Manifest.permission.ACCESS_FINE_LOCATION
+                            }, PERMISSION_CALLBACK_CONSTANT);
+                        }
+                    });
+                    builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+                } else{
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                    }, PERMISSION_CALLBACK_CONSTANT);
+                }
+
+                //we have the permissions now
+                // Get location from Network provider
+                if (isNetworkEnabled){
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                            MIN_TIME_BETWEEN_UPDATE,
+                            MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                    if(locationManager != null){
+                        location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        if (location != null){
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                        }
+                    }
+                }
+                // we try getting the location form GPS
+                if (isGPSEnabled){
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                            MIN_TIME_BETWEEN_UPDATE,
+                            MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                    if(locationManager != null){
+                        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        if (location != null){
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                        }
+                    }
+                }
+
+            }
+
+        } catch (Exception e){}
 
         return v;
     }
@@ -155,8 +290,28 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
                 String referralName = mName.getText().toString();
                 String referralPhone = mPhone.getText().toString();
                 String referralTitle = mTitle.getText().toString();
+                String recruitment ="";
+                String county = "";
+                String parish = "";
+                String subcounty = "";
+                String district = "";
+                String mapping = "";
 
-                String recruitment = session.getSavedRecruitment().getId();
+
+                String mobilization = "";
+                if (createdFromRecruitment){
+                    recruitment = session.getSavedRecruitment().getId();
+                    county = session.getSavedRecruitment().getCounty();
+                    subcounty = session.getSavedRecruitment().getSubcounty();
+                }else{
+                    mobilization = session.getSavedMobilization().getId();
+                    county = session.getSavedMapping().getCounty();
+                    subcounty = session.getSavedMapping().getSubCounty();
+                    district = session.getSavedMapping().getDistrict();
+                    mapping = session.getSavedMapping().getId();
+                    parish = session.getSavedParish().getId();
+                }
+
 
                 String country = user.get(SessionManagement.KEY_USER_COUNTRY);
 
@@ -166,10 +321,17 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
                     mName.requestFocus();
                     return;
                 }
+                /**
+                 * String id, String name, String phone, String title, String country,
+                 String recruitmentId, Integer synced, String county, String district,
+                 String subCounty, String communityUnit, String village, String mapping,
+                 String lat, String lon, String mobilization
+                 */
 
                 // Save Recruitment
                 ChewReferral chewReferral = new ChewReferral(id, referralName, referralPhone,
-                        referralTitle, country, recruitment, 0, "","","","","","","","","");
+                        referralTitle, country, recruitment, 0, county,district,subcounty,"","",
+                        mapping,String.valueOf(latitude),String.valueOf(longitude),mobilization);
                 ChewReferralTable chewReferralTable = new ChewReferralTable(getContext());
                 long statusId = chewReferralTable.addChewReferral(chewReferral);
 
@@ -230,5 +392,24 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
             mPhone.setText(editingChewReferral.getTitle());
             mName.requestFocus();
         }
+    }
+    @Override
+    public void onLocationChanged(Location location){
+        longitude = location.getLongitude();
+        latitude = location.getLatitude();
+    }
+
+    @Override
+    public void onProviderEnabled(String provider){
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider){
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
     }
 }

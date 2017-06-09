@@ -30,11 +30,14 @@ import android.widget.Toast;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
-import com.expansion.lg.kimaru.expansion.mzigos.Exam;
+import com.expansion.lg.kimaru.expansion.dbhelpers.ChewReferralListAdapter;
 import com.expansion.lg.kimaru.expansion.dbhelpers.ExamListAdapter;
+import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
+import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
-import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
+import com.expansion.lg.kimaru.expansion.tables.ChewReferralTable;
+import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 
 import java.util.ArrayList;
@@ -45,12 +48,12 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ExamsFragment.OnFragmentInteractionListener} interface
+ * {@link ReferralsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ExamsFragment#newInstance} factory method to
+ * Use the {@link ReferralsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ExamsFragment extends Fragment  {
+public class ReferralsFragment extends Fragment  {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -65,9 +68,9 @@ public class ExamsFragment extends Fragment  {
     FloatingActionButton fab;
 
     // to show list in Gmail Mode
-    private List<Exam> exams = new ArrayList<>();
+    private List<ChewReferral> chewReferrals = new ArrayList<>();
     private RecyclerView recyclerView;
-    private ExamListAdapter rAdapter;
+    private ChewReferralListAdapter rAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ActionMode actionMode;
     private ActionModeCallback actionModeCallback;
@@ -81,7 +84,7 @@ public class ExamsFragment extends Fragment  {
 
 
 
-    public ExamsFragment() {
+    public ReferralsFragment() {
         // Required empty public constructor
     }
 
@@ -94,8 +97,8 @@ public class ExamsFragment extends Fragment  {
      * @return A new instance of fragment RegistrationsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ExamsFragment newInstance(String param1, String param2) {
-        ExamsFragment fragment = new ExamsFragment();
+    public static ReferralsFragment newInstance(String param1, String param2) {
+        ReferralsFragment fragment = new ReferralsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -118,125 +121,80 @@ public class ExamsFragment extends Fragment  {
                              Bundle savedInstanceState) {
         View v;
         //check if Recruitment is set
-        MainActivity.CURRENT_TAG =MainActivity.TAG_EXAMS;
-        MainActivity.backFragment = new RegistrationsFragment();
+        MainActivity.backFragment = new MapViewFragment();
         session = new SessionManagement(getContext());
 
-        if(!session.isRegistrationSet()){
-            RegistrationsFragment newRegistrationsFragment = new RegistrationsFragment();
-            Fragment fragment = newRegistrationsFragment;
-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                    android.R.anim.fade_out);
-
-            fragmentTransaction.replace(R.id.frame, fragment, "registrations");
-            fragmentTransaction.commitAllowingStateLoss();
-        }
         // Inflate the layout for this fragment
-        v =  inflater.inflate(R.layout.fragment_exams, container, false);
+        v =  inflater.inflate(R.layout.fragment_referrals, container, false);
         textshow = (TextView) v.findViewById(R.id.textShow);
 
         fab = (FloatingActionButton) v.findViewById(R.id.fab);
-        fab.hide();
-//        final Fragment fragment;
-//        if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("KE")){
-//            fragment = new NewExamFragment();
-//        }else {
-//            fragment = new NewExamFragment();
-//        }
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-//                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-//                fragmentTransaction.replace(R.id.frame, fragment, "villages");
-//                fragmentTransaction.commitAllowingStateLoss();
-//            }
-//        });
-
-        // ============Gmail View starts here =======================
-        // Gmail View.
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get to show details of the referral
+                Fragment fragment = new NewChewReferralFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        });
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getExams();
+                getReferrals();
             }
         });
-        rAdapter = new ExamListAdapter(this.getContext(), exams, new ExamListAdapter.ExamListAdapterListener() {
+        rAdapter = new ChewReferralListAdapter(getContext(), chewReferrals, new ChewReferralListAdapter.ChewReferralListAdapterListener() {
             @Override
             public void onIconClicked(int position) {
 
-                // get the registration
-                Exam exam = exams.get(position);
-                //extract registration from the exam
-                String regId = exam.getApplicant();
-                RegistrationTable registrationTable = new RegistrationTable(getContext());
-                Registration registration = registrationTable.getRegistrationById(regId);
-                session.saveRegistration(registration);
-                Fragment fragment = new RegistrationViewFragment();
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
-                fragmentTransaction.commitAllowingStateLoss();
+                ChewReferral chewReferral = chewReferrals.get(position);
+                // // Get to show details of the referral
+                //  Fragment fragment = new ReferralViewFragment();
+                // FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                // fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                // fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                // fragmentTransaction.commitAllowingStateLoss();
 
             }
 
             @Override
             public void onIconImportantClicked(int position) {
-                // get the registration
-                Exam exam = exams.get(position);
-                //extract registration from the exam
-                String regId = exam.getApplicant();
-                RegistrationTable registrationTable = new RegistrationTable(getContext());
-                Registration registration = registrationTable.getRegistrationById(regId);
-                session.saveRegistration(registration);
-                Fragment fragment = new RegistrationViewFragment();
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
-                fragmentTransaction.commitAllowingStateLoss();
+                ChewReferral chewReferral = chewReferrals.get(position);
+                // // Get to show details of the referral
+                //  Fragment fragment = new ReferralViewFragment();
+                // FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                // fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                // fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                // fragmentTransaction.commitAllowingStateLoss();
             }
 
             @Override
             public void onMessageRowClicked(int position) {
-                // read the message which removes bold from the row
-                Exam exam = exams.get(position);
-
-                exam.setRead(true);
-                exams.set(position, exam);
-                rAdapter.notifyDataSetChanged();
-
-                //extract registration from the exam
-                String regId = exam.getApplicant();
-                RegistrationTable registrationTable = new RegistrationTable(getContext());
-                Registration registration = registrationTable.getRegistrationById(regId);
-                session.saveRegistration(registration);
-                Fragment fragment = new RegistrationViewFragment();
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
-                fragmentTransaction.commitAllowingStateLoss();
+                ChewReferral chewReferral = chewReferrals.get(position);
+                // // Get to show details of the referral
+                //  Fragment fragment = new ReferralViewFragment();
+                // FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                // fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                // fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                // fragmentTransaction.commitAllowingStateLoss();
 
             }
 
             @Override
             public void onRowLongClicked(int position) {
-                Exam exam = exams.get(position);
-                NewExamFragment newExamFragment = new NewExamFragment();
-                newExamFragment.editingExam = exam;
-                Fragment fragment = newExamFragment;
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-
-                fragmentTransaction.replace(R.id.frame, fragment, "exams");
-                fragmentTransaction.commitAllowingStateLoss();
+                ChewReferral chewReferral = chewReferrals.get(position);
+                // // Get to show details of the referral
+                //  Fragment fragment = new ReferralViewFragment();
+                // FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                // fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                // fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                // fragmentTransaction.commitAllowingStateLoss();
             }
 
         });
@@ -250,7 +208,7 @@ public class ExamsFragment extends Fragment  {
                 new Runnable(){
                     @Override
                     public void run(){
-                        getExams();
+                        getReferrals();
                     }
                 }
         );
@@ -388,28 +346,26 @@ public class ExamsFragment extends Fragment  {
         }
         rAdapter.notifyDataSetChanged();
     }
-    private void getExams() {
+    private void getReferrals() {
         swipeRefreshLayout.setRefreshing(true);
 
-        exams.clear();
+        chewReferrals.clear();
 
         // clear the registrations
         try {
             // get the registrations
-            ExamTable examTable = new ExamTable(getContext());
-            List<Exam> examList = new ArrayList<>();
+            ChewReferralTable chewReferralTable = new ChewReferralTable(getContext());
+            List<ChewReferral> chewReferralList = new ArrayList<>();
 
-            examList = examTable.getExamData();
-            examList = examTable.getExamsByRecruitment(session.getSavedRecruitment());
-            for (Exam exam:examList){
-                exam.setColor(getRandomMaterialColor("400"));
-                exams.add(exam);
+            chewReferralList = chewReferralTable.getChewReferralBySubCountyId(session.getSavedMapping().getSubCounty());
+            for (ChewReferral chewReferral:chewReferralList){
+                chewReferral.setColor(getRandomMaterialColor("400"));
+                chewReferrals.add(chewReferral);
             }
             rAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
         } catch (Exception error){
-            Toast.makeText(getContext(), "No Exams", Toast.LENGTH_SHORT).show();
-            textshow.setText("No Exams added. Please create one");
+            textshow.setText("No Referrals added. Please create one");
         }
         swipeRefreshLayout.setRefreshing(false);
     }
