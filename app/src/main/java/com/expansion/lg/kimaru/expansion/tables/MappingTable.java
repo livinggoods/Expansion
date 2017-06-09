@@ -32,6 +32,7 @@ public class MappingTable extends SQLiteOpenHelper {
     public static String primary_field = " _id INTEGER PRIMARY KEY AUTOINCREMENT ";
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
+    public static String real_field = " REAL ";
 
     public static final String ID = "id";
     public static final String MAPPINGNAME= "name";
@@ -58,7 +59,7 @@ public class MappingTable extends SQLiteOpenHelper {
             + CONTACTPERSONPHONE + varchar_field + ", "
             + COMMENT + text_field + ", "
             + SYNCED + integer_field + ", "
-            + DATE_ADDED + integer_field + "); ";
+            + DATE_ADDED + real_field + "); ";
 
     String [] columns=new String[]{ID, MAPPINGNAME, COUNTRY, COUNTY, ADDED_BY, CONTACTPERSON,
             CONTACTPERSONPHONE, COMMENT, DATE_ADDED, SYNCED, DISTRICT, SUBCOUNTY};
@@ -131,7 +132,7 @@ public class MappingTable extends SQLiteOpenHelper {
             mapping.setContactPerson(cursor.getString(5));
             mapping.setContactPersonPhone(cursor.getString(6));
             mapping.setComment(cursor.getString(7));
-            mapping.setDateAdded(cursor.getInt(8));
+            mapping.setDateAdded(cursor.getLong(8));
             mapping.setSynced(cursor.getInt(9) == 1);
             mapping.setDistrict(cursor.getString(10));
             mapping.setSubCounty(cursor.getString(11));
@@ -156,7 +157,7 @@ public class MappingTable extends SQLiteOpenHelper {
         mapping.setContactPerson(cursor.getString(5));
         mapping.setContactPersonPhone(cursor.getString(6));
         mapping.setComment(cursor.getString(7));
-        mapping.setDateAdded(cursor.getInt(8));
+        mapping.setDateAdded(cursor.getLong(8));
         mapping.setSynced(cursor.getInt(9) == 1);
         mapping.setDistrict(cursor.getString(10));
         mapping.setSubCounty(cursor.getString(11));
@@ -182,7 +183,7 @@ public class MappingTable extends SQLiteOpenHelper {
             mapping.setContactPerson(cursor.getString(5));
             mapping.setContactPersonPhone(cursor.getString(6));
             mapping.setComment(cursor.getString(7));
-            mapping.setDateAdded(cursor.getInt(8));
+            mapping.setDateAdded(cursor.getLong(8));
             mapping.setSynced(cursor.getInt(9) == 1);
             mapping.setDistrict(cursor.getString(10));
             mapping.setSubCounty(cursor.getString(11));
@@ -206,7 +207,7 @@ public class MappingTable extends SQLiteOpenHelper {
         mapping.setContactPerson(cursor.getString(5));
         mapping.setContactPersonPhone(cursor.getString(6));
         mapping.setComment(cursor.getString(7));
-        mapping.setDateAdded(cursor.getInt(8));
+        mapping.setDateAdded(cursor.getLong(8));
         mapping.setSynced(cursor.getInt(9) == 1);
         mapping.setDistrict(cursor.getString(10));
         mapping.setSubCounty(cursor.getString(11));
@@ -225,7 +226,7 @@ public class MappingTable extends SQLiteOpenHelper {
         mapping.setContactPerson(cursor.getString(5));
         mapping.setContactPersonPhone(cursor.getString(6));
         mapping.setComment(cursor.getString(7));
-        mapping.setDateAdded(cursor.getInt(8));
+        mapping.setDateAdded(cursor.getLong(8));
         mapping.setSynced(cursor.getInt(9) == 1);
         mapping.setDistrict(cursor.getString(10));
         mapping.setSubCounty(cursor.getString(11));

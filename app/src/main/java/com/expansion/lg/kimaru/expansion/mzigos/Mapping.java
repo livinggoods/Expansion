@@ -7,7 +7,8 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 public class Mapping {
 
     String id, mappingName, subCounty, country, contactPerson, contactPersonPhone, comment, county, district;
-    Integer dateAdded, addedBy;
+    Integer addedBy;
+    Long dateAdded;
     boolean synced;
 
     boolean isRead = false;
@@ -19,7 +20,7 @@ public class Mapping {
 
     }
 
-    public Mapping(String id, String mappingName, String country, String county, Integer dateAdded,
+    public Mapping(String id, String mappingName, String country, String county, Long dateAdded,
                    Integer addedBy, String contactPerson, String contactPersonPhone,
                    boolean synced, String comment, String district, String subCounty) {
         this.id = id;
@@ -76,11 +77,11 @@ public class Mapping {
         this.addedBy = addedBy;
     }
 
-    public Integer getDateAdded() {
+    public Long getDateAdded() {
         return dateAdded;
     }
 
-    public void setDateAdded(Integer dateAdded) {
+    public void setDateAdded(Long dateAdded) {
         this.dateAdded = dateAdded;
     }
 

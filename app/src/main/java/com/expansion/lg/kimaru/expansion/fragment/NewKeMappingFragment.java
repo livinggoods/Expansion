@@ -145,7 +145,7 @@ public class NewKeMappingFragment extends Fragment implements OnClickListener {
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
                 Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
-                Integer currentDate =  (int) (new Date().getTime()/1000);
+                Long currentDate =  new Date().getTime();
 
                 String id = UUID.randomUUID().toString();
                 String mappingName = mMappingName.getText().toString();
@@ -153,7 +153,7 @@ public class NewKeMappingFragment extends Fragment implements OnClickListener {
                 String contactPerson = mMappingContactPerson.getText().toString();
                 String contactPersonPhone = mMappingContactPersonPhone.getText().toString();
                 String comment = mComment.getText().toString();
-                Integer dateAdded = currentDate;
+                String country = user.get(SessionManagement.KEY_USER_COUNTRY);
                 Integer applicantAddedBy = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
                 boolean sync = false;
 
@@ -168,12 +168,11 @@ public class NewKeMappingFragment extends Fragment implements OnClickListener {
                     Toast.makeText(getContext(), "Enter the county or the area", Toast.LENGTH_SHORT).show();
                 } else{
                     // Save Exam Details
-                    Mapping mapping = new Mapping(id, mappingName, "UG", mappingCounty, dateAdded,
+                    Mapping mapping = new Mapping(id, mappingName, country, mappingCounty, currentDate,
                             applicantAddedBy, contactPerson,contactPersonPhone, sync, comment, "", "");
 
                     MappingTable mappingTable = new MappingTable(getContext());
                     String createdMap = mappingTable.addData(mapping);
-                    Toast.makeText(getContext(), createdMap + " Is the ID", Toast.LENGTH_LONG).show();
                     // Clear boxes
                     mMappingContactPerson.setText("");
                     mMappingContactPersonPhone.setText("");
