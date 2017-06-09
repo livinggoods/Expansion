@@ -276,7 +276,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 layout.setOrientation(LinearLayout.VERTICAL);
                 final EditText facilityName = new EditText(getContext());
                 facilityName.setHint("Link Facility Name");
-                facilityName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+                facilityName.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                 layout.addView(facilityName);
                 builder.setView(layout);
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
