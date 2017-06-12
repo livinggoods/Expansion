@@ -10,6 +10,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -60,6 +61,7 @@ public class SubCountiesFragment extends Fragment  {
 
     private OnFragmentInteractionListener mListener;
     TextView textshow;
+    FloatingActionButton fab;
 
     // to show list in Gmail Mode
     private List<SubCounty> subCounties = new ArrayList<>();
@@ -118,14 +120,28 @@ public class SubCountiesFragment extends Fragment  {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_subcounties, container, false);
         textshow = (TextView) v.findViewById(R.id.textShow);
-        MainActivity.CURRENT_TAG = MainActivity.TAG_SUBCOUNTIES;
-        MainActivity.backFragment = new MapViewFragment();
 
         sessionManagement = new SessionManagement(getContext());
         mapping = sessionManagement.getSavedMapping();
-
-        // ============Gmail View starts here =======================
-        // Gmail View.
+        MainActivity.CURRENT_TAG = MainActivity.TAG_SUBCOUNTIES;
+        final Fragment fragment;
+        if (sessionManagement.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("KE")){
+            MainActivity.backFragment = new MapKeViewFragment();
+            fragment = new NewSubCountyFragment();
+            fab = (FloatingActionButton) v.findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                    fragmentTransaction.replace(R.id.frame, fragment, "villages");
+                    fragmentTransaction.commitAllowingStateLoss();
+                }
+            });
+        }else{
+            MainActivity.backFragment = new MapKeViewFragment();
+            fab.hide();
+        }
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
@@ -133,8 +149,7 @@ public class SubCountiesFragment extends Fragment  {
             @Override
             public void onRefresh() {
                 // onRefresh action here
-                Toast.makeText(getContext(), "Refreshing the list", Toast.LENGTH_SHORT).show();
-                getInterviews();
+                getSubCounties();
             }
         });
         rAdapter = new SubCountyListAdapter(this.getContext(), subCounties, new SubCountyListAdapter.SubCountyListAdapterListener() {
@@ -142,7 +157,6 @@ public class SubCountiesFragment extends Fragment  {
             public void onIconClicked(int position) {
                 if (actionMode == null) {
 //                    actionMode = startSupportActionMode(actionModeCallback);
-                    Toast.makeText(getContext(), "An Icon is clicked "+ position, Toast.LENGTH_SHORT).show();
                 }
 
 //                toggleSelection(position);
@@ -162,10 +176,8 @@ public class SubCountiesFragment extends Fragment  {
                 subCounties.set(position, subCounty);
                 rAdapter.notifyDataSetChanged();
 
-                //lets save teh subcounty
+                //lets save the subcounty
                 sessionManagement.saveSubCounty(subCounty);
-
-                //show the next screen for Subcounty details
 
                 SubCountyViewFragment subCountyViewFragment = new SubCountyViewFragment();
                 Fragment fragment = subCountyViewFragment;
@@ -204,7 +216,7 @@ public class SubCountiesFragment extends Fragment  {
                 new Runnable(){
                     @Override
                     public void run(){
-                        getInterviews();
+                        getSubCounties();
                     }
                 }
         );
@@ -354,7 +366,7 @@ public class SubCountiesFragment extends Fragment  {
         }
         rAdapter.notifyDataSetChanged();
     }
-    private void getInterviews() {
+    private void getSubCounties() {
         swipeRefreshLayout.setRefreshing(true);
 
         subCounties.clear();
@@ -365,7 +377,7 @@ public class SubCountiesFragment extends Fragment  {
             SubCountyTable subCountyTable = new SubCountyTable(getContext());
             List<SubCounty> subCountyList = new ArrayList<>();
 
-            subCountyList = subCountyTable.getSubCountyData();
+            subCountyList = subCountyTable.getSubCountiesByCounty(Integer.valueOf(mapping.getId()));
             for (SubCounty subCounty:subCountyList){
                 subCounty.setColor(getRandomMaterialColor("400"));
                 subCounties.add(subCounty);

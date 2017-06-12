@@ -21,6 +21,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
+import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.other.FlipAnimator;
 
 import java.text.SimpleDateFormat;
@@ -101,9 +102,7 @@ public class MappingListAdapter extends RecyclerView.Adapter<MappingListAdapter.
         holder.from.setText(mapping.getCounty());
         holder.subject.setText(mapping.getContactPerson());
         holder.message.setText(mapping.getContactPersonPhone());
-        Date dateAdded = new Date(mapping.getDateAdded() * 1000);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy' ' HH:mm:ss:S");
-        holder.timestamp.setText(simpleDateFormat.format(dateAdded));
+        holder.timestamp.setText(new DisplayDate(mapping.getDateAdded()).dateAndTime());
 
         // displaying the first letter of From in icon text
         holder.iconText.setText(mapping.getMappingName().substring(0,1));

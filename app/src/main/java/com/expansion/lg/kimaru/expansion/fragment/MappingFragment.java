@@ -124,11 +124,11 @@ public class MappingFragment extends Fragment  {
         MainActivity.CURRENT_TAG =MainActivity.TAG_MAPPINGS;
         MainActivity.backFragment = new HomeFragment();
         fab = (FloatingActionButton) v.findViewById(R.id.fab);
-        final Fragment fragment;
+        final Fragment newMappingfragment;
         if (country.equalsIgnoreCase("KE")){
-            fragment = new NewKeMappingFragment();
+            newMappingfragment = new NewKeMappingFragment();
         }else {
-            fragment = new NewUgMappingFragment();
+            newMappingfragment = new NewUgMappingFragment();
         }
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,21 +136,16 @@ public class MappingFragment extends Fragment  {
 
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, "villages");
+                fragmentTransaction.replace(R.id.frame, newMappingfragment, "villages");
                 fragmentTransaction.commitAllowingStateLoss();
             }
         });
-
-                // ============Gmail View starts here =======================
-        // Gmail View.
-
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 // onRefresh action here
-                Toast.makeText(getContext(), "Refreshing the list", Toast.LENGTH_SHORT).show();
                 getInterviews();
             }
         });
@@ -174,11 +169,6 @@ public class MappingFragment extends Fragment  {
                 mappings.set(position, mapping);
                 rAdapter.notifyDataSetChanged();
 
-                // show relevant view based on the country
-                // can be done better here to avoid writing a lot of code.
-                // I was tring to get the shortcut since the app was getting launched the following day
-
-
                 Fragment fragment;
                 if (country.equalsIgnoreCase("KE")){
                     //show ke fragment
@@ -201,14 +191,25 @@ public class MappingFragment extends Fragment  {
 
             @Override
             public void onRowLongClicked(int position) {
-
                 //getMapping
                 Mapping mapping = mappings.get(position);
                 session.saveMapping(mapping);
-                Toast.makeText(getContext(), mapping.getCounty(), Toast.LENGTH_SHORT).show();
 
-
-//                mapping = mappingTable.getMapping(position.get())
+                Fragment fragment;
+                if (mapping.getCountry().equalsIgnoreCase("KE")){
+                    NewKeMappingFragment newKeMappingFragment = new NewKeMappingFragment();
+                    newKeMappingFragment.editingMapping = mapping;
+                    fragment = newKeMappingFragment;
+                }else{
+                    NewUgMappingFragment newUgMappingFragment = new NewUgMappingFragment();
+                    newUgMappingFragment.editingMapping = mapping;
+                    fragment = newUgMappingFragment;
+                }
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager()
+                        .beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "mapping");
+                fragmentTransaction.commitAllowingStateLoss();
             }
 
         });
@@ -230,7 +231,6 @@ public class MappingFragment extends Fragment  {
 //        actionModeCallback = new ActionMode().Callback;
 
 
-        //===========Gmail View Ends here ============================
         return v;
     }
 
@@ -267,15 +267,6 @@ public class MappingFragment extends Fragment  {
         void onFragmentInteraction(Uri uri);
     }
 
-
-    // ===================================== Gmail View Methods ====================================
-    private void enableActionMode(int position) {
-        if (actionMode == null) {
-            Toast.makeText(getContext(), "Values of Enabled", Toast.LENGTH_SHORT).show();
-        }
-        Toast.makeText(getContext(), "Values of Enabled", Toast.LENGTH_SHORT).show();
-        toggleSelection(position);
-    }
 
     private void toggleSelection(int position) {
         rAdapter.toggleSelection(position);
@@ -362,12 +353,8 @@ public class MappingFragment extends Fragment  {
     }
     private void getInterviews() {
         swipeRefreshLayout.setRefreshing(true);
-
         mappings.clear();
-
-        // clear the registrations
         try {
-            // get the registrations
             MappingTable mappingTable = new MappingTable(getContext());
             List<Mapping> mappingList = new ArrayList<>();
 
@@ -384,7 +371,4 @@ public class MappingFragment extends Fragment  {
         }
         swipeRefreshLayout.setRefreshing(false);
     }
-
-    //====================================== End Gmail Methods======================================
-
 }

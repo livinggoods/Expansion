@@ -8,24 +8,31 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.KeCounty;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
+import com.expansion.lg.kimaru.expansion.tables.KeCountyTable;
 import com.expansion.lg.kimaru.expansion.tables.MappingTable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -49,8 +56,8 @@ public class NewKeMappingFragment extends Fragment implements OnClickListener {
 
     private OnFragmentInteractionListener mListener;
 
-    EditText mMappingName, mMappingContactPerson, mMappingContactPersonPhone, mCounty, mComment;
-
+    EditText mMappingName, mMappingContactPerson, mMappingContactPersonPhone, mComment;
+    Spinner selectCounty;
 
     Button buttonSave, buttonList;
 
@@ -61,7 +68,9 @@ public class NewKeMappingFragment extends Fragment implements OnClickListener {
     SessionManagement session;
     HashMap<String, String> user;
 
-
+    List<KeCounty> keCountyList = new ArrayList<>();
+    List<String> counties = new ArrayList<>();
+    Mapping editingMapping = null;
 
 
     public NewKeMappingFragment() {
@@ -114,8 +123,33 @@ public class NewKeMappingFragment extends Fragment implements OnClickListener {
         mMappingName = (EditText) v.findViewById(R.id.editMappingName);
         mMappingContactPerson = (EditText) v.findViewById(R.id.editContactPerson);
         mMappingContactPersonPhone = (EditText) v.findViewById(R.id.editContactPersonPhone);
-        mCounty = (EditText) v.findViewById(R.id.editMappingCounty);
+        selectCounty = (Spinner) v.findViewById(R.id.selectCounty);
         mComment = (EditText) v.findViewById(R.id.editComment);
+
+        KeCountyTable keCountyTable = new KeCountyTable(getContext());
+        keCountyList = keCountyTable.getCounties();
+        for (KeCounty k : keCountyList){
+            counties.add(k.getCountyName());
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, counties);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        selectCounty.setAdapter(adapter);
+
+        if (editingMapping != null){
+            mMappingName.setText(editingMapping.getMappingName());
+            mMappingContactPerson.setText(editingMapping.getContactPerson());
+            mMappingContactPersonPhone.setText(editingMapping.getContactPersonPhone());
+            mComment.setText(editingMapping.getComment());
+            int x = 0;
+            for (KeCounty c : keCountyList){
+                if (c.getId().equals(Integer.valueOf(editingMapping.getCounty()))){
+                    selectCounty.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
+        }
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
@@ -146,10 +180,15 @@ public class NewKeMappingFragment extends Fragment implements OnClickListener {
 
                 Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
                 Long currentDate =  new Date().getTime();
+                String id;
+                if (editingMapping != null){
+                    id = editingMapping.getId();
+                }else{
+                    id = UUID.randomUUID().toString();
+                }
 
-                String id = UUID.randomUUID().toString();
                 String mappingName = mMappingName.getText().toString();
-                String mappingCounty = mCounty.getText().toString();
+                String mappingCounty = String.valueOf(keCountyList.get(selectCounty.getSelectedItemPosition()).getId());
                 String contactPerson = mMappingContactPerson.getText().toString();
                 String contactPersonPhone = mMappingContactPersonPhone.getText().toString();
                 String comment = mComment.getText().toString();
@@ -160,32 +199,30 @@ public class NewKeMappingFragment extends Fragment implements OnClickListener {
 
                 // Do some validations
                 if (mappingName.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Enter name of the mapping", Toast.LENGTH_SHORT).show();
-
-                }
-
-                else if (mappingCounty.toString().trim().equals("")){
-                    Toast.makeText(getContext(), "Enter the county or the area", Toast.LENGTH_SHORT).show();
-                } else{
-                    // Save Exam Details
-                    Mapping mapping = new Mapping(id, mappingName, country, mappingCounty, currentDate,
-                            applicantAddedBy, contactPerson,contactPersonPhone, sync, comment, "", "");
-
-                    MappingTable mappingTable = new MappingTable(getContext());
-                    String createdMap = mappingTable.addData(mapping);
-                    // Clear boxes
-                    mMappingContactPerson.setText("");
-                    mMappingContactPersonPhone.setText("");
-                    mMappingName.setText("");
-                    mComment.setText("");
-                    mCounty.setText("");
                     mMappingName.requestFocus();
-
+                    Toast.makeText(getContext(), "Enter name of the mapping", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+                // Save Exam Details
+                Mapping mapping = new Mapping(id, mappingName, country, mappingCounty, currentDate,
+                        applicantAddedBy, contactPerson,contactPersonPhone, sync, comment, "", "");
+
+                MappingTable mappingTable = new MappingTable(getContext());
+                String createdMap = mappingTable.addData(mapping);
+                // Clear boxes
+                mMappingContactPerson.setText("");
+                mMappingContactPersonPhone.setText("");
+                mMappingName.setText("");
+                mComment.setText("");
+                selectCounty.setSelection(0);
+                mMappingName.requestFocus();
                 break;
             case R.id.buttonList:
-                //load the list
-
+                Fragment fragment = new MappingFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "mappings");
+                fragmentTransaction.commitAllowingStateLoss();
         }
     }
 

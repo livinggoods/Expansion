@@ -263,7 +263,11 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                         String uuid = UUID.randomUUID().toString();
                         ChewReferral chew = new ChewReferral(uuid, referralName, referralPhone, referralTitle,
                                 session.getSavedRecruitment().getCountry(),
-                                session.getSavedRecruitment().getId(), 0, "", "", "", "", "", "", "", "", "");
+                                session.getSavedRecruitment().getId(), 0,
+                                session.getSavedRecruitment().getCounty(),
+                                session.getSavedRecruitment().getDistrict(),
+                                session.getSavedRecruitment().getSubcounty(), "", "", "", "", "", "");
+
                         ChewReferralTable chewTb = new ChewReferralTable(getContext());
                         chewTb.addChewReferral(chew);
 

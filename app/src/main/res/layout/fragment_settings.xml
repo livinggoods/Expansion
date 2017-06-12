@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=""
-
     >
 
     <ImageView
@@ -14,4 +13,3 @@
         android:src="@drawable/ic_settings_black_24dp" />
 
 </FrameLayout>
-    <!-- tools:context="info.androidhive.navigationdrawer.info.androidhive.ugexpansion.fragment.InterviewsFragment" -->

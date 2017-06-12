@@ -77,7 +77,7 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
     ArrayAdapter<String> subCountyAdapter;
 
 
-
+    Mapping editingMapping = null;
 
     public NewUgMappingFragment() {
         // Required empty public constructor
@@ -158,13 +158,34 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
         //initialize the array adapter
 
 
-
-
         mMappingName = (EditText) v.findViewById(R.id.editMappingName);
         mMappingContactPerson = (EditText) v.findViewById(R.id.editContactPerson);
         mMappingContactPersonPhone = (EditText) v.findViewById(R.id.editContactPersonPhone);
 
         mComment = (EditText) v.findViewById(R.id.editComment);
+
+        if (editingMapping != null){
+            mMappingName.setText(editingMapping.getMappingName());
+            mMappingContactPerson.setText(editingMapping.getContactPerson());
+            mMappingContactPersonPhone.setText(editingMapping.getContactPersonPhone());
+            mComment.setText(editingMapping.getComment());
+            int x = 0;
+            for (CountyLocation county : counties){
+                if (county.getId().equals(Integer.valueOf(editingMapping.getCounty()))){
+                    mCounty.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
+            x = 0;
+            for (CountyLocation subCounty : subCounties){
+                if (subCounty.getId().equals(Integer.valueOf(editingMapping.getSubCounty()))){
+                    mSubCounty.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
+        }
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);

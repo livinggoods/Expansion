@@ -312,7 +312,9 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
         FragmentTransaction fragmentTransaction;
         switch (view.getId()){
             case R.id.addReferrals:
-                fragment = new NewChewReferralFragment();
+                NewChewReferralFragment newChewReferralFragment = new NewChewReferralFragment();
+                newChewReferralFragment.createdFromRecruitment = true;
+                fragment = newChewReferralFragment;
                 fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
