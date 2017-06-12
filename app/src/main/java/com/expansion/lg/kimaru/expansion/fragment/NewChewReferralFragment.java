@@ -173,6 +173,7 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
         // get location
 
         // PERMISSIONS
+        checkIfLocationIsEnabled();
         try{
             if(ActivityCompat.checkSelfPermission(getContext(), permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED){
                 if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),permissionsRequired[0])){
@@ -230,6 +231,7 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
                 proceedAfterPermission();
             }
         }catch (Exception e){}
+        checkIfLocationIsEnabled();
 
         return v;
     }
