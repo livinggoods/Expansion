@@ -30,6 +30,24 @@
                     android:maxLines="1" />
 
             </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:id="@+id/linkFacility"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/editLinkFacility"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Link Facility"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="number"
+                    android:maxLines="1" />
+                <Spinner
+                    android:id="@+id/spinnerLinkFacility"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:prompt="@string/select_prompt" />
+            </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -253,19 +271,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
-                    android:id="@+id/editLinkFacility"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Link Facility"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="number"
-                    android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
                     android:id="@+id/editDistributors"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -414,7 +419,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Presence of Trader Market"/>
+                    android:text="Presence of Large Supermarket"/>
                 <RadioGroup
                     android:id="@+id/editPresenceOfSuperMarket"
                     android:layout_width="fill_parent"

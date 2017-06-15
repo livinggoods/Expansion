@@ -10,7 +10,10 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -68,6 +71,7 @@ public class LinkFacilitiesFragment extends Fragment  {
     private SwipeRefreshLayout swipeRefreshLayout;
     private ActionMode actionMode;
     private ActionModeCallback actionModeCallback;
+    FloatingActionButton fab;
 
     SessionManagement session;
 
@@ -120,56 +124,57 @@ public class LinkFacilitiesFragment extends Fragment  {
         //session Management
         session = new SessionManagement(getContext());
         MainActivity.CURRENT_TAG = MainActivity.TAG_LINK_FACILITIES;
-        MainActivity.backFragment = new SubCountyFragment();
+        MainActivity.backFragment = new SubCountyViewFragment();
 
+        fab = (FloatingActionButton) v.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                // ============Gmail View starts here =======================
-        // Gmail View.
+                Fragment fragment = new NewLinkFacilityFragment();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left,
+                        android.R.anim.slide_out_right);
+                fragmentTransaction.replace(R.id.frame, fragment, "subcounties");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        });
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // onRefresh action here
-                Toast.makeText(getContext(), "Refreshing the list", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         rAdapter = new LinkFacilityListAdapter(this.getContext(), linkFacilities, new LinkFacilityListAdapter.LinkFacilityListAdapterListener() {
             @Override
             public void onIconClicked(int position) {
-                if (actionMode == null) {
-//                    actionMode = startSupportActionMode(actionModeCallback);
-                    Toast.makeText(getContext(), "An Icon is clicked "+ position, Toast.LENGTH_SHORT).show();
-                }
-
-//                toggleSelection(position);
+                //
+                LinkFacility linkFacility = linkFacilities.get(position);
+                session.saveLinkFacility(linkFacility);
             }
 
             @Override
             public void onIconImportantClicked(int position) {
-                Toast.makeText(getContext(), "An iconImportant is clicked", Toast.LENGTH_SHORT).show();
+                session.saveLinkFacility(linkFacilities.get(position));
             }
 
             @Override
             public void onMessageRowClicked(int position) {
                 // read the message which removes bold from the row
                 LinkFacility linkFacility = linkFacilities.get(position);
+                session.saveLinkFacility(linkFacilities.get(position));
 
-                linkFacility.setRead(true);
-                linkFacilities.set(position, linkFacility);
-                rAdapter.notifyDataSetChanged();
+                Fragment fragment = new LinkFacilityViewFragment();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left,
+                        android.R.anim.slide_out_right);
+                fragmentTransaction.replace(R.id.frame, fragment, "subcounties");
+                fragmentTransaction.commitAllowingStateLoss();
+
             }
 
             @Override
             public void onRowLongClicked(int position) {
-                // When one long presses a registration, we give them a chance to
-                // Interview the selected applicant
-
-                //extract the clicked recruitment
-
-
 
             }
 
@@ -229,8 +234,6 @@ public class LinkFacilitiesFragment extends Fragment  {
         void onFragmentInteraction(Uri uri);
     }
 
-
-    // ===================================== Gmail View Methods ====================================
     private void enableActionMode(int position) {
         if (actionMode == null) {
             Toast.makeText(getContext(), "Values of Enabled", Toast.LENGTH_SHORT).show();
@@ -332,7 +335,7 @@ public class LinkFacilitiesFragment extends Fragment  {
             LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
             List<LinkFacility> linkFacilityList = new ArrayList<>();
 
-            linkFacilityList = linkFacilityTable.getLinkFacilityData();
+            linkFacilityList = linkFacilityTable.getLinkFacilityBySubCounty(session.getSavedSubCounty().getId());
             for (LinkFacility linkFacility:linkFacilityList){
                 linkFacility.setColor(getRandomMaterialColor("400"));
                 linkFacilities.add(linkFacility);
@@ -341,12 +344,9 @@ public class LinkFacilitiesFragment extends Fragment  {
             swipeRefreshLayout.setRefreshing(false);
         } catch (Exception error){
             Toast.makeText(getContext(), "No Link facility found ", Toast.LENGTH_SHORT).show();
-
             textshow.setText(" No  Link facility recorded ");
         }
         swipeRefreshLayout.setRefreshing(false);
     }
-
-    //====================================== End Gmail Methods======================================
 
 }

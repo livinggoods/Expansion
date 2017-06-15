@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -70,7 +71,7 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
     private OnFragmentInteractionListener mListener;
 
     EditText editName, editContactPerson, editPhone, editMainTown, editMainTownPopulation;
-    EditText editSubCountyPopulation, editNoOfVillages, editServicePopulation;
+    EditText editSubCountyPopulation, editNoOfVillages, editServicePopulation, editMainTownGPS;
     EditText editTransportCost, editMajorRoads, editPrivateClinics, editPrivateClinicsInRadius;
     EditText editCommunityUnits, editMainSuperMarkets, editMainBanks, editMajorBusiness, editComment;
 
@@ -79,6 +80,7 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
     Spinner editPopulationDensity;
 
     Button buttonSave, buttonList;
+    CheckBox canUseCurrentPosition;
 
     private int mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 100;
@@ -168,6 +170,9 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
         session = new SessionManagement(getContext());
         user = session.getUserDetails();
         mapping = session.getSavedMapping();
+        canUseCurrentPosition = (CheckBox) v.findViewById(R.id.chkGps);
+
+        editMainTownGPS = (EditText) v.findViewById(R.id.editMainTownGPS);
 
         checkIfLocationIsEnabled();
         try {
@@ -247,6 +252,7 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
                         if (location != null){
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
+                            editMainTownGPS.setText("Network Lat "+ String.valueOf(latitude)+" Lon " + String.valueOf(longitude));
                         }
                     }
                 }
@@ -260,6 +266,7 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
                         if (location != null){
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
+                            editMainTownGPS.setText("GPS Lat "+ String.valueOf(latitude)+" Lon " + String.valueOf(longitude));
                         }
                     }
                 }
@@ -612,23 +619,44 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
                 } else{
                     // Save Details
 
-                    /**
-                     *
-                     * String servicePopulation, String populationDensity,
-                     String transportCost, String majorRoads, String healtFacilities,
-                     String privateClinicsInTown, String privateClinicsInRadius, String communityUnits,
-                     String mainSupermarkets, String mainBanks, String anyMajorBusiness,
-                     String comments, boolean recommended, Integer dateAdded, Integer addedBy)
-                     */
-                    SubCounty subCounty;
-                    subCounty = new SubCounty(uuid, editDataName, mappingID, "", mappingID, lat, lon,
-                            editDataContactPerson, editDataPhone, editDataMainTown, countySupport,
-                            subCountySupport, chvActivity, editDataCountyPopulation,
-                            editDataSubCountyPopulation, editDataNoOfVillages, editDataMainTownPopulation,
-                            editDataServicePopulation, populationDensity, editDataTransportCost, editDataMajorRoads,
-                            healtFacilities, editDataPrivateClinics, editDataPrivateClinicsInRadius,
-                            editDataCommunityUnits,editDataMainSuperMarkets, editDataMainBanks, editDataMajorBusiness,
-                            editDataComment, isRecommended, currentDate, addedBy);
+                    SubCounty subCounty = new SubCounty();
+                    boolean useCurrentGps = canUseCurrentPosition.isChecked();
+                    if (useCurrentGps){
+                        subCounty.setLat(lat);
+                        subCounty.setLon(lon);
+                    }
+
+                    subCounty.setSubCountyName(editDataName);
+                    subCounty.setId(uuid);
+                    subCounty.setCountyID(county);
+                    subCounty.setCountry(mapping.getCountry());
+                    subCounty.setMappingId(mappingID);
+                    subCounty.setContactPerson(editDataContactPerson);
+                    subCounty.setContactPersonPhone(editDataPhone);
+                    subCounty.setMainTown(editDataMainTown);
+                    subCounty.setCountySupport(countySupport);
+                    subCounty.setSubcountySupport(subCountySupport);
+                    subCounty.setChvActivityLevel(chvActivity);
+                    subCounty.setCountyPopulation(editDataCountyPopulation);
+                    subCounty.setSubCountyPopulation(editDataSubCountyPopulation);
+                    subCounty.setNoOfVillages(editDataNoOfVillages);
+                    subCounty.setMainTownPopulation(editDataMainTownPopulation);
+                    subCounty.setServicePopulation(editDataServicePopulation);
+                    subCounty.setPopulationDensity(populationDensity);
+                    subCounty.setTransportCost(editDataTransportCost);
+                    subCounty.setMajorRoads(editDataMajorRoads);
+                    subCounty.setHealtFacilities(healtFacilities);
+                    subCounty.setPrivateClinicsInRadius(editDataPrivateClinicsInRadius);
+                    subCounty.setPrivateClinicsInTown(editDataPrivateClinics);
+                    subCounty.setCommunityUnits(editDataCommunityUnits);
+                    subCounty.setMainSupermarkets(editDataMainSuperMarkets);
+                    subCounty.setMainBanks(editDataMainBanks);
+                    subCounty.setAnyMajorBusiness(editDataMajorBusiness);
+                    subCounty.setComments(editDataComment);
+                    subCounty.setRecommended(isRecommended);
+                    subCounty.setDateAdded(currentDate);
+                    subCounty.setAddedBy(addedBy);
+
                     SubCountyTable subCountyTable = new SubCountyTable(getContext());
                     long id;
                     if (subCountyEditing == null){
@@ -722,6 +750,9 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
     //Location Methods
     @Override
     public void onLocationChanged(Location location){
+        longitude = location.getLongitude();
+        latitude = location.getLatitude();
+        editMainTownGPS.setText("Current Lat "+ String.valueOf(latitude)+" Lon " + String.valueOf(longitude));
 
     }
 
@@ -759,8 +790,11 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
             editMajorBusiness.setText(subCountyEditing.getAnyMajorBusiness());
             editComment.setText(subCountyEditing.getComments());
             //clear all radios
-            editSubCountySupport.clearCheck();
-            editSubCountySupport.check(Integer.valueOf(subCountyEditing.getCountySupport()));
+
+            if (!subCountyEditing.getCountySupport().equalsIgnoreCase("")){
+                editSubCountySupport.clearCheck();
+                editSubCountySupport.check(Integer.valueOf(subCountyEditing.getCountySupport()));
+            }
 
             editRecommended.clearCheck();
             editRecommended.check(Integer.valueOf(subCountyEditing.isRecommended() ? 1 : 0));

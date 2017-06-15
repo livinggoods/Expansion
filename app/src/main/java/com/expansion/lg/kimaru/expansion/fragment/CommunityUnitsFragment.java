@@ -10,7 +10,9 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +34,7 @@ import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.dbhelpers.CommunityUnitListAdapter;
 import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationListAdapter;
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
+import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
@@ -63,6 +66,7 @@ public class CommunityUnitsFragment extends Fragment  {
 
     private OnFragmentInteractionListener mListener;
     TextView textshow;
+    FloatingActionButton fab;
 
     // to show list in Gmail Mode
     private List<CommunityUnit> communityUnits = new ArrayList<>();
@@ -75,6 +79,7 @@ public class CommunityUnitsFragment extends Fragment  {
     SessionManagement session;
     SubCounty subCounty;
     Fragment backFragment = null;
+    LinkFacility linkFacility = null;
 
 
 
@@ -122,11 +127,12 @@ public class CommunityUnitsFragment extends Fragment  {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_communityunits, container, false);
         textshow = (TextView) v.findViewById(R.id.textShow);
+        fab = (FloatingActionButton) v.findViewById(R.id.fab);
         //session Management
         session = new SessionManagement(getContext());
         MainActivity.CURRENT_TAG =MainActivity.TAG_COMMUNITY_UNITS;
         if (backFragment == null){
-            MainActivity.backFragment = new SubCountyFragment();
+            MainActivity.backFragment = new SubCountyViewFragment();
         }else{
             MainActivity.backFragment = backFragment;
         }
@@ -138,13 +144,7 @@ public class CommunityUnitsFragment extends Fragment  {
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // onRefresh action here
-                Toast.makeText(getContext(), "Refreshing the list", Toast.LENGTH_SHORT).show();
-            }
-        });
+
 
         rAdapter = new CommunityUnitListAdapter(this.getContext(), communityUnits, new CommunityUnitListAdapter.CommunityUnitListAdapterListener() {
             @Override
@@ -198,11 +198,20 @@ public class CommunityUnitsFragment extends Fragment  {
                     }
                 }
         );
-
-//        actionModeCallback = new ActionMode().Callback;
-
-
-        //===========Gmail View Ends here ============================
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NewCommunityUnitFragment newCommunityUnitFragment = new NewCommunityUnitFragment();
+                newCommunityUnitFragment.linkFacility = linkFacility;
+                Fragment fragment = newCommunityUnitFragment;
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left,
+                        android.R.anim.slide_out_right);
+                fragmentTransaction.replace(R.id.frame, fragment, "subcounties");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        });
         return v;
     }
 
@@ -347,8 +356,12 @@ public class CommunityUnitsFragment extends Fragment  {
             // get CUs
             CommunityUnitTable communityUnitTable = new CommunityUnitTable(getContext());
             List<CommunityUnit> communityUnitList = new ArrayList<>();
+            if (linkFacility != null){
+                communityUnitList = communityUnitTable.getCommunityUnitByLinkFacility(linkFacility.getId());
+            }else{
+                communityUnitList = communityUnitTable.getCommunityUnitBySubCounty(subCounty.getId());
+            }
 
-            communityUnitList = communityUnitTable.getCommunityUnitData();
             for (CommunityUnit communityUnit:communityUnitList){
                 communityUnit.setColor(getRandomMaterialColor("400"));
                 communityUnits.add(communityUnit);
@@ -362,7 +375,4 @@ public class CommunityUnitsFragment extends Fragment  {
         }
         swipeRefreshLayout.setRefreshing(false);
     }
-
-    //====================================== End Gmail Methods======================================
-
 }

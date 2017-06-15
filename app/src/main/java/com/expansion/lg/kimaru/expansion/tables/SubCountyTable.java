@@ -314,7 +314,6 @@ public class SubCountyTable extends SQLiteOpenHelper {
             subCounty.setDateAdded(cursor.getInt(30));
             subCounty.setAddedBy(cursor.getInt(31));
 
-
             subCounties.add(subCounty);
         }
         db.close();
@@ -391,6 +390,7 @@ public class SubCountyTable extends SQLiteOpenHelper {
         };
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            db.close();
             return null;
         }else {
             SubCounty subCounty = new SubCounty();

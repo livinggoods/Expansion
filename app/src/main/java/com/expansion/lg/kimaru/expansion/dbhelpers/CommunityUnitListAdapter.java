@@ -21,8 +21,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
+import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
+import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.other.FlipAnimator;
+import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -100,11 +103,21 @@ public class CommunityUnitListAdapter extends RecyclerView.Adapter<CommunityUnit
 
         //// displaying text view data
         holder.from.setText(communityUnit.getCommunityUnitName());
-        holder.subject.setText(communityUnit.getSubCountyId());
-        holder.message.setText(communityUnit.getMappingId());
-        Date dateAdded = new Date(communityUnit.getDateAdded() * 1000);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy' ' HH:mm:ss:S");
-        holder.timestamp.setText(simpleDateFormat.format(dateAdded));
+        holder.subject.setText("Households "+String.valueOf(communityUnit.getNoOfHouseholds())+" Households per CHV " +
+                communityUnit.getHouseholdPerChv());
+        if (!communityUnit.getLinkFacilityId().equalsIgnoreCase("")){
+            holder.message.setText(communityUnit.getLinkFacilityId()); // show Households and per Chv
+            LinkFacility l = new LinkFacilityTable(mContext).getLinkFacilityById(communityUnit.getLinkFacilityId());
+            if (l != null){
+                holder.message.setText(l.getFacilityName());
+            }else{
+                holder.message.setText("Villages "+String.valueOf(communityUnit.getNumberOfVillages()));
+            }
+        }else{
+            holder.message.setText("Villages "+String.valueOf(communityUnit.getNumberOfVillages()));
+        }
+
+        holder.timestamp.setText(new DisplayDate(communityUnit.getDateAdded()).dateAndTime());
 
         // displaying the first letter of From in icon text
         holder.iconText.setText(communityUnit.getCommunityUnitName().substring(0,1));

@@ -1014,8 +1014,8 @@ public class RegistrationTable extends SQLiteOpenHelper {
                         newLinkFacility.setId(linkFacilityUuid);
                         newLinkFacility.setFacilityName(cursor.getString(29));
                         newLinkFacility.setMappingId(cursor.getString(23));
-                        newLinkFacility.setLat("0");
-                        newLinkFacility.setLon("0");
+                        newLinkFacility.setLat(0D);
+                        newLinkFacility.setLon(0D);
                         newLinkFacility.setSubCountyId(registrationRecruitment.getSubcounty());
                         newLinkFacility.setDateAdded(cursor.getLong(21));
                         newLinkFacility.setAddedBy(cursor.getInt(18));

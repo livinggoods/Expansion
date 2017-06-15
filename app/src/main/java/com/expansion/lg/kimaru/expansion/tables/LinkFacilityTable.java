@@ -120,8 +120,8 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
             linkFacility.setId(cursor.getString(0));
             linkFacility.setFacilityName(cursor.getString(1));
             linkFacility.setMappingId(cursor.getString(2));
-            linkFacility.setLat(cursor.getString(3));
-            linkFacility.setLon(cursor.getString(4));
+            linkFacility.setLat(cursor.getDouble(3));
+            linkFacility.setLon(cursor.getDouble(4));
             linkFacility.setSubCountyId(cursor.getString(5));
             linkFacility.setDateAdded(cursor.getLong(6));
             linkFacility.setAddedBy(cursor.getInt(7));
@@ -152,8 +152,8 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
             linkFacility.setId(cursor.getString(0));
             linkFacility.setFacilityName(cursor.getString(1));
             linkFacility.setMappingId(cursor.getString(2));
-            linkFacility.setLat(cursor.getString(3));
-            linkFacility.setLon(cursor.getString(4));
+            linkFacility.setLat(cursor.getDouble(3));
+            linkFacility.setLon(cursor.getDouble(4));
             linkFacility.setSubCountyId(cursor.getString(5));
             linkFacility.setDateAdded(cursor.getLong(6));
             linkFacility.setAddedBy(cursor.getInt(7));
@@ -185,8 +185,8 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
             linkFacility.setId(cursor.getString(0));
             linkFacility.setFacilityName(cursor.getString(1));
             linkFacility.setMappingId(cursor.getString(2));
-            linkFacility.setLat(cursor.getString(3));
-            linkFacility.setLon(cursor.getString(4));
+            linkFacility.setLat(cursor.getDouble(3));
+            linkFacility.setLon(cursor.getDouble(4));
             linkFacility.setSubCountyId(cursor.getString(5));
             linkFacility.setDateAdded(cursor.getLong(6));
             linkFacility.setAddedBy(cursor.getInt(7));
@@ -217,8 +217,8 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
             linkFacility.setId(cursor.getString(0));
             linkFacility.setFacilityName(cursor.getString(1));
             linkFacility.setMappingId(cursor.getString(2));
-            linkFacility.setLat(cursor.getString(3));
-            linkFacility.setLon(cursor.getString(4));
+            linkFacility.setLat(cursor.getDouble(3));
+            linkFacility.setLon(cursor.getDouble(4));
             linkFacility.setSubCountyId(cursor.getString(5));
             linkFacility.setDateAdded(cursor.getLong(6));
             linkFacility.setAddedBy(cursor.getInt(7));

@@ -27,8 +27,9 @@ public class CommunityUnit {
 
     // Some community units are split into 2 and they share some data
 
-    String id, communityUnitName, mappingId, lat, lon, country, subCountyId, linkFacilityId, areaChiefName;
+    String id, communityUnitName, mappingId, country, subCountyId, linkFacilityId, areaChiefName;
     String ward;
+    Double lat, lon;
     long dateAdded, addedBy, numberOfChvs, householdPerChv, numberOfVillages, distanceToBranch, transportCost;
     long distanceTOMainRoad, noOfHouseholds, mohPoplationDensity, estimatedPopulationDensity;
     long distanceTONearestHealthFacility, actLevels, actPrice, mrdtLevels,mrdtPrice, noOfDistibutors;
@@ -49,7 +50,7 @@ public class CommunityUnit {
 
     }
 
-    public CommunityUnit(String id, String communityUnitName, String mappingId, String lat, String lon,
+    public CommunityUnit(String id, String communityUnitName, String mappingId, Double lat, Double lon,
                          String country, String subCountyId, String linkFacilityId, String areaChiefName,
                          String ward, String economicStatus, String privateFacilityForAct,
                          String privateFacilityForMrdt,
@@ -133,19 +134,19 @@ public class CommunityUnit {
         this.mappingId = mappingId;
     }
 
-    public String getLat() {
+    public Double getLat() {
         return lat;
     }
 
-    public String getLon() {
+    public Double getLon() {
         return lon;
     }
 
-    public void setLat(String lat) {
+    public void setLat(Double lat) {
         this.lat = lat;
     }
 
-    public void setLon(String lon) {
+    public void setLon(Double lon) {
         this.lon = lon;
     }
     public String getCountry() {

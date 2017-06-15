@@ -377,7 +377,7 @@ public class SubCountiesFragment extends Fragment  {
             SubCountyTable subCountyTable = new SubCountyTable(getContext());
             List<SubCounty> subCountyList = new ArrayList<>();
 
-            subCountyList = subCountyTable.getSubCountiesByCounty(Integer.valueOf(mapping.getId()));
+            subCountyList = subCountyTable.getSubCountiesByCounty(Integer.valueOf(mapping.getCounty()));
             for (SubCounty subCounty:subCountyList){
                 subCounty.setColor(getRandomMaterialColor("400"));
                 subCounties.add(subCounty);
@@ -390,7 +390,5 @@ public class SubCountiesFragment extends Fragment  {
         }
         swipeRefreshLayout.setRefreshing(false);
     }
-
-    //====================================== End Gmail Methods======================================
 
 }

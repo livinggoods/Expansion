@@ -291,8 +291,6 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                         lknFacility.setSubCountyId(session.getSavedRecruitment().getSubcounty());
 
                         lknFacility.setMappingId("");
-                        lknFacility.setLat("");
-                        lknFacility.setLon("");
                         lknFacility.setDateAdded(new Date().getTime());
                         lknFacility.setAddedBy(Integer.valueOf(session.getUserDetails().get(SessionManagement.KEY_USERID)));
                         lknFacility.setMrdtLevels(0L);

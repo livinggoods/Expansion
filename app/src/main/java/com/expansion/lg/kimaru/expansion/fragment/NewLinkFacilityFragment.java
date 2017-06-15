@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
@@ -86,7 +87,6 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
     Button buttonSave, buttonList;
 
-    ImageView addNewIcon;
     EditText editFacilityName, editActLevels, editMrdtLevels;
 
     private int mYear, mMonth, mDay;
@@ -95,7 +95,6 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
     SessionManagement session;
     HashMap<String, String> user;
-    GpsTracker gps;
     double latitude;
     double longitude;
     //flag for GPS Status
@@ -111,6 +110,9 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     // Due to Runtime Perms, let us declare some constants for the permissions
     private static final int PERMISSION_CALLBACK_CONSTANT = 101;
     private static final int REQUEST_PERMISSION_SETTING = 102;
+    String[] permissionsRequired = new String[]{
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION};
 
 
     // The minimum distance to change Updates in meters
@@ -167,9 +169,109 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 //get the current user
         session = new SessionManagement(getContext());
         user = session.getUserDetails();
-//        parentLayout = (LinearLayout)findViewById(R.id.parentLayout);
-        parentLayout = (LinearLayout) v.findViewById(R.id.editCuLayout);
+        // check Permissions
+        checkPermissions();
 
+        editFacilityName = (EditText) v.findViewById(R.id.editFacilityName);
+        editMrdtLevels = (EditText) v.findViewById(R.id.editMrdtLevels);
+        editActLevels = (EditText) v.findViewById(R.id.editActLevels);
+
+
+        buttonList = (Button) v.findViewById(R.id.buttonList);
+        buttonList.setOnClickListener(this);
+
+        buttonSave = (Button) v.findViewById(R.id.buttonSave);
+        buttonSave.setOnClickListener(this);
+
+        return v;
+    }
+
+    public void checkPermissions(){
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.READ_CONTACTS)) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Needs GPS Permission");
+                builder.setMessage("In order to work properly, this app needs GPS permission");
+                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        ActivityCompat.requestPermissions(getActivity(), new String[]{
+                                Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                        }, PERMISSION_CALLBACK_CONSTANT);
+                    }
+                });
+                builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        ActivityCompat.requestPermissions(getActivity(), new String[]{
+                                Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                        }, PERMISSION_CALLBACK_CONSTANT);
+                    }
+                });
+                builder.show();
+
+            } else {
+
+                ActivityCompat.requestPermissions(getActivity(), new String[]{
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                }, PERMISSION_CALLBACK_CONSTANT);
+            }
+
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == PERMISSION_CALLBACK_CONSTANT){
+            //check if all permissions are granted
+            boolean allgranted = false;
+            for(int i=0;i<grantResults.length;i++){
+                if(grantResults[i]==PackageManager.PERMISSION_GRANTED){
+                    allgranted = true;
+                } else {
+                    allgranted = false;
+                    break;
+                }
+            }
+
+            if(allgranted){
+                proceedAfterPermission();
+            } else if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),permissionsRequired[0])
+                    || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),permissionsRequired[1])){
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Need Multiple Permissions");
+                builder.setMessage("This app needs Location permissions.");
+                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        ActivityCompat.requestPermissions(getActivity(),permissionsRequired,PERMISSION_CALLBACK_CONSTANT);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            } else {
+                Toast.makeText(getContext(),"Unable to get Permission",Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+    private void proceedAfterPermission() {
+        getLocation();
+    }
+    public void getLocation(){
         //get the location
         try {
             locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
@@ -218,8 +320,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
                             ActivityCompat.requestPermissions(getActivity(), new String[]{
-                                Manifest.permission.ACCESS_COARSE_LOCATION,
-                                Manifest.permission.ACCESS_FINE_LOCATION
+                                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                                    Manifest.permission.ACCESS_FINE_LOCATION
                             }, PERMISSION_CALLBACK_CONSTANT);
                         }
                     });
@@ -268,25 +370,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
             }
 
         } catch (Exception e){}
-
-
-
-        //Initialize the UI Components
-        editFacilityName = (EditText) v.findViewById(R.id.editFacilityName);
-        //editMrdtLevels = (EditText) v.findViewById(R.id.editMrdtLevels);
-        //editActLevels = (EditText) v.findViewById(R.id.editActLevels);
-
-        addNewIcon = (ImageView) v.findViewById(R.id.add_new_icon);
-        addNewIcon.setImageResource(R.drawable.ic_add_box_black_24dp);
-        buttonList = (Button) v.findViewById(R.id.buttonList);
-        buttonList.setOnClickListener(this);
-
-        buttonSave = (Button) v.findViewById(R.id.buttonSave);
-        buttonSave.setOnClickListener(this);
-        addNewIcon.setOnClickListener(this);
-
-        return v;
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -302,52 +387,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 newFragment.show(getFragmentManager(), "DatePicker");
                 break;
 
-            case R.id.add_new_icon:
-                //editCuLayout
-//                LinearLayout linearLayout = (LinearLayout) getActivity().findViewById(R.id.editCuLayout);
-//                EditText editText = new EditText(getContext());
-//                editText.setId(id+1);
-//                id+=1;
-//                editText.setLayoutParams(new LinearLayout.LayoutParams(
-//                        LinearLayout.LayoutParams.MATCH_PARENT,
-//                        LinearLayout.LayoutParams.WRAP_CONTENT));
-//                editText.setText("Niko " + id);
-//                linearLayout.addView(editText);
-//                Toast.makeText(getContext(), "Adding "+id, Toast.LENGTH_SHORT).show();
 
-//                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams (
-//                        RelativeLayout.LayoutParams.WRAP_CONTENT,
-//                        RelativeLayout.LayoutParams.WRAP_CONTENT);
-//                params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                // params.setMargins(0,10,0,10);
-                TextInputLayout textInputLayout = new TextInputLayout(getContext());
-                textInputLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT));
-
-                EditText edittTxt = new EditText(getContext());
-                communityUnitsCreated.add(edittTxt);
-                id++;
-                if (id > 1) {
-                    edittTxt.setHint("Add another Community Unit");
-                }else{
-                    edittTxt.setHint("Add Community Unit");
-                }
-                edittTxt.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT));
-//                edittTxt.setLayoutParams(params);
-                // edtTxt.setBackgroundColor(Color.WHITE);
-//                edittTxt.setInputType(InputType.TYPE_CLASS_TEXT);
-//                edittTxt.setTextSize(TypedValue.COMPLEX_UNIT_SP,18);
-                edittTxt.setId(id);
-//                InputFilter[] fArray = new InputFilter[1];
-//                fArray[0] = new InputFilter.LengthFilter(maxLength);
-//                edittTxt.setFilters(fArray);
-                textInputLayout.addView(edittTxt);
-                parentLayout.addView(textInputLayout);
-
-                break;
             case R.id.buttonList:
                 //when user clicks this button, we will show the list
 
@@ -357,14 +397,11 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left,
                         android.R.anim.slide_out_right);
-                MainActivity.CURRENT_TAG = MainActivity.TAG_NEW_LINK_FACILITY;
-
                 fragmentTransaction.replace(R.id.frame, fragment, "linkfacility");
                 fragmentTransaction.commitAllowingStateLoss();
                 break;
             case R.id.buttonSave:
                 // set date as integers
-                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
                 Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
                 Long currentDate =  new Date().getTime();
@@ -374,58 +411,45 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
                 String uuid = UUID.randomUUID().toString();
                 String county = mapping.getCounty();
+                String subCounty = session.getSavedSubCounty().getId();
                 String mappingId = mapping.getId();
-                String lat = String.valueOf(latitude);
-                String lon= String.valueOf(longitude);
                 Integer addedBy = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
                 String country = user.get(SessionManagement.KEY_USER_COUNTRY);
                 String facilityName = editFacilityName.getText().toString();
-                Long mrdtLevels = 0L; // Long.valueOf(editMrdtLevels.getText().toString());
-                Long actLevels = 0L; //Long.valueOf(editActLevels.getText().toString());
-
-
-                // retrieve all Cus Created
-                int cuSize = communityUnitsCreated.size();
-                String[] strings = new String[cuSize];
-
-
-                for(int i=0; i < communityUnitsCreated.size(); i++){
-                    //strings[i] = communityUnitsCreated.get(i).getText().toString();
-                    String cuName = communityUnitsCreated.get(i).getText().toString();
-                    Toast.makeText(getContext(), cuName, Toast.LENGTH_SHORT).show();
-
-                    // Save the community unit
-                    CommunityUnit communityUnit = new CommunityUnit("id", cuName, mappingId, lat, lon, country, subCountyId, uuid, "", "", "", "","","","", 0L, 0L, 0L, 0L, currentDate, addedBy, 0L,
-                            0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, false, false, false, false, false, false, false, false, false);
-                    CommunityUnitTable communityUnitTable = new CommunityUnitTable(getContext());
-                    communityUnitTable.addCommunityUnitData(communityUnit);
+                Long mrdtLevels = 0L;
+                if (!editMrdtLevels.getText().toString().trim().equals("")){
+                    mrdtLevels = Long.valueOf(editMrdtLevels.getText().toString());
                 }
 
+                Long actLevels = 0L;
+                if (!editActLevels.getText().toString().trim().equals("")){
+                    actLevels = Long.valueOf(editActLevels.getText().toString());
+                }
 
                 // Do some validations
                 if (facilityName.toString().trim().equals("")){
                     Toast.makeText(getContext(), "Enter the name of the facility", Toast.LENGTH_SHORT).show();
-                } else{
-                    // Save Details
-                    LinkFacility linkFacility = new LinkFacility(uuid, facilityName, country, mappingId, lat, lon, county, currentDate, addedBy,
-                            actLevels, mrdtLevels);
-                    LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
-                    long id  = linkFacilityTable.addData(linkFacility);
-
-                    if (id ==-1){
-                        Toast.makeText(getContext(), "Could not save the link Facility", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
-
-                        // Clear boxes
-                        editFacilityName.setText("");
-                        editFacilityName.requestFocus();
-                        //editMrdtLevels.setText("");
-                        //editActLevels.setText("");
-                    }
-
+                    return;
                 }
+
+                LinkFacility linkFacility = new LinkFacility(uuid, facilityName, country, mappingId,
+                        latitude, longitude, subCounty, currentDate, addedBy, actLevels, mrdtLevels);
+                LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
+                long id  = linkFacilityTable.addData(linkFacility);
+
+                if (id ==-1){
+                    Toast.makeText(getContext(), "Could not save the link Facility", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
+
+                    editFacilityName.setText("");
+                    editFacilityName.requestFocus();
+                    editMrdtLevels.setText("");
+                    editActLevels.setText("");
+                }
+
+
 
         }
     }
@@ -473,6 +497,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     //CountyLocation Methods
     @Override
     public void onLocationChanged(Location location){
+        longitude = location.getLongitude();
+        latitude = location.getLatitude();
 
     }
 

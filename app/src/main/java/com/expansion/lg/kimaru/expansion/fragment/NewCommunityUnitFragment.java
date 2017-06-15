@@ -6,12 +6,16 @@ package com.expansion.lg.kimaru.expansion.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -23,14 +27,18 @@ import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
+import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
+import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -60,12 +68,13 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
     EditText editPrivateFacilityForAct, editPrivateFacilityForMrdt, editNumberOfChvs, editChvHouseHold;
     EditText editNumberOfHouseHolds, editMohPopulation, editPopulationDensity, editNumberOfVillages;
     EditText editDistanceToBranch, editTransportCost, editDistanceToMainRoad, editDistanceToHealthFacility;
-    EditText editLinkFacility, editDistributors, editCHVsTrained;
+    EditText editDistributors, editCHVsTrained;
 
-    Spinner editEconomicStatus;
+    Spinner editEconomicStatus, spinnerLinkFacility;
 
     RadioGroup editPresenceOfFactories, editPresenceEstates, editPresenceOfTraderMarket, editPresenceOfSuperMarket;
     RadioGroup editNgosGivingFreeDrugs;
+    LinkFacility linkFacility = null;
 
     Button buttonSave, buttonList;
 
@@ -80,10 +89,11 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
     HashMap<String, String> user;
 
 
-    String latitude = "0";
-    String longitude = "0";
+    Double latitude = 0D;
+    Double longitude = 0D;
 
-
+    List<LinkFacility> linkFacilityList = new ArrayList<LinkFacility>();
+    List<String> linkFacilities = new ArrayList<String>();
 
     public NewCommunityUnitFragment() {
         // Required empty public constructor
@@ -121,7 +131,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_new_sublocation, container, false);
+        View v =  inflater.inflate(R.layout.fragment_new_community_unit, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_COMMUNITY_UNIT;
         if (backFragment == null){
             MainActivity.backFragment = new CommunityUnitsFragment();
@@ -157,7 +167,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
         editDistanceToMainRoad = (EditText) v.findViewById(R.id.editDistanceToMainRoad);
         editDistanceToHealthFacility = (EditText) v.findViewById(R.id.editDistanceToHealthFacility);
 
-        editLinkFacility = (EditText) v.findViewById(R.id.editLinkFacility);
+        spinnerLinkFacility = (Spinner) v.findViewById(R.id.spinnerLinkFacility);
         editDistributors = (EditText) v.findViewById(R.id.editDistributors);
         editCHVsTrained = (EditText) v.findViewById(R.id.editCHVsTrained);
 
@@ -174,7 +184,41 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
         buttonSave = (Button) v.findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(this);
 
+        // populate the link Facilities;
+        linkFacilityList.clear();
+        linkFacilities.clear();
+        addLinkFacilities();
+        ArrayAdapter<String> linkFacilityAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, linkFacilities);
+        linkFacilityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLinkFacility.setAdapter(linkFacilityAdapter);
+
+        //lets set the selected
+        if (linkFacility != null){
+            int x = 0;
+            for (LinkFacility e : linkFacilityList) {
+                if (e.getId().equalsIgnoreCase(linkFacility.getId())){
+                    spinnerLinkFacility.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
+            // hide the spinner
+            TextInputLayout linkFacilityView = (TextInputLayout) v.findViewById(R.id.linkFacility);
+            linkFacilityView.setVisibility(View.INVISIBLE);
+            Toast.makeText(getContext(), "ID "+linkFacility.getId(), Toast.LENGTH_SHORT).show();
+        }
+
+
         return v;
+    }
+    public void addLinkFacilities() {
+        LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
+
+        linkFacilityList = linkFacilityTable.getLinkFacilityBySubCounty(subCounty.getId());
+        for (LinkFacility lFacility: linkFacilityList){
+            linkFacilities.add(lFacility.getFacilityName());
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -189,6 +233,18 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
             case R.id.editDob:
                 DialogFragment newFragment = new DatePickerFragment().newInstance(R.id.editDob);
                 newFragment.show(getFragmentManager(), "DatePicker");
+                break;
+
+            case R.id.buttonList:
+                CommunityUnitsFragment communityUnitsFragment = new CommunityUnitsFragment();
+                communityUnitsFragment.linkFacility = linkFacility;
+                Fragment fragment = communityUnitsFragment;
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left,
+                        android.R.anim.slide_out_right);
+                fragmentTransaction.replace(R.id.frame, fragment, "subcounties");
+                fragmentTransaction.commitAllowingStateLoss();
                 break;
 
             case R.id.editRelocated:
@@ -237,8 +293,12 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                         .equalsIgnoreCase("") ? "0" : editDistanceToMainRoad.getText().toString());
                 Long distanceToHealthFacility = Long.valueOf(editDistanceToHealthFacility.getText().toString()
                         .equalsIgnoreCase("") ? "0" : editDistanceToHealthFacility.getText().toString());
-
-                String linkFacility = editLinkFacility.getText().toString(); // Change this to Spinner
+                String linkFacilityId;
+                if (linkFacility != null){
+                    linkFacilityId = linkFacility.getId();
+                }else{
+                    linkFacilityId = linkFacilityList.get(spinnerLinkFacility.getSelectedItemPosition()).getId();
+                }
 
                 Long distributors = Long.valueOf(editDistributors.getText().toString()
                         .equalsIgnoreCase("") ? "0" : editDistributors.getText().toString());
@@ -293,7 +353,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                     }
 
                     CommunityUnit communityUnit = new CommunityUnit(id,name, mappingId, latitude, longitude,
-                            country, subCounty.getId(),linkFacility , areaChiefName,
+                            country, subCounty.getId(),linkFacilityId , areaChiefName,
                             ward, economicStatus, privateFacilityForAct, privateFacilityForMrdt,
                             "", "", currentDate, userId, numberOfChvs, chvHouseHold, numberOfVillages,
                             distanceToBranch, transportCost, distanceToMainRoad,

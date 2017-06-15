@@ -21,7 +21,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
+import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.other.FlipAnimator;
+import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -99,11 +101,13 @@ public class LinkFacilityListAdapter extends RecyclerView.Adapter<LinkFacilityLi
 
         //// displaying text view data
         holder.from.setText(linkfacility.getFacilityName());
-        holder.subject.setText("ACT Level "+ linkfacility.getActLevels());
-        holder.message.setText("Mrdt levels: "+ linkfacility.getMrdtLevels());
-        Date dateAdded = new Date(linkfacility.getDateAdded() * 1000);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy' ' HH:mm:ss:S");
-        holder.timestamp.setText(simpleDateFormat.format(dateAdded));
+        // Show the umber of linked Cus
+        CommunityUnitTable communityUnitTable = new CommunityUnitTable(mContext);
+        Integer communityUnits = communityUnitTable.getCommunityUnitByLinkFacility(linkfacility.getId()).size();
+
+        holder.subject.setText(String.valueOf(communityUnits)+" Linked CUs");
+        holder.message.setText("ACT "+ linkfacility.getActLevels() + " MRDT: "+ linkfacility.getMrdtLevels());
+        holder.timestamp.setText(new DisplayDate(linkfacility.getDateAdded()).dateAndTime());
 
         // displaying the first letter of From in icon text
         holder.iconText.setText(linkfacility.getFacilityName().substring(0,1));

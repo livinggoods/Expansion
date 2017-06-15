@@ -8,6 +8,7 @@ import android.content.SharedPreferences.Editor;
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
+import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.mzigos.Mobilization;
 import com.expansion.lg.kimaru.expansion.mzigos.Parish;
@@ -38,6 +39,7 @@ public class SessionManagement {
     public static final String KEY_USER_COUNTRY = "country";
     public static final String COMMUNITY_UNIT = "community_unit";
     public static final String MOBILIZATION = "mobilization";
+    public static final String LINK_FACILITY = "link_facility";
 
 
     // Recruitment Details
@@ -150,6 +152,19 @@ public class SessionManagement {
         parish = gson.fromJson(parishDetails, Parish.class);
 
         return parish;
+    }
+    public void saveLinkFacility(LinkFacility linkFacility){
+        Gson gson = new Gson();
+        String linkFacilityObject = gson.toJson(linkFacility);
+        editor.putString(LINK_FACILITY, linkFacilityObject);
+        editor.commit();
+    }
+    public LinkFacility getSavedLinkFacility(){
+        LinkFacility linkFacility;
+        Gson gson = new Gson();
+        String linkFacilityDetails = pref.getString(LINK_FACILITY, "");
+        linkFacility = gson.fromJson(linkFacilityDetails, LinkFacility.class);
+        return  linkFacility;
     }
 
 
