@@ -410,6 +410,11 @@ public class ChewReferralTable extends SQLiteOpenHelper {
         db.close();
         return results;
     }
+
+    public void deleteChewReferral (ChewReferral chewReferral){
+        SQLiteDatabase db = getReadableDatabase();
+        db.delete(TABLE_NAME, ID + " = ?", new String[] { chewReferral.getId() });
+    }
     private void upgradeVersion2(SQLiteDatabase db) {}
 }
 

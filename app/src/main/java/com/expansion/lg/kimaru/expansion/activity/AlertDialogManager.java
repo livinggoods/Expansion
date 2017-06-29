@@ -28,8 +28,6 @@ public class AlertDialogManager {
     public void showAlertDialog(Context context, String title, String message, Boolean status,
                                 @Nullable String positiveButton, @Nullable String negativeButton){
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-
-        //set the title, I almost wrote 'Tithe', lakini  :D
         alertDialog.setTitle(title);
 
         //set the message
@@ -59,6 +57,7 @@ public class AlertDialogManager {
 
             }
         });
+
 
         alertDialog.show();
     }

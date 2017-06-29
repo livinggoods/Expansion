@@ -24,10 +24,10 @@ public class CustomListView extends ListView {
     {
         if (getCount() != prevCount)
         {
-            int height = getChildAt(0).getHeight() + 1 ;
+            //int height = getChildAt(0).getHeight() + 1 ;
             prevCount = getCount();
             params = getLayoutParams();
-            params.height = getCount() * height;
+            //params.height = getCount() * height;
             setLayoutParams(params);
         }
 

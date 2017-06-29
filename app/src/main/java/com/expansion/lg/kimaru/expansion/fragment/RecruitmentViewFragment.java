@@ -6,6 +6,7 @@ package com.expansion.lg.kimaru.expansion.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,6 +39,7 @@ import android.support.v7.app.AppCompatActivity;
 
 
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.activity.AlertDialogManager;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.dbhelpers.ChewReferralListAdapter;
@@ -95,6 +98,8 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
 
 
     AppCompatActivity a = new AppCompatActivity();
+    CuAdapter cuAdapter;
+    ChewAdapter adapter;
 
     SessionManagement session;
     HashMap<String, String> user;
@@ -148,7 +153,7 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             ChewReferral chewReferral = chewReferrals.get(i);
             listItems[i] = chewReferral.getName();
         }
-        ChewAdapter adapter = new ChewAdapter(getContext(), chewReferrals);
+        adapter = new ChewAdapter(getContext(), chewReferrals);
 
         mListView.setAdapter(adapter);
 
@@ -210,7 +215,7 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
                 CommunityUnit communityUnit = communityUnits.get(i);
                 cuItems[i] = communityUnit.getCommunityUnitName();
             }
-            CuAdapter cuAdapter = new CuAdapter(getContext(), communityUnits);
+            cuAdapter = new CuAdapter(getContext(), communityUnits);
 
             cuListView.setAdapter(cuAdapter);
 
@@ -361,7 +366,7 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             this.context = context;
         }
         @Override
-        public View getView(int position, View convertView, ViewGroup parent){
+        public View getView(final int position, View convertView, ViewGroup parent){
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             //View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
             View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
@@ -391,8 +396,39 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             imgProfile.setImageResource(R.drawable.bg_circle);
             imgProfile.setColorFilter(chew.getColor());
             iconText.setVisibility(View.VISIBLE);
-            iconImp.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_black_24dp));
-            iconImp.setColorFilter(ContextCompat.getColor(getContext(), R.color.icon_tint_selected));
+            iconImp.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_delete_white_24dp));
+            iconImp.setColorFilter(ContextCompat.getColor(getContext(), R.color.icon_warning));
+            iconImp.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    // really delete the Item?
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+                    alertDialog.setTitle("Confirm Delete");
+                    alertDialog.setMessage("Are you sure you want to delete "+ chew.getName()+"?");
+                    alertDialog.setIcon(R.drawable.ic_delete_white_24dp);
+                    alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Check if there are records dependent on this item
+                            List <Registration> registrations = new RegistrationTable(getContext())
+                                    .getRegistrationsByChewReferral(chew);
+                            if (registrations.size() <= 0){
+                                chewReferrals.remove(position);
+                                deleteChewReferral(chew);
+                            }
+                        }
+                    });
+                    alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Check if there are records dependent on this item
+                            dialog.cancel();
+                        }
+                    });
+                    alertDialog.show();
+                    return false;
+                }
+            });
 
             View.OnLongClickListener chewLongClick = new View.OnLongClickListener() {
                 @Override
@@ -425,7 +461,7 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             this.context = context;
         }
         @Override
-        public View getView(int position, View convertView, ViewGroup parent){
+        public View getView(final int position, View convertView, ViewGroup parent){
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
             subject = (TextView) rowView.findViewById(R.id.txt_primary);
@@ -450,8 +486,41 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             imgProfile.setImageResource(R.drawable.bg_circle);
             imgProfile.setColorFilter(community.getColor());
             iconText.setVisibility(View.VISIBLE);
-            iconImp.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_black_24dp));
-            iconImp.setColorFilter(ContextCompat.getColor(getContext(), R.color.icon_tint_selected));
+            iconImp.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_delete_white_24dp));
+            iconImp.setColorFilter(ContextCompat.getColor(getContext(), R.color.icon_warning));
+            iconImp.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    // really delete the Item?
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+                    alertDialog.setTitle("Confirm Delete");
+                    alertDialog.setMessage("Are you sure you want to delete "+ community.getCommunityUnitName()+"?");
+                    alertDialog.setIcon(R.drawable.ic_delete_white_24dp);
+                    alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Check if there are records dependent on this item
+                            List <Registration> registrations = new RegistrationTable(getContext())
+                                    .getRegistrationsByRecruitmentAndCommunityUnit(session
+                                            .getSavedRecruitment(), community);
+                            if (registrations.size() <= 0){
+                                communityUnits.remove(position);
+                                //arrayAdapter.notifyDataSetChanged();
+                                deleteCommunityUnit(community);
+                            }
+                        }
+                    });
+                    alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Check if there are records dependent on this item
+                            dialog.cancel();
+                        }
+                    });
+                    alertDialog.show();
+                    return false;
+                }
+            });
 
             View.OnClickListener itemClickListener = new View.OnClickListener() {
                 @Override
@@ -492,5 +561,15 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
 
             return rowView;
         }
+    }
+
+    public void deleteCommunityUnit(CommunityUnit communityUnit){
+        new CommunityUnitTable(getContext()).deleteCommunityUnit(communityUnit);
+        cuAdapter.notifyDataSetChanged();
+    }
+
+    public void deleteChewReferral(ChewReferral chewReferral){
+        new ChewReferralTable(getContext()).deleteChewReferral(chewReferral);
+        adapter.notifyDataSetChanged();
     }
 }

@@ -652,6 +652,11 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
         return communityUnitList;
     }
 
+    public void deleteCommunityUnit (CommunityUnit communityUnit){
+        SQLiteDatabase db = getReadableDatabase();
+        db.delete(TABLE_NAME, ID + " = ?", new String[] { communityUnit.getId() });
+    }
+
 
     public Cursor getCommunityUnitDataCursor() {
         SQLiteDatabase db=getReadableDatabase();
