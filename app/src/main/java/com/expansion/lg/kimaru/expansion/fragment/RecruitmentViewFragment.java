@@ -392,7 +392,12 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             message.getLayoutParams().width = RecyclerView.LayoutParams.WRAP_CONTENT;
             // timestamp.setText(chew.getRecruitmentId());
             // timestamp.getLayoutParams().width = RecyclerView.LayoutParams.MATCH_PARENT;
-            iconText.setText(String.valueOf(chew.getName().substring(0,1)));
+            if (!chew.getName().equalsIgnoreCase("")){
+                iconText.setText(String.valueOf(chew.getName().substring(0,1)));
+            }else{
+                iconText.setText("");
+            }
+
             imgProfile.setImageResource(R.drawable.bg_circle);
             imgProfile.setColorFilter(chew.getColor());
             iconText.setVisibility(View.VISIBLE);

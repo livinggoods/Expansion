@@ -48,6 +48,7 @@ import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -85,12 +86,12 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
     EditText mLangs;
     EditText mOccupation;
     EditText mComment;
-    EditText mDob;
+    EditText mDob, mAge;
     RadioGroup mReadEnglish;
     EditText mRecruitment;
     EditText mDateMoved, editBranchTransportCost, editRecruitmentTransportCost;
     RadioGroup editIsChv, editIsGokTrained;
-    RadioGroup mCommunity, mAccounts;
+    RadioGroup mCommunity, mAccounts, chooseAgeFormat;
     Spinner editCuName;
     Spinner selectLinkFacility;
     EditText editLinkFacility;
@@ -197,6 +198,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         mLangs = (EditText) v.findViewById(R.id.editOtherlanguages);
         mOccupation = (EditText) v.findViewById(R.id.editOccupation);
         mDob = (EditText) v.findViewById(R.id.editDob);
+        mAge = (EditText) v.findViewById(R.id.editAge);
         mReadEnglish = (RadioGroup) v.findViewById(R.id.editReadEnglish);
         selectChew = (Spinner) v.findViewById(R.id.selectChewReferral);
         mComment = (EditText) v.findViewById(R.id.editComment);
@@ -214,8 +216,22 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         editIsGokTrained = (RadioGroup) v.findViewById(R.id.editIsGokTrained);
         mCommunity = (RadioGroup) v.findViewById(R.id.editCommunityMembership);
         educationLevel = (Spinner) v.findViewById(R.id.selectEdducation);
-
-        //
+        chooseAgeFormat = (RadioGroup) v.findViewById(R.id.chooseAgeFormat);
+        chooseAgeFormat.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.radioAge:
+                        mAge.setVisibility(View.VISIBLE);
+                        mDob.setVisibility(View.GONE);
+                        break;
+                    case R.id.radioYear:
+                        mDob.setVisibility(View.VISIBLE);
+                        mAge.setVisibility(View.GONE);
+                        break;
+                }
+            }
+        });
 
         addChewReferrals();
 
@@ -540,12 +556,29 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 Boolean isGokTrained = isApplicantTrained.equalsIgnoreCase("Yes");
 
                 Long applicantDob;
-                try{
-                    Date date = dateFormat.parse(aDob);
-                    applicantDob = date.getTime();
-                }catch (Exception e){
-                    applicantDob = currentDate;
+                if (chooseAgeFormat.getCheckedRadioButtonId() == R.id.radioAge){
+                    // convert the age to years
+                    int year = Calendar.getInstance().get(Calendar.YEAR);
+                    int age = Integer.valueOf(mAge.getText().toString());
+                    int birthYear = year-age;
+                    String birthYyear = String.valueOf(birthYear)+"/1/1";
+                    try{
+                        Date date = dateFormat.parse(birthYyear);
+                        applicantDob = date.getTime();
+                    }catch (Exception e){
+                        applicantDob = currentDate;
+                    }
+                }else{
+                    try{
+                        Date date = dateFormat.parse(aDob);
+                        applicantDob = date.getTime();
+                    }catch (Exception e){
+                        applicantDob = currentDate;
+                    }
                 }
+
+
+
                 Integer readEnglish = mReadEnglish.getCheckedRadioButtonId();
                 RadioButton readEnglishRadioButton =(RadioButton) mReadEnglish.findViewById(readEnglish);
                 String canApplicantReadEnglish = readEnglishRadioButton.getText().toString();
