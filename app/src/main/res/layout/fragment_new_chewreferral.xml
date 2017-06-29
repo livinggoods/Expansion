@@ -57,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Phone"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="textCapWords"
+                    android:inputType="phone"
                     android:maxLines="1" />
 
             </android.support.design.widget.TextInputLayout>

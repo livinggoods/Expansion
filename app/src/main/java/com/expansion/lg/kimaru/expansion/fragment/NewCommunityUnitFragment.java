@@ -298,7 +298,12 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                 if (linkFacility != null){
                     linkFacilityId = linkFacility.getId();
                 }else{
-                    linkFacilityId = linkFacilityList.get(spinnerLinkFacility.getSelectedItemPosition()).getId();
+                    Integer lFacility = spinnerLinkFacility.getSelectedItemPosition();
+                    if (linkFacilityList.size() != 0 && lFacility != -1) {
+                        linkFacilityId = linkFacilityList.get(spinnerLinkFacility.getSelectedItemPosition()).getId();
+                    }else{
+                        linkFacilityId = "";
+                    }
                 }
 
                 Long distributors = Long.valueOf(editDistributors.getText().toString()
@@ -340,12 +345,12 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                     editName.requestFocus();
                 }
 
-                else if (areaChiefName.toString().trim().equals("") && mapping != null){
+                else if (areaChiefName.toString().trim().equals("") && mapping != null && backFragment == null){
                     Toast.makeText(getContext(), "Enter the name of the Chief", Toast.LENGTH_SHORT).show();
                     editAreaChiefName.requestFocus();
                 }
 
-                else if(areaChiefPhone.toString().trim().equals("") && mapping != null){
+                else if(areaChiefPhone.toString().trim().equals("") && mapping != null && backFragment == null){
                     Toast.makeText(getContext(), "Enter the contact details of the chief", Toast.LENGTH_SHORT).show();
                     editAreaChiefPhone.requestFocus();
                 } else{
