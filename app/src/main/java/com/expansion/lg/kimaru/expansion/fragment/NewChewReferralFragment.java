@@ -21,6 +21,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.telephony.PhoneNumberUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -79,6 +80,7 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
 
     SessionManagement session;
     HashMap<String, String> user;
+    String country;
 
     double latitude, longitude;
     boolean isGPSEnabled = false;
@@ -155,10 +157,14 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
 
         session = new SessionManagement(getContext());
         user = session.getUserDetails();
-                //Initialize the UI Components editRecruitmentName editReferralTitle editReferralPhoneNumber
+        country = user.get(SessionManagement.KEY_USER_COUNTRY);
         mName = (EditText) v.findViewById(R.id.editName);
         mTitle = (EditText) v.findViewById(R.id.editReferralTitle);
         mPhone = (EditText) v.findViewById(R.id.editReferralPhoneNumber);
+
+        if (country.equalsIgnoreCase("ke")){
+            mTitle.setVisibility(View.GONE);
+        }
 
         // setUpEditingMode();
 
@@ -451,7 +457,6 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
                 break;
             case R.id.buttonSave:
                 // set date as integers
-                Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
                 Long currentDate =  new Date().getTime();
 
                 // Generate the uuid
@@ -471,6 +476,26 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
                 String district = "";
                 String mapping = "";
 
+                if (!referralPhone.toString().trim().equals("")){
+                    if (referralPhone.toString().trim().startsWith("+")){
+                        if (referralPhone.length() != 13){
+                            Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+                            mPhone.requestFocus();
+                            return;
+                        } else if (!PhoneNumberUtils.isGlobalPhoneNumber(referralPhone)) {
+                            mPhone.requestFocus();
+                            Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }else if (referralPhone.length() != 10){
+                        mPhone.requestFocus();
+                        Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+                        return;
+                    }else if(!PhoneNumberUtils.isGlobalPhoneNumber(referralPhone)){
+                        Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
 
                 String mobilization = "";
                 if (createdFromRecruitment){
@@ -486,15 +511,14 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
                     parish = session.getSavedParish().getId();
                 }
 
-
-                String country = user.get(SessionManagement.KEY_USER_COUNTRY);
-
                 // Do some validations
                 if (referralName.toString().trim().equals("")){
                     Toast.makeText(getContext(), "Name cannot be blank", Toast.LENGTH_SHORT).show();
                     mName.requestFocus();
                     return;
                 }
+                Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
+
                 /**
                  * String id, String name, String phone, String title, String country,
                  String recruitmentId, Integer synced, String county, String district,
