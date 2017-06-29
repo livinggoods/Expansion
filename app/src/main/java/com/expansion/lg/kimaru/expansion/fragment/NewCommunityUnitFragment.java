@@ -374,7 +374,31 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                     CommunityUnitTable communityUnitTable = new CommunityUnitTable(getContext());
                     long cid = communityUnitTable.addCommunityUnitData(communityUnit);
                     if (cid != -1){
-                        Toast.makeText(getContext(), "Community Unit saved successfuly", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Community Unit saved successfully", Toast.LENGTH_SHORT).show();
+                        editName.setText("");
+                        editName.requestFocus();
+                        editAreaChiefName.setText("");
+                        editAreaChiefPhone.setText("");
+                        editWard.setText("");
+
+                        editPrivateFacilityForAct.setText("");
+                        editPrivateFacilityForMrdt.setText("");
+                        editNumberOfChvs.setText("");
+                        editChvHouseHold.setText("");
+
+                        editNumberOfHouseHolds.setText("");
+                        editMohPopulation.setText("");
+                        editPopulationDensity.setText("");
+                        editNumberOfVillages.setText("");
+
+                        editDistanceToBranch.setText("");
+                        editTransportCost.setText("");
+                        editDistanceToMainRoad.setText("");
+                        editDistanceToHealthFacility.setText("");
+
+                        editDistributors.setText("");
+                        // editCHVsTrained.setText("");
+
                     }
                 }
 
