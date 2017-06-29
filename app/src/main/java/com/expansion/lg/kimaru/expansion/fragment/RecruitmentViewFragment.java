@@ -377,7 +377,7 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             registrationContainser = (LinearLayout) rowView.findViewById(R.id.message_container);
             iconContainer = (RelativeLayout) rowView.findViewById(R.id.icon_container);
 
-            ChewReferral chew = chewReferralss.get(position);
+            final ChewReferral chew = chewReferralss.get(position);
             // name.setText(chew.getTitle());
             subject.setText(chew.getTitle() + " " +chew.getName());
             //view_instance.getLayoutParams().width = LayoutParams.MATCH_PARENT
@@ -393,6 +393,23 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             iconText.setVisibility(View.VISIBLE);
             iconImp.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_black_24dp));
             iconImp.setColorFilter(ContextCompat.getColor(getContext(), R.color.icon_tint_selected));
+
+            View.OnLongClickListener chewLongClick = new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    NewChewReferralFragment newChewReferralFragment = new NewChewReferralFragment();
+                    newChewReferralFragment.createdFromRecruitment = true;
+                    newChewReferralFragment.editingChewReferral = chew;
+                    Fragment fragment = newChewReferralFragment;
+                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                            android.R.anim.fade_out);
+                    fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
+                    fragmentTransaction.commitAllowingStateLoss();
+                    return false;
+                }
+            };
+            registrationContainser.setOnLongClickListener(chewLongClick);
 
             return rowView;
         }

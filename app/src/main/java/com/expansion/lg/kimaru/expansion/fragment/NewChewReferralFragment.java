@@ -166,7 +166,7 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
             mTitle.setVisibility(View.GONE);
         }
 
-        // setUpEditingMode();
+        setUpEditingMode();
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
@@ -587,7 +587,7 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
         if (editingChewReferral != null){
             mName.setText(editingChewReferral.getName());
             mTitle.setText(editingChewReferral.getTitle());
-            mPhone.setText(editingChewReferral.getTitle());
+            mPhone.setText(editingChewReferral.getPhone());
             mName.requestFocus();
         }
     }
