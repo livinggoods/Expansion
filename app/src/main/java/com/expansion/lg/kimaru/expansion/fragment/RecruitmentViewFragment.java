@@ -458,7 +458,6 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             View.OnLongClickListener longClick = new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    Toast.makeText(getContext(), "Long Click", Toast.LENGTH_SHORT).show();
                     NewCommunityUnitFragment newCommunityUnitFragment = new NewCommunityUnitFragment();
                     newCommunityUnitFragment.editingCommunityUnit = community;
                     newCommunityUnitFragment.backFragment =  new RecruitmentViewFragment();
