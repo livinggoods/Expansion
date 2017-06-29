@@ -147,7 +147,12 @@ public class NewChewReferralFragment extends Fragment implements OnClickListener
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_new_chewreferral, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_RECRUITMENT;
-        MainActivity.backFragment = new ReferralsFragment();
+        if (createdFromRecruitment){
+            MainActivity.backFragment = new RecruitmentViewFragment();
+        }else{
+            MainActivity.backFragment = new ReferralsFragment();
+        }
+
         session = new SessionManagement(getContext());
         user = session.getUserDetails();
                 //Initialize the UI Components editRecruitmentName editReferralTitle editReferralPhoneNumber

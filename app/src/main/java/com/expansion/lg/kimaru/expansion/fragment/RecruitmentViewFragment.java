@@ -278,7 +278,6 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
 
     }
     private void getCommunityUnits(){
-        Toast.makeText(getContext(), "Getting the CUs", Toast.LENGTH_SHORT).show();
         communityUnits.clear();
         try{
             List<CommunityUnit> communityUnitList = new CommunityUnitTable(getContext())

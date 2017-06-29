@@ -107,7 +107,7 @@ public class SubCountyViewFragment extends Fragment implements  View.OnClickList
 
         relativeLinkFacilities.setOnClickListener(this);
         relativeViewCommunityUnits.setOnClickListener(this);
-        relativeViewPartners.setOnClickListener(this);
+        // relativeViewPartners.setOnClickListener(this);
 
 
         return v;

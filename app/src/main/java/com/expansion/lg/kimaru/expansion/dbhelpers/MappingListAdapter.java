@@ -19,10 +19,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.mzigos.KeCounty;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
 import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.other.FlipAnimator;
+import com.expansion.lg.kimaru.expansion.tables.KeCountyTable;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -97,9 +99,12 @@ public class MappingListAdapter extends RecyclerView.Adapter<MappingListAdapter.
     @Override
     public void onBindViewHolder(final ListHolder holder, final int position){
         Mapping mapping = mappings.get(position);
-
+        String mappingName = mapping.getMappingName();
+        if (mapping.getCountry().equalsIgnoreCase("KE")){
+            // mappingName = new KeCountyTable(mContext).getCountyById(Integer.valueOf(mapping.getCounty())).getCountyName();
+        }
         //// displaying text view data
-        holder.from.setText(mapping.getCounty());
+        holder.from.setText(mappingName);
         holder.subject.setText(mapping.getContactPerson());
         holder.message.setText(mapping.getContactPersonPhone());
         holder.timestamp.setText(new DisplayDate(mapping.getDateAdded()).dateAndTime());

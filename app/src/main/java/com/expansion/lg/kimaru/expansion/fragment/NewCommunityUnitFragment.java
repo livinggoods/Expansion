@@ -73,7 +73,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
     Spinner editEconomicStatus, spinnerLinkFacility;
 
     RadioGroup editPresenceOfFactories, editPresenceEstates, editPresenceOfTraderMarket, editPresenceOfSuperMarket;
-    RadioGroup editNgosGivingFreeDrugs;
+    RadioGroup editNgosGivingFreeDrugs, editCHVsTrainedGroup;
     LinkFacility linkFacility = null;
 
     Button buttonSave, buttonList;
@@ -169,7 +169,8 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
 
         spinnerLinkFacility = (Spinner) v.findViewById(R.id.spinnerLinkFacility);
         editDistributors = (EditText) v.findViewById(R.id.editDistributors);
-        editCHVsTrained = (EditText) v.findViewById(R.id.editCHVsTrained);
+        // editCHVsTrained = (EditText) v.findViewById(R.id.editCHVsTrained);
+        editCHVsTrainedGroup = (RadioGroup) v.findViewById(R.id.editCHVsTrainedGroup);
 
 
         editPresenceOfFactories = (RadioGroup) v.findViewById(R.id.editPresenceOfFactories);
@@ -303,12 +304,16 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                 Long distributors = Long.valueOf(editDistributors.getText().toString()
                         .equalsIgnoreCase("") ? "0" : editDistributors.getText().toString());
 
-                boolean cHVsTrained = (editCHVsTrained.getText().toString() == "Yes");
+                // boolean cHVsTrained = (editCHVsTrained.getText().toString() == "Yes");
+
+                Integer chvsTrainedInICCm = editCHVsTrainedGroup.getCheckedRadioButtonId();
+                RadioButton selectedIccmOption =(RadioButton) editCHVsTrainedGroup.findViewById(chvsTrainedInICCm);
+                boolean presenceOfFactories = (selectedIccmOption.getText().toString() != "");
 
 
                 Integer factoriesPresent = editPresenceOfFactories.getCheckedRadioButtonId();
                 RadioButton selectedFactoryOption =(RadioButton) editPresenceOfFactories.findViewById(factoriesPresent);
-                boolean presenceOfFactories = (selectedFactoryOption.getText().toString() != "");
+                boolean cHVsTrained = (selectedFactoryOption.getText().toString().equalsIgnoreCase("Yes"));
 
                 Integer estatesPresent = editPresenceEstates.getCheckedRadioButtonId();
                 RadioButton selectedEstateOption =(RadioButton) editPresenceEstates.findViewById(estatesPresent);
