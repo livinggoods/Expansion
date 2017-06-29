@@ -33,11 +33,12 @@ public class CommunityUnit {
     long dateAdded, addedBy, numberOfChvs, householdPerChv, numberOfVillages, distanceToBranch, transportCost;
     long distanceTOMainRoad, noOfHouseholds, mohPoplationDensity, estimatedPopulationDensity;
     long distanceTONearestHealthFacility, actLevels, actPrice, mrdtLevels,mrdtPrice, noOfDistibutors;
-    String economicStatus; //lower, middle or upper
+    String economicStatus, areaChiefPhone; //lower, middle or upper
     String privateFacilityForAct, privateFacilityForMrdt;
     String nameOfNgoDoingIccm, nameOfNgoDoingMhealth;
+    Long presenceOfFactories;
 
-    boolean chvsTrained, presenceOfEstates, presenceOfFactories, presenceOfHostels, traderMarket, largeSupermarket, ngosGivingFreeDrugs;
+    boolean chvsTrained, presenceOfEstates, presenceOfHostels, traderMarket, largeSupermarket, ngosGivingFreeDrugs;
     boolean ngoDoingIccm, ngoDoingMhealth;
 
     boolean isRead, isImportant;
@@ -52,7 +53,7 @@ public class CommunityUnit {
 
     public CommunityUnit(String id, String communityUnitName, String mappingId, Double lat, Double lon,
                          String country, String subCountyId, String linkFacilityId, String areaChiefName,
-                         String ward, String economicStatus, String privateFacilityForAct,
+                         String areaChiefPhone, String ward, String economicStatus, String privateFacilityForAct,
                          String privateFacilityForMrdt,
                          String nameOfNgoDoingIccm, String nameOfNgoDoingMhealth, long dateAdded, long addedBy,
                          long numberOfChvs, long householdPerChv, long numberOfVillages,
@@ -60,7 +61,7 @@ public class CommunityUnit {
                          long noOfHouseholds, long mohPoplationDensity, long estimatedPopulationDensity,
                          long distanceTONearestHealthFacility, long actLevels, long actPrice,
                          long mrdtLevels, long mrdtPrice, long noOfDistibutors, boolean chvsTrained,
-                         boolean presenceOfEstates, boolean presenceOfFactories,
+                         boolean presenceOfEstates, Long presenceOfFactories,
                          boolean presenceOfHostels, boolean traderMarket, boolean largeSupermarket,
                          boolean ngosGivingFreeDrugs, boolean ngoDoingIccm, boolean ngoDoingMhealth) {
         this.id = id;
@@ -104,10 +105,15 @@ public class CommunityUnit {
         this.ngosGivingFreeDrugs = ngosGivingFreeDrugs;
         this.ngoDoingIccm = ngoDoingIccm;
         this.ngoDoingMhealth = ngoDoingMhealth;
+        this.areaChiefPhone = areaChiefPhone;
 
     }
 
     // Get Methods
+
+    public String getAreaChiefPhone() {
+        return areaChiefPhone;
+    }
 
     public String getId() {
         return id;
@@ -187,11 +193,11 @@ public class CommunityUnit {
 
     ////
     public long getNumberOfChvs() {
-        return dateAdded;
+        return numberOfChvs;
     }
 
-    public void setNumberOfChvs(long addedBy) {
-        this.addedBy = addedBy;
+    public void setNumberOfChvs(long numberOfChvs) {
+        this.numberOfChvs = numberOfChvs;
     }
 
     public long getHouseholdPerChv() {
@@ -290,7 +296,7 @@ public class CommunityUnit {
         this.distanceToBranch = distanceToBranch;
     }
 
-    public boolean isPresenceOfFactories() {
+    public Long presenceOfFactories() {
         return presenceOfFactories;
     }
 
@@ -429,13 +435,20 @@ public class CommunityUnit {
     public void setPresenceOfEstates(boolean presenceOfEstates) {
         this.presenceOfEstates = presenceOfEstates;
     }
+    public boolean isPresenceOfFactories(){
+        return this.presenceOfFactories.compareTo(0L) > 0;
+    }
 
-    public void setPresenceOfFactories(boolean presenceOfFactories) {
+    public void setPresenceOfFactories(Long presenceOfFactories) {
         this.presenceOfFactories = presenceOfFactories;
     }
 
     public void setPresenceOfHostels(boolean presenceOfHostels) {
         this.presenceOfHostels = presenceOfHostels;
+    }
+
+    public void setAreaChiefPhone(String areaChiefPhone) {
+        this.areaChiefPhone = areaChiefPhone;
     }
 
     public void setPrivateFacilityForAct(String privateFacilityForAct) {

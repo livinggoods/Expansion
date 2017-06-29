@@ -61,6 +61,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
     private String mParam2;
 
     Fragment backFragment = null;
+    CommunityUnit editingCommunityUnit = null;
 
     private OnFragmentInteractionListener mListener;
 
@@ -193,7 +194,6 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                 android.R.layout.simple_spinner_item, linkFacilities);
         linkFacilityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLinkFacility.setAdapter(linkFacilityAdapter);
-
         //lets set the selected
         if (linkFacility != null){
             int x = 0;
@@ -207,9 +207,9 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
             // hide the spinner
             TextInputLayout linkFacilityView = (TextInputLayout) v.findViewById(R.id.linkFacility);
             linkFacilityView.setVisibility(View.INVISIBLE);
-            Toast.makeText(getContext(), "ID "+linkFacility.getId(), Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getContext(), "ID "+linkFacility.getId(), Toast.LENGTH_SHORT).show();
         }
-
+        setUpEditingMode();
 
         return v;
     }
@@ -253,23 +253,20 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                 dateMovedFragment.show(getFragmentManager(), "Datepicker");
                 break;
             case R.id.buttonSave:
-                // set date as integers
-                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-
-                Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
-                Integer currentDate =  (int) (new Date().getTime()/1000);
+                Long currentDate =  new Date().getTime()/1000;
 
                 String name = editName.getText().toString();
                 String areaChiefName = editAreaChiefName.getText().toString();
                 String areaChiefPhone = editAreaChiefPhone.getText().toString();
                 String ward = editWard.getText().toString();
-                String economicStatus = String.valueOf(editEconomicStatus.getSelectedItemId());
+                String economicStatus = String.valueOf(editEconomicStatus.getSelectedItemPosition());
 
                 String privateFacilityForAct = editPrivateFacilityForAct.getText().toString();
                 String privateFacilityForMrdt = editPrivateFacilityForMrdt.getText().toString();
 
                 Long numberOfChvs = Long.valueOf(editNumberOfChvs.getText().toString().trim()
                         .equalsIgnoreCase("") ? "0" : editNumberOfChvs.getText().toString());
+
                 Long chvHouseHold = Long.valueOf(editChvHouseHold.getText().toString().trim()
                         .equalsIgnoreCase("") ? "0" : editChvHouseHold.getText().toString());
 
@@ -313,30 +310,38 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
 
                 Integer chvsTrainedInICCm = editCHVsTrainedGroup.getCheckedRadioButtonId();
                 RadioButton selectedIccmOption =(RadioButton) editCHVsTrainedGroup.findViewById(chvsTrainedInICCm);
-                boolean presenceOfFactories = (selectedIccmOption.getText().toString() != "");
+                boolean cHVsTrained = (selectedIccmOption.getText().toString().equalsIgnoreCase("Yes"));
 
 
                 Integer factoriesPresent = editPresenceOfFactories.getCheckedRadioButtonId();
                 RadioButton selectedFactoryOption =(RadioButton) editPresenceOfFactories.findViewById(factoriesPresent);
-                boolean cHVsTrained = (selectedFactoryOption.getText().toString().equalsIgnoreCase("Yes"));
+                Long presenceOfFactories = 0L;
+                if (selectedFactoryOption.getText().toString().equalsIgnoreCase("More than 2")){
+                    presenceOfFactories = 3L;
+                }else if (selectedFactoryOption.getText().toString().equalsIgnoreCase("More than 2")){
+                    presenceOfFactories = 2L;
+                }else{
+                    presenceOfFactories = 0L;
+                }
+                //boolean presenceOfFactories = (selectedFactoryOption.getText().toString().equalsIgnoreCase("Yes"));
 
                 Integer estatesPresent = editPresenceEstates.getCheckedRadioButtonId();
                 RadioButton selectedEstateOption =(RadioButton) editPresenceEstates.findViewById(estatesPresent);
-                boolean presenceEstates = (selectedEstateOption.getText().toString() != "");
+                boolean presenceEstates = (selectedEstateOption.getText().toString().equalsIgnoreCase("Yes"));
 
                 Integer tradeMarketsPresent = editPresenceOfTraderMarket.getCheckedRadioButtonId();
                 RadioButton selectedTradeMarketOption =(RadioButton) editPresenceOfTraderMarket.findViewById(tradeMarketsPresent);
-                boolean presenceOfTraderMarket = (selectedTradeMarketOption.getText().toString() != "");
+                boolean presenceOfTraderMarket = (selectedTradeMarketOption.getText().toString().equalsIgnoreCase("Yes"));
 
 
                 Integer superMarketPresent = editPresenceOfSuperMarket.getCheckedRadioButtonId();
                 RadioButton selectedSuperMarketOption =(RadioButton) editPresenceOfSuperMarket.findViewById(superMarketPresent);
-                boolean presenceOfSuperMarket = (selectedSuperMarketOption.getText().toString() != "");
+                boolean presenceOfSuperMarket = (selectedSuperMarketOption.getText().toString().equalsIgnoreCase("Yes"));
 
 
                 Integer ngosDrugs = editNgosGivingFreeDrugs.getCheckedRadioButtonId();
                 RadioButton ngosGivingFreeDrugsSelected =(RadioButton) editNgosGivingFreeDrugs.findViewById(ngosDrugs);
-                boolean ngosGivingFreeDrugs = (ngosGivingFreeDrugsSelected.getText().toString() != "");
+                boolean ngosGivingFreeDrugs = (ngosGivingFreeDrugsSelected.getText().toString().equalsIgnoreCase("Yes"));
 
                 // Do some validations
 
@@ -354,7 +359,11 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                     Toast.makeText(getContext(), "Enter the contact details of the chief", Toast.LENGTH_SHORT).show();
                     editAreaChiefPhone.requestFocus();
                 } else{
+                    Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
                     String id = UUID.randomUUID().toString();
+                    if (editingCommunityUnit != null){
+                        id = editingCommunityUnit.getId();
+                    }
                     long userId = Long.valueOf(user.get(SessionManagement.KEY_USERID));
                     String country = user.get(SessionManagement.KEY_USER_COUNTRY);
                     String mappingId = "";
@@ -362,15 +371,51 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                         mappingId = mapping.getId();
                     }
 
-                    CommunityUnit communityUnit = new CommunityUnit(id,name, mappingId, latitude, longitude,
-                            country, subCounty.getId(),linkFacilityId , areaChiefName,
-                            ward, economicStatus, privateFacilityForAct, privateFacilityForMrdt,
-                            "", "", currentDate, userId, numberOfChvs, chvHouseHold, numberOfVillages,
-                            distanceToBranch, transportCost, distanceToMainRoad,
-                            numberOfHouseHolds, mohPopulation, populationDensity,
-                            distanceToHealthFacility, 0, 0, 0, 0, distributors, cHVsTrained,
-                            presenceEstates, presenceOfFactories, presenceEstates, presenceOfTraderMarket,
-                            presenceOfSuperMarket, ngosGivingFreeDrugs, false, false);
+                    CommunityUnit communityUnit = new CommunityUnit();
+
+                    communityUnit.setId(id);
+                    communityUnit.setCommunityUnitName(name);
+                    communityUnit.setMappingId(mappingId);
+                    communityUnit.setLat(latitude);
+                    communityUnit.setLon(longitude);
+                    communityUnit.setCountry(country);
+                    communityUnit.setSubCountyId(subCounty.getId());
+                    communityUnit.setLinkFacilityId(linkFacilityId);
+                    communityUnit.setAreaChiefName(areaChiefName);
+                    communityUnit.setAreaChiefPhone(areaChiefPhone);
+                    communityUnit.setWard(ward);
+                    communityUnit.setEconomicStatus(economicStatus);
+                    communityUnit.setPrivateFacilityForAct(privateFacilityForAct);
+                    communityUnit.setPrivateFacilityForMrdt(privateFacilityForMrdt);
+                    communityUnit.setNameOfNgoDoingIccm("");
+                    communityUnit.setNameOfNgoDoingMhealth("");
+                    communityUnit.setDateAdded(currentDate);
+                    communityUnit.setAddedBy(userId);
+                    communityUnit.setNumberOfChvs(numberOfChvs);
+                    communityUnit.setHouseholdPerChv(chvHouseHold);
+                    communityUnit.setNumberOfVillages(numberOfVillages);
+                    communityUnit.setDistanceToBranch(distanceToBranch);
+                    communityUnit.setTransportCost(transportCost);
+                    communityUnit.setDistanceTOMainRoad(distanceToMainRoad);
+                    communityUnit.setNoOfHouseholds(numberOfHouseHolds);
+                    communityUnit.setMohPoplationDensity(mohPopulation);
+                    communityUnit.setEstimatedPopulationDensity(populationDensity);
+                    communityUnit.setDistanceTONearestHealthFacility(distanceToHealthFacility);
+                    communityUnit.setActLevels(0);
+                    communityUnit.setActPrice(0);
+                    communityUnit.setMrdtLevels(0);
+                    communityUnit.setMrdtPrice(0);
+                    communityUnit.setNoOfDistibutors(distributors);
+                    communityUnit.setChvsTrained(cHVsTrained);
+                    communityUnit.setPresenceOfEstates(presenceEstates);
+                    communityUnit.setPresenceOfFactories(presenceOfFactories);
+                    communityUnit.setPresenceOfHostels(presenceEstates);
+                    communityUnit.setTraderMarket(presenceOfTraderMarket);
+                    communityUnit.setLargeSupermarket(presenceOfSuperMarket);
+                    communityUnit.setNgosGivingFreeDrugs(ngosGivingFreeDrugs);
+                    communityUnit.setNgoDoingIccm(false);
+                    communityUnit.setNgoDoingMhealth(false);
+
                     CommunityUnitTable communityUnitTable = new CommunityUnitTable(getContext());
                     long cid = communityUnitTable.addCommunityUnitData(communityUnit);
                     if (cid != -1){
@@ -405,6 +450,60 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
         }
     }
 
+    public void setUpEditingMode(){
+        if (editingCommunityUnit != null){
+            editName.setText(editingCommunityUnit.getCommunityUnitName());
+            editName.requestFocus();
+            editAreaChiefName.setText(editingCommunityUnit.getAreaChiefName());
+            editAreaChiefPhone.setText(editingCommunityUnit.getAreaChiefPhone());
+            editWard.setText(editingCommunityUnit.getWard());
+            editPrivateFacilityForAct.setText(editingCommunityUnit.getPrivateFacilityForAct());
+            editPrivateFacilityForMrdt.setText(editingCommunityUnit.getPrivateFacilityForMrdt());
+            editNumberOfChvs.setText(String.valueOf(editingCommunityUnit.getNumberOfChvs()));
+            editChvHouseHold.setText(String.valueOf(editingCommunityUnit.getHouseholdPerChv()));
+            editNumberOfHouseHolds.setText(String.valueOf(editingCommunityUnit.getNoOfHouseholds()));
+            editMohPopulation.setText(String.valueOf(editingCommunityUnit.getMohPoplationDensity()));
+            editPopulationDensity.setText(String.valueOf(
+                    editingCommunityUnit.getEstimatedPopulationDensity()));
+            editNumberOfVillages.setText(String.valueOf(editingCommunityUnit.getNumberOfVillages()));
+            editDistanceToBranch.setText(String.valueOf(editingCommunityUnit.getDistanceToBranch()));
+            editTransportCost.setText(String.valueOf(editingCommunityUnit.getTransportCost()));
+            editDistanceToMainRoad.setText(String.valueOf(
+                    editingCommunityUnit.getDistanceTOMainRoad()));
+            editDistanceToHealthFacility.setText(String.valueOf(
+                    editingCommunityUnit.getDistanceTONearestHealthFacility()));
+            editDistributors.setText(String.valueOf(editingCommunityUnit.getNoOfDistibutors()));
+
+            // set radio Buttons
+            //mReadEnglish.check(editingRegistration.getReadEnglish().equals(1) ? R.id.radioCanReadEnglish : R.id.radioCannotReadEnglish);
+            editCHVsTrainedGroup.clearCheck();
+            editCHVsTrainedGroup.check(editingCommunityUnit.isChvsTrained() ? R.id.trainedYes : R.id.trainedNo);
+
+            editPresenceOfFactories.clearCheck();
+            if (editingCommunityUnit.presenceOfFactories().equals(0L)){
+                editPresenceOfFactories.check(R.id.cFactory1);
+            }else if (editingCommunityUnit.presenceOfFactories().equals(2L)){
+                editPresenceOfFactories.check(R.id.cFactory2);
+            }else {
+                editPresenceOfFactories.check(R.id.cFactory3);
+            }
+
+            editPresenceEstates.clearCheck();
+            editPresenceEstates.check(editingCommunityUnit.isPresenceOfEstates()? R.id.estate1 : R.id.estate2);
+
+            editPresenceOfTraderMarket.clearCheck();
+            editPresenceOfTraderMarket.check(editingCommunityUnit.isTraderMarket() ? R.id.marketYes : R.id.marketNo);
+
+
+            editPresenceOfSuperMarket.clearCheck();
+            editPresenceOfSuperMarket.check(editingCommunityUnit.isLargeSupermarket() ? R.id.superMarketYes : R.id.SuperMarketNo);
+
+            editNgosGivingFreeDrugs.clearCheck();
+            editNgosGivingFreeDrugs.check(editingCommunityUnit.isNgosGivingFreeDrugs() ? R.id.drugsYes : R.id.drugsNo);
+
+            editEconomicStatus.setSelection(Integer.valueOf(editingCommunityUnit.getEconomicStatus()));
+        }
+    }
 
     @Override
     public void onAttach(Context context) {

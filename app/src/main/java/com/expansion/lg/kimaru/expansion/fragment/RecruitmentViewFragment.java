@@ -455,6 +455,25 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             };
             registrationContainser.setOnClickListener(itemClickListener);
 
+            View.OnLongClickListener longClick = new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Toast.makeText(getContext(), "Long Click", Toast.LENGTH_SHORT).show();
+                    NewCommunityUnitFragment newCommunityUnitFragment = new NewCommunityUnitFragment();
+                    newCommunityUnitFragment.editingCommunityUnit = community;
+                    newCommunityUnitFragment.backFragment =  new RecruitmentViewFragment();
+                    Fragment fragment = newCommunityUnitFragment;
+                    FragmentTransaction fragmentTransaction  = getActivity()
+                            .getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                            android.R.anim.fade_out);
+                    fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_REGISTRATIONS);
+                    fragmentTransaction.commitAllowingStateLoss();
+                    return false;
+                }
+            };
+            registrationContainser.setOnLongClickListener(longClick);
+
             return rowView;
         }
     }
