@@ -216,6 +216,8 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         editIsGokTrained = (RadioGroup) v.findViewById(R.id.editIsGokTrained);
         mCommunity = (RadioGroup) v.findViewById(R.id.editCommunityMembership);
         educationLevel = (Spinner) v.findViewById(R.id.selectEdducation);
+        mAge.setVisibility(View.GONE);
+        mDob.setVisibility(View.GONE);
         chooseAgeFormat = (RadioGroup) v.findViewById(R.id.chooseAgeFormat);
         chooseAgeFormat.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override

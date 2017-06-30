@@ -200,6 +200,8 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         editSubCounty = (EditText) v.findViewById(R.id.editSubCounty);
         editParish = (EditText) v.findViewById(R.id.editParish);
         editVht = (RadioGroup) v.findViewById(R.id.editVht);
+        mAge.setVisibility(View.GONE);
+        mDob.setVisibility(View.GONE);
         chooseAgeFormat = (RadioGroup) v.findViewById(R.id.chooseAgeFormat);
         chooseAgeFormat.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override

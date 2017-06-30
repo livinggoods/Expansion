@@ -142,7 +142,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Applicant Gender"/>
+                    android:text="Applicant Age (Year or Actual Age)"/>
                 <RadioGroup
                     android:id="@+id/chooseAgeFormat"
                     android:layout_width="fill_parent"
