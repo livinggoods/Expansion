@@ -460,43 +460,51 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
                     editAreaChiefPhone.requestFocus();
                     return;
                 }
-                if (editDistanceToBranch.getText().toString().equalsIgnoreCase("")){
+                String distanceToBranch = editDistanceToBranch.getText().toString();
+                if (distanceToBranch.equalsIgnoreCase("")){
                     Toast.makeText(getContext(), "Distance to branch is required", Toast.LENGTH_LONG).show();
                     editDistanceToBranch.requestFocus();
                     return;
                 }
-                if (editTransportCost.getText().toString().equalsIgnoreCase("")){
+                String transportCost = editTransportCost.getText().toString();
+                if (transportCost.equalsIgnoreCase("")){
                     Toast.makeText(getContext(), "Transport cost to branch is required", Toast.LENGTH_LONG).show();
                     editTransportCost.requestFocus();
                     return;
                 }
-                if (editDistanceToMainRoad.getText().toString().equalsIgnoreCase("")){
+                String distanceToMainRoad = editDistanceToMainRoad.getText().toString();
+                if (distanceToMainRoad.equalsIgnoreCase("")){
                     Toast.makeText(getContext(), "Distance to the main road is required", Toast.LENGTH_LONG).show();
                     editDistanceToMainRoad.requestFocus();
                     return;
                 }
-                if (editNumberOfHouseHolds.getText().toString().equalsIgnoreCase("")){
+                String numberOfhouseHolds = editNumberOfHouseHolds.getText().toString();
+                if (numberOfhouseHolds.equalsIgnoreCase("")){
                     Toast.makeText(getContext(), "Please enter the number of households", Toast.LENGTH_LONG).show();
                     editNumberOfHouseHolds.requestFocus();
                     return;
                 }
-                if (editPopulationDensity.getText().toString().equalsIgnoreCase("")){
+                String populationDensity = editPopulationDensity.getText().toString();
+                if (populationDensity.equalsIgnoreCase("")){
                     Toast.makeText(getContext(), "Population density is required", Toast.LENGTH_LONG).show();
                     editPopulationDensity.requestFocus();
                     return;
                 }
-                if (editDistanceToHealthFacility.getText().toString().equalsIgnoreCase("")){
+                String distanceToHealthFacility = editDistanceToHealthFacility.getText().toString();
+                if (distanceToHealthFacility.equalsIgnoreCase("")){
                     Toast.makeText(getContext(), "Enter the distance to the nearest health facility",
                             Toast.LENGTH_LONG).show();
                     editDistanceToHealthFacility.requestFocus();
                     return;
                 }
+                String actLevels = editActLevels.getText().toString();
                 if (editActLevels.getText().toString().equalsIgnoreCase("")){
                     Toast.makeText(getContext(), "Enter the ACT levels of the nearest public" +
                             " health facility", Toast.LENGTH_LONG).show();
                     editActLevels.requestFocus();
                     return;
                 }
+                String actCost = editActCost.getText().toString();
                 if (editActCost.getText().toString().equalsIgnoreCase("")){
                     Toast.makeText(getContext(), "Enter the cost of ACT at the nearest private" +
                             " health facility", Toast.LENGTH_LONG).show();
