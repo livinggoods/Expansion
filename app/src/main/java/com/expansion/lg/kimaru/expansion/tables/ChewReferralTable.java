@@ -37,6 +37,9 @@ public class ChewReferralTable extends SQLiteOpenHelper {
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
+
+    public static String JSON_ROOT = "chew_referrals";
+
     public static final String ID = "id";
     public static final String PHONE= "phone";
     public static final String TITLE = "title";
