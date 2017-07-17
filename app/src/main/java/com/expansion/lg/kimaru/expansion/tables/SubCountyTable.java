@@ -437,6 +437,84 @@ public class SubCountyTable extends SQLiteOpenHelper {
             return subCounty;
         }
     }
+
+    public  void fromJson (JSONObject jsonObject){
+        SubCounty subCounty = new SubCounty();
+        try {
+            subCounty.setId(jsonObject.getString(ID));
+            subCounty.setSubCountyName(jsonObject.getString(SUBCOUNTYNAME));
+            subCounty.setCountyID(jsonObject.getString(COUNTYID));
+            subCounty.setCountry(jsonObject.getString(COUNTRY));
+            subCounty.setMappingId(jsonObject.getString(MAPPINGID));
+            subCounty.setLat(jsonObject.getString(LAT));
+            subCounty.setLon(jsonObject.getString(LON));
+            subCounty.setContactPerson(jsonObject.getString(CONTACTPERSON));
+            subCounty.setContactPersonPhone(jsonObject.getString(CONTACTPERSONPHONE));
+            subCounty.setMainTown(jsonObject.getString(MAINTOWN));
+            subCounty.setCountySupport(jsonObject.getString(COUNTYSUPPORT));
+            subCounty.setSubcountySupport(jsonObject.getString(SUBCOUNTYSUPPORT));
+            subCounty.setChvActivityLevel(jsonObject.getString(CHVACTIVITYLEVEL));
+            subCounty.setCountyPopulation(jsonObject.getString(COUNTYPOPULATION));
+            subCounty.setSubCountyPopulation(jsonObject.getString(SUBCOUNTYPOPULATION));
+            subCounty.setNoOfVillages(jsonObject.getString(NOOFVILLAGES));
+            subCounty.setMainTownPopulation(jsonObject.getString(MAINTOWNPOPULATION));
+            subCounty.setServicePopulation(jsonObject.getString(SERVICEPOPULATION));
+            subCounty.setPopulationDensity(jsonObject.getString(POPULATIONDENSITY));
+            subCounty.setTransportCost(jsonObject.getString(TRANSPORTCOST));
+            subCounty.setMajorRoads(jsonObject.getString(MAJORROADS));
+            subCounty.setHealtFacilities(jsonObject.getString(HEALTFACILITIES));
+            subCounty.setPrivateClinicsInTown(jsonObject.getString(PRIVATECLINICSINTOWN));
+            subCounty.setPrivateClinicsInRadius(jsonObject.getString(PRIVATECLINICSINRADIUS));
+            subCounty.setCommunityUnits(jsonObject.getString(COMMUNITYUNITS));
+            subCounty.setMainSupermarkets(jsonObject.getString(MAINSUPERMARKETS));
+            subCounty.setMainBanks(jsonObject.getString(MAINBANKS));
+            subCounty.setAnyMajorBusiness(jsonObject.getString(ANYMAJORBUSINESS));
+            subCounty.setComments(jsonObject.getString(COMMENTS));
+            subCounty.setRecommended(jsonObject.getBoolean(RECOMMENDATION));
+            subCounty.setDateAdded(jsonObject.getInt(DATEADDED));
+            subCounty.setAddedBy(jsonObject.getInt(ADDEDBY));
+
+            this.addData(subCounty);
+        }catch (Exception e){}
+    }
+    public JSONObject getJson() {
+
+        SQLiteDatabase db=getReadableDatabase();
+
+        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+
+        JSONObject results = new JSONObject();
+
+        JSONArray resultSet = new JSONArray();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
+    }
+
     private void upgradeVersion2(SQLiteDatabase db) {}
 }
 
