@@ -10,6 +10,10 @@ import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Partners;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +35,8 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
     public static String varchar_field = " varchar(512) ";
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
+
+    public static String CU_JSON_ROOT = "community_unit";
 
     public static final String ID = "id";
     public static final String NAME = "name";
