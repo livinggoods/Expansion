@@ -85,7 +85,6 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
                         Toast.LENGTH_SHORT).show();
                 break;
             case R.id.buttonShareRecords:
-
                 HttpClient httpClient = new HttpClient(getBaseContext());
                 httpClient.startClient();
 
