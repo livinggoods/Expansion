@@ -9,6 +9,10 @@ import android.util.Log;
 import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +32,9 @@ public class SubCountyTable extends SQLiteOpenHelper {
     public static String varchar_field = " varchar(512) ";
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
+
+    public static final String JSON_ROOT = "subcounties";
+
 
     public static final String ID = "id";
     public static final String SUBCOUNTYNAME = "name";
