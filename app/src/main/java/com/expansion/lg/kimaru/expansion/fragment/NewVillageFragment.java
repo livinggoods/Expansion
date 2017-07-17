@@ -603,9 +603,9 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
 
                 Village village = new Village(id, villageName, mappingId, lat, lon, country,
                         district, county, subCountyId, parish, communityUnit, ward, linkFacilityId,
-                        areaChiefName, areaChiefPhone, distanceToBranch, transportCost, distanceToMainRoad,
+                        areaChiefName, areaChiefPhone, branch, transportCostToBranch, mainRoad,
                         noOfHouseholds, mohPoplationDensity, estimatedPopulationDensity,
-                        economicStatus, distanceToNearestHealthFacility, actLevels, actPrice,
+                        economicStatus, distanceToNearestHealthFacility, actLevel, actPrice,
                         mrdtLevels, mrdtPrice, presenceOfHostels, presenceOfEstates,
                         numberOfFactories, presenceOfDistributors, distributorsInTheArea, traderMarket, largeSupermarket,
                         ngosGivingFreeDrugs, ngoDoingIccm, ngoDoingMhealth, nameOfNgoDoingIccm,
