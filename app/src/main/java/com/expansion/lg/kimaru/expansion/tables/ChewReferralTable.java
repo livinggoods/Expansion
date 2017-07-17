@@ -413,6 +413,30 @@ public class ChewReferralTable extends SQLiteOpenHelper {
         db.close();
         return results;
     }
+    public void fromJson(JSONObject jsonObject){
+        ChewReferral chewReferral = new ChewReferral();
+        try {
+
+            chewReferral.setId(jsonObject.getString(ID));
+            chewReferral.setName(jsonObject.getString(NAME));
+            chewReferral.setPhone(jsonObject.getString(PHONE));
+            chewReferral.setTitle(jsonObject.getString(TITLE));
+            chewReferral.setCountry(jsonObject.getString(COUNTRY));
+            chewReferral.setRecruitmentId(jsonObject.getString(RECRUITMENT));
+            chewReferral.setSynced(jsonObject.getInt(SYNCED));
+            chewReferral.setCounty(jsonObject.getString(COUNTY));
+            chewReferral.setDistrict(jsonObject.getString(DISTRICT));
+            chewReferral.setSubCounty(jsonObject.getString(SUBCOUNTY));
+            chewReferral.setCommunityUnit(jsonObject.getString(COMMUNITY_UNIT));
+            chewReferral.setVillage(jsonObject.getString(VILLAGE));
+            chewReferral.setMapping(jsonObject.getString(MAPPING));
+            chewReferral.setMobilization(jsonObject.getString(MOBILIZATION));
+            chewReferral.setLat(jsonObject.getString(LAT));
+            chewReferral.setLon(jsonObject.getString(LON));
+
+            this.addChewReferral(chewReferral);
+        }catch (Exception e){}
+    }
 
     public void deleteChewReferral (ChewReferral chewReferral){
         SQLiteDatabase db = getReadableDatabase();
