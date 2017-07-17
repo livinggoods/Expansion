@@ -445,6 +445,15 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                         // editCHVsTrained.setText("");
 
                     }
+                    if (backFragment != null){
+                        RecruitmentViewFragment recruitmentViewFragment = new RecruitmentViewFragment();
+                        fragment = recruitmentViewFragment;
+                        fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                android.R.anim.fade_out);
+                        fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
+                        fragmentTransaction.commitAllowingStateLoss();
+                    }
                 }
 
         }
