@@ -537,24 +537,47 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
                 Integer addedBy = Integer.valueOf(session.getUserDetails().get(SessionManagement.KEY_USERID));
                 long numberOfChvs = 0L;
                 long householdPerChv = 0L;
-                long distanceToBranch = Long.valueOf(editDistanceToBranch.getText().toString()
-                        .equalsIgnoreCase("") ? "0" : editDistanceToBranch.getText().toString());
-                long transportCost = Long.valueOf(editTransportCost.getText().toString()
-                        .equalsIgnoreCase("") ? "0" : editTransportCost.getText().toString());
-                long distanceToMainRoad = Long.valueOf(editDistanceToMainRoad.getText().toString()
-                        .equalsIgnoreCase("") ? "0" : editDistanceToMainRoad.getText().toString());
-                long noOfHouseholds = Long.valueOf(editNumberOfHouseHolds.getText().toString()
-                        .equalsIgnoreCase("") ? "0" : editNumberOfHouseHolds.getText().toString());
+                long branch = Long.valueOf(distanceToBranch.equalsIgnoreCase("") ? "0" :
+                        distanceToBranch);
+                long transportCostToBranch = 0L;
+                try {
+                    transportCostToBranch = Long.valueOf(transportCost.equalsIgnoreCase("") ? "0" : transportCost);
+                }catch(Exception e){}
+                long mainRoad = 0L;
+                try {
+                    mainRoad = Long.valueOf(distanceToMainRoad
+                            .equalsIgnoreCase("") ? "0" : distanceToMainRoad);
+                }catch (Exception e){}
+                long noOfHouseholds = 0L;
+                try{
+                    noOfHouseholds = Long.valueOf(editNumberOfHouseHolds.getText().toString()
+                            .equalsIgnoreCase("") ? "0" : editNumberOfHouseHolds.getText().toString());
+                }catch (Exception e){}
                 long mohPoplationDensity = 0L;
+
                 String comment = editComment.getText().toString();
-                long estimatedPopulationDensity = Long.valueOf(editPopulationDensity.getText().toString()
-                        .equalsIgnoreCase("") ? "0" : editPopulationDensity.getText().toString());
-                long distanceToNearestHealthFacility = Long.valueOf(editDistanceToHealthFacility.getText().toString()
-                        .equalsIgnoreCase("") ? "0" : editDistanceToHealthFacility.getText().toString());
-                long actLevels = Long.valueOf(editActLevels.getText().toString()
-                        .equalsIgnoreCase("") ? "0" : editActLevels.getText().toString());
-                long actPrice = Long.valueOf(editActCost.getText().toString()
-                        .equalsIgnoreCase("") ? "0" : editActCost.getText().toString());
+                long estimatedPopulationDensity = 0L;
+                try {
+                    estimatedPopulationDensity = Long.valueOf(editPopulationDensity.getText().toString()
+                            .equalsIgnoreCase("") ? "0" : editPopulationDensity.getText().toString());
+                }catch (Exception e){}
+                long distanceToNearestHealthFacility = 0L;
+                try {
+                    distanceToNearestHealthFacility = Long.valueOf(distanceToHealthFacility
+                            .equalsIgnoreCase("") ? "0" : distanceToHealthFacility);
+                }catch (Exception e){}
+
+                long actLevel = 0L;
+                try {
+                    actLevel = Long.valueOf(actLevels.equalsIgnoreCase("") ? "0" : actLevels);
+                }catch (Exception e){}
+
+                long actPrice = 0L;
+                try {
+                    actPrice = Long.valueOf(actCost.equalsIgnoreCase("") ? "0" : actCost);
+                }catch (Exception e){}
+
+
                 Integer mtnSignal = Integer.valueOf(getSelectedRadioItemValue(mtn));
                 Integer orangeSignal = Integer.valueOf(getSelectedRadioItemValue(orange));
                 Integer airtelSignal = Integer.valueOf(getSelectedRadioItemValue(airtel));
