@@ -18,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+// import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -226,8 +227,6 @@ public class VillagesFragment extends Fragment  {
         void onFragmentInteraction(Uri uri);
     }
 
-
-    // ===================================== Gmail View Methods ====================================
     private void enableActionMode(int position) {
         if (actionMode == null) {
             Toast.makeText(getContext(), "Values of Enabled", Toast.LENGTH_SHORT).show();
