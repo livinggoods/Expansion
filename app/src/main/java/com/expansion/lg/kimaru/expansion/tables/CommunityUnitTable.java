@@ -669,6 +669,96 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
         return cursor;
     }
+
+    //JSON
+    public JSONObject getJson() {
+
+        SQLiteDatabase db=getReadableDatabase();
+
+        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+
+        JSONObject results = new JSONObject();
+
+        JSONArray resultSet = new JSONArray();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(CU_JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
+    }
+
+    public void CuFromJson (JSONObject jsonObject){
+        CommunityUnit communityUnit = new CommunityUnit();
+        try {
+
+            communityUnit.setId(jsonObject.getString(ID));
+            communityUnit.setCommunityUnitName(jsonObject.getString(NAME));
+            communityUnit.setMappingId(jsonObject.getString(MAPPINGID));
+            communityUnit.setLat(jsonObject.getDouble(LAT));
+            communityUnit.setLon(jsonObject.getDouble(LON));
+            communityUnit.setCountry(jsonObject.getString(COUNTRY));
+            communityUnit.setSubCountyId(jsonObject.getString(SUBCOUNTYID));
+            communityUnit.setLinkFacilityId(jsonObject.getString(LINKFACILITYID));
+            communityUnit.setAreaChiefName(jsonObject.getString(AREACHIEFNAME));
+            communityUnit.setWard(jsonObject.getString(WARD));
+            communityUnit.setEconomicStatus(jsonObject.getString(ECONOMICSTATUS));
+            communityUnit.setPrivateFacilityForAct(jsonObject.getString(PRIVATEFACILITYFORACT));
+            communityUnit.setPrivateFacilityForMrdt(jsonObject.getString(PRIVATEFACILITYFORMRDT));
+            communityUnit.setNameOfNgoDoingIccm(jsonObject.getString(NAMEOFNGODOINGICCM));
+            communityUnit.setNameOfNgoDoingMhealth(jsonObject.getString(NAMEOFNGODOINGMHEALTH));
+            communityUnit.setDateAdded(jsonObject.getLong(DATEADDED));
+            communityUnit.setAddedBy(jsonObject.getInt(ADDEDBY));
+            communityUnit.setNumberOfChvs(jsonObject.getLong(NUMBEROFCHVS));
+            communityUnit.setHouseholdPerChv(jsonObject.getLong(HOUSEHOLDPERCHV));
+            communityUnit.setNumberOfVillages(jsonObject.getLong(NUMBEROFVILLAGES));
+            communityUnit.setDistanceToBranch(jsonObject.getLong(DISTANCETOBRANCH));
+            communityUnit.setTransportCost(jsonObject.getLong(TRANSPORTCOST));
+            communityUnit.setDistanceTOMainRoad(jsonObject.getLong(DISTANCETOMAINROAD));
+            communityUnit.setNoOfHouseholds(jsonObject.getLong(NOOFHOUSEHOLDS));
+            communityUnit.setMohPoplationDensity(jsonObject.getLong(MOHPOPLATIONDENSITY));
+            communityUnit.setEstimatedPopulationDensity(jsonObject.getLong(ESTIMATEDPOPULATIONDENSITY));
+            communityUnit.setDistanceTONearestHealthFacility(jsonObject.getLong(DISTANCETONEARESTHEALTHFACILITY));
+            communityUnit.setActLevels(jsonObject.getLong(ACTLEVELS));
+            communityUnit.setActPrice(jsonObject.getLong(ACTPRICE));
+            communityUnit.setMrdtLevels(jsonObject.getLong(MRDTLEVELS));
+            communityUnit.setMrdtPrice(jsonObject.getLong(MRDTPRICE));
+            communityUnit.setNoOfDistibutors(jsonObject.getLong(NOOFDISTIBUTORS));
+            communityUnit.setChvsTrained(jsonObject.getBoolean(CHVSTRAINED));
+            communityUnit.setPresenceOfEstates(jsonObject.getBoolean(PRESENCEOFESTATES));
+            communityUnit.setPresenceOfFactories(jsonObject.getLong(PRESENCEOFFACTORIES));
+            communityUnit.setPresenceOfHostels(jsonObject.getBoolean(PRESENCEOFHOSTELS));
+            communityUnit.setTraderMarket(jsonObject.getBoolean(TRADERMARKET));
+            communityUnit.setLargeSupermarket(jsonObject.getBoolean(LARGESUPERMARKET));
+            communityUnit.setNgosGivingFreeDrugs(jsonObject.getBoolean(NGOSGIVINGFREEDRUGS));
+            communityUnit.setNgoDoingIccm(jsonObject.getBoolean(NGODOINGICCM));
+            communityUnit.setNgoDoingMhealth(jsonObject.getBoolean(NGODOINGMHEALTH));
+
+            this.addCommunityUnitData(communityUnit);
+        }catch (Exception e){}
+    }
+
     private void upgradeVersion2(SQLiteDatabase db) {}
 }
 
