@@ -267,7 +267,7 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
             }
             resultSet.put(rowObject);
             try {
-                results.put("users", resultSet);
+                results.put(JSON_ROOT, resultSet);
             } catch (JSONException e) {
 
             }
@@ -275,6 +275,24 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return results;
+    }
+    public void fromJson(JSONObject jsonObject){
+        LinkFacility linkFacility = new LinkFacility();
+        try {
+
+            linkFacility.setId(jsonObject.getString(ID));
+            linkFacility.setFacilityName(jsonObject.getString(NAME));
+            linkFacility.setLat(jsonObject.getDouble(LAT));
+            linkFacility.setLon(jsonObject.getDouble(LON));
+            linkFacility.setSubCountyId(jsonObject.getString(SUBCOUNTY));
+            linkFacility.setDateAdded(jsonObject.getLong(ADDED));
+            linkFacility.setAddedBy(jsonObject.getInt(ADDEDBY));
+            linkFacility.setMrdtLevels(jsonObject.getLong(MRDTLEVELS));
+            linkFacility.setActLevels(jsonObject.getLong(ACTLEVELS));
+            linkFacility.setCountry(jsonObject.getString(COUNTRY));
+
+            this.addData(linkFacility);
+        }catch (Exception e){}
     }
     private void upgradeVersion2(SQLiteDatabase db) {}
 
