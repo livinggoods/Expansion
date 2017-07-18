@@ -16,6 +16,7 @@ import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.mzigos.Village;
+import com.expansion.lg.kimaru.expansion.sync.HttpServer;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -40,6 +41,9 @@ public class SessionManagement {
     public static final String COMMUNITY_UNIT = "community_unit";
     public static final String MOBILIZATION = "mobilization";
     public static final String LINK_FACILITY = "link_facility";
+
+
+    public static final String CLOUD_URL = "cloud_url";
 
 
     // Recruitment Details
