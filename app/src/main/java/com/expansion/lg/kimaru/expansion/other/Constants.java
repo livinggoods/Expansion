@@ -1,5 +1,7 @@
 package com.expansion.lg.kimaru.expansion.other;
 
+import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+
 import java.net.InetAddress;
 
 /**
@@ -13,6 +15,4 @@ public class Constants {
     public static final int PEER_SERVER_PORT = 8090;
     public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "expansion";
-
-
 }
