@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
+import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
@@ -549,6 +550,72 @@ public class HttpClient {
         return stream;
     }
 
+
+
+//////////////////////////////////////////////////////////////////////////////
+    public void syncCommunityUnits () {
+        String syncResults;
+        CommunityUnitTable communityUnitTable = new CommunityUnitTable(context);
+        try {
+            syncResults = this.syncClient(communityUnitTable.getJson(),
+                    HttpServer.CU_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+        /*
+        if (syncResults != null){
+            try {
+
+                JSONObject reader = new JSONObject(syncResults);
+                JSONArray recs = reader.getJSONArray("status");
+                //RecruitmentTable recruitmentTable = new RecruitmentTable(context);
+
+                for (int x = 0; x < recs.length(); x++) {
+                    CommunityUnit communityUnit = communityUnitTable.getCommunityUnitById(
+                            recs.getJSONObject(x).getString("id"));
+                    communityUnit.synced(recs.getJSONObject(x).getString("status") == "ok" ? 1 : 0);
+                    // update recruitment
+                    communityUnitTable.addCommunityUnitData(communityUnit);
+                }
+            }catch (Exception e){}
+        }
+        */
+    }
+
+    public void syncReferrals () {
+        String syncResults;
+        ChewReferralTable chewReferralTable = new ChewReferralTable(context);
+        try {
+            syncResults = this.syncClient(chewReferralTable.getChewReferralJson(),
+                    HttpServer.CHEW_REFERRAL_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+    }
+    public void syncLinkFacilities () {
+        String syncResults;
+        LinkFacilityTable linkFacilityTable = new LinkFacilityTable(context);
+        try {
+            syncResults = this.syncClient(linkFacilityTable.getJson(),
+                    HttpServer.LINKFACILITY_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+    }
+
+    public void syncSubCounties () {
+        String syncResults;
+        SubCountyTable subCountyTable = new SubCountyTable(context);
+        try {
+            syncResults = this.syncClient(subCountyTable.getJson(),
+                    HttpServer.SUBCOUNTY_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+    }
+
+
+//////////////////////////////////////////////////////////////////////////////
 
     public void syncRecruitments () {
         String syncResults;
