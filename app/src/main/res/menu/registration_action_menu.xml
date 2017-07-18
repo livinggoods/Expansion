@@ -21,6 +21,13 @@
         app:showAsAction="always|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView"
         android:title="Search"/>
+    <item
+        android:id="@+id/action_new"
+        android:orderInCategory="100"
+        android:title="@string/new_registration"
+        android:icon="@drawable/ic_passed_24dp"
+        android:tint="@color/colorAccent"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_passed"
