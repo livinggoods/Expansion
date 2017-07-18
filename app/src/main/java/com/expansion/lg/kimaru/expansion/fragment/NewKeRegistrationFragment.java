@@ -180,7 +180,6 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         userId = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
         Recruitment recruitment = session.getSavedRecruitment();
         recruitmentId = recruitment.getId();
-        cu = session.getSavedCommunityUnit();
         if (cu == null){
             MainActivity.backFragment = new RegistrationsFragment();
         }else{
@@ -207,7 +206,6 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         selectLinkFacility = (Spinner) v.findViewById(R.id.selectLinkFacility);
         editBranchTransportCost = (EditText) v.findViewById(R.id.editBranchTransportCost);
         editRecruitmentTransportCost = (EditText) v.findViewById(R.id.editRecruitmentTransportCost);
-        editLinkFacility = (EditText) v.findViewById(R.id.editLinkFacility);
         editNoOfHouseholds = (EditText) v.findViewById(R.id.editNoOfHouseholds);
         editOtherTrainings = (EditText) v.findViewById(R.id.editOtherTrainings);
         mDateMoved = (EditText) v.findViewById(R.id.editRelocated);
@@ -216,6 +214,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         editIsGokTrained = (RadioGroup) v.findViewById(R.id.editIsGokTrained);
         mCommunity = (RadioGroup) v.findViewById(R.id.editCommunityMembership);
         educationLevel = (Spinner) v.findViewById(R.id.selectEdducation);
+
         mAge.setVisibility(View.GONE);
         mDob.setVisibility(View.GONE);
         chooseAgeFormat = (RadioGroup) v.findViewById(R.id.chooseAgeFormat);
@@ -235,6 +234,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
             }
         });
 
+
         addChewReferrals();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
@@ -250,6 +250,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 android.R.layout.simple_spinner_item, communityUnits);
         cuAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         editCuName.setAdapter(cuAdapter);
+        editCuName.setOnItemSelectedListener(onSelectedCuListener);
         // set the selected CU
         // In case there is no order followed
         if (cu != null){
@@ -286,7 +287,8 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
     AdapterView.OnItemSelectedListener onSelectedLinkFacilityListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (position > chewReferralList.size() -1){
+            String selectedItem = linkFacilities.get(position);
+            if (selectedItem.equalsIgnoreCase("Add New")){
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("New Link Facility");
                 // add Facility Name, the rest can be edited later
@@ -301,6 +303,11 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         linkName = facilityName.getText().toString();
+                        if (linkName.equalsIgnoreCase("")){
+                            Toast.makeText(getContext(), "Facility Name is required", Toast.LENGTH_LONG).show();
+                            facilityName.requestFocus();
+                            return;
+                        }
                         // save the Link Facility
                         String uuid = UUID.randomUUID().toString();
                         LinkFacility lknFacility = new LinkFacility();
@@ -506,6 +513,11 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                         referralTitle = titleBox.getText().toString();
                         referralName = refName.getText().toString();
                         referralPhone = refPhone.getText().toString();
+                        if (referralName.equalsIgnoreCase("")){
+                            Toast.makeText(getContext(), "Name is required", Toast.LENGTH_LONG).show();
+                            refName.requestFocus();
+                            return;
+                        }
                         // we save the referral, refresh the list and rebind the Spinner, and set selected
                         String uuid = UUID.randomUUID().toString();
                         ChewReferral chew = new ChewReferral(uuid, referralName, referralPhone, "CHEW",
@@ -617,8 +629,14 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 String applicantChewName = "";
                 String applicantChewNumber = "";
                 String applicantWard = editWard.getText().toString();
-                String applicantCuName = communityUnitList.get(editCuName.getSelectedItemPosition()).getId(); //editCuName.getText().toString();
-                String applicantLinkFacility = editLinkFacility.getText().toString();
+                String applicantCuName="";
+                if (communityUnitList.size() !=0){
+                    applicantCuName = communityUnitList.get(editCuName.getSelectedItemPosition()).getId();
+                }
+                String applicantLinkFacility ="";
+                if (linkFacilityList.size() !=0){
+                    applicantLinkFacility = linkFacilityList.get(selectLinkFacility.getSelectedItemPosition()).getId();
+                }
                 String noOfHouseholds = editNoOfHouseholds.getText().toString();
                 String applicantOtherTrainings = editOtherTrainings.getText().toString();
                 //recruitmentTransportCost,transportCostToBranch
@@ -797,7 +815,6 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                     mDob.setText("");
                     editWard.setText("");
                     //editCuName.setSelection(0);
-                    editLinkFacility.setText("");
                     editNoOfHouseholds.setText("");
                     editOtherTrainings.setText("");
                     editIsChv.clearCheck();
@@ -879,6 +896,9 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         for (ChewReferral chewReferral: chewReferralList){
             chewReferrals.add(chewReferral.getName());
         }
+        if (chewReferrals.size() == 0){
+            chewReferrals.add("  ");
+        }
         chewReferrals.add("Add New");
     }
 
@@ -889,6 +909,10 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         for (CommunityUnit cUnit: communityUnitList){
             communityUnits.add(cUnit.getCommunityUnitName());
         }
+        if (communityUnits.size()==0){
+            communityUnits.add("  ");
+        }
+        communityUnits.add("Add New");
     }
 
     public void addLinkFacilities() {
@@ -898,6 +922,9 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 .getSavedRecruitment().getSubcounty());
         for (LinkFacility lFacility: linkFacilityList){
             linkFacilities.add(lFacility.getFacilityName());
+        }
+        if (linkFacilities.size()==0){
+            linkFacilities.add("  ");
         }
         linkFacilities.add("Add New");
     }
