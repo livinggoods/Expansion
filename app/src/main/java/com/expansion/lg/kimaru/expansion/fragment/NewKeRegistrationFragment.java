@@ -354,11 +354,118 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         }
     };
 
+    AdapterView.OnItemSelectedListener onSelectedCuListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            String selectedItem = communityUnits.get(position);
+            if (selectedItem.equalsIgnoreCase("Add New")){
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("New Community Unit");
+                LinearLayout layout = new LinearLayout(getContext());
+                layout.setOrientation(LinearLayout.VERTICAL);
+                final EditText cuName = new EditText(getContext());
+                cuName.setHint("Cu Name");
+                cuName.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                layout.addView(cuName);
+                builder.setView(layout);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String communityUnitName = cuName.getText().toString();
+                        // save the CU
+                        String uuid = UUID.randomUUID().toString();
+                        CommunityUnit communityUnit = new CommunityUnit();
+                        communityUnit.setId(uuid);
+                        communityUnit.setCommunityUnitName(communityUnitName);
+                        communityUnit.setCountry(session.getSavedRecruitment().getCountry());
+                        communityUnit.setSubCountyId(session.getSavedRecruitment().getSubcounty());
+                        communityUnit.setDateAdded(new Date().getTime());
+                        communityUnit.setAddedBy(Integer.valueOf(session.getUserDetails().get(SessionManagement.KEY_USERID)));
+
+
+
+                        communityUnit.setMappingId("");
+                        communityUnit.setLat(0D);
+                        communityUnit.setLon(0D);
+                        communityUnit.setLinkFacilityId("");
+                        communityUnit.setAreaChiefName("");
+                        communityUnit.setAreaChiefPhone("");
+                        communityUnit.setWard("");
+                        communityUnit.setEconomicStatus("");
+                        communityUnit.setPrivateFacilityForAct("");
+                        communityUnit.setPrivateFacilityForMrdt("");
+                        communityUnit.setNameOfNgoDoingIccm("");
+                        communityUnit.setNameOfNgoDoingMhealth("");
+                        communityUnit.setNumberOfChvs(0);
+                        communityUnit.setHouseholdPerChv(0);
+                        communityUnit.setNumberOfVillages(0);
+                        communityUnit.setDistanceToBranch(0);
+                        communityUnit.setTransportCost(0);
+                        communityUnit.setDistanceTOMainRoad(0);
+                        communityUnit.setNoOfHouseholds(0);
+                        communityUnit.setMohPoplationDensity(0);
+                        communityUnit.setEstimatedPopulationDensity(0);
+                        communityUnit.setDistanceTONearestHealthFacility(0);
+                        communityUnit.setActLevels(0);
+                        communityUnit.setActPrice(0);
+                        communityUnit.setMrdtLevels(0);
+                        communityUnit.setMrdtPrice(0);
+                        communityUnit.setNoOfDistibutors(0);
+                        communityUnit.setChvsTrained(false);
+                        communityUnit.setPresenceOfEstates(false);
+                        communityUnit.setPresenceOfFactories(0L);
+                        communityUnit.setPresenceOfHostels(false);
+                        communityUnit.setTraderMarket(false);
+                        communityUnit.setLargeSupermarket(false);
+                        communityUnit.setNgosGivingFreeDrugs(false);
+                        communityUnit.setNgoDoingIccm(false);
+                        communityUnit.setNgoDoingMhealth(false);
+
+                        CommunityUnitTable communityUnitTable = new CommunityUnitTable(getContext());
+                        communityUnitTable.addCommunityUnitData(communityUnit);
+
+                        // clear data
+                        communityUnitList.clear();
+                        communityUnits.clear();
+                        addCommunityUnits();
+                        ArrayAdapter<String> cuAdapter = new ArrayAdapter<String>(getContext(),
+                                android.R.layout.simple_spinner_item, communityUnits);
+                        cuAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        editCuName.setAdapter(cuAdapter);
+                        editCuName.setOnItemSelectedListener(onSelectedCuListener);
+                        // set the selected CU
+                        int x = 0;
+                        for (CommunityUnit cu : communityUnitList) {
+                            if (cu.getId().equalsIgnoreCase(uuid)){
+                                editCuName.setSelection(x, true);
+                                break;
+                            }
+                            x++;
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
 
     AdapterView.OnItemSelectedListener onSelectedChewListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (position > chewReferralList.size() -1){
+            String selectedItem = chewReferrals.get(position);
+            if (selectedItem.equalsIgnoreCase("Add New")){
                 // Show Dialog to add the Referral
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Add new Referral");
