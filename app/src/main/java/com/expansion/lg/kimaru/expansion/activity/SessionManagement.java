@@ -378,6 +378,16 @@ public class SessionManagement {
         }
     }
 
+    public void saveCloudUrl(String cloudUrl){
+        editor.putString(CLOUD_URL, cloudUrl);
+        editor.commit();
+    }
+
+    public String getCloudUrl (){
+        String cloudUrl = pref.getString(CLOUD_URL, HttpServer.SERVER_URL);
+        return cloudUrl;
+    }
+
 
 
 
