@@ -206,9 +206,12 @@ public class SessionManagement {
         CommunityUnit communityUnit;
         Gson gson = new Gson();
         String cuDetails = pref.getString(COMMUNITY_UNIT, "");
-        communityUnit = gson.fromJson(cuDetails, CommunityUnit.class);
-
-        return communityUnit;
+        if (cuDetails.equalsIgnoreCase("")){
+            return null;
+        }else{
+            communityUnit = gson.fromJson(cuDetails, CommunityUnit.class);
+            return communityUnit;
+        }
     }
 
     public void saveMapping(Mapping mapping){
