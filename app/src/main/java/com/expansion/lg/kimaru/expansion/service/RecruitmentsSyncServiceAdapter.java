@@ -51,7 +51,11 @@ public class RecruitmentsSyncServiceAdapter extends AbstractThreadedSyncAdapter 
 
         client.syncInterviews();
 
-        // notifyDataDownloaded();
+        client.syncCommunityUnits();
+        client.syncReferrals();
+        client.syncLinkFacilities();
+        client.syncSubCounties();
+
     }
 
     /**
