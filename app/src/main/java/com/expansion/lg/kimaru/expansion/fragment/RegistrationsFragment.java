@@ -560,7 +560,6 @@ public class RegistrationsFragment extends Fragment  {
                 // export scoring tool
                 Toast.makeText(getContext(), "Exporting Scoring tool", Toast.LENGTH_SHORT).show();
                 checkPermissions();
-
                 break;
             // action with ID action_settings was selected
             case R.id.action_passed:
@@ -576,6 +575,16 @@ public class RegistrationsFragment extends Fragment  {
             case R.id.action_all:
                 // refresh the registrations
                 getFilteredRegistrations("all");
+                break;
+            case R.id.action_new:
+                if (user.get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("KE")){
+                    fragment = new NewKeRegistrationFragment();
+                }else{
+                    fragment = new NewRegistrationFragment();
+                }fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                fragmentTransaction.commitAllowingStateLoss();
                 break;
 
             default:
