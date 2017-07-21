@@ -142,6 +142,7 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mCounty.setAdapter(adapter);
         mCounty.setOnItemSelectedListener(onSelectedCountyListener);
+        mSubCounty.setOnItemSelectedListener(onSelectedSubCountyListener);
 
         // Subcounties
 
@@ -286,7 +287,6 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
             case R.id.buttonSave:
 
                 // set date as integers
-                Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
                 Long currentDate =  new Date().getTime();
 
                 // Generate the uuid
@@ -295,6 +295,10 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
                     id = editingRecruitment.getId();
                 }else {
                     id = UUID.randomUUID().toString();
+                }
+                if (mSubCounty.getSelectedItemPosition() > subCountyList.size() -1){
+                    Toast.makeText(getContext(), "Please select a valid Sub County", Toast.LENGTH_LONG).show();
+                    return;
                 }
                 String recruitmentName = mName.getText().toString();
                 String recruitmentDistrict = "";
