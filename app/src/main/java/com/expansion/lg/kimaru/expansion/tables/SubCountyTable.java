@@ -459,15 +459,33 @@ public class SubCountyTable extends SQLiteOpenHelper {
         SubCounty subCounty = new SubCounty();
         try {
             subCounty.setId(jsonObject.getString(ID));
-            subCounty.setSubCountyName(jsonObject.getString(SUBCOUNTYNAME));
+            String name= jsonObject.getString(SUBCOUNTYNAME);
+            if (!jsonObject.getString(SUBCOUNTYNAME).equalsIgnoreCase("")){
+                name = name.substring(0, 1).toUpperCase() + name.substring(1);
+            }
+            subCounty.setSubCountyName(name);
             subCounty.setCountyID(jsonObject.getString(COUNTYID));
-            subCounty.setCountry(jsonObject.getString(COUNTRY));
+            String country= jsonObject.getString(COUNTRY);
+            if (!jsonObject.getString(COUNTRY).equalsIgnoreCase("")){
+                country = country.substring(0, 1).toUpperCase() + country.substring(1);
+            }
+            subCounty.setCountry(country);
+
             subCounty.setMappingId(jsonObject.getString(MAPPINGID));
             subCounty.setLat(jsonObject.getString(LAT));
             subCounty.setLon(jsonObject.getString(LON));
-            subCounty.setContactPerson(jsonObject.getString(CONTACTPERSON));
-            subCounty.setContactPersonPhone(jsonObject.getString(CONTACTPERSONPHONE));
-            subCounty.setMainTown(jsonObject.getString(MAINTOWN));
+
+            String contactPerson= jsonObject.getString(CONTACTPERSON);
+            if (!jsonObject.getString(CONTACTPERSON).equalsIgnoreCase("")){
+                contactPerson = contactPerson.substring(0, 1).toUpperCase() + contactPerson.substring(1);
+            }
+            subCounty.setContactPerson(contactPerson);
+
+            String mainTown= jsonObject.getString(MAINTOWN);
+            if (!jsonObject.getString(MAINTOWN).equalsIgnoreCase("")){
+                mainTown = mainTown.substring(0, 1).toUpperCase() + mainTown.substring(1);
+            }
+            subCounty.setMainTown(mainTown);
             subCounty.setCountySupport(jsonObject.getString(COUNTYSUPPORT));
             subCounty.setSubcountySupport(jsonObject.getString(SUBCOUNTYSUPPORT));
             subCounty.setChvActivityLevel(jsonObject.getString(CHVACTIVITYLEVEL));
