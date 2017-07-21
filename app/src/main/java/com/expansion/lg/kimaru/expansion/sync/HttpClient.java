@@ -111,7 +111,7 @@ public class HttpClient{
                 });
             }
         };
-        combinedTimer.schedule(combinedTask, 0, 60*3000);
+        combinedTimer.schedule(combinedTask, 0, 60*1000);
 
         Timer postRecordsTimer = new Timer();
         TimerTask postRecordsTask = new TimerTask() {
@@ -153,6 +153,7 @@ public class HttpClient{
                     JSONArray recs = reader.getJSONArray(CommunityUnitTable.CU_JSON_ROOT);
 
                     for (int x = 0; x < recs.length(); x++){
+                        Log.d("Tremap Sync", "Community Unit gotten, try saving");
                         new CommunityUnitTable(context).CuFromJson(recs.getJSONObject(x));
                     }
                 }catch(JSONException e){
