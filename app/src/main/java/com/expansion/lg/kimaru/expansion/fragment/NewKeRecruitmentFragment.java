@@ -157,15 +157,38 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
         return v;
     }
 
-    //AdapterView.OnItemSelectedListener onSelectedChewListener = new AdapterView.OnItemSelectedListener() {
     AdapterView.OnItemSelectedListener onSelectedCountyListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
             // get subcounties
-            if (position > subCountyList.size() -1){
+            subCountyList.clear();
+            subCounties.clear();
+            SubCountyTable scTable = new SubCountyTable(getContext());
+            subCountyList = scTable.getSubCountiesByCounty(keCountyList.get(position).getId());
+            for (SubCounty s : subCountyList){
+                subCounties.add(s.getSubCountyName());
+            }
+            subCounties.add("Add New");
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                    android.R.layout.simple_spinner_item, subCounties);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mSubCounty.setAdapter(adapter);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
+    AdapterView.OnItemSelectedListener onSelectedSubCountyListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
+            if (subCounties.get(position).equalsIgnoreCase("Add New")){
                 // Show Dialog to add the Referral
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Add new Sub County");
+                builder.setTitle("Add New Sub County");
 
                 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
                 // Context context = mapView.getContext();
@@ -203,7 +226,7 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
                         subCounty.setContactPersonPhone(subCountyContactPerson);
                         subCounty.setSubCountyName(subCountyName);
                         subCounty.setContactPerson(subCountyContactPerson);
-                        subCounty.setCountyID(String.valueOf(keCountyList.get(position).getId()));
+                        subCounty.setCountyID(String.valueOf(keCountyList.get(mCounty.getSelectedItemPosition()).getId()));
 
                         SubCountyTable scTbl = new SubCountyTable(getContext());
                         scTbl.addData(subCounty);
@@ -213,7 +236,7 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
                         subCountyList.clear();
                         subCounties.clear();
 
-                        subCountyList = scTbl.getSubCountiesByCounty(keCountyList.get(position).getId());
+                        subCountyList = scTbl.getSubCountiesByCounty(keCountyList.get(mCounty.getSelectedItemPosition()).getId());
                         for (SubCounty s : subCountyList){
                             subCounties.add(s.getSubCountyName());
                         }
@@ -242,21 +265,6 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
                     }
                 });
                 builder.show();
-            }else{
-                //populate subcounties
-                subCountyList.clear();
-                subCounties.clear();
-                SubCountyTable scTable = new SubCountyTable(getContext());
-                subCountyList = scTable.getSubCountiesByCounty(keCountyList.get(position).getId());
-                for (SubCounty s : subCountyList){
-                    subCounties.add(s.getSubCountyName());
-                }
-                subCounties.add("Add New");
-
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
-                        android.R.layout.simple_spinner_item, subCounties);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                mSubCounty.setAdapter(adapter);
             }
         }
 
