@@ -205,7 +205,11 @@ public class WardTable extends SQLiteOpenHelper {
         try {
 
             ward.setId(jsonObject.getString(ID));
-            ward.setName(jsonObject.getString(NAME));
+            String name= jsonObject.getString(NAME);
+            if (!jsonObject.getString(NAME).equalsIgnoreCase("")){
+                name = name.substring(0, 1).toUpperCase() + name.substring(1);
+            }
+            ward.setName(name);
             ward.setCounty(jsonObject.getInt(COUNTY));
             ward.setSubCounty(jsonObject.getString(SUBCOUNTY));
             ward.setArchived(jsonObject.getInt(ARCHIVED));
