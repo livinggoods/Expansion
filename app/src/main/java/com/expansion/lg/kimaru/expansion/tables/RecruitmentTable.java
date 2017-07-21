@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -482,7 +483,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
                         String uuid = UUID.randomUUID().toString();
                         subCounty = new SubCounty(uuid, cursor.getString(cursor.getColumnIndex(SUB_COUNTY)),
                                 String.valueOf(keCounty.getId()), country, "", "", "", "", "", "",
-                                "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", false,0,0);
+                                "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", false,new Date().getTime(),0);
                         subCountyTable.addData(subCounty);
                     }
                     try {
