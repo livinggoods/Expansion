@@ -101,12 +101,25 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
         cv.put(ACTLEVELS, linkFacility.getActLevels());
         cv.put(COUNTRY, linkFacility.getCountry());
 
-
-        long id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+        long id;
+        if (isExist(linkFacility)){
+            id = db.update(TABLE_NAME, cv, ID+"='"+linkFacility.getId()+"'", null);
+            Log.d("Tremap DB Op", "Link Facility updated");
+        }else{
+            id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+            Log.d("Tremap DB Op", "Link Facility Created");
+        }
 
         db.close();
         return id;
 
+    }
+    public boolean isExist(LinkFacility linkFacility) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cur = db.rawQuery("SELECT id FROM " + TABLE_NAME + " WHERE "+ID+" = '" + linkFacility.getId() + "'", null);
+        boolean exist = (cur.getCount() > 0);
+        cur.close();
+        return exist;
     }
 
     public List<LinkFacility> getLinkFacilityData() {
@@ -282,17 +295,28 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
 
             linkFacility.setId(jsonObject.getString(ID));
             linkFacility.setFacilityName(jsonObject.getString(NAME));
-            linkFacility.setLat(jsonObject.getDouble(LAT));
-            linkFacility.setLon(jsonObject.getDouble(LON));
+            if (jsonObject.getString(LAT).equalsIgnoreCase("")){
+                linkFacility.setLat(0D);
+            }else{
+                linkFacility.setLat(jsonObject.getDouble(LAT));
+            }
+
+            if (jsonObject.getString(LON).equalsIgnoreCase("")){
+                linkFacility.setLat(0D);
+            }else{
+                linkFacility.setLon(jsonObject.getDouble(LON));
+            }
+
             linkFacility.setSubCountyId(jsonObject.getString(SUBCOUNTY));
             linkFacility.setDateAdded(jsonObject.getLong(ADDED));
             linkFacility.setAddedBy(jsonObject.getInt(ADDEDBY));
             linkFacility.setMrdtLevels(jsonObject.getLong(MRDTLEVELS));
             linkFacility.setActLevels(jsonObject.getLong(ACTLEVELS));
             linkFacility.setCountry(jsonObject.getString(COUNTRY));
-
-            this.addData(linkFacility);
-        }catch (Exception e){}
+            addData(linkFacility);
+        }catch (Exception e){
+            Log.d("Tremap ERR", "Link Facility from JSON "+e.getMessage());
+        }
     }
     private void upgradeVersion2(SQLiteDatabase db) {}
 
