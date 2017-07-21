@@ -3,6 +3,7 @@ package com.expansion.lg.kimaru.expansion.other;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -26,10 +27,17 @@ public class WifiState {
     }
 
     public boolean isWifiConnected(){
-        return wifiCheck.getType() == ConnectivityManager.TYPE_WIFI;
+        boolean wifi;
+        try {
+            return wifiCheck.getType() == ConnectivityManager.TYPE_WIFI;
+        }catch (Exception e){
+            return false;
+        }
+
     }
 
     public boolean canReachPeerServer(){
+        Log.d("Tremap", "Checking Peer connection");
         return isWifiConnected();
     }
 
