@@ -37,6 +37,7 @@ import com.expansion.lg.kimaru.expansion.mzigos.Education;
 import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.mzigos.Ward;
 import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.other.SpinnersCursorAdapter;
 import com.expansion.lg.kimaru.expansion.tables.ChewReferralTable;
@@ -44,6 +45,8 @@ import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.EducationTable;
 import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
+import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
+import com.expansion.lg.kimaru.expansion.tables.WardTable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -80,7 +83,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
     EditText mPhone;
     RadioGroup mGender;
     RadioButton gender;
-    EditText editWard;
+    Spinner editWard;
     EditText mVillage;
     EditText mMark;
     EditText mLangs;
@@ -106,6 +109,8 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
     private String referralName = "";
     private String referralPhone = "";
 
+    private String wardName = "";
+
 
     private int mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 100;
@@ -126,6 +131,9 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
 
     List<LinkFacility> linkFacilityList = new ArrayList<LinkFacility>();
     List<String> linkFacilities = new ArrayList<String>();
+
+    List<Ward> wardsList = new ArrayList<Ward>();
+    List<String> wards = new ArrayList<String>();
 
     List<Education> educationList = new ArrayList<Education>();
 
@@ -201,7 +209,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         mReadEnglish = (RadioGroup) v.findViewById(R.id.editReadEnglish);
         selectChew = (Spinner) v.findViewById(R.id.selectChewReferral);
         mComment = (EditText) v.findViewById(R.id.editComment);
-        editWard = (EditText) v.findViewById(R.id.editWard);
+        editWard = (Spinner) v.findViewById(R.id.editWard);
         editCuName = (Spinner) v.findViewById(R.id.editCuName);
         selectLinkFacility = (Spinner) v.findViewById(R.id.selectLinkFacility);
         editBranchTransportCost = (EditText) v.findViewById(R.id.editBranchTransportCost);
@@ -263,13 +271,20 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 x++;
             }
         }
-
+        addWards();
         addLinkFacilities();
         ArrayAdapter<String> linkFacilityAdapter = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_spinner_item, linkFacilities);
         linkFacilityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         selectLinkFacility.setAdapter(linkFacilityAdapter);
         selectLinkFacility.setOnItemSelectedListener(onSelectedLinkFacilityListener);
+
+
+        ArrayAdapter<String> wardAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, wards);
+        wardAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        editWard.setAdapter(wardAdapter);
+        // editWard.setOnItemSelectedListener(onSelectedWardListener);
 
         setUpEditingMode();
 
@@ -562,6 +577,83 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         }
     };
 
+    AdapterView.OnItemSelectedListener onSelectedWardListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            String selectedItem = wards.get(position);
+            if (selectedItem.equalsIgnoreCase("Add New")){
+                // Show Dialog to add the Referral
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Add new Ward");
+
+                // Set up the input
+                LinearLayout layout = new LinearLayout(getContext());
+                layout.setOrientation(LinearLayout.VERTICAL);
+
+                final EditText titleBox = new EditText(getContext());
+                titleBox.setHint("Ward Name");
+                titleBox.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                layout.addView(titleBox);
+
+                builder.setView(layout);
+
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        wardName = titleBox.getText().toString();
+                        if (wardName.equalsIgnoreCase("")){
+                            Toast.makeText(getContext(), "Name is required", Toast.LENGTH_LONG).show();
+                            titleBox.requestFocus();
+                            return;
+                        }
+                        // we save the ward, refresh the list and rebind the Spinner, and set selected
+                        String uuid = UUID.randomUUID().toString();
+                        Ward ward = new Ward();
+                        ward.setId(uuid);
+                        ward.setName(wardName);
+                        ward.setArchived(0);
+                        ward.setSubCounty(session.getSavedRecruitment().getSubcounty());
+                        ward.setCounty(Integer.valueOf(session.getSavedRecruitment().getCounty()));
+                        WardTable wardTable = new WardTable(getContext());
+                        wardTable.addData(ward);
+
+                        // clear chews
+                        wardsList.clear();
+                        wards.clear();
+                        addWards();
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                                android.R.layout.simple_spinner_item, wards);
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        editWard.setAdapter(adapter);
+
+                        //lets set the selected
+                        int x = 0;
+                        for (Ward e : wardsList) {
+                            if (e.getId().equalsIgnoreCase(uuid)){
+                                editWard.setSelection(x, true);
+                                break;
+                            }
+                            x++;
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -628,7 +720,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 String aDob = mDob.getText().toString();
                 String applicantChewName = "";
                 String applicantChewNumber = "";
-                String applicantWard = editWard.getText().toString();
+                String applicantWard = wardsList.get(editWard.getSelectedItemPosition()).getId();
                 String applicantCuName="";
                 if (communityUnitList.size() !=0){
                     applicantCuName = communityUnitList.get(editCuName.getSelectedItemPosition()).getId();
@@ -813,7 +905,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                     selectChew.setSelection(0);
                     mOccupation.setText("");
                     mDob.setText("");
-                    editWard.setText("");
+                    editWard.setSelection(0);
                     //editCuName.setSelection(0);
                     editNoOfHouseholds.setText("");
                     editOtherTrainings.setText("");
@@ -929,6 +1021,19 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         linkFacilities.add("Add New");
     }
 
+    public void addWards() {
+        WardTable wardTable = new WardTable(getContext());
+        wardsList = wardTable.getWardsbySubCounty(new SubCountyTable(getContext())
+                .getSubCountyById(session.getSavedRecruitment().getSubcounty()));
+        for (Ward w: wardsList){
+            wards.add(w.getName());
+        }
+        if (wards.size()==0){
+            wards.add(" ");
+        }
+        wards.add("Add New");
+    }
+
     public void setUpEditingMode(){
         if (editingRegistration != null){
             mName.setText(editingRegistration.getName());
@@ -964,9 +1069,18 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 }
                 x++;
             }
+
+            x = 0;
+            for (Ward w : wardsList){
+                if (w.getId().equalsIgnoreCase(editingRegistration.getWard())){
+                    editWard.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
+
             mOccupation.setText(editingRegistration.getOccupation());
             mDob.setText(new DisplayDate(Long.valueOf(editingRegistration.getDob())).widgetDateOnly());
-            editWard.setText(editingRegistration.getWard());
             x = 0;
             for (CommunityUnit cu : communityUnitList){
                 if (cu.getId().equalsIgnoreCase(editingRegistration.getCuName())){
