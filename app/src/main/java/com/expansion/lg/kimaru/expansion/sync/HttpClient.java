@@ -69,11 +69,6 @@ public class HttpClient{
                         if (wifiState.canReachPeerServer()) {
                             Log.d("Tremap Sync", "Wifi Connected");
 
-                            //subCounty
-                            subCountyUrl = url + "/" + HttpServer.SUBCOUNTY_URL;
-                            Log.d("Tremap Sync", "Subcounty Process");
-                            new ProcessSubCounty().execute(subCountyUrl);
-
                             //Link Facility
                             linkFacilityUrl = url + "/" + HttpServer.LINKFACILITY_URL;
                             Log.d("Tremap Sync", "Link Facility Process");
@@ -170,37 +165,6 @@ public class HttpClient{
 
         protected void onPostExecute(String stream){
             // if statement end
-        }
-    }
-
-    private class ProcessSubCounty extends AsyncTask<String, Void, String> {
-        protected String doInBackground(String... strings){
-            String stream = null;
-            String urlString = strings[0];
-            Log.d("Tremap Sync", "SubCounty  URL "+ urlString);
-            Log.d("Tremap Sync", "SubCounty  Async Task");
-            ApiClient hh = new ApiClient();
-            stream = hh.GetHTTPData(urlString);
-            if(stream !=null){
-                Log.d("Tremap Sync", "SubCounty stream is not null");
-                try{
-                    // Get the full HTTP Data as JSONObject
-                    JSONObject reader= new JSONObject(stream);
-                    JSONArray recs = reader.getJSONArray(SubCountyTable.JSON_ROOT);
-                    for (int x = 0; x < recs.length(); x++){
-                        Log.d("Tremap Sync", "SubCounty "+ recs.getJSONObject(x));
-                        new SubCountyTable(context).fromJson(recs.getJSONObject(x));
-                    }
-                }catch(JSONException e){
-                    Log.d("Tremap Sync ERR", "SubCounty "+ e.getMessage());
-                }
-            }else{
-                Log.d("Tremap Sync", "SubCounty stream is null");
-            }
-            return stream;
-        }
-
-        protected void onPostExecute(String stream){
         }
     }
 
@@ -470,13 +434,6 @@ public class HttpClient{
                 Log.d("Tremap Sync ERR", "Error in posting Link Facilities "+e.getMessage());
             }
 
-            try {
-                String status = postSubCounties();
-                Log.d("Tremap Sync LOG", "SubCounty Status "+status);
-            } catch (Exception e) {
-                Log.d("Tremap Sync ERR", "Error in posting sub counties "+e.getMessage());
-            }
-
             return "";
         }
     }
@@ -562,20 +519,6 @@ public class HttpClient{
      * Added new methods to sync new data fragments
      */
 
-    public String postSubCounties() throws Exception {
-        Log.d("Tremap POST", "Posting SubCounties to peer server");
-        String postResults;
-        SubCountyTable subCountyTable = new SubCountyTable(context);
-        try {
-            postResults = this.peerClientServer(subCountyTable.getJson(),
-                    SubCountyTable.JSON_ROOT, HttpServer.SUBCOUNTY_URL);
-            Log.d("Tremap Sync", "Subcounties posted");
-        } catch (Exception e){
-            Log.d("ERR: Sync subCounty", e.getMessage());
-            postResults = null;
-        }
-        return postResults;
-    }
 
     public String postLinkFacilities() throws Exception {
         Log.d("Tremap POST", "Posting Link Facilities to peer server");
@@ -836,27 +779,4 @@ public class HttpClient{
             }catch (Exception e){}
         }
     }
-
-    public void syncSubCounties () {
-        String syncResults;
-        SubCountyTable subCountyTable = new SubCountyTable(context);
-        try {
-            syncResults = this.syncClient(subCountyTable.getJson(),
-                    HttpServer.SUBCOUNTY_URL);
-        } catch (Exception e){
-            syncResults = null;
-        }
-        if (syncResults != null){
-            try {
-
-                JSONObject reader = new JSONObject(syncResults);
-                JSONArray recs = reader.getJSONArray("status");
-                for (int x = 0; x < recs.length(); x++) {
-                    subCountyTable.fromJson(recs.getJSONObject(x));
-                }
-            }catch (Exception e){}
-        }
-    }
-
-
 }
