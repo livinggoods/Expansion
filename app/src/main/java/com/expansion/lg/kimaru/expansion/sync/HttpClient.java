@@ -5,8 +5,11 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
-import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
-import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
+/**
+ * Created by kimaru on 7/19/17.
+ */
+
+
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
@@ -33,170 +36,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutionException;
 
-import static junit.framework.Assert.assertEquals;
-
-/**
- * Created by kimaru on 4/7/17.
- */
-
-public class HttpClient {
+public class HttpClient{
     Context context;
+    boolean isRunning = false;
     private static String url = HttpServer.SERVER_URL+":"+HttpServer.SERVER_PORT;
-
     public HttpClient(Context context){
         this.context = context;
     }
 
-
-    // POST MY RECORDS
-    public String testPostJsonObject(JSONObject json) throws Exception {
-        AsyncHttpPost p = new AsyncHttpPost(HttpServer.SERVER_URL+":"+HttpServer.SERVER_PORT+"/echo");
-        p.setBody(new JSONObjectBody(json));
-        JSONObject ret = AsyncHttpClient.getDefaultInstance().executeJSONObject(p, null).get();
-        return ret.getString(RegistrationTable.JSON_ROOT);
-    }
-
-    public String postRegistrations() throws Exception {
-        String postResults;
-        RegistrationTable registrationTable = new RegistrationTable(context);
-        try {
-            postResults = this.ApiClient(registrationTable.getRegistrationJson(),
-                    RegistrationTable.JSON_ROOT, HttpServer.REGISTRATION_URL);
-        } catch (Exception e){
-            Log.d("ERROR : Sync Regs", e.getMessage());
-            postResults = null;
-        }
-        return postResults;
-    }
-    public String postInterviews() throws Exception {
-        String postResults;
-        InterviewTable interviewTable = new InterviewTable(context);
-        try {
-            postResults = this.ApiClient(interviewTable.getInterviewJson(),
-                    InterviewTable.JSON_ROOT, HttpServer.INTERVIEW_URL);
-        } catch (Exception e){
-            Log.d("ERROR : Sync Inter", e.getMessage());
-            postResults = null;
-        }
-        return postResults;
-    }
-    public String postExams() throws Exception {
-        String postResults;
-        ExamTable examTable = new ExamTable(context);
-        try {
-            postResults = this.ApiClient(examTable.getExamJson(), ExamTable.JSON_ROOT,
-                    HttpServer.EXAM_URL);
-        } catch (Exception e){
-            Log.d("ERROR : Sync Exams", e.getMessage());
-            postResults = null;
-        }
-        return postResults;
-    }
-
-    public String postRecruitments() throws Exception {
-        String postResults;
-        RecruitmentTable recruitmentTable = new RecruitmentTable(context);
-        try {
-            postResults = this.ApiClient(recruitmentTable.getRecruitmentJson(),
-                    RecruitmentTable.JSON_ROOT, HttpServer.RECRUIRMENT_URL);
-        } catch (Exception e){
-            Log.d("ERROR : Sync Recs", e.getMessage());
-            postResults = null;
-        }
-        return postResults;
-    }
-
-    /**
-     *
-     * Added new methods to sync new data fragments
-     */
-
-    public String postSubCounties() throws Exception {
-        String postResults;
-        SubCountyTable subCountyTable = new SubCountyTable(context);
-        try {
-            postResults = this.ApiClient(subCountyTable.getJson(),
-                    SubCountyTable.JSON_ROOT, HttpServer.SUBCOUNTY_URL);
-        } catch (Exception e){
-            Log.d("ERR: Sync subCounty", e.getMessage());
-            postResults = null;
-        }
-        return postResults;
-    }
-
-    public String postLinkFacilities() throws Exception {
-        String postResults;
-        LinkFacilityTable linkFacilityTable = new LinkFacilityTable(context);
-        try {
-            postResults = this.ApiClient(linkFacilityTable.getJson(),
-                    LinkFacilityTable.JSON_ROOT, HttpServer.LINKFACILITY_URL);
-        } catch (Exception e){
-            Log.d("ERR: Sync LinkFacility", e.getMessage());
-            postResults = null;
-        }
-        return postResults;
-    }
-
-    public String postChewReferral() throws Exception {
-        String postResults;
-        ChewReferralTable chewReferralTable = new ChewReferralTable(context);
-        try {
-            postResults = this.ApiClient(chewReferralTable.getChewReferralJson(),
-                    ChewReferralTable.JSON_ROOT, HttpServer.CHEW_REFERRAL_URL);
-        } catch (Exception e){
-            Log.d("ERR: Sync LinkFacility", e.getMessage());
-            postResults = null;
-        }
-        return postResults;
-    }
-
-    public String postCommunityUnit() throws Exception {
-        String postResults;
-        CommunityUnitTable communityUnitTable = new CommunityUnitTable(context);
-        try {
-            postResults = this.ApiClient(communityUnitTable.getJson(),
-                    CommunityUnitTable.CU_JSON_ROOT, HttpServer.CU_URL);
-        } catch (Exception e){
-            Log.d("ERR: Sync LinkFacility", e.getMessage());
-            postResults = null;
-        }
-        return postResults;
-    }
-
-    /**
-     *
-     * End
-     */
-
-    private String ApiClient(JSONObject json, String JsonRoot, String apiEndpoint) throws Exception {
-        //  get the server URL
-        AsyncHttpPost p = new AsyncHttpPost(HttpServer.SERVER_URL+":"+HttpServer.SERVER_PORT+"/"
-                +apiEndpoint);
-        p.setBody(new JSONObjectBody(json));
-        JSONObject ret = AsyncHttpClient.getDefaultInstance().executeJSONObject(p, null).get();
-        return ret.getString(JsonRoot);
-    }
+    // Implement two methods:
+    // POST = To send all records to the Peer Server
+    // GET = Get all records that are in the Peer Server
 
 
-    // Callback for the API
-    private String syncClient(JSONObject json, String apiEndpoint) throws Exception {
-        //  get the server URL
-        AsyncHttpPost p = new AsyncHttpPost(Constants.API_SERVER+apiEndpoint);
-        p.setBody(new JSONObjectBody(json));
-        JSONObject ret = AsyncHttpClient.getDefaultInstance().executeJSONObject(p, null).get();
-//        return ret.getString(expectedJsonRoot);
-        Log.d("RESULTS : Sync", ret.toString());
-        Log.d("API  : Url", Constants.API_SERVER+apiEndpoint);
-        return ret.toString();
-    }
+    //GET METHODS
 
-    // GET RECORDS FROM THE SERVER
     public void startClient(){
         final Handler handler = new Handler();
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
+        Log.d("Tremap Sync", "Client Starting");
+        Timer combinedTimer = new Timer();
+        TimerTask combinedTask = new TimerTask() {
             @Override
             public void run() {
                 handler.post(new Runnable() {
@@ -205,86 +65,219 @@ public class HttpClient {
                         String registrationUrl, recruitmentUrl, examUrl, interviewUrl,
                                 linkFacilityUrl, chewReferralUrl, communityUnitUrl, subCountyUrl;
                         WifiState wifiState = new WifiState(context);
+                        Log.d("Tremap Sync", "Checking Wifi connection");
                         if (wifiState.canReachPeerServer()) {
-                            //Subcounty
+                            Log.d("Tremap Sync", "Wifi Connected");
+
+                            //subCounty
                             subCountyUrl = url + "/" + HttpServer.SUBCOUNTY_URL;
+                            Log.d("Tremap Sync", "Subcounty Process");
                             new ProcessSubCounty().execute(subCountyUrl);
 
-                            //Link Favilities
+                            //Link Facility
                             linkFacilityUrl = url + "/" + HttpServer.LINKFACILITY_URL;
+                            Log.d("Tremap Sync", "Link Facility Process");
                             new ProcessLinkFacility().execute(linkFacilityUrl);
 
-                            //chews
-                            chewReferralUrl = url + "/" + HttpServer.CHEW_REFERRAL_URL;
-                            new ProcessChewReferral().execute(chewReferralUrl);
-
-                            //CUs
+                            //Community Url
                             communityUnitUrl = url + "/" + HttpServer.CU_URL;
+                            Log.d("Tremap Sync", "Community Unit Process");
                             new ProcessCommunityUnit().execute(communityUnitUrl);
+
+                            //chew referral
+                            chewReferralUrl = url + "/" + HttpServer.CHEW_REFERRAL_URL;
+                            Log.d("Tremap Sync", "Chew Referral Process");
+                            new ProcessChewReferral().execute(chewReferralUrl);
 
                             //Recruitments
                             recruitmentUrl = url + "/" + HttpServer.RECRUIRMENT_URL;
+                            Log.d("Tremap Sync", "Recruitments Process");
                             new ProcessRecruitment().execute(recruitmentUrl);
 
                             //registrations
                             registrationUrl = url + "/" + HttpServer.REGISTRATION_URL;
+                            Log.d("Tremap Sync", "Registrations Process");
                             new ProcessRegistrations().execute(registrationUrl);
 
                             //Interviews
                             interviewUrl = url + "/" + HttpServer.INTERVIEW_URL;
+                            Log.d("Tremap Sync", "Interviews Process");
                             new ProcessInterviews().execute(interviewUrl);
 
                             //Exams
                             examUrl = url + "/" + HttpServer.EXAM_URL;
+                            Log.d("Tremap Sync", "Exams Process");
                             new ProcessExams().execute(examUrl);
 
-                            // Poll for records
-                            new PollRecords().execute();
-
+                        }else{
+                            Log.d("Tremap Sync Err", "WiFi not Connected");
                         }
                     }
                 });
             }
         };
-        timer.schedule(task, 0, 60*1000);
+        combinedTimer.schedule(combinedTask, 0, 60*3000);
+
+        Timer postRecordsTimer = new Timer();
+        TimerTask postRecordsTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        WifiState wifiState = new WifiState(context);
+                        Log.d("Tremap Sync", "Posting Records Start");
+                        if (wifiState.canReachPeerServer()) {
+                            Log.d("Tremap", "=====================+++++++++++++++++++=============");
+                            Log.d("Tremap Sync", "Post my records");
+                            new PostMyRecords().execute();
+                        }else{
+                            Log.d("Tremap Sync Err", "WiFi not Connected");
+                        }
+                    }
+                });
+            }
+        };
+        postRecordsTimer.schedule(postRecordsTask, 0, 60*1000);
     }
-    private class PollRecords extends AsyncTask<String, Void, String> {
+
+    private class ProcessCommunityUnit extends AsyncTask<String, Void, String> {
         protected String doInBackground(String... strings){
-            try {
-                String status = postRecruitments();
-            } catch (Exception e) {}
+            String stream = null;
+            String urlString = strings[0];
+            Log.d("Tremap Sync", "Community Unit Async task");
+            Log.d("Tremap Sync", "Community Unit URL " + urlString);
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+            Log.d("Tremap Sync", "Community Unit Async task started");
+            if(stream !=null){
+                Log.d("Tremap Sync", "Community Unit Stream is not null ");
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(CommunityUnitTable.CU_JSON_ROOT);
 
-            try {
-                String status = postRegistrations();
-            } catch (Exception e) {}
+                    for (int x = 0; x < recs.length(); x++){
+                        new CommunityUnitTable(context).CuFromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    Log.d("Tremap Sync ERR", "Community Unit "+ e.getMessage());
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
 
-            try {
-                String status = postExams();
-            } catch (Exception e) {}
-
-            try {
-                String status = postInterviews();
-            } catch (Exception e) {}
-
-            try {
-                String status = postCommunityUnit();
-            } catch (Exception e) {}
-
-            try {
-                String status = postChewReferral();
-            } catch (Exception e) {}
-
-            try {
-                String status = postLinkFacilities();
-            } catch (Exception e) {}
-
-            try {
-                String status = postSubCounties();
-            } catch (Exception e) {}
-
-            return "";
+        protected void onPostExecute(String stream){
+            // if statement end
         }
     }
+
+    private class ProcessSubCounty extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            Log.d("Tremap Sync", "SubCounty  URL "+ urlString);
+            Log.d("Tremap Sync", "SubCounty  Async Task");
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+            if(stream !=null){
+                Log.d("Tremap Sync", "SubCounty stream is not null");
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(SubCountyTable.JSON_ROOT);
+                    for (int x = 0; x < recs.length(); x++){
+                        Log.d("Tremap Sync", "SubCounty "+ recs.getJSONObject(x));
+                        new SubCountyTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    Log.d("Tremap Sync ERR", "SubCounty "+ e.getMessage());
+                }
+            }else{
+                Log.d("Tremap Sync", "SubCounty stream is null");
+            }
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+        }
+    }
+
+    private class ProcessLinkFacility extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            Log.d("Tremap Sync", "Link Facility Async task");
+            Log.d("Tremap Sync", "Link Facility URL " + urlString);
+
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+            Log.d("Tremap Sync", "Link Facility Async task");
+
+            if(stream !=null){
+                Log.d("Tremap Sync", "Link Facility stream is not null");
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+
+                    // Get the JSONArray recruitments
+                    JSONArray recs = reader.getJSONArray(LinkFacilityTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new LinkFacilityTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    Log.d("Tremap Sync ERR", "Link Facility "+ e.getMessage());
+                }
+            }else{
+                Log.d("Tremap Sync", "Link Facility stream is null");
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessChewReferral extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            Log.d("Tremap Sync", "CHEW referral Async task");
+            Log.d("Tremap Sync", "CHEW referral URL " + urlString);
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+            Log.d("Tremap Sync", "CHEW Async task started");
+            if(stream !=null){
+                Log.d("Tremap Sync", "CHEW Referral stream is not null");
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+
+                    // Get the JSONArray recruitments
+                    JSONArray recs = reader.getJSONArray(ChewReferralTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new ChewReferralTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    Log.d("Tremap Sync ERR", "CHEW Referral "+ e.getMessage());
+                }
+            }else{
+                Log.d("Tremap Sync", "CHEW Referral stream is null");
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
 
     private class ProcessExams extends AsyncTask<String, Void, String> {
         protected String doInBackground(String... strings){
@@ -368,14 +361,12 @@ public class HttpClient {
                     // Get the JSONArray recruitments
                     JSONArray recs = reader.getJSONArray(RecruitmentTable.JSON_ROOT);
                     // Get the array first JSONObject
-                    List<Recruitment> recruitmentList = new ArrayList<Recruitment>();
-
-
+                    Log.d("Tremap", "Processing REcruitmnt ");
                     for (int x = 0; x < recs.length(); x++){
                         new RecruitmentTable(context).fromJson(recs.getJSONObject(x));
                     }
                 }catch(JSONException e){
-                    e.printStackTrace();
+                    Log.d("Tremap", "Processing error "+e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -387,34 +378,6 @@ public class HttpClient {
         } // onPostExecute() end
     } // ProcessJSON class end
 
-    private class ProcessSubCounty extends AsyncTask<String, Void, String> {
-        protected String doInBackground(String... strings){
-            String stream = null;
-            String urlString = strings[0];
-
-            ApiClient hh = new ApiClient();
-            stream = hh.GetHTTPData(urlString);
-            if(stream !=null){
-                try{
-                    // Get the full HTTP Data as JSONObject
-                    JSONObject reader= new JSONObject(stream);
-                    JSONArray recs = reader.getJSONArray(SubCountyTable.JSON_ROOT);
-                    for (int x = 0; x < recs.length(); x++){
-                        new SubCountyTable(context).fromJson(recs.getJSONObject(x));
-                    }
-                }catch(JSONException e){
-                    e.printStackTrace();
-                }
-
-            }
-            // Return the data from specified url
-            return stream;
-        }
-
-        protected void onPostExecute(String stream){
-            // if statement end
-        } // onPostExecute() end
-    }
 
     private class ProcessInterviews extends AsyncTask<String, Void, String> {
         protected String doInBackground(String... strings){
@@ -448,174 +411,232 @@ public class HttpClient {
         } // onPostExecute() end
     }
 
-    private class ProcessLinkFacility extends AsyncTask<String, Void, String> {
+
+    /**
+     * Now methods to post the records
+     *
+     */
+
+    private class PostMyRecords extends AsyncTask<String, Void, String> {
         protected String doInBackground(String... strings){
-            String stream = null;
-            String urlString = strings[0];
-
-            ApiClient hh = new ApiClient();
-            stream = hh.GetHTTPData(urlString);
-            if(stream !=null){
-                try{
-                    // Get the full HTTP Data as JSONObject
-                    JSONObject reader= new JSONObject(stream);
-
-                    // Get the JSONArray recruitments
-                    JSONArray recs = reader.getJSONArray(LinkFacilityTable.JSON_ROOT);
-
-                    for (int x = 0; x < recs.length(); x++){
-                        new LinkFacilityTable(context).fromJson(recs.getJSONObject(x));
-                    }
-                }catch(JSONException e){
-                    e.printStackTrace();
-                }
-            }
-            // Return the data from specified url
-            return stream;
-        }
-
-        protected void onPostExecute(String stream){
-            // if statement end
-        }
-    }
-
-
-    private class ProcessChewReferral extends AsyncTask<String, Void, String> {
-        protected String doInBackground(String... strings){
-            String stream = null;
-            String urlString = strings[0];
-
-            ApiClient hh = new ApiClient();
-            stream = hh.GetHTTPData(urlString);
-            if(stream !=null){
-                try{
-                    // Get the full HTTP Data as JSONObject
-                    JSONObject reader= new JSONObject(stream);
-
-                    // Get the JSONArray recruitments
-                    JSONArray recs = reader.getJSONArray(ChewReferralTable.JSON_ROOT);
-
-                    for (int x = 0; x < recs.length(); x++){
-                        new ChewReferralTable(context).fromJson(recs.getJSONObject(x));
-                    }
-                }catch(JSONException e){
-                    e.printStackTrace();
-                }
-            }
-            // Return the data from specified url
-            return stream;
-        }
-
-        protected void onPostExecute(String stream){
-            // if statement end
-        }
-    }
-
-
-    private class ProcessCommunityUnit extends AsyncTask<String, Void, String> {
-        protected String doInBackground(String... strings){
-            String stream = null;
-            String urlString = strings[0];
-
-            ApiClient hh = new ApiClient();
-            stream = hh.GetHTTPData(urlString);
-            if(stream !=null){
-                try{
-                    // Get the full HTTP Data as JSONObject
-                    JSONObject reader= new JSONObject(stream);
-                    JSONArray recs = reader.getJSONArray(CommunityUnitTable.CU_JSON_ROOT);
-
-                    for (int x = 0; x < recs.length(); x++){
-                        new CommunityUnitTable(context).CuFromJson(recs.getJSONObject(x));
-                    }
-                }catch(JSONException e){
-                    e.printStackTrace();
-                }
-            }
-            // Return the data from specified url
-            return stream;
-        }
-
-        protected void onPostExecute(String stream){
-            // if statement end
-        }
-    }
-
-    //we add method to pull users from the
-
-    public String getJsonData(String urlString){
-        String stream;
-        ApiClient hh = new ApiClient();
-        stream = hh.GetHTTPData(urlString);
-        return stream;
-    }
-
-
-
-//////////////////////////////////////////////////////////////////////////////
-    public void syncCommunityUnits () {
-        String syncResults;
-        CommunityUnitTable communityUnitTable = new CommunityUnitTable(context);
-        try {
-            syncResults = this.syncClient(communityUnitTable.getJson(),
-                    HttpServer.CU_URL);
-        } catch (Exception e){
-            syncResults = null;
-        }
-        /*
-        if (syncResults != null){
+            Log.d("Tremap POST", "Posting the records in the device to peer server");
             try {
+                Log.d("Tremap Sync LOG", "+++++++++========++++++++===+++=+===+=+======+++++");
+                String status = postRecruitments();
+                Log.d("Tremap Sync LOG", "Recruitments Status "+status);
+            } catch (Exception e) {
+                Log.d("Tremap Sync ERROR", "postRecruitments "+e.getMessage());
+            }
 
-                JSONObject reader = new JSONObject(syncResults);
-                JSONArray recs = reader.getJSONArray("status");
-                //RecruitmentTable recruitmentTable = new RecruitmentTable(context);
+            try {
+                String status = postRegistrations();
+                Log.d("Tremap Sync LOG", "Registrations Status "+status);
+            } catch (Exception e) {
+                Log.d("Tremap Sync ERR", "Error in posting registrations "+e.getMessage());
+            }
 
-                for (int x = 0; x < recs.length(); x++) {
-                    CommunityUnit communityUnit = communityUnitTable.getCommunityUnitById(
-                            recs.getJSONObject(x).getString("id"));
-                    communityUnit.synced(recs.getJSONObject(x).getString("status") == "ok" ? 1 : 0);
-                    // update recruitment
-                    communityUnitTable.addCommunityUnitData(communityUnit);
-                }
-            }catch (Exception e){}
+            try {
+                String status = postExams();
+                Log.d("Tremap Sync LOG", "Exams Status "+status);
+            } catch (Exception e) {
+                Log.d("Tremap Sync ERR", "Error in posting exams "+e.getMessage());
+            }
+
+            try {
+                String status = postInterviews();
+                Log.d("Tremap Sync LOG", "Interviews Status "+status);
+            } catch (Exception e) {
+                Log.d("Tremap Sync ERR", "Error in posting interviews "+e.getMessage());
+            }
+
+            try {
+                String status = postCommunityUnit();
+                Log.d("Tremap Sync LOG", "Community Unit Status "+status);
+            } catch (Exception e) {
+                Log.d("Tremap Sync ERR", "Error in posting community units "+e.getMessage());
+            }
+
+            try {
+                String status = postChewReferral();
+                Log.d("Tremap Sync LOG", "CHEW REFs Status "+status);
+            } catch (Exception e) {
+                Log.d("Tremap Sync ERR", "Error in posting CHEWs "+e.getMessage());
+            }
+
+            try {
+                String status = postLinkFacilities();
+                Log.d("Tremap Sync LOG", "Link Facility Status "+status);
+            } catch (Exception e) {
+                Log.d("Tremap Sync ERR", "Error in posting Link Facilities "+e.getMessage());
+            }
+
+            try {
+                String status = postSubCounties();
+                Log.d("Tremap Sync LOG", "SubCounty Status "+status);
+            } catch (Exception e) {
+                Log.d("Tremap Sync ERR", "Error in posting sub counties "+e.getMessage());
+            }
+
+            return "";
         }
-        */
     }
 
-    public void syncReferrals () {
-        String syncResults;
-        ChewReferralTable chewReferralTable = new ChewReferralTable(context);
+
+    /**
+     *
+     * @param json: Json object to send to server, this is the body of the POST message
+     * @param JsonRoot: The root string of the JSON
+     * @param apiEndpoint: The endpoint for the API
+     * @return: String Response from the server
+     * @throws Exception: Exception if error occurs
+     */
+    private String peerClientServer(JSONObject json, String JsonRoot, String apiEndpoint) throws Exception {
+        //  get the server URL
+        AsyncHttpPost p = new AsyncHttpPost(HttpServer.SERVER_URL+":"+HttpServer.SERVER_PORT+"/"
+                +apiEndpoint);
+        p.setBody(new JSONObjectBody(json));
+        JSONObject ret = AsyncHttpClient.getDefaultInstance().executeJSONObject(p, null).get();
+        return ret.getString(JsonRoot);
+    }
+
+    public String postRegistrations() throws Exception {
+        Log.d("Tremap POST", "Posting Registrations to peer server");
+        String postResults;
+        RegistrationTable registrationTable = new RegistrationTable(context);
         try {
-            syncResults = this.syncClient(chewReferralTable.getChewReferralJson(),
-                    HttpServer.CHEW_REFERRAL_URL);
+            postResults = this.peerClientServer(registrationTable.getRegistrationJson(),
+                    RegistrationTable.JSON_ROOT, HttpServer.REGISTRATION_URL);
+            Log.d("Tremap Sync", "Registrations posted");
         } catch (Exception e){
-            syncResults = null;
+            Log.d("ERROR : Sync Regs", e.getMessage());
+            postResults = null;
         }
+        return postResults;
     }
-    public void syncLinkFacilities () {
-        String syncResults;
-        LinkFacilityTable linkFacilityTable = new LinkFacilityTable(context);
+    public String postInterviews() throws Exception {
+        Log.d("Tremap POST", "Posting Interviews to peer server");
+        String postResults;
+        InterviewTable interviewTable = new InterviewTable(context);
         try {
-            syncResults = this.syncClient(linkFacilityTable.getJson(),
-                    HttpServer.LINKFACILITY_URL);
+            postResults = this.peerClientServer(interviewTable.getInterviewJson(),
+                    InterviewTable.JSON_ROOT, HttpServer.INTERVIEW_URL);
+            Log.d("Tremap Sync", "Interviews posted");
         } catch (Exception e){
-            syncResults = null;
+            Log.d("ERROR : Sync Inter", e.getMessage());
+            postResults = null;
         }
+        return postResults;
+    }
+    public String postExams() throws Exception {
+        Log.d("Tremap POST", "Posting Exams to peer server");
+        String postResults;
+        ExamTable examTable = new ExamTable(context);
+        try {
+            postResults = this.peerClientServer(examTable.getExamJson(), ExamTable.JSON_ROOT,
+                    HttpServer.EXAM_URL);
+            Log.d("Tremap Sync", "Exams posted");
+        } catch (Exception e){
+            Log.d("ERROR : Sync Exams", e.getMessage());
+            postResults = null;
+        }
+        return postResults;
     }
 
-    public void syncSubCounties () {
-        String syncResults;
+    public String postRecruitments() throws Exception {
+        Log.d("Tremap POST", "Posting Recruitments to peer server");
+        String postResults;
+        RecruitmentTable recruitmentTable = new RecruitmentTable(context);
+        try {
+            postResults = this.peerClientServer(recruitmentTable.getRecruitmentJson(),
+                    RecruitmentTable.JSON_ROOT, HttpServer.RECRUIRMENT_URL);
+            Log.d("Tremap Sync", "Recruitments posted");
+        } catch (Exception e){
+            Log.d("ERROR : Sync Recs", e.getMessage());
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    /**
+     *
+     * Added new methods to sync new data fragments
+     */
+
+    public String postSubCounties() throws Exception {
+        Log.d("Tremap POST", "Posting SubCounties to peer server");
+        String postResults;
         SubCountyTable subCountyTable = new SubCountyTable(context);
         try {
-            syncResults = this.syncClient(subCountyTable.getJson(),
-                    HttpServer.SUBCOUNTY_URL);
+            postResults = this.peerClientServer(subCountyTable.getJson(),
+                    SubCountyTable.JSON_ROOT, HttpServer.SUBCOUNTY_URL);
+            Log.d("Tremap Sync", "Subcounties posted");
         } catch (Exception e){
-            syncResults = null;
+            Log.d("ERR: Sync subCounty", e.getMessage());
+            postResults = null;
         }
+        return postResults;
+    }
+
+    public String postLinkFacilities() throws Exception {
+        Log.d("Tremap POST", "Posting Link Facilities to peer server");
+        String postResults;
+        LinkFacilityTable linkFacilityTable = new LinkFacilityTable(context);
+        try {
+            postResults = this.peerClientServer(linkFacilityTable.getJson(),
+                    LinkFacilityTable.JSON_ROOT, HttpServer.LINKFACILITY_URL);
+            Log.d("Tremap Sync", "Link Facilities posted");
+        } catch (Exception e){
+            Log.d("ERR: Sync LinkFacility", e.getMessage());
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postChewReferral() throws Exception {
+        Log.d("Tremap POST", "Posting Chews/referrals to peer server");
+        String postResults;
+        ChewReferralTable chewReferralTable = new ChewReferralTable(context);
+        try {
+            postResults = this.peerClientServer(chewReferralTable.getChewReferralJson(),
+                    ChewReferralTable.JSON_ROOT, HttpServer.CHEW_REFERRAL_URL);
+            Log.d("Tremap Sync", "CHEWS posted");
+        } catch (Exception e){
+            Log.d("ERR: Sync chews", e.getMessage());
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postCommunityUnit() throws Exception {
+        Log.d("Tremap POST", "Posting Community Units to peer server");
+        String postResults;
+        CommunityUnitTable communityUnitTable = new CommunityUnitTable(context);
+        try {
+            postResults = this.peerClientServer(communityUnitTable.getJson(),
+                    CommunityUnitTable.CU_JSON_ROOT, HttpServer.CU_URL);
+            Log.d("Tremap Sync", "Community Units posted");
+        } catch (Exception e){
+            Log.d("ERR: Sync CUs", e.getMessage());
+            postResults = null;
+        }
+        return postResults;
     }
 
 
-//////////////////////////////////////////////////////////////////////////////
+
+    //THE FOLLOWING SYNC METHODS HELPS US TO UPLOAD DATA TO THE CLOUD (https://expansion.lg-apps.com)
+
+    // Callback for the API
+    private String syncClient(JSONObject json, String apiEndpoint) throws Exception {
+        //  get the server URL
+        AsyncHttpPost p = new AsyncHttpPost(Constants.API_SERVER+apiEndpoint);
+        p.setBody(new JSONObjectBody(json));
+        JSONObject ret = AsyncHttpClient.getDefaultInstance().executeJSONObject(p, null).get();
+//        return ret.getString(expectedJsonRoot);
+        Log.d("RESULTS : Sync", ret.toString());
+        Log.d("API  : Url", Constants.API_SERVER+apiEndpoint);
+        return ret.toString();
+    }
 
     public void syncRecruitments () {
         String syncResults;
@@ -751,6 +772,90 @@ public class HttpClient {
             }
         }catch (Exception e){}
 
+    }
+    public void syncCommunityUnits () {
+        String syncResults;
+        CommunityUnitTable communityUnitTable = new CommunityUnitTable(context);
+        try {
+            syncResults = this.syncClient(communityUnitTable.getJson(),
+                    HttpServer.CU_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+
+        if (syncResults != null){
+            try {
+
+                JSONObject reader = new JSONObject(syncResults);
+                JSONArray recs = reader.getJSONArray("status");
+                for (int x = 0; x < recs.length(); x++) {
+                    communityUnitTable.CuFromJson(recs.getJSONObject(x));
+                }
+            }catch (Exception e){}
+        }
+    }
+
+    public void syncReferrals () {
+        String syncResults;
+        ChewReferralTable chewReferralTable = new ChewReferralTable(context);
+        try {
+            syncResults = this.syncClient(chewReferralTable.getChewReferralJson(),
+                    HttpServer.CHEW_REFERRAL_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+        if (syncResults != null){
+            try {
+
+                JSONObject reader = new JSONObject(syncResults);
+                JSONArray recs = reader.getJSONArray("status");
+
+                for (int x = 0; x < recs.length(); x++) {
+                    chewReferralTable.fromJson(recs.getJSONObject(x));
+                }
+            }catch (Exception e){}
+        }
+    }
+    public void syncLinkFacilities () {
+        String syncResults;
+        LinkFacilityTable linkFacilityTable = new LinkFacilityTable(context);
+        try {
+            syncResults = this.syncClient(linkFacilityTable.getJson(),
+                    HttpServer.LINKFACILITY_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+        if (syncResults != null){
+            try {
+
+                JSONObject reader = new JSONObject(syncResults);
+                JSONArray recs = reader.getJSONArray("status");
+                for (int x = 0; x < recs.length(); x++) {
+                    linkFacilityTable.fromJson(recs.getJSONObject(x));
+                }
+            }catch (Exception e){}
+        }
+    }
+
+    public void syncSubCounties () {
+        String syncResults;
+        SubCountyTable subCountyTable = new SubCountyTable(context);
+        try {
+            syncResults = this.syncClient(subCountyTable.getJson(),
+                    HttpServer.SUBCOUNTY_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+        if (syncResults != null){
+            try {
+
+                JSONObject reader = new JSONObject(syncResults);
+                JSONArray recs = reader.getJSONArray("status");
+                for (int x = 0; x < recs.length(); x++) {
+                    subCountyTable.fromJson(recs.getJSONObject(x));
+                }
+            }catch (Exception e){}
+        }
     }
 
 
