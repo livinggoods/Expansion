@@ -253,7 +253,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                 dateMovedFragment.show(getFragmentManager(), "Datepicker");
                 break;
             case R.id.buttonSave:
-                Long currentDate =  new Date().getTime()/1000;
+                Long currentDate =  new Date().getTime();
 
                 String name = editName.getText().toString();
                 String areaChiefName = editAreaChiefName.getText().toString();
