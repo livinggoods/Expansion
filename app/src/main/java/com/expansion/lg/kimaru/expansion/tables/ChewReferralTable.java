@@ -126,8 +126,10 @@ public class ChewReferralTable extends SQLiteOpenHelper {
         if (isExist(chewReferral)){
             cv.put(SYNCED, 0);
             id = db.update(TABLE_NAME, cv, ID+"='"+chewReferral.getId()+"'", null);
+            Log.d("Tremap DB Op", "CHEW Referral updated");
         }else{
             id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+            Log.d("Tremap DB Op", "CHEW Referral created");
         }
         db.close();
         return id;
@@ -404,7 +406,7 @@ public class ChewReferralTable extends SQLiteOpenHelper {
             }
             resultSet.put(rowObject);
             try {
-                results.put("referrals", resultSet);
+                results.put(JSON_ROOT, resultSet);
             } catch (JSONException e) {
 
             }
@@ -434,8 +436,10 @@ public class ChewReferralTable extends SQLiteOpenHelper {
             chewReferral.setLat(jsonObject.getString(LAT));
             chewReferral.setLon(jsonObject.getString(LON));
 
-            this.addChewReferral(chewReferral);
-        }catch (Exception e){}
+            addChewReferral(chewReferral);
+        }catch (Exception e){
+            Log.d("Tremap ChewReferral ERR", "From Json : "+e.getMessage());
+        }
     }
 
     public void deleteChewReferral (ChewReferral chewReferral){
