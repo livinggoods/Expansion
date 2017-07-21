@@ -37,7 +37,7 @@ public class SubCounty {
     String anyMajorBusiness;
     String comments;
     boolean recommended;
-    Integer dateAdded;
+    Long dateAdded;
     Integer addedBy;
 
     //boolean isRead, isImportant;
@@ -57,38 +57,38 @@ public class SubCounty {
                      String transportCost, String majorRoads, String healtFacilities,
                      String privateClinicsInTown, String privateClinicsInRadius, String communityUnits,
                      String mainSupermarkets, String mainBanks, String anyMajorBusiness,
-                     String comments, boolean recommended, Integer dateAdded, Integer addedBy) {
+                     String comments, boolean recommended, Long dateAdded, Integer addedBy) {
 
         this.id = id;
-        this.subCountyName = subCountyName;
+        this.subCountyName = subCountyName.substring(0, 1).toUpperCase() + subCountyName.substring(1);
         this.countyID = countyID;
         this.country = country;
         this.mappingId = mappingId;
-        this.lat = lat;
-        this.lon = lon;
-        this.contactPerson = contactPerson;
-        this.contactPersonPhone = contactPersonPhone;
-        this.mainTown = mainTown;
-        this.countySupport = countySupport;
-        this.subcountySupport = subcountySupport;
-        this.chvActivityLevel = chvActivityLevel;
+        this.lat = lat.substring(0, 1).toUpperCase() + lat.substring(1);
+        this.lon = lon.substring(0, 1).toUpperCase() + lon.substring(1);
+        this.contactPerson = contactPerson.substring(0, 1).toUpperCase() + contactPerson.substring(1);
+        this.contactPersonPhone = contactPersonPhone.substring(0, 1).toUpperCase() + contactPersonPhone.substring(1);
+        this.mainTown = mainTown.substring(0, 1).toUpperCase() + mainTown.substring(1);
+        this.countySupport = countySupport.substring(0, 1).toUpperCase() + countySupport.substring(1);
+        this.subcountySupport = subcountySupport.substring(0, 1).toUpperCase() + subcountySupport.substring(1);
+        this.chvActivityLevel = chvActivityLevel.substring(0, 1).toUpperCase() + chvActivityLevel.substring(1);
         this.chvActivity = chvActivityLevel != "0";
-        this.countyPopulation = countyPopulation;
-        this.subCountyPopulation = subCountyPopulation;
-        this.noOfVillages = noOfVillages;
-        this.mainTownPopulation = mainTownPopulation;
-        this.servicePopulation = servicePopulation;
-        this.populationDensity = populationDensity;
-        this.transportCost = transportCost;
-        this.majorRoads = majorRoads;
-        this.healtFacilities = healtFacilities;
-        this.privateClinicsInTown = privateClinicsInTown;
-        this.privateClinicsInRadius = privateClinicsInRadius;
-        this.communityUnits = communityUnits;
-        this.mainSupermarkets = mainSupermarkets;
-        this.mainBanks = mainBanks;
-        this.anyMajorBusiness = anyMajorBusiness;
-        this.comments = comments;
+        this.countyPopulation = countyPopulation.substring(0, 1).toUpperCase() + countyPopulation.substring(1);
+        this.subCountyPopulation = subCountyPopulation.substring(0, 1).toUpperCase() + subCountyPopulation.substring(1);
+        this.noOfVillages = noOfVillages.substring(0, 1).toUpperCase() + noOfVillages.substring(1);
+        this.mainTownPopulation = mainTownPopulation.substring(0, 1).toUpperCase() + mainTownPopulation.substring(1);
+        this.servicePopulation = servicePopulation.substring(0, 1).toUpperCase() + servicePopulation.substring(1);
+        this.populationDensity = populationDensity.substring(0, 1).toUpperCase() + populationDensity.substring(1);
+        this.transportCost = transportCost.substring(0, 1).toUpperCase() + transportCost.substring(1);
+        this.majorRoads = majorRoads.substring(0, 1).toUpperCase() + majorRoads.substring(1);
+        this.healtFacilities = healtFacilities.substring(0, 1).toUpperCase() + healtFacilities.substring(1);
+        this.privateClinicsInTown = privateClinicsInTown.substring(0, 1).toUpperCase() + privateClinicsInTown.substring(1);
+        this.privateClinicsInRadius = privateClinicsInRadius.substring(0, 1).toUpperCase() + privateClinicsInRadius.substring(1);
+        this.communityUnits = communityUnits.substring(0, 1).toUpperCase() + communityUnits.substring(1);
+        this.mainSupermarkets = mainSupermarkets.substring(0, 1).toUpperCase() + mainSupermarkets.substring(1);
+        this.mainBanks = mainBanks.substring(0, 1).toUpperCase() + mainBanks.substring(1);
+        this.anyMajorBusiness = anyMajorBusiness.substring(0, 1).toUpperCase() + anyMajorBusiness.substring(1);
+        this.comments = comments.substring(0, 1).toUpperCase() + comments.substring(1);
         this.recommended = recommended;
         this.dateAdded = dateAdded;
         this.addedBy = addedBy;
@@ -108,11 +108,11 @@ public class SubCounty {
         return addedBy;
     }
 
-    public void setDateAdded(Integer dateAdded) {
+    public void setDateAdded(Long dateAdded) {
         this.dateAdded = dateAdded;
     }
 
-    public Integer getDateAdded() {
+    public Long getDateAdded() {
         return dateAdded;
     }
 
