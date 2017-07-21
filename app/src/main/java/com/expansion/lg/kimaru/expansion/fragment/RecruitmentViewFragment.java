@@ -220,9 +220,14 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             cuListView.setAdapter(cuAdapter);
 
             recruitmentMainLocation.setText(session.getSavedRecruitment().getName());
-            recruitmentSecondaryLocation.setText(new SubCountyTable(getContext())
-                    .getSubCountyById(session.getSavedRecruitment().getSubcounty())
-                    .getSubCountyName());
+
+//            recruitmentSecondaryLocation.setText(new SubCountyTable(getContext())
+//                    .getSubCountyById(session.getSavedRecruitment().getSubcounty())
+//                    .getSubCountyName());
+
+
+            recruitmentSecondaryLocation.setText(session.getSavedRecruitment().getSubcounty());
+
             session.saveSubCounty(new SubCountyTable(getContext())
                     .getSubCountyById(session.getSavedRecruitment().getSubcounty()));
             addReferrals.setText("+ ADD A CHEW");
