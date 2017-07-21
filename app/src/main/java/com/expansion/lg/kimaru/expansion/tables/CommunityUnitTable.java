@@ -228,8 +228,10 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
         long id;
         if (isCommunityUnitExisting(communityUnit)){
             id = db.update(TABLE_NAME, cv, ID+"='"+communityUnit.getId()+"'", null);
+            Log.d("Tremap DB OP", "Community Unit updated");
         }else{
             id = db.insert(TABLE_NAME,null,cv);
+            Log.d("Tremap DB OP", "Community Unit Created");
         }
         db.close();
         return id;
@@ -755,7 +757,7 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
             communityUnit.setNgoDoingIccm(jsonObject.getBoolean(NGODOINGICCM));
             communityUnit.setNgoDoingMhealth(jsonObject.getBoolean(NGODOINGMHEALTH));
 
-            this.addCommunityUnitData(communityUnit);
+            addCommunityUnitData(communityUnit);
         }catch (Exception e){}
     }
 
