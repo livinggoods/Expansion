@@ -40,7 +40,7 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
 
 
 
-    Button enableServer;
+    Button enableServer, buttonGetSubCounty;
     Button resyncLocations, shareRecords;
 
     @Override
@@ -50,12 +50,14 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         enableServer = (Button) findViewById(R.id.buttonStartServer);
-        resyncLocations = (Button) findViewById(R.id.buttonStopServer);
+        resyncLocations = (Button) findViewById(R.id.buttonLocationSync);
         shareRecords = (Button) findViewById(R.id.buttonShareRecords);
+        buttonGetSubCounty = (Button) findViewById(R.id.buttonGetSubCounty);
 
         enableServer.setOnClickListener(this);
         shareRecords.setOnClickListener(this);
         resyncLocations.setOnClickListener(this);
+        buttonGetSubCounty.setOnClickListener(this);
 
     }
 
@@ -81,11 +83,14 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
         switch (view.getId()){
             case R.id.buttonStartServer:
                 HttpServer server = new HttpServer(getBaseContext());
+                Log.d("Tremap Sync", "Starting server");
                 server.startServer();
+
                 Toast.makeText(getBaseContext(), "Server started successfully",
                         Toast.LENGTH_SHORT).show();
                 break;
             case R.id.buttonShareRecords:
+                Log.d("Tremap Sync", "Starting Client");
                 HttpClient httpClient = new HttpClient(getBaseContext());
                 httpClient.startClient();
 
@@ -93,7 +98,7 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
                         Toast.LENGTH_SHORT).show();
 
                 break;
-            case R.id.buttonStopServer:
+            case R.id.buttonLocationSync:
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -102,8 +107,21 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
                     }
                 });
                 thread.start();
-
                 break;
+
+            case R.id.buttonGetSubCounty:
+                Toast.makeText(getBaseContext(), "Starting", Toast.LENGTH_SHORT).show();
+                Thread locationThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LocationDataSync locationDataSync = new LocationDataSync(getBaseContext());
+                        locationDataSync.getKeSubcounties();
+                    }
+                });
+                locationThread.start();
+                Toast.makeText(getBaseContext(), "Sync started", Toast.LENGTH_SHORT).show();
+                break;
+
 
         }
     }
