@@ -1,6 +1,7 @@
 package com.expansion.lg.kimaru.expansion.sync;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
@@ -67,6 +68,7 @@ public class HttpServer {
     }
 
     public void startServer(){
+        Log.d("Tremap Sync", "Starting server");
         server.get("/"+RECRUIRMENT_URL, new HttpServerRequestCallback() {
             @Override
             public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
@@ -282,40 +284,47 @@ public class HttpServer {
                     if (request.getBody() instanceof JSONObjectBody) {
                         json = ((JSONObjectBody)request.getBody()).get();
                         processSubCounty(json);
+                        response.send("Body not instalce of JSON Object Body");
+                    }else{
+                        processSubCounty(json);
+                        response.send("processed");
                     }
-                    response.send(json);
+
                 }
                 catch (Exception e) {
                     response.send(e.getMessage());
                 }
             }
         });
-
         server.listen(asyncServer, SERVER_PORT);
     }
     private void processCus(JSONObject json){
+        Log.d("Tremap Sync", "Processing CUs");
         try{
             JSONArray recs = json.getJSONArray(CommunityUnitTable.CU_JSON_ROOT);
-            // Get the array first JSONObject
             for (int x = 0; x < recs.length(); x++){
                 new CommunityUnitTable(context).CuFromJson(recs.getJSONObject(x));
             }
         }catch(JSONException e){
-            e.printStackTrace();
+            Log.d("Tremap Server", "ERR CUs "+e.getMessage());
         }
     }
+
     private void processSubCounty(JSONObject json){
+        Log.d("Tremap Sync", "Processing subcounties");
         try{
             JSONArray recs = json.getJSONArray(SubCountyTable.JSON_ROOT);
-            // Get the array first JSONObject
             for (int x = 0; x < recs.length(); x++){
+                Log.d("Tremap ", "Received subcounty data "+recs.getJSONObject(x));
                 new SubCountyTable(context).fromJson(recs.getJSONObject(x));
             }
         }catch(JSONException e){
-            e.printStackTrace();
+            Log.d("Tremap Server", "ERR SUBCOUNTY "+e.getMessage());
         }
     }
+
     private void processLinkFacility(JSONObject json){
+        Log.d("Tremap Sync", "Processing Link Facilities");
         try{
             JSONArray recs = json.getJSONArray(LinkFacilityTable.JSON_ROOT);
             // Get the array first JSONObject
@@ -323,18 +332,21 @@ public class HttpServer {
                 new LinkFacilityTable(context).fromJson(recs.getJSONObject(x));
             }
         }catch(JSONException e){
-            e.printStackTrace();
+            Log.d("Tremap Server", "ERR Link Facility "+e.getMessage());
         }
     }
     private void processChewReferral(JSONObject json){
+        Log.d("Tremap Server CHEW", "Processing Received Chews");
+        Log.d("Tremap Server CHEW", "Received data "+ json);
         try{
             JSONArray recs = json.getJSONArray(ChewReferralTable.JSON_ROOT);
+            Log.d("Tremap Server CHEW", "Processing Received Chews");
             // Get the array first JSONObject
             for (int x = 0; x < recs.length(); x++){
                 new ChewReferralTable(context).fromJson(recs.getJSONObject(x));
             }
         }catch(JSONException e){
-            e.printStackTrace();
+            Log.d("Tremap Server CHEW", "ERROR "+ e.getMessage());
         }
     }
 
