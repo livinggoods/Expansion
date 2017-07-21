@@ -712,6 +712,8 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
     }
 
     public void CuFromJson (JSONObject jsonObject){
+        Log.d("Tremap", "+++++++++++++++++++++++++++++++++++++++");
+        Log.d("Tremap", "Trying to Save teh CU from JSON");
         CommunityUnit communityUnit = new CommunityUnit();
         try {
 
@@ -747,18 +749,22 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
             communityUnit.setMrdtLevels(jsonObject.getLong(MRDTLEVELS));
             communityUnit.setMrdtPrice(jsonObject.getLong(MRDTPRICE));
             communityUnit.setNoOfDistibutors(jsonObject.getLong(NOOFDISTIBUTORS));
-            communityUnit.setChvsTrained(jsonObject.getBoolean(CHVSTRAINED));
-            communityUnit.setPresenceOfEstates(jsonObject.getBoolean(PRESENCEOFESTATES));
+            communityUnit.setChvsTrained(jsonObject.getString(CHVSTRAINED).equalsIgnoreCase("1"));
+            communityUnit.setPresenceOfEstates(jsonObject.getString(PRESENCEOFESTATES).equalsIgnoreCase("1"));
             communityUnit.setPresenceOfFactories(jsonObject.getLong(PRESENCEOFFACTORIES));
-            communityUnit.setPresenceOfHostels(jsonObject.getBoolean(PRESENCEOFHOSTELS));
-            communityUnit.setTraderMarket(jsonObject.getBoolean(TRADERMARKET));
-            communityUnit.setLargeSupermarket(jsonObject.getBoolean(LARGESUPERMARKET));
-            communityUnit.setNgosGivingFreeDrugs(jsonObject.getBoolean(NGOSGIVINGFREEDRUGS));
-            communityUnit.setNgoDoingIccm(jsonObject.getBoolean(NGODOINGICCM));
-            communityUnit.setNgoDoingMhealth(jsonObject.getBoolean(NGODOINGMHEALTH));
+            communityUnit.setPresenceOfHostels(jsonObject.getString(PRESENCEOFHOSTELS).equalsIgnoreCase("1"));
+            communityUnit.setTraderMarket(jsonObject.getString(TRADERMARKET).equalsIgnoreCase("1"));
+            communityUnit.setLargeSupermarket(jsonObject.getString(LARGESUPERMARKET).equalsIgnoreCase("1"));
+            communityUnit.setNgosGivingFreeDrugs(jsonObject.getString(NGOSGIVINGFREEDRUGS).equalsIgnoreCase("1"));
+            communityUnit.setNgoDoingIccm(jsonObject.getString(NGODOINGICCM).equalsIgnoreCase("1"));
+            communityUnit.setNgoDoingMhealth(jsonObject.getString(NGODOINGMHEALTH).equalsIgnoreCase("1"));
 
             addCommunityUnitData(communityUnit);
-        }catch (Exception e){}
+        }catch (Exception e){
+            Log.d("Tremap", "+++++++++++++++++++++++++++++++++++++++");
+            Log.d("Tremap", "CU ERROR IN CREATING CU FROM JSON");
+            Log.d("Tremap", "CE ERROR "+e.getMessage());
+        }
     }
 
     private void upgradeVersion2(SQLiteDatabase db) {}
