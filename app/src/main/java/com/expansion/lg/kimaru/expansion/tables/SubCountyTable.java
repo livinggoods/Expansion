@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -168,11 +169,26 @@ public class SubCountyTable extends SQLiteOpenHelper {
         cv.put(RECOMMENDATION, subCounty.isRecommended() ? 1 : 0);
         cv.put(DATEADDED, subCounty.getDateAdded());
         cv.put(ADDEDBY, subCounty.getAddedBy());
-
-        long id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
-
+        Log.d("Tremap ", "Subcounty Try savig or updating");
+        long id;
+        if (isExist(subCounty)){
+            id = db.update(TABLE_NAME, cv, ID+"='"+subCounty.getId()+"'", null);
+            Log.d("Tremap DB Op", "Sub County updated");
+        }else{
+            id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+            Log.d("Tremap DB Op", "SubCounty Created");
+        }
+        Log.d("Tremap ", "Closing Connection");
         db.close();
         return id;
+
+    }
+    public boolean isExist(SubCounty subCounty) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cur = db.rawQuery("SELECT id FROM " + TABLE_NAME + " WHERE "+ID+" = '" + subCounty.getId() + "'", null);
+        boolean exist = (cur.getCount() > 0);
+        cur.close();
+        return exist;
     }
     //editData
     public long editData(SubCounty subCounty) {
@@ -268,7 +284,7 @@ public class SubCountyTable extends SQLiteOpenHelper {
             subCounty.setAnyMajorBusiness(cursor.getString(27));
             subCounty.setComments(cursor.getString(28));
             subCounty.setRecommended((cursor.getInt(29) == 1));
-            subCounty.setDateAdded(cursor.getInt(30));
+            subCounty.setDateAdded(cursor.getLong(30));
             subCounty.setAddedBy(cursor.getInt(31));
             db.close();
             return subCounty;
@@ -318,7 +334,7 @@ public class SubCountyTable extends SQLiteOpenHelper {
             subCounty.setAnyMajorBusiness(cursor.getString(27));
             subCounty.setComments(cursor.getString(28));
             subCounty.setRecommended((cursor.getInt(29) == 1));
-            subCounty.setDateAdded(cursor.getInt(30));
+            subCounty.setDateAdded(cursor.getLong(30));
             subCounty.setAddedBy(cursor.getInt(31));
 
             subCounties.add(subCounty);
@@ -377,7 +393,7 @@ public class SubCountyTable extends SQLiteOpenHelper {
             subCounty.setAnyMajorBusiness(cursor.getString(27));
             subCounty.setComments(cursor.getString(28));
             subCounty.setRecommended((cursor.getInt(29) == 1));
-            subCounty.setDateAdded(cursor.getInt(30));
+            subCounty.setDateAdded(cursor.getLong(30));
             subCounty.setAddedBy(cursor.getInt(31));
 
             subCounties.add(subCounty);
@@ -431,7 +447,7 @@ public class SubCountyTable extends SQLiteOpenHelper {
             subCounty.setAnyMajorBusiness(cursor.getString(27));
             subCounty.setComments(cursor.getString(28));
             subCounty.setRecommended((cursor.getInt(29) == 1));
-            subCounty.setDateAdded(cursor.getInt(30));
+            subCounty.setDateAdded(cursor.getLong(30));
             subCounty.setAddedBy(cursor.getInt(31));
             db.close();
             return subCounty;
@@ -439,6 +455,7 @@ public class SubCountyTable extends SQLiteOpenHelper {
     }
 
     public  void fromJson (JSONObject jsonObject){
+        Log.d("Tremap", "Subcounty Creating from JSON");
         SubCounty subCounty = new SubCounty();
         try {
             subCounty.setId(jsonObject.getString(ID));
@@ -470,12 +487,40 @@ public class SubCountyTable extends SQLiteOpenHelper {
             subCounty.setMainBanks(jsonObject.getString(MAINBANKS));
             subCounty.setAnyMajorBusiness(jsonObject.getString(ANYMAJORBUSINESS));
             subCounty.setComments(jsonObject.getString(COMMENTS));
-            subCounty.setRecommended(jsonObject.getBoolean(RECOMMENDATION));
-            subCounty.setDateAdded(jsonObject.getInt(DATEADDED));
-            subCounty.setAddedBy(jsonObject.getInt(ADDEDBY));
+            subCounty.setRecommended(jsonObject.getInt(RECOMMENDATION)==1);
+            try{
+                String added = jsonObject.getString(DATEADDED);
+                if (added.equalsIgnoreCase("") || added.isEmpty()){
+                    subCounty.setDateAdded(new Date().getTime());
+                }else{
+                    subCounty.setDateAdded(jsonObject.getLong(DATEADDED));
+                }
+            }catch (Exception e){
+                subCounty.setDateAdded(new Date().getTime());
+                Log.e("Tremap Error", "=======================================");
+                Log.e("Tremap Error", "SUBCOUNTY E "+e.getMessage());
+                Log.e("Tremap Error", "Using the current time instead");
+            }
+            try {
+                String by = jsonObject.getString(ADDEDBY);
+                if (by.equalsIgnoreCase("")){
+                    subCounty.setAddedBy(1);
+                }else{
+                    subCounty.setAddedBy(jsonObject.getInt(ADDEDBY));
+                }
+            }catch (Exception e){
+                subCounty.setAddedBy(1);
+                Log.e("Tremap Error", "=======================================");
+                Log.e("Tremap Error", "SUBCOUNTY E "+e.getMessage());
+                Log.e("Tremap Error", "Using 1 instead");
+            }
 
-            this.addData(subCounty);
-        }catch (Exception e){}
+            addData(subCounty);
+            Log.d("Tremap", "Subcounty Object from JSON");
+        }catch (Exception e){
+            Log.e("Tremap Error", "=======================================");
+            Log.e("Tremap Error", "SUBCOUNTY E "+e.getMessage());
+        }
     }
     public JSONObject getJson() {
 
