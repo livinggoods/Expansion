@@ -15,7 +15,7 @@
         android:text="HTTP Server running" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/buttonStartServer"
         android:text="Start Server"
@@ -24,31 +24,28 @@
         android:layout_marginTop="50dp" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/buttonShareRecords"
         android:text="Share Records with others"
-        android:layout_marginTop="102dp"
         android:layout_below="@+id/buttonStartServer"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/buttonLocationSync"
         android:text="Get Counties (UG) from Cloud"
-        android:layout_marginTop="71dp"
         android:layout_below="@+id/buttonShareRecords"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/buttonGetSubCounty"
         android:text="Get Sub Counties (KE) from Cloud"
-        android:layout_marginTop="71dp"
         android:layout_below="@+id/buttonLocationSync"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
