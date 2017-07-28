@@ -298,11 +298,12 @@ public class CountyLocationTable extends SQLiteOpenHelper {
 
     public List<CountyLocation> getChildrenLocations(CountyLocation parentCountyLocation){
         SQLiteDatabase db=getReadableDatabase();
+        String orderBy = NAME + " asc";
         String whereClause = PARENT+" = ?";
         String[] whereArgs = new String[] {
                 String.valueOf(parentCountyLocation.getId())
         };
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
 
         List<CountyLocation> countyLocationList =new ArrayList<>();
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
@@ -329,11 +330,12 @@ public class CountyLocationTable extends SQLiteOpenHelper {
 
     public List<CountyLocation> getCounties(){
         SQLiteDatabase db=getReadableDatabase();
+        String orderBy = NAME + " asc";
         String whereClause = ADMIN_NAME+" = ?";
         String[] whereArgs = new String[] {
                 "County"
         };
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
 
         List<CountyLocation> countyLocationList =new ArrayList<>();
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
