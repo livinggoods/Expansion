@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -344,6 +345,13 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
 
                     //set Focus
                     mName.requestFocus();
+
+                    session.saveRecruitment(recruitment);
+                    Fragment fragment = new RecruitmentViewFragment();
+                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                    fragmentTransaction.replace(R.id.frame, fragment, "villages");
+                    fragmentTransaction.commitAllowingStateLoss();
                 }
 
         }

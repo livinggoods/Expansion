@@ -78,6 +78,7 @@ public class VillageTable extends SQLiteOpenHelper {
     public static final String SAFARICOM = "safaricom_signal";
     public static final String AIRTEL = "airtel_signal";
     public static final String ORANGE = "orange_signal";
+    public static final String ACTSTOCK = "act_stock";
 
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
@@ -131,6 +132,7 @@ public class VillageTable extends SQLiteOpenHelper {
             + SAFARICOM + integer_field + ","
             + ORANGE + integer_field + ","
             + AIRTEL + integer_field + ","
+            + ACTSTOCK + integer_field + ","
             + COMMENT + text_field + ");";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
@@ -143,7 +145,10 @@ public class VillageTable extends SQLiteOpenHelper {
             DISTRIBUTORSINTHEAREA, TRADERMARKET, LARGESUPERMARKET, NGOSGIVINGFREEDRUGS, NGODOINGICCM,
             NGODOINGMHEALTH, NAMEOFNGODOINGICCM, NAMEOFNGODOINGMHEALTH, PRIVATEFACILITYFORACT,
             PRIVATEFACILITYFORMRDT, DATEADDED, ADDEDBY, COMMENT, SYNCED, CHVS_TRAINED, BRAC_OPERATING,
-            SAFARICOM, MTN, AIRTEL, ORANGE};
+            SAFARICOM, MTN, AIRTEL, ORANGE, ACTSTOCK};
+
+    public static final String DB_UPDATE_V2 = "ALTER TABLE " + TABLE_NAME +
+            "  ADD "+ ACTSTOCK + integer_field +";";
 
     public VillageTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);
@@ -159,6 +164,7 @@ public class VillageTable extends SQLiteOpenHelper {
         Log.w("VillageTable", "upgrading database from" + oldVersion + "to" + newVersion);
         if (oldVersion < 2){
             upgradeVersion2(db);
+
         }
     }
 
@@ -217,11 +223,28 @@ public class VillageTable extends SQLiteOpenHelper {
         cv.put(MTN, village.getMtnSignalStrength());
         cv.put(AIRTEL, village.getAirtelSignalStrength());
         cv.put(ORANGE, village.getOrangeSignalStrength());
+        cv.put(ACTSTOCK, village.getActStock() ? 1 : 0);
 
-        long id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
-
+        long id;
+        if (isExist(village)){
+            cv.put(SYNCED, 0);
+            id = db.update(TABLE_NAME, cv, ID+"='"+village.getId()+"'", null);
+            Log.d("Tremap DB Op", "Village updated");
+        }else{
+            id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+            Log.d("Tremap DB Op", "Village created");
+        }
         db.close();
         return id;
+
+    }
+    public boolean isExist(Village village) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cur = db.rawQuery("SELECT id FROM " + TABLE_NAME + " WHERE "+ID+" = '" + village.getId() + "'", null);
+        boolean exist = (cur.getCount() > 0);
+        cur.close();
+        return exist;
+
     }
 
     public List<Village> getVillageData() {
@@ -288,6 +311,7 @@ public class VillageTable extends SQLiteOpenHelper {
             village.setMtnSignalStrength(cursor.getInt(cursor.getColumnIndex(MTN)));
             village.setAirtelSignalStrength(cursor.getInt(cursor.getColumnIndex(AIRTEL)));
             village.setOrangeSignalStrength(cursor.getInt(cursor.getColumnIndex(ORANGE)));
+            village.setActStock(cursor.getInt(cursor.getColumnIndex(ACTSTOCK))==1);
 
             villages.add(village);
         }
@@ -301,6 +325,33 @@ public class VillageTable extends SQLiteOpenHelper {
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
         return cursor;
     }
-    private void upgradeVersion2(SQLiteDatabase db) {}
+    private void upgradeVersion2(SQLiteDatabase db) {
+        if (!isFieldExist(db, ACTSTOCK)){
+            db.execSQL(DB_UPDATE_V2);
+        }
+    }
+
+    public boolean isFieldExist(SQLiteDatabase db, String fieldName)
+    {
+        boolean isExist = false;
+
+        Cursor res = null;
+
+        try {
+
+            res = db.rawQuery("Select * from "+ TABLE_NAME +" limit 1", null);
+
+            int colIndex = res.getColumnIndex(fieldName);
+            if (colIndex!=-1){
+                isExist = true;
+            }
+
+        } catch (Exception e) {
+        } finally {
+            try { if (res !=null){ res.close(); } } catch (Exception e1) {}
+        }
+
+        return isExist;
+    }
 }
 

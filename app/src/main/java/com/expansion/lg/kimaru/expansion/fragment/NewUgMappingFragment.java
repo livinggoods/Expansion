@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -227,6 +228,8 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
     }
     @Override
     public void onClick(View view){
+        Fragment fragment;
+        FragmentTransaction fragmentTransaction;
         switch (view.getId()){
             case R.id.editDob:
                 DialogFragment newFragment = new DatePickerFragment().newInstance(R.id.editDob);
@@ -240,7 +243,12 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
                 Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
                 Long currentDate =  new Date().getTime();
 
-                String id = UUID.randomUUID().toString();
+                String id;
+                if (editingMapping == null){
+                    id = UUID.randomUUID().toString();
+                }else{
+                    id = editingMapping.getId();
+                }
                 String mappingName = mMappingName.getText().toString();
                 String mappingCounty = String.valueOf(counties.get(mCounty.getSelectedItemPosition()).getId());
                 String subCounty = String.valueOf(subCounties.get(mSubCounty.getSelectedItemPosition()).getId());
@@ -273,10 +281,22 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
                     mComment.setText("");
                     mMappingName.requestFocus();
 
+                    session.saveMapping(mapping);
+                    fragment = new MapViewFragment();
+                    fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                    fragmentTransaction.replace(R.id.frame, fragment, "mappings");
+                    fragmentTransaction.commitAllowingStateLoss();
+
                 }
                 break;
             case R.id.buttonList:
-                //load the list
+                fragment = new MappingFragment();
+                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "mappings");
+                fragmentTransaction.commitAllowingStateLoss();
+                break;
 
         }
     }

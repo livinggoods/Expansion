@@ -168,6 +168,8 @@ public class NewKeMappingFragment extends Fragment implements OnClickListener {
     }
     @Override
     public void onClick(View view){
+        Fragment fragment;
+        FragmentTransaction fragmentTransaction;
         switch (view.getId()){
             case R.id.editDob:
                 DialogFragment newFragment = new DatePickerFragment().newInstance(R.id.editDob);
@@ -216,10 +218,17 @@ public class NewKeMappingFragment extends Fragment implements OnClickListener {
                 mComment.setText("");
                 selectCounty.setSelection(0);
                 mMappingName.requestFocus();
+
+                session.saveMapping(mapping);
+                fragment = new MapKeViewFragment();
+                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "mappings");
+                fragmentTransaction.commitAllowingStateLoss();
                 break;
             case R.id.buttonList:
-                Fragment fragment = new MappingFragment();
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragment = new MappingFragment();
+                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, "mappings");
                 fragmentTransaction.commitAllowingStateLoss();

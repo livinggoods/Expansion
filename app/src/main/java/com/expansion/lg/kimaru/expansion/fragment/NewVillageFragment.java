@@ -72,11 +72,11 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
 
     EditText editName, editAreaChiefName, editAreaChiefPhone, editComment, editDistanceToBranch,
             editTransportCost, editDistanceToMainRoad, editNumberOfHouseHolds, editPopulationDensity,
-            editDistributors, editDistanceToHealthFacility, editActLevels, editActCost;
+            editDistributors, editDistanceToHealthFacility;
     Spinner editEconomicStatus;
     RadioGroup editPresenceEstates, editPresenceOfFactories, editPresenceOfTraderMarket,
             editPresenceOfSuperMarket, editNgosGivingFreeDrugs, editBrac, editNgosIccms, mtn, airtel,
-            orange, editNgosMhealth, editPresenceDistributors;
+            orange, editNgosMhealth, editPresenceDistributors, actStock, editActCost;
     List<String> economicStatusList;
 
     //location
@@ -170,14 +170,15 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
         editPopulationDensity = (EditText) v.findViewById(R.id.editPopulationDensity);
         editDistributors = (EditText) v.findViewById(R.id.editDistributors);
         editDistanceToHealthFacility = (EditText) v.findViewById(R.id.editDistanceToHealthFacility);
-        editActLevels = (EditText) v.findViewById(R.id.editActLevels);
-        editActCost = (EditText) v.findViewById(R.id.editActCost);
+//        editActLevels = (EditText) v.findViewById(R.id.editActLevels);
+        editActCost = (RadioGroup) v.findViewById(R.id.editActCost);
         editPresenceEstates = (RadioGroup) v.findViewById(R.id.editPresenceEstates);
         editPresenceOfFactories = (RadioGroup) v.findViewById(R.id.editPresenceOfFactories);
         editPresenceOfTraderMarket = (RadioGroup) v.findViewById(R.id.editPresenceOfTraderMarket);
         editPresenceOfSuperMarket = (RadioGroup) v.findViewById(R.id.editPresenceOfSuperMarket);
         editNgosGivingFreeDrugs = (RadioGroup) v.findViewById(R.id.editNgosGivingFreeDrugs);
         editPresenceDistributors = (RadioGroup) v.findViewById(R.id.editPresenceDistributors);
+        actStock = (RadioGroup) v.findViewById(R.id.editActStock);
         editBrac = (RadioGroup) v.findViewById(R.id.editBrac);
         editNgosIccms = (RadioGroup) v.findViewById(R.id.editNgosIccms);
         editNgosMhealth = (RadioGroup) v.findViewById(R.id.editNgosMhealth);
@@ -497,20 +498,13 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
                     editDistanceToHealthFacility.requestFocus();
                     return;
                 }
-                String actLevels = editActLevels.getText().toString();
-                if (editActLevels.getText().toString().equalsIgnoreCase("")){
-                    Toast.makeText(getContext(), "Enter the ACT levels of the nearest public" +
-                            " health facility", Toast.LENGTH_LONG).show();
-                    editActLevels.requestFocus();
-                    return;
-                }
-                String actCost = editActCost.getText().toString();
-                if (editActCost.getText().toString().equalsIgnoreCase("")){
-                    Toast.makeText(getContext(), "Enter the cost of ACT at the nearest private" +
-                            " health facility", Toast.LENGTH_LONG).show();
-                    editActCost.requestFocus();
-                    return;
-                }
+//                String actLevels = editActLevels.getText().toString();
+//                if (editActLevels.getText().toString().equalsIgnoreCase("")){
+//                    Toast.makeText(getContext(), "Enter the ACT levels of the nearest public" +
+//                            " health facility", Toast.LENGTH_LONG).show();
+//                    editActLevels.requestFocus();
+//                    return;
+//                }
 
                 String villageName = editName.getText().toString();
                 String mappingId = session.getSavedMapping().getId();
@@ -528,6 +522,7 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
                 String ward = ""; //No Wards in UG
                 String parish = session.getSavedParish().getId();
                 String economicStatus = economicStatusList.get(editEconomicStatus.getSelectedItemPosition());  //List<String> economicStatusList
+                Boolean actStockPresent = getSelectedRadioItemValue(actStock).equalsIgnoreCase("Yes");
                 String privateFacilityForAct = "";
                 String privateFacilityForMrdt = "";
                 String nameOfNgoDoingIccm = "";
@@ -568,13 +563,10 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
                 }catch (Exception e){}
 
                 long actLevel = 0L;
-                try {
-                    actLevel = Long.valueOf(actLevels.equalsIgnoreCase("") ? "0" : actLevels);
-                }catch (Exception e){}
 
                 long actPrice = 0L;
                 try {
-                    actPrice = Long.valueOf(actCost.equalsIgnoreCase("") ? "0" : actCost);
+                    actPrice = getSelectedRadioItemValue(editActCost).equalsIgnoreCase("Less than 5000") ? 1000L : 6000L;
                 }catch (Exception e){}
 
 
@@ -611,7 +603,7 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
                         ngosGivingFreeDrugs, ngoDoingIccm, ngoDoingMhealth, nameOfNgoDoingIccm,
                         nameOfNgoDoingMhealth, privateFacilityForAct, privateFacilityForMrdt,
                         dateAdded, addedBy, comment, chvsTrained, synced, bracOperating, mtnSignal,
-                        safaricomSignal, orangeSignal, airtelSignal);
+                        safaricomSignal, orangeSignal, airtelSignal, actStockPresent);
                 VillageTable villageTable = new VillageTable(getContext());
 
                 long saved = villageTable.addData(village);
@@ -619,6 +611,17 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
                     Toast.makeText(getContext(), "Error occured when saving the record", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(getContext(), "Record saved successfully", Toast.LENGTH_SHORT).show();
+                    editName.setText("");
+                    editAreaChiefName.setText("");
+                    editAreaChiefPhone.setText("");
+                    editComment.setText("");
+                    editDistanceToBranch.setText("");
+                    editTransportCost.setText("");
+                    editDistanceToMainRoad.setText("");
+                    editNumberOfHouseHolds.setText("");
+                    editPopulationDensity.setText("");
+                    editDistributors.setText("");
+                    editDistanceToHealthFacility.setText("");
                 }
 
         }
@@ -665,10 +668,9 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
 
     public void setupEditingMode(){
         if (editingVillage != null){
-            Toast.makeText(getContext(), editingVillage.getDistanceToMainRoad().toString(),
-                    Toast.LENGTH_SHORT).show();
 
             editName.setText(editingVillage.getVillageName());
+            editName.requestFocus();
             editAreaChiefName.setText(editingVillage.getAreaChiefName());
             editAreaChiefPhone.setText(editingVillage.getAreaChiefPhone());
             editComment.setText(editingVillage.getComment());
@@ -679,8 +681,7 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
             editPopulationDensity.setText(editingVillage.getEstimatedPopulationDensity().toString());
             editDistributors.setText(editingVillage.getDistributorsInTheArea());
             editDistanceToHealthFacility.setText(editingVillage.getDistanceToNearestHealthFacility().toString());
-            editActLevels.setText(editingVillage.getActLevels().toString());
-            editActCost.setText(editingVillage.getActPrice().toString());
+//            editActLevels.setText(editingVillage.getActLevels().toString());
             editPresenceEstates.clearCheck();
             editPresenceEstates.check(editingVillage.getPresenceOfEstates() ? R.id.estate1 : R.id.estate2);
             editPresenceOfFactories.clearCheck();
@@ -706,6 +707,20 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
 
             editNgosMhealth.clearCheck();
             editNgosMhealth.check(editingVillage.getNgoDoingMhealth() ? R.id.mHealthYes : R.id.mHealthNo);
+
+            actStock.clearCheck();
+            if (editingVillage.getActStock()){
+                actStock.check(R.id.actStockYes);
+            }else{
+                actStock.check(R.id.actStockNo);
+            }
+
+            editActCost.clearCheck();
+            if (editingVillage.getActPrice().compareTo(5000L) > 0 ){
+                editActCost.check(R.id.actPriceMore);
+            }else{
+                editActCost.check(R.id.actPriceLess);
+            }
 
             mtn.clearCheck();
             switch (editingVillage.getMtnSignalStrength()){

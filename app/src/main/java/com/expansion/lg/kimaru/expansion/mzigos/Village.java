@@ -23,7 +23,7 @@ public class Village {
             areaChiefName, areaChiefPhone, economicStatus, nameOfNgoDoingMhealth, privateFacilityForAct,
             nameOfNgoDoingIccm, privateFacilityForMrdt, comment, distributorsInTheArea;
 
-    Boolean presenceOfHostels, presenceOfEstates, presenceOfDistributors, chvsTrained,
+    Boolean presenceOfHostels, presenceOfEstates, presenceOfDistributors, chvsTrained, actStock,
             traderMarket, largeSupermarket, ngosGivingFreeDrugs, ngoDoingIccm, ngoDoingMhealth;
 
     Long dateAdded, distanceToBranch, transportCost, distanceToNearestHealthFacility, actPrice,
@@ -55,7 +55,7 @@ public class Village {
                    String nameOfNgoDoingMhealth, String privateFacilityForAct, String privateFacilityForMrdt,
                    Long dateAdded, Integer addedBy, String comment, Boolean chvsTrained, boolean synced,
                    boolean bracOperating, Integer mtnSignalStrength, Integer safaricomSignalStrength,
-                   Integer orangeSignalStrength, Integer airtelSignalStrength){
+                   Integer orangeSignalStrength, Integer airtelSignalStrength, Boolean actStock){
 
         this.id = id;
         this.villageName = villageName;
@@ -108,6 +108,7 @@ public class Village {
         this.safaricomSignalStrength = safaricomSignalStrength;
         this.orangeSignalStrength = orangeSignalStrength;
         this.airtelSignalStrength = airtelSignalStrength;
+        this.actStock = actStock;
     }
 
     //SET METHODS
@@ -273,6 +274,10 @@ public class Village {
 
     public void setMohPoplationDensity(Long mohPoplationDensity) {
         this.mohPoplationDensity = mohPoplationDensity;
+    }
+
+    public void setActStock(Boolean actStock) {
+        this.actStock = actStock;
     }
 
     public void setLon(Double lon) {
@@ -547,5 +552,9 @@ public class Village {
 
     public Integer getSafaricomSignalStrength() {
         return safaricomSignalStrength;
+    }
+
+    public Boolean getActStock() {
+        return actStock;
     }
 }

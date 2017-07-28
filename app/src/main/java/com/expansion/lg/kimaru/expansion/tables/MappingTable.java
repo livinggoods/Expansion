@@ -104,12 +104,26 @@ public class MappingTable extends SQLiteOpenHelper {
         cv.put(SYNCED, mapping.isSynced() ? 1 : 0);
         cv.put(DATE_ADDED, mapping.getDateAdded());
 
-        long Is = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
-
+        long id;
+        if (isExist(mapping)){
+            id = db.update(TABLE_NAME, cv, ID+"='"+mapping.getId()+"'", null);
+            Log.d("Tremap DB Op", "Mapping updated");
+        }else{
+            id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+            Log.d("Tremap DB Op", "Mapping Created");
+        }
         db.close();
-        return String.valueOf(Is);
+        return String.valueOf(id);
 
     }
+    public boolean isExist(Mapping mapping) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cur = db.rawQuery("SELECT id FROM " + TABLE_NAME + " WHERE "+ID+" = '" + mapping.getId() + "'", null);
+        boolean exist = (cur.getCount() > 0);
+        cur.close();
+        return exist;
+    }
+
     public List<Mapping> getMappingData() {
 
         SQLiteDatabase db=getReadableDatabase();

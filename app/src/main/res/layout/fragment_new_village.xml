@@ -157,7 +157,7 @@
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <!-- <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
@@ -168,9 +168,46 @@
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+            </android.support.design.widget.TextInputLayout> -->
 
-             <android.support.design.widget.TextInputLayout
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stock of ACT"/>
+                <RadioGroup
+                    android:id="@+id/editActStock"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:id="@+id/actStockYes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:checked="false"
+                        android:text="Yes"
+                        />
+                    <RadioButton
+                        android:id="@+id/actStockNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:checked="true"
+                        android:text="No"
+                        />
+                </RadioGroup>
+            </LinearLayout>
+
+             <!-- <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
@@ -181,7 +218,44 @@
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+            </android.support.design.widget.TextInputLayout> -->
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cost of ACT"/>
+                <RadioGroup
+                    android:id="@+id/editActCost"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:id="@+id/actPriceLess"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:checked="false"
+                        android:text="Less than 5000"
+                        />
+                    <RadioButton
+                        android:id="@+id/actPriceMore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:checked="true"
+                        android:text="More than 5000"
+                        />
+                </RadioGroup>
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
