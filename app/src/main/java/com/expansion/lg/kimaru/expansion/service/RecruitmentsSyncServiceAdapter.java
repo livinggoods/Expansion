@@ -19,6 +19,7 @@ import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
+import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.sync.HttpClient;
 
 /**
@@ -118,9 +119,13 @@ public class RecruitmentsSyncServiceAdapter extends AbstractThreadedSyncAdapter 
      * @return a fake account.
      */
     public static Account getSyncAccount(Context context) {
-        AccountManager accountManager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE); // Get an instance of the Android account manager
-        Account newAccount = new Account(context.getString(R.string.app_name), context.getString(R.string.sync_account_type)); // Create the account type and default account
+        // get the loggedin user Account
+        SessionManagement sessionManagement = new SessionManagement(context);
 
+        AccountManager accountManager = (AccountManager) context.getSystemService(
+                Context.ACCOUNT_SERVICE); // Get an instance of the Android account manager
+        Account newAccount = new Account(sessionManagement.getUserDetails()
+                .get(SessionManagement.KEY_EMAIL), context.getString(R.string.sync_account_type)); // Create the account type and default account
         // If the password doesn't exist, the account doesn't exist
         if (accountManager.getPassword(newAccount) == null) {
             if (!accountManager.addAccountExplicitly(newAccount, "", null)) {
