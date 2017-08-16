@@ -97,14 +97,14 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
             NGODOINGICCM, NGODOINGMHEALTH};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
-            + ID + " varchar(36)" + ","
+            + ID + varchar_field + ","
             + NAME + varchar_field + ","
-            + MAPPINGID + " varchar(36)" + ","
+            + MAPPINGID + varchar_field + ","
             + LAT + varchar_field + ","
             + LON + varchar_field + ","
             + COUNTRY + varchar_field + ","
-            + SUBCOUNTYID + " varchar(36)" + ","
-            + LINKFACILITYID + " varchar(36)" + ","
+            + SUBCOUNTYID + varchar_field + ","
+            + LINKFACILITYID + varchar_field + ","
             + AREACHIEFNAME + varchar_field + ","
             + WARD + varchar_field + ","
             + ECONOMICSTATUS + varchar_field + ","
@@ -139,8 +139,11 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
             + NGODOINGICCM + integer_field + ","
             + NGODOINGMHEALTH + integer_field + ");";
 
+    String [] partnerColumns = {ID, NAME, ICCM, ICCMCOMPONENT, MHEALTH, COMMENT, DATEADDED, ADDEDBY};
+    String [] partnerCuColumns = {ID, PARTNERID, CUID};
+
     public static final String CREATE_PARTNERS = "CREATE TABLE " + PARTNERS_TABLE + "("
-            + ID + " varchar(36)" + ","
+            + ID + varchar_field + ","
             + NAME + varchar_field + ","
             + ICCM + varchar_field + ","
             + ICCMCOMPONENT + varchar_field + ","
@@ -150,7 +153,7 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
             + ADDEDBY + integer_field + "); ";
 
     public static final String CREATE_CU_PARTNERS = "CREATE TABLE " + CU_PARTNERS_TABLE + "("
-            + ID + " varchar(36)" + ","
+            + ID + varchar_field + ","
             + PARTNERID + varchar_field + ","
             + CUID + varchar_field + ");";
 
@@ -237,22 +240,6 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
         return id;
     }
 
-    public long addPartnerData(Partners partners) {
-
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(ID, partners.getPartnerID());
-        cv.put(NAME, partners.getPartnerName());
-        cv.put(ICCM, partners.isDoingIccm() ? 1 : 0);
-        cv.put(ICCMCOMPONENT, partners.getIccmComponent());
-        cv.put(MHEALTH, partners.isDoingMHealth() ? 1 : 0);
-        cv.put(COMMENT, partners.getComment());
-        cv.put(DATEADDED, partners.getDateAdded());
-        cv.put(ADDEDBY, partners.getAddedBy());
-        long id = db.insertWithOnConflict(PARTNERS_TABLE, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
-        return id;
-    }
-
     public boolean isCommunityUnitExisting(CommunityUnit communityUnit) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cur = db.rawQuery("SELECT "+ID+" FROM " + TABLE_NAME + " WHERE " + ID + " = '"
@@ -262,22 +249,7 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
         return exist;
     }
 
-    public boolean isPartnerExisting(Partners partner) {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cur = db.rawQuery("SELECT "+ID+" FROM " + PARTNERS_TABLE + " WHERE " + ID + " = '"
-                + partner.getPartnerID() + "'", null);
-        boolean exist = (cur.getCount() > 0);
-        cur.close();
-        return exist;
-    }
-    public boolean isPartnerCuExisting(Partners partner, CommunityUnit communityUnit) {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cur = db.rawQuery("SELECT "+ID+" FROM " + CU_PARTNERS_TABLE + " WHERE " + PARTNERID + " = '"
-                + partner.getPartnerID() + "' AND "+ CUID + "='"+communityUnit.getId()+"'", null);
-        boolean exist = (cur.getCount() > 0);
-        cur.close();
-        return exist;
-    }
+
 
     public long addPartnerCUData(String id, Partners partner, CommunityUnit communityUnit) {
 
@@ -290,29 +262,6 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
         long savedId = db.insertWithOnConflict(CU_PARTNERS_TABLE, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
         return savedId;
     }
-
-    public List<Partners> getPartnersData() {
-        SQLiteDatabase db = getReadableDatabase();
-        String [] columns =new String [] {ID, NAME, ICCM, ICCMCOMPONENT, MHEALTH, COMMENT, DATEADDED, ADDEDBY};
-        Cursor c = db.query(PARTNERS_TABLE, columns,null,null,null,null,null,null);
-        List<Partners> partnersList = new ArrayList<>();
-        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
-            Partners partners = new Partners();
-            partners.setPartnerID(c.getString(0));
-            partners.setPartnerName(c.getString(1));
-            partners.setDoingIccm(c.getInt(2) == 1);
-            partners.setIccmComponent(c.getString(3));
-            partners.setDoingMHealth(c.getInt(4) == 1);
-            partners.setComment(c.getString(5));
-            partners.setDateAdded(c.getLong(6));
-            partners.setAddedBy(c.getLong(7));
-
-            partnersList.add(partners);
-        }
-        db.close();
-        return partnersList;
-    }
-
 
     public List<CommunityUnit> getCommunityUnitData() {
 
@@ -500,35 +449,6 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
             return communityUnit;
         }
     }
-    //
-    public List<Partners> getPartnersDataBySubCounty(String subCountyUUID) {
-
-        SQLiteDatabase db=getReadableDatabase();
-        String whereClause = SUBCOUNTYID+" = ? ";
-        String[] whereArgs = new String[] {
-                subCountyUUID
-        };
-
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
-        String [] columns =new String [] {ID, NAME, ICCM, ICCMCOMPONENT, MHEALTH, COMMENT, DATEADDED, ADDEDBY};
-        Cursor c = db.query(PARTNERS_TABLE, columns,null,null,null,null,null,null);
-        List<Partners> partnersList = new ArrayList<>();
-        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
-            Partners partners = new Partners();
-            partners.setPartnerID(c.getString(0));
-            partners.setPartnerName(c.getString(1));
-            partners.setDoingIccm(c.getInt(2) == 1);
-            partners.setIccmComponent(c.getString(3));
-            partners.setDoingMHealth(c.getInt(4) == 1);
-            partners.setComment(c.getString(5));
-            partners.setDateAdded(c.getLong(6));
-            partners.setAddedBy(c.getLong(7));
-
-            partnersList.add(partners);
-        }
-        db.close();
-        return partnersList;
-    }
 
     public List<CommunityUnit> getCommunityUnitBySubCounty(String subCountyUUID) {
 
@@ -672,7 +592,6 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
         return cursor;
     }
 
-    //JSON
     public JSONObject getJson() {
 
         SQLiteDatabase db=getReadableDatabase();
