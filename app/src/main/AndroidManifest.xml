@@ -44,11 +44,16 @@
         <!-- SYNC -->
         <provider
             android:authorities="@string/content_authority"
-            android:name=".service.ExpansionContentProvider"
-            android:exported="false"
+            android:name=".service.RecruitmentsContentProvider"
+            android:exported="true"
             android:label="@string/nav_photos"
             android:syncable="true" />
-
+        <provider
+            android:authorities="content_mapping"
+            android:name=".service.MappingsContentProvider"
+            android:exported="true"
+            android:label="Mapping"
+            android:syncable="true" />
 
         <!-- SyncAdapter's dummy authentication service -->
         <service android:name=".service.AuthenticatorService">
@@ -70,6 +75,17 @@
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/recruitmentssyncadapter" />
+        </service>
+
+        <service
+            android:name=".service.MappingsSyncService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/mappingsssyncadapter" />
         </service>
 
     </application>

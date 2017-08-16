@@ -93,6 +93,7 @@
     <string name="action_delete">Delete</string>
     <string name="action_invite">Invite</string>
     <string name="activity_title_http_server">Server Settings</string>
+    <string name="content_mapping">mappings</string>
     <string name="content_authority">com.expansion.lg.kimaru.expansion</string>
     <string name="sync_account_type">com.expansion.lg.kimaru.expansion</string>
 </resources>

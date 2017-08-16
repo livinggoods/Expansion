@@ -55,6 +55,8 @@ import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.other.SetUpApp;
+import com.expansion.lg.kimaru.expansion.service.MappingsSyncService;
+import com.expansion.lg.kimaru.expansion.service.MappingsSyncServiceAdapter;
 import com.expansion.lg.kimaru.expansion.service.RecruitmentsSyncServiceAdapter;
 import com.expansion.lg.kimaru.expansion.sync.ApiClient;
 import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
@@ -154,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         // Start the Sync Service
-        RecruitmentsSyncServiceAdapter.initializeSyncAdapter(getApplicationContext());
+
 
         //since we want login to be the first thing
         session = new SessionManagement(getBaseContext());
@@ -166,6 +168,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         session.checkLogin();
+        if (session.isLoggedIn()){
+            RecruitmentsSyncServiceAdapter.initializeSyncAdapter(getApplicationContext());
+            MappingsSyncServiceAdapter.initializeSyncAdapter(getApplicationContext());
+        }
 
         //we can now extract User details
         HashMap<String, String> user = session.getUserDetails();

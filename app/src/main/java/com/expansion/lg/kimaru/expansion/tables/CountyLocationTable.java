@@ -360,6 +360,40 @@ public class CountyLocationTable extends SQLiteOpenHelper {
         return countyLocationList;
     }
 
+    public List<CountyLocation> getCountiesAndDistricts(){
+        SQLiteDatabase db=getReadableDatabase();
+        String orderBy = NAME + " asc";
+        String whereClause = ADMIN_NAME +" = ? OR " +
+                ADMIN_NAME +" = ? ";
+        String[] whereArgs = new String[] {
+                "County",
+                "District"
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
+
+        List<CountyLocation> countyLocationList =new ArrayList<>();
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            CountyLocation countyLocation = new CountyLocation();
+
+            countyLocation.setId(cursor.getInt(0));
+            countyLocation.setName(cursor.getString(1));
+            countyLocation.setAdminName(cursor.getString(2));
+            countyLocation.setCode(cursor.getString(3));
+            countyLocation.setCountry(cursor.getString(4));
+            countyLocation.setLat(cursor.getString(5));
+            countyLocation.setLon(cursor.getString(6));
+            countyLocation.setMeta(cursor.getString(7));
+            countyLocation.setParent(cursor.getInt(8));
+            countyLocation.setPolygon(cursor.getString(9));
+            countyLocation.setArchived(cursor.getInt(10));
+
+            countyLocationList.add(countyLocation);
+        }
+        db.close();
+
+        return countyLocationList;
+    }
+
 
     public boolean isExist(CountyLocation countyLocation) {
         SQLiteDatabase db = getReadableDatabase();

@@ -21,7 +21,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.mzigos.Village;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
+import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.other.FlipAnimator;
+import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
+import com.expansion.lg.kimaru.expansion.tables.MappingTable;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -99,11 +102,16 @@ public class VillageListAdapter extends RecyclerView.Adapter<VillageListAdapter.
 
         //// displaying text view data
         holder.from.setText(village.getVillageName());
-        holder.subject.setText(village.getSubCountyId());
-        holder.message.setText(village.getMappingId());
-        Date dateAdded = new Date(village.getDateAdded() * 1000);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy' ' HH:mm:ss:S");
-        holder.timestamp.setText(simpleDateFormat.format(dateAdded));
+        if (village.getCountry().equalsIgnoreCase("UG")){
+            holder.subject.setText(new CountyLocationTable(mContext)
+                    .getLocationById(village.getSubCountyId()).getName());
+        }else{
+            holder.subject.setText(village.getSubCountyId());
+        }
+
+        holder.message.setText(new MappingTable(mContext)
+                .getMappingById(village.getMappingId()).getMappingName());
+        holder.timestamp.setText(new DisplayDate(village.getDateAdded()).dateAndTime());
 
         // displaying the first letter of From in icon text
         holder.iconText.setText(village.getVillageName().substring(0,1));

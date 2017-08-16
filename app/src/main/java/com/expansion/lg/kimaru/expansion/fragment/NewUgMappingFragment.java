@@ -128,7 +128,7 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
         mCounty = (Spinner) v.findViewById(R.id.editCounty);
         //populate the Counties
         CountyLocationTable countyLocationTable = new CountyLocationTable(getContext());
-        counties = countyLocationTable.getCounties();
+        counties = countyLocationTable.getCountiesAndDistricts();
 
 
         for (CountyLocation location: counties){

@@ -10,7 +10,7 @@ import android.net.Uri;
  */
 
 
-public class ExpansionContentProvider extends ContentProvider {
+public class MappingsContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
