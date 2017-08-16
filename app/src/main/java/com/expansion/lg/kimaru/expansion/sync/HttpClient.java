@@ -21,6 +21,7 @@ import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
+import com.expansion.lg.kimaru.expansion.tables.ParishTable;
 import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
@@ -760,6 +761,54 @@ public class HttpClient{
             }catch (Exception e){}
         }
     }
+//    client.syncParishes();
+//        client.syncPartnerss();
+//        client.syncPartnersCommunityUnits();
+//        client.syncMapping();
+    public void syncParishes () {
+        String syncResults;
+        ParishTable parishTable = new ParishTable(context);
+        try {
+            syncResults = this.syncClient(parishTable.getJson(),
+                    HttpServer.PARISH_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+        if (syncResults != null){
+            try {
+
+                JSONObject reader = new JSONObject(syncResults);
+                JSONArray recs = reader.getJSONArray("status");
+
+                for (int x = 0; x < recs.length(); x++) {
+                    parishTable.fromJson(recs.getJSONObject(x));
+                }
+            }catch (Exception e){}
+        }
+    }
+
+//    public void syncPartners () {
+//        String syncResults;
+//         parishTable = new ParishTable(context);
+//        try {
+//            syncResults = this.syncClient(parishTable.getJson(),
+//                    HttpServer.PARISH_URL);
+//        } catch (Exception e){
+//            syncResults = null;
+//        }
+//        if (syncResults != null){
+//            try {
+//
+//                JSONObject reader = new JSONObject(syncResults);
+//                JSONArray recs = reader.getJSONArray("status");
+//
+//                for (int x = 0; x < recs.length(); x++) {
+//                    parishTable.fromJson(recs.getJSONObject(x));
+//                }
+//            }catch (Exception e){}
+//        }
+//    }
+
     public void syncLinkFacilities () {
         String syncResults;
         LinkFacilityTable linkFacilityTable = new LinkFacilityTable(context);
