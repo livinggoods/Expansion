@@ -9,19 +9,20 @@ package com.expansion.lg.kimaru.expansion.mzigos;
  */
 
 public class PartnerActivity {
-    String partnerId, country, county, subcounty, parish, village, communityUnit, mappingId,
+    String id, partnerId, country, county, subcounty, parish, village, communityUnit, mappingId,
             comment, activities;
-    boolean doingMhealth, doingIccm, givingFreeDrugs, givingStipend;
+    boolean doingMhealth, doingIccm, givingFreeDrugs, givingStipend, synced;
     Long dateAdded, addedBy;
 
     //empty constructor
     public PartnerActivity(){}
 
-    public PartnerActivity(String partnerId, String country, String county, String subcounty,
+    public PartnerActivity(String id, String partnerId, String country, String county, String subcounty,
                            String parish, String village, String communityUnit, String mappingId,
                            String comment, boolean doingMhealth, boolean doingIccm,
                            boolean givingFreeDrugs, boolean givingStipend,
-                           Long dateAdded, Long addedBy, String activities) {
+                           Long dateAdded, Long addedBy, String activities, boolean synced) {
+        this.id = id;
         this.partnerId = partnerId;
         this.country = country;
         this.county = county;
@@ -38,6 +39,11 @@ public class PartnerActivity {
         this.dateAdded = dateAdded;
         this.addedBy = addedBy;
         this.activities = activities;
+        this.synced = synced;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getPartnerId() {
@@ -104,6 +110,14 @@ public class PartnerActivity {
         return activities;
     }
 
+    public boolean isSynced() {
+        return synced;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public void setPartnerId(String partnerId) {
         this.partnerId = partnerId;
     }
@@ -166,5 +180,9 @@ public class PartnerActivity {
 
     public void setActivities(String activities) {
         this.activities = activities;
+    }
+
+    public void setSynced(boolean synced) {
+        this.synced = synced;
     }
 }
