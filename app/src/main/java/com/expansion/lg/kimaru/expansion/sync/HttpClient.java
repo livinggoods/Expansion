@@ -21,7 +21,10 @@ import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
+import com.expansion.lg.kimaru.expansion.tables.MappingTable;
 import com.expansion.lg.kimaru.expansion.tables.ParishTable;
+import com.expansion.lg.kimaru.expansion.tables.PartnerActivityTable;
+import com.expansion.lg.kimaru.expansion.tables.PartnersTable;
 import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
@@ -787,27 +790,38 @@ public class HttpClient{
         }
     }
 
-//    public void syncPartners () {
-//        String syncResults;
-//         parishTable = new ParishTable(context);
-//        try {
-//            syncResults = this.syncClient(parishTable.getJson(),
-//                    HttpServer.PARISH_URL);
-//        } catch (Exception e){
-//            syncResults = null;
-//        }
-//        if (syncResults != null){
-//            try {
-//
-//                JSONObject reader = new JSONObject(syncResults);
-//                JSONArray recs = reader.getJSONArray("status");
-//
-//                for (int x = 0; x < recs.length(); x++) {
-//                    parishTable.fromJson(recs.getJSONObject(x));
-//                }
-//            }catch (Exception e){}
-//        }
-//    }
+    public void syncPartners () {
+        String syncResults;
+         PartnersTable partnersTable = new PartnersTable(context);
+        try {
+            syncResults = this.syncClient(partnersTable.getJson(),
+                    HttpServer.PARTNERS_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+    }
+
+    public void syncPartnersCommunityUnits () {
+        String syncResults;
+        PartnerActivityTable partnerActivityTable = new PartnerActivityTable(context);
+        try {
+            syncResults = this.syncClient(partnerActivityTable.getJson(),
+                    HttpServer.PARTNERS_ACTIVITY_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+    }
+
+    public void syncMapping () {
+        String syncResults;
+        MappingTable mappingTable = new MappingTable(context);
+        try {
+            syncResults = this.syncClient(mappingTable.getJson(),
+                    HttpServer.PARTNERS_ACTIVITY_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+    }
 
     public void syncLinkFacilities () {
         String syncResults;
