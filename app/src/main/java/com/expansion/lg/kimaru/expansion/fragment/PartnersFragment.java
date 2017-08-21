@@ -10,7 +10,9 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -29,6 +31,7 @@ import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.dbhelpers.CommunityUnitListAdapter;
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
+import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 
@@ -55,6 +58,8 @@ public class PartnersFragment extends Fragment  {
     private String mParam1;
     private String mParam2;
 
+    SubCounty subCounty = null;
+
     private OnFragmentInteractionListener mListener;
     TextView textshow;
 
@@ -68,6 +73,7 @@ public class PartnersFragment extends Fragment  {
 
     SessionManagement session;
 
+    FloatingActionButton fab;
 
 
     // I cant seem to get the context working
@@ -185,6 +191,21 @@ public class PartnersFragment extends Fragment  {
                     }
                 }
         );
+
+        //
+        fab = (FloatingActionButton) v.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = new NewPartnerFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "villages");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        });
+
+        //
 
 //        actionModeCallback = new ActionMode().Callback;
 
