@@ -147,7 +147,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
         editIsGivingFreeMedicine = (RadioGroup) v.findViewById(R.id.editIsGivingFreeMedicine);
         editIsGivingStipend = (RadioGroup) v.findViewById(R.id.editIsGivingStipend);
         editIsDoingMhealth = (RadioGroup) v.findViewById(R.id.editIsDoingMhealth);
-        LinearLayout parentLayout = (LinearLayout) v.findViewById(R.id.check_add_layout);
+        parentLayout = (LinearLayout) v.findViewById(R.id.check_add_layout);
 
         addPartners();
 
