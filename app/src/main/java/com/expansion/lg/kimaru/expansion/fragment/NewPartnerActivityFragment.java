@@ -325,13 +325,17 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                 PartnerActivity partnerActivity = new PartnerActivity();
 
                 partnerActivity.setId(id);
-                partnerActivity.setPartnerId(partnersList.get(selectPartner.getSelectedItemPosition()).getPartnerID());
+
+                if (partnersList.size() !=0){
+                    partnerActivity.setPartnerId(partnersList.get(selectPartner.getSelectedItemPosition()).getPartnerID());
+                }
+
                 partnerActivity.setCountry(session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY));
                 partnerActivity.setCounty(session.getSavedMapping().getCounty());
                 partnerActivity.setSubcounty(session.getSavedSubCounty().getId());
-                partnerActivity.setParish(session.getSavedParish().getId());
-                partnerActivity.setVillage(village.getId());
-                partnerActivity.setCommunityUnit(communityUnit.getId());
+                // partnerActivity.setParish(session.getSavedParish().getId());
+                // partnerActivity.setVillage(village.getId());
+                // partnerActivity.setCommunityUnit(communityUnit.getId());
                 partnerActivity.setMappingId(session.getSavedMapping().getId());
                 partnerActivity.setComment(partnerActivityComment.getText().toString());
 
@@ -347,25 +351,25 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
 
                 JSONObject activities = new JSONObject();
                 String partnerActivities="";
-                try {
-                    activities.put("name","foo");
-                    activities.put("num",new Integer(100));
-                    activities.put("balance",new Double(1000.21));
-                    activities.put("is_vip",new Boolean(true));
-
-                    partnerActivities = activities.toString();
-                }catch (Exception e){}
-
-
-                partnerActivity.setActivities(partnerActivities);
 
                 partnerActivity.setSynced(false);
 
-
+                ArrayList<Integer> listOfSelectedCheckBoxId = new ArrayList<>();
+                for (int i = 0; i < parentLayout.getChildCount(); i++) {
+                    CheckBox checkbox = (CheckBox) parentLayout.getChildAt(i);
+                    try{
+                        activities.put(String.valueOf(checkbox.getId()), checkbox.isChecked());
+                        }catch (Exception e){}
+                    if (checkbox.isChecked())
+                    {
+                        listOfSelectedCheckBoxId.add(checkbox.getId());
+                    }
+                }
+                partnerActivities = activities.toString();
+                partnerActivity.setActivities(partnerActivities);
 
                 PartnerActivityTable partnerActivityTable = new PartnerActivityTable(getContext());
                 long statusId = partnerActivityTable.addData(partnerActivity);
-
                 if (statusId ==-1){
                     Toast.makeText(getContext(), "Could not save the partner", Toast.LENGTH_SHORT).show();
                 }
