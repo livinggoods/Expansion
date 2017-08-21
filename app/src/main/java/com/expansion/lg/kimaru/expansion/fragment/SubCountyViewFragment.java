@@ -26,6 +26,7 @@ import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.KeCountyTable;
 import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
+import com.expansion.lg.kimaru.expansion.tables.PartnersTable;
 import com.poliveira.parallaxrecycleradapter.ParallaxRecyclerAdapter;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class SubCountyViewFragment extends Fragment implements  View.OnClickList
     TextView mappingComment, contactPhone, contactPerson, subCountyName, subCountyCounty;
     TextView linkFacilitySummary, communityUnitSummary, partnersSummary;
     RelativeLayout relativeViewPartners, relativeViewCommunityUnits, relativeLinkFacilities;
+
 
 
     @Override
@@ -83,7 +85,8 @@ public class SubCountyViewFragment extends Fragment implements  View.OnClickList
         }
 
         CommunityUnitTable communityUnitTable = new CommunityUnitTable(getContext());
-        Integer communityUnits = communityUnitTable.getCommunityUnitBySubCounty(subCounty.getId()).size();
+        Integer communityUnits = communityUnitTable
+                .getCommunityUnitBySubCounty(subCounty.getId()).size();
         if (communityUnits.equals(0)){
             communityUnitSummary.setText("NO COMMUNITY UNITS");
         }else if (communityUnits.equals(1)){
@@ -92,7 +95,8 @@ public class SubCountyViewFragment extends Fragment implements  View.OnClickList
             communityUnitSummary.setText(String.valueOf(communityUnits) +" COMMUNITY UNITS");
         }
 
-        Integer partners = communityUnitTable.getPartnersDataBySubCounty(subCounty.getId()).size();
+        Integer partners = new PartnersTable(getContext())
+                .getPartnersBySubCounty(subCounty.getId()).size();
         if (partners.equals(0)){
             partnersSummary.setText("NO PARTNERS");
         }else if (partners.equals(1)){
@@ -107,7 +111,7 @@ public class SubCountyViewFragment extends Fragment implements  View.OnClickList
 
         relativeLinkFacilities.setOnClickListener(this);
         relativeViewCommunityUnits.setOnClickListener(this);
-        // relativeViewPartners.setOnClickListener(this);
+        relativeViewPartners.setOnClickListener(this);
 
 
         return v;
@@ -146,7 +150,7 @@ public class SubCountyViewFragment extends Fragment implements  View.OnClickList
                 fragmentTransaction.commitAllowingStateLoss();
                 break;
             case R.id.relativeViewPartners:
-                fragment = new PartnersFragment();
+                fragment = new NewPartnerActivityFragment();
                 fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left,
