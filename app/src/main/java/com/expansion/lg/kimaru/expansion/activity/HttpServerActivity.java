@@ -19,6 +19,7 @@ import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.sync.ApiClient;
 import com.expansion.lg.kimaru.expansion.sync.HttpClient;
 import com.expansion.lg.kimaru.expansion.sync.HttpServer;
+import com.expansion.lg.kimaru.expansion.sync.IccmDataSync;
 import com.expansion.lg.kimaru.expansion.sync.LocationDataSync;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
@@ -41,7 +42,7 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
 
 
     Button enableServer, buttonGetSubCounty;
-    Button resyncLocations, shareRecords;
+    Button resyncLocations, shareRecords, syncIccmComponents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +54,13 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
         resyncLocations = (Button) findViewById(R.id.buttonLocationSync);
         shareRecords = (Button) findViewById(R.id.buttonShareRecords);
         buttonGetSubCounty = (Button) findViewById(R.id.buttonGetSubCounty);
+        syncIccmComponents = (Button) findViewById(R.id.iccmComponents);
 
         enableServer.setOnClickListener(this);
         shareRecords.setOnClickListener(this);
         resyncLocations.setOnClickListener(this);
         buttonGetSubCounty.setOnClickListener(this);
+        syncIccmComponents.setOnClickListener(this);
 
     }
 
@@ -120,6 +123,18 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
                 });
                 locationThread.start();
                 Toast.makeText(getBaseContext(), "Sync started", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.iccmComponents:
+                Thread iccmThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        IccmDataSync iccmDataSync = new IccmDataSync(getBaseContext());
+                        iccmDataSync.pollNewComponents();
+                    }
+                });
+                iccmThread.start();
+                Toast.makeText(getBaseContext(), "Getting ICCM components ", Toast.LENGTH_SHORT).show();
                 break;
 
 
