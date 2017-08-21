@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.sync.ApiClient;
+import com.expansion.lg.kimaru.expansion.sync.IccmDataSync;
 import com.expansion.lg.kimaru.expansion.sync.LocationDataSync;
 import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
 import com.expansion.lg.kimaru.expansion.tables.UserTable;
@@ -104,6 +105,15 @@ public class LoginActivity extends Activity {
             }
         });
         userThread.start();
+
+        Thread iccmThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                IccmDataSync iccmDataSync = new IccmDataSync(getBaseContext());
+                iccmDataSync.pollNewComponents();
+            }
+        });
+        iccmThread.start();
 
     }
     @Override
