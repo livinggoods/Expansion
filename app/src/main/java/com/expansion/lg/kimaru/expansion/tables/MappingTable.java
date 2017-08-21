@@ -10,6 +10,10 @@ import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.sync.LocationDataSync;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +50,7 @@ public class MappingTable extends SQLiteOpenHelper {
     public static final String COMMENT = "comment";
     public static final String SYNCED = "synced";
     public static final String DATE_ADDED = "date_added";
+    public static final String JSON_ROOT = "mappings";
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ", "
@@ -246,6 +251,43 @@ public class MappingTable extends SQLiteOpenHelper {
         mapping.setSubCounty(cursor.getString(11));
         return mapping;
     }
+
+
+    //JSON
+    public JSONObject getJson() {
+        SQLiteDatabase db=getReadableDatabase();
+        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+        JSONObject results = new JSONObject();
+        JSONArray resultSet = new JSONArray();
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
+    }
+
+
     private void upgradeVersion2(SQLiteDatabase db) {
         // add column
         db.execSQL(DB_UPDATE_V2);
