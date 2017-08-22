@@ -49,7 +49,15 @@ public class RecruitmentsSyncServiceAdapter extends AbstractThreadedSyncAdapter 
         client.syncInterviews();
         client.syncCommunityUnits();
         client.syncReferrals();
+        Log.d("tremap", "Start Syncing mapping");
+        client.syncMapping();
+        Log.d("tremap", "End Syncing mapping");
         client.syncLinkFacilities();
+
+        client.syncParishes();
+        //client.syncPartners();
+        //client.syncPartnersCommunityUnits();
+
 
     }
 
