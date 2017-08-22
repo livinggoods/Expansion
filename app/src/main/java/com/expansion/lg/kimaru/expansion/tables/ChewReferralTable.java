@@ -56,7 +56,7 @@ public class ChewReferralTable extends SQLiteOpenHelper {
     public static final String LON = "lon";
     public static final String MOBILIZATION = "mobilization";
     public static final String SYNCED = "synced";
-    String [] columns=new String[]{ID, NAME, PHONE, TITLE, COUNTRY, RECRUITMENT, SYNCED,
+    public String [] columns=new String[]{ID, NAME, PHONE, TITLE, COUNTRY, RECRUITMENT, SYNCED,
             COUNTY, DISTRICT, SUBCOUNTY, COMMUNITY_UNIT, VILLAGE, MAPPING, MOBILIZATION, LAT, LON};
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ","

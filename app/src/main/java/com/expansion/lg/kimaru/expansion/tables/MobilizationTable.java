@@ -52,7 +52,7 @@ public class MobilizationTable extends SQLiteOpenHelper {
     public static final String PARISH = "parish";
     public static final String SYNCED = "synced";
 
-    String [] columns=new String[]{ID, NAME, MAPPING, COUNTRY, ADDED_BY, COMMENT,
+    public String [] columns=new String[]{ID, NAME, MAPPING, COUNTRY, ADDED_BY, COMMENT,
             DATE_ADDED, SYNCED, DISTRICT, COUNTY, SUB_COUNTY, PARISH};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
