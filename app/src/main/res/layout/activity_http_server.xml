@@ -50,6 +50,15 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonExportData"
+        android:text="Export Data to SD card"
+        android:layout_below="@+id/buttonLocationSync"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
 
 
 </RelativeLayout>
