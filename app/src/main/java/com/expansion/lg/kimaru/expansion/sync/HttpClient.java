@@ -576,6 +576,10 @@ public class HttpClient{
     // Callback for the API
     private String syncClient(JSONObject json, String apiEndpoint) throws Exception {
         //  get the server URL
+        Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        Log.d("Tremap", "URL: "+Constants.API_SERVER+apiEndpoint);
+        Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
         AsyncHttpPost p = new AsyncHttpPost(Constants.API_SERVER+apiEndpoint);
         p.setBody(new JSONObjectBody(json));
         JSONObject ret = AsyncHttpClient.getDefaultInstance().executeJSONObject(p, null).get();
@@ -787,7 +791,6 @@ public class HttpClient{
 
     public void syncMapping () {
         String syncResults;
-        Log.d("tremap", "Syncing mapping");
         MappingTable mappingTable = new MappingTable(context);
         try {
             syncResults = this.syncClient(mappingTable.getJson(),
@@ -800,13 +803,10 @@ public class HttpClient{
 
                 JSONObject reader = new JSONObject(syncResults);
                 JSONArray recs = reader.getJSONArray("status");
-
                 for (int x = 0; x < recs.length(); x++) {
-
+                    mappingTable.fromJson(recs.getJSONObject(x));
                 }
             }catch (Exception e){}
-        }else{
-            Log.d("tremap", "Syncing mapping - Results NULL");
         }
     }
 
