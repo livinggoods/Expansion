@@ -28,6 +28,7 @@ import com.expansion.lg.kimaru.expansion.tables.PartnersTable;
 import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
+import com.expansion.lg.kimaru.expansion.tables.VillageTable;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.AsyncHttpPost;
 import com.koushikdutta.async.http.body.JSONObjectBody;
@@ -577,6 +578,10 @@ public class HttpClient{
     // Callback for the API
     private String syncClient(JSONObject json, String apiEndpoint) throws Exception {
         //  get the server URL
+        Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        Log.d("Tremap", "URL: "+Constants.API_SERVER+apiEndpoint);
+        Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
         AsyncHttpPost p = new AsyncHttpPost(Constants.API_SERVER+apiEndpoint);
         p.setBody(new JSONObjectBody(json));
         JSONObject ret = AsyncHttpClient.getDefaultInstance().executeJSONObject(p, null).get();
@@ -764,10 +769,6 @@ public class HttpClient{
             }catch (Exception e){}
         }
     }
-//    client.syncParishes();
-//        client.syncPartnerss();
-//        client.syncPartnersCommunityUnits();
-//        client.syncMapping();
     public void syncParishes () {
         String syncResults;
         ParishTable parishTable = new ParishTable(context);
@@ -789,6 +790,7 @@ public class HttpClient{
             }catch (Exception e){}
         }
     }
+
 
     public void syncPartners () {
         String syncResults;
@@ -812,12 +814,34 @@ public class HttpClient{
         }
     }
 
+
     public void syncMapping () {
         String syncResults;
         MappingTable mappingTable = new MappingTable(context);
         try {
             syncResults = this.syncClient(mappingTable.getJson(),
-                    HttpServer.PARTNERS_ACTIVITY_URL);
+                    HttpServer.MAPPING_URL);
+        } catch (Exception e){
+            syncResults = null;
+        }
+        if (syncResults != null){
+            try {
+
+                JSONObject reader = new JSONObject(syncResults);
+                JSONArray recs = reader.getJSONArray("status");
+                for (int x = 0; x < recs.length(); x++) {
+                    mappingTable.fromJson(recs.getJSONObject(x));
+                }
+            }catch (Exception e){}
+        }
+    }
+
+    public void syncVillages () {
+        String syncResults;
+        VillageTable villageTable = new VillageTable(context);
+        try {
+            syncResults = this.syncClient(villageTable.getJson(),
+                    HttpServer.VILLAGE_URL);
         } catch (Exception e){
             syncResults = null;
         }

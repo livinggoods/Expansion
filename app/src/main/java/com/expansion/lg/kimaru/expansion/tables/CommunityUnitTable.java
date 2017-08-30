@@ -85,7 +85,7 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
     public static final String COMMENT = "comment";
     public static final String PARTNERID = "partner_id";
     public static final String CUID = "cu_id";
-    String [] columns=new String[]{ID, NAME, MAPPINGID, LAT, LON, COUNTRY,
+    public String [] columns=new String[]{ID, NAME, MAPPINGID, LAT, LON, COUNTRY,
             SUBCOUNTYID, LINKFACILITYID, AREACHIEFNAME, WARD, ECONOMICSTATUS,
             PRIVATEFACILITYFORACT, PRIVATEFACILITYFORMRDT, NAMEOFNGODOINGICCM,
             NAMEOFNGODOINGMHEALTH, DATEADDED, ADDEDBY, NUMBEROFCHVS, HOUSEHOLDPERCHV,

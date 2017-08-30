@@ -60,9 +60,12 @@ public class HttpServer {
     public static final String CHEW_REFERRAL_URL = "chew_referral";
     public static final String CU_URL = "community_unit";
     public static final String SUBCOUNTY_URL = "subcounty";
+    public static final String MAPPING_URL = "mapping";
     public static final String PARISH_URL = "parish";
     public static final String PARTNERS_URL = "partners";
     public static final String PARTNERS_ACTIVITY_URL = "partners/activity";
+    public static final String VILLAGE_URL = "villages";
+
     public static String url;
     Context context;
 

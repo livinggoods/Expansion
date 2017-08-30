@@ -66,7 +66,7 @@ public class ParishTable extends SQLiteOpenHelper {
             + SYNCED + integer_field + ", "
             + DATE_ADDED + integer_field + "); ";
 
-    String [] columns=new String[]{ID, PARISHNAME, COUNTRY, PARENT_LOCATION, MAPPINGID, ADDED_BY,
+    public String [] columns=new String[]{ID, PARISHNAME, COUNTRY, PARENT_LOCATION, MAPPINGID, ADDED_BY,
             CONTACTPERSON, CONTACTPERSONPHONE, COMMENT, SYNCED, DATE_ADDED};
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;

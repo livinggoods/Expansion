@@ -50,7 +50,13 @@ public class RecruitmentsSyncServiceAdapter extends AbstractThreadedSyncAdapter 
         client.syncInterviews();
         client.syncCommunityUnits();
         client.syncReferrals();
+        client.syncMapping();
         client.syncLinkFacilities();
+        client.syncVillages();
+        client.syncParishes();
+        //client.syncPartners();
+        //client.syncPartnersCommunityUnits();
+
 
         // Add parishes, partners. partnercu, mapping
         client.syncParishes();

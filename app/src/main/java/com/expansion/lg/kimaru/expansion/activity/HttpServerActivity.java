@@ -16,6 +16,7 @@ import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.other.ExportDataToCsv;
 import com.expansion.lg.kimaru.expansion.sync.ApiClient;
 import com.expansion.lg.kimaru.expansion.sync.HttpClient;
 import com.expansion.lg.kimaru.expansion.sync.HttpServer;
@@ -42,7 +43,9 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
 
 
     Button enableServer, buttonGetSubCounty;
-    Button resyncLocations, shareRecords, syncIccmComponents;
+    Button resyncLocations, shareRecords, syncIccmComponents, buttonExportData;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +58,14 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
         shareRecords = (Button) findViewById(R.id.buttonShareRecords);
         buttonGetSubCounty = (Button) findViewById(R.id.buttonGetSubCounty);
         syncIccmComponents = (Button) findViewById(R.id.iccmComponents);
+        buttonExportData = (Button) findViewById(R.id.buttonExportData);
 
         enableServer.setOnClickListener(this);
         shareRecords.setOnClickListener(this);
         resyncLocations.setOnClickListener(this);
         buttonGetSubCounty.setOnClickListener(this);
         syncIccmComponents.setOnClickListener(this);
+        buttonExportData.setOnClickListener(this);
 
     }
 
@@ -123,6 +128,22 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
                 });
                 locationThread.start();
                 Toast.makeText(getBaseContext(), "Sync started", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.buttonExportData:
+                Toast.makeText(getBaseContext(), "Exporting data", Toast.LENGTH_SHORT).show();
+                Thread dataExport = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ExportDataToCsv exportDataToCsv = new ExportDataToCsv(getApplicationContext());
+                        exportDataToCsv.exportChewReferral();
+                        exportDataToCsv.exportCommunityUnit();
+                        exportDataToCsv.exportMobilization();
+                        exportDataToCsv.exportVillage();
+                        exportDataToCsv.exportParish();
+                        exportDataToCsv.exportMapping();
+                    }
+                });
+                dataExport.start();
                 break;
 
             case R.id.iccmComponents:

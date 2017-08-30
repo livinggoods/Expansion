@@ -66,7 +66,7 @@ public class MappingTable extends SQLiteOpenHelper {
             + SYNCED + integer_field + ", "
             + DATE_ADDED + real_field + "); ";
 
-    String [] columns=new String[]{ID, MAPPINGNAME, COUNTRY, COUNTY, ADDED_BY, CONTACTPERSON,
+    public String [] columns=new String[]{ID, MAPPINGNAME, COUNTRY, COUNTY, ADDED_BY, CONTACTPERSON,
             CONTACTPERSONPHONE, COMMENT, DATE_ADDED, SYNCED, DISTRICT, SUBCOUNTY};
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
@@ -251,8 +251,7 @@ public class MappingTable extends SQLiteOpenHelper {
         mapping.setSubCounty(cursor.getString(11));
         return mapping;
     }
-
-
+    
     //JSON
     public JSONObject getJson() {
         SQLiteDatabase db=getReadableDatabase();
@@ -262,7 +261,6 @@ public class MappingTable extends SQLiteOpenHelper {
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
             int totalColumns = cursor.getColumnCount();
             JSONObject rowObject = new JSONObject();
-
             for (int i =0; i < totalColumns; i++){
                 if (cursor.getColumnName(i) != null){
                     try {
@@ -284,9 +282,37 @@ public class MappingTable extends SQLiteOpenHelper {
         }
         cursor.close();
         db.close();
+        Log.d("TREMAP", "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
+        Log.d("TREMAP", results.toString());
+        Log.d("TREMAP", "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
         return results;
     }
 
+    public void fromJson (JSONObject jsonObject){
+        Log.d("Tremap", "Creating Mapping from JSON");
+        Mapping mapping = new Mapping();
+        try {
+
+
+            mapping.setId(jsonObject.getString(ID));
+            mapping.setMappingName(jsonObject.getString(MAPPINGNAME));
+            mapping.setCountry(jsonObject.getString(COUNTRY));
+            mapping.setCounty(jsonObject.getString(COUNTY));
+            mapping.setAddedBy(jsonObject.getInt(ADDED_BY));
+            mapping.setContactPerson(jsonObject.getString(CONTACTPERSON));
+            mapping.setContactPersonPhone(jsonObject.getString(CONTACTPERSONPHONE));
+            mapping.setComment(jsonObject.getString(COMMENT));
+            mapping.setDateAdded(jsonObject.getLong(DATE_ADDED));
+            mapping.setSynced(jsonObject.getInt(SYNCED) == 1);
+            mapping.setDistrict(jsonObject.getString(DISTRICT));
+            mapping.setSubCounty(jsonObject.getString(SUBCOUNTY));
+            addData(mapping);
+        }catch (Exception e){
+            Log.d("Tremap", "+++++++++++++++++++++++++++++++++++++++");
+            Log.d("Tremap", "ERROR CREATING MAPPING FROM JSON");
+            Log.d("Tremap", "CE ERROR "+e.getMessage());
+        }
+    }
 
     private void upgradeVersion2(SQLiteDatabase db) {
         // add column
