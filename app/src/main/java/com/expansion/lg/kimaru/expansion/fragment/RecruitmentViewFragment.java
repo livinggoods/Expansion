@@ -226,7 +226,9 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
 //                    .getSubCountyName());
 
 
-            recruitmentSecondaryLocation.setText(session.getSavedRecruitment().getSubcounty());
+            recruitmentSecondaryLocation.setText(new SubCountyTable(getContext())
+                    .getSubCountyById(session.getSavedRecruitment().getSubcounty())
+                    .getSubCountyName());
 
             session.saveSubCounty(new SubCountyTable(getContext())
                     .getSubCountyById(session.getSavedRecruitment().getSubcounty()));
