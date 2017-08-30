@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.mzigos.CountyLocation;
@@ -73,6 +74,7 @@ public class LocationDataSync {
                         }
                     }
                 }catch(JSONException e){
+                    Log.d("TREMAP", "KE County Sync ERROR "+e.getMessage());
                 }
 
             }
