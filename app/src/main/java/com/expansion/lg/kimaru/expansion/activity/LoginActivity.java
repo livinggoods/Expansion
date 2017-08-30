@@ -33,7 +33,7 @@ public class LoginActivity extends Activity {
     // get the Email and pwd fields
     EditText txtUsername, txtPassword;
     // and the button
-    Button btnLogin;
+    Button btnLogin, buttonRefresh;
     AlertDialogManager alert = new AlertDialogManager();
 
     SessionManagement session;
@@ -71,6 +71,21 @@ public class LoginActivity extends Activity {
                 }else{
                     alert.showAlertDialog(LoginActivity.this, "Login failed..", "Please enter both the Email and password", true, null, null);
                 }
+            }
+        });
+        buttonRefresh = (Button) findViewById(R.id.buttonRefresh);
+        buttonRefresh.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Thread userThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        UserDataSync dSync = new UserDataSync(getBaseContext());
+                        dSync.pollNewUsers();
+                    }
+                });
+                userThread.start();
+                Toast.makeText(getApplicationContext(), "Refreshing users", Toast.LENGTH_SHORT).show();
             }
         });
     }
