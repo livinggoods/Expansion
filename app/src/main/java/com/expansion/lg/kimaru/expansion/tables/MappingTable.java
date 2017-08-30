@@ -251,7 +251,7 @@ public class MappingTable extends SQLiteOpenHelper {
         mapping.setSubCounty(cursor.getString(11));
         return mapping;
     }
-    
+
     //JSON
     public JSONObject getJson() {
         SQLiteDatabase db=getReadableDatabase();

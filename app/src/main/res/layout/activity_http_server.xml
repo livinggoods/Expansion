@@ -53,20 +53,20 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-<<<<<<< HEAD
         android:id="@+id/iccmComponents"
         android:text="Sync ICCM components"
         android:layout_below="@+id/buttonGetSubCounty"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
-=======
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/buttonExportData"
         android:text="Export Data to SD card"
-        android:layout_below="@+id/buttonGetSubCounty"
+        android:layout_below="@+id/iccmComponents"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-
->>>>>>> uganda-mapping
 
 </RelativeLayout>
