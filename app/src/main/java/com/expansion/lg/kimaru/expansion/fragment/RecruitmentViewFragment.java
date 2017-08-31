@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -77,6 +78,7 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
     private RecyclerView recyclerView;
     private ChewReferralListAdapter rAdapter;
     public SwipeRefreshLayout swipeRefreshLayout;
+    public RelativeLayout registrationDetails;
 
     private List<ChewReferral> chewReferrals = new ArrayList<>();
     private List<CommunityUnit> communityUnits = new ArrayList<>();
@@ -156,6 +158,8 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
         adapter = new ChewAdapter(getContext(), chewReferrals);
 
         mListView.setAdapter(adapter);
+        registrationDetails = (RelativeLayout) v.findViewById(R.id.registrationDetails);
+        registrationDetails.setOnClickListener(onRecruitmentRegistrationSummaryClickListener);
 
         recruitmentMainLocation = (TextView) v.findViewById(R.id.recruitmentMainLocation);
         addReferrals = (TextView) v.findViewById(R.id.addReferrals);
@@ -164,7 +168,7 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
                 .getRegistrationsByRecruitment(session.getSavedRecruitment());
         txtRegistrations = (TextView) v.findViewById(R.id.registrations);
         txtRegistrations.setText(registrations.size()+" Registrations");
-        txtRegistrations.setOnClickListener(this);
+        txtRegistrations.setOnClickListener(onRecruitmentRegistrationSummaryClickListener);
 
 
 
@@ -193,7 +197,7 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
                 " list\n" + String.valueOf(failed) + " Not selected";
         recruitmentRegSummary = (TextView) v.findViewById(R.id.recruitmentRegSummary);
         recruitmentRegSummary.setText(summary);
-        recruitmentRegSummary.setOnClickListener(this);
+        recruitmentRegSummary.setOnClickListener(onRecruitmentRegistrationSummaryClickListener);
 
         RelativeLayout keCuList = (RelativeLayout) v.findViewById(R.id.ke_cu_list);
         RelativeLayout keCuView = (RelativeLayout) v.findViewById(R.id.ke_cu_view);
@@ -240,6 +244,18 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
 
         return v;
     }
+
+    View.OnClickListener onRecruitmentRegistrationSummaryClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Fragment fragment = new RegistrationsFragment();
+            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                    android.R.anim.fade_out);
+            fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_REGISTRATIONS);
+            fragmentTransaction.commitAllowingStateLoss();
+        }
+    };
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -333,22 +349,23 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
                 fragmentTransaction.commitAllowingStateLoss();
                 break;
 
-            case R.id.recruitmentRegSummary:
-                fragment = new RegistrationsFragment();
-                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_REGISTRATIONS);
-                fragmentTransaction.commitAllowingStateLoss();
-                break;
-            case  R.id.registrations:
-                fragment = new RegistrationsFragment();
-                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_REGISTRATIONS);
-                fragmentTransaction.commitAllowingStateLoss();
-                break;
+//            case R.id.recruitmentRegSummary:
+//                fragment = new RegistrationsFragment();
+//                Toast.makeText(getContext(), "Opening Registrations", Toast.LENGTH_SHORT).show();
+//                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+//                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+//                        android.R.anim.fade_out);
+//                fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_REGISTRATIONS);
+//                fragmentTransaction.commitAllowingStateLoss();
+//                break;
+//            case  R.id.registrations:
+//                fragment = new RegistrationsFragment();
+//                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+//                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+//                        android.R.anim.fade_out);
+//                fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_REGISTRATIONS);
+//                fragmentTransaction.commitAllowingStateLoss();
+//                break;
             case R.id.ke_cu_view:
                 NewCommunityUnitFragment newCommunityUnitFragment = new NewCommunityUnitFragment();
                 newCommunityUnitFragment.backFragment = new RecruitmentViewFragment();
