@@ -720,12 +720,30 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 String aDob = mDob.getText().toString();
                 String applicantChewName = "";
                 String applicantChewNumber = "";
+                if (wards.get(editWard.getSelectedItemPosition()).equalsIgnoreCase("Add New") ||
+                        wards.get(editWard.getSelectedItemPosition()).trim().equalsIgnoreCase("")){
+                    Toast.makeText(getContext(), "Please select a valid Ward", Toast.LENGTH_SHORT)
+                            .show();
+                    return;
+                }
                 String applicantWard = wardsList.get(editWard.getSelectedItemPosition()).getId();
                 String applicantCuName="";
+                if (communityUnits.get(editCuName.getSelectedItemPosition()).equalsIgnoreCase("Add New") ||
+                        communityUnits.get(editCuName.getSelectedItemPosition()).trim().equalsIgnoreCase("")){
+                    Toast.makeText(getContext(), "Please select a valid Community Unit", Toast.LENGTH_SHORT)
+                            .show();
+                    return;
+                }
                 if (communityUnitList.size() !=0){
                     applicantCuName = communityUnitList.get(editCuName.getSelectedItemPosition()).getId();
                 }
                 String applicantLinkFacility ="";
+                if (linkFacilities.get(selectLinkFacility.getSelectedItemPosition()).equalsIgnoreCase("Add New") ||
+                        linkFacilities.get(selectLinkFacility.getSelectedItemPosition()).trim().equalsIgnoreCase("") ){
+                    Toast.makeText(getContext(), "Please select a valid Link Facility", Toast.LENGTH_SHORT)
+                            .show();
+                    return;
+                }
                 if (linkFacilityList.size() !=0){
                     applicantLinkFacility = linkFacilityList.get(selectLinkFacility.getSelectedItemPosition()).getId();
                 }
@@ -815,6 +833,13 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
 
 
                 Integer applicantBracChp = 0; // = hasApplicantWorkedAsBracChp == "Yes" ? 1 : 0;
+
+                if (chewReferrals.get(selectChew.getSelectedItemPosition()).equalsIgnoreCase("Add New") ||
+                        chewReferrals.get(selectChew.getSelectedItemPosition()).trim().equalsIgnoreCase("") ){
+                    Toast.makeText(getContext(), "Please select a valid CHEW", Toast.LENGTH_SHORT)
+                            .show();
+                    return;
+                }
 
                 String chewUuid = chewReferralList.get(selectChew.getSelectedItemPosition()).getId();
 
@@ -1089,7 +1114,14 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 }
                 x++;
             }
-            editLinkFacility.setText(editingRegistration.getLinkFacility());
+            x=0;
+            for (LinkFacility lf : linkFacilityList){
+                if (lf.getId().equalsIgnoreCase(editingRegistration.getLinkFacility())){
+                    selectLinkFacility.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
             editNoOfHouseholds.setText(String.valueOf(editingRegistration.getNoOfHouseholds()));
             editOtherTrainings.setText(editingRegistration.getOtherTrainings());
             if (editingRegistration.isChv()){
