@@ -101,6 +101,11 @@ public class LoginActivity extends Activity {
                 Toast.makeText(getBaseContext(), "Please wait ...", Toast.LENGTH_SHORT).show();
                 if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
                     new syncLocations().execute(Constants.CLOUD_ADDRESS+"/api/v1/sync/locations");
+                }else{
+                    IccmDataSync iccmDataSync = new IccmDataSync(getBaseContext());
+                    iccmDataSync.pollNewComponents();
+                    LocationDataSync locationDataSync = new LocationDataSync(getBaseContext());
+                    locationDataSync.getKeSubcounties();
                 }
                 return true;
             }
