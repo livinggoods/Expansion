@@ -5,6 +5,7 @@ package com.expansion.lg.kimaru.expansion.fragment;
  */
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -34,8 +35,11 @@ import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.dbhelpers.RecruitmentListAdapter;
+import com.expansion.lg.kimaru.expansion.sync.IccmDataSync;
+import com.expansion.lg.kimaru.expansion.sync.LocationDataSync;
 import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
+import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -135,6 +139,21 @@ public class RecruitmentsFragment extends Fragment  {
                 Fragment fragment;
                 if (user.get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("KE")){
                     fragment = new NewKeRecruitmentFragment();
+                    Integer s = new SubCountyTable(getContext()).getSubCountyData().size();
+                    if (s.equals(0)) {
+                        // wait till syncing is done..
+                        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+                        progressDialog.setTitle("Syncing Location Data");
+                        progressDialog.setMessage("Please wait ...");
+                        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+                        IccmDataSync iccmDataSync = new IccmDataSync(getContext());
+                        iccmDataSync.pollNewComponents();
+                        LocationDataSync locationDataSync = new LocationDataSync(getContext());
+                        locationDataSync.getKeSubcounties();
+                        progressDialog.dismiss();
+                    }
                 }else{
                     fragment = new NewRecruitmentFragment();
                 }

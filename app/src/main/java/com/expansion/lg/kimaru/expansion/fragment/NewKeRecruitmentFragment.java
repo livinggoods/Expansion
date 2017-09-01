@@ -4,6 +4,7 @@ package com.expansion.lg.kimaru.expansion.fragment;
  */
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -29,6 +30,8 @@ import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.KeCounty;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
+import com.expansion.lg.kimaru.expansion.sync.IccmDataSync;
+import com.expansion.lg.kimaru.expansion.sync.LocationDataSync;
 import com.expansion.lg.kimaru.expansion.tables.KeCountyTable;
 import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
 import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
@@ -138,6 +141,8 @@ public class NewKeRecruitmentFragment extends Fragment implements OnClickListene
         for (KeCounty k : keCountyList){
             keCounties.add(k.getCountyName());
         }
+
+        // check if we have subCounties and Wards
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_spinner_item, keCounties);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

@@ -1,6 +1,7 @@
 package com.expansion.lg.kimaru.expansion.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 
 import android.database.Cursor;
@@ -62,6 +63,42 @@ public class LoginActivity extends Activity {
                     //Cursor theUser = dbHelper.fetchUser(thisUsername, thisPassword);
 
                     if (loginUser(username, password)){
+
+                        if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+                            new syncLocations().execute(Constants.CLOUD_ADDRESS+"/api/v1/sync/locations");
+                        }else{
+                            IccmDataSync iccmDataSync = new IccmDataSync(getBaseContext());
+                            iccmDataSync.pollNewComponents();
+                            LocationDataSync locationDataSync = new LocationDataSync(getBaseContext());
+                            locationDataSync.getKeSubcounties();
+                        }
+
+//                        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this);
+//                        progressDialog.setTitle("Syncing Location Data");
+//                        progressDialog.setMessage("Please wait ...");
+//                        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//                        progressDialog.setCancelable(false);
+//                        progressDialog.show();
+//                        new Thread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                try {
+//                                    if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+//                                        new syncLocations().execute(Constants.CLOUD_ADDRESS+"/api/v1/sync/locations");
+//                                    }else{
+//                                        IccmDataSync iccmDataSync = new IccmDataSync(getBaseContext());
+//                                        iccmDataSync.pollNewComponents();
+//                                        LocationDataSync locationDataSync = new LocationDataSync(getBaseContext());
+//                                        locationDataSync.getKeSubcounties();
+//                                    }
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }finally {
+//                                    progressDialog.dismiss();
+//                                }
+//                            }
+//                        }).start();
+
                         Intent i = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(i);
                         finish();
@@ -98,15 +135,6 @@ public class LoginActivity extends Activity {
             if (user.getCount() > 0){
                 session.createLoginSesstion(user.getString(4), user.getString(1), user.getInt(0), user.getString(5));
                 // at this point, let us sync the locations
-                Toast.makeText(getBaseContext(), "Please wait ...", Toast.LENGTH_SHORT).show();
-                if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
-                    new syncLocations().execute(Constants.CLOUD_ADDRESS+"/api/v1/sync/locations");
-                }else{
-                    IccmDataSync iccmDataSync = new IccmDataSync(getBaseContext());
-                    iccmDataSync.pollNewComponents();
-                    LocationDataSync locationDataSync = new LocationDataSync(getBaseContext());
-                    locationDataSync.getKeSubcounties();
-                }
                 return true;
             }
         }

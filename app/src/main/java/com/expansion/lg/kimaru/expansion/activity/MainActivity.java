@@ -2,6 +2,7 @@ package com.expansion.lg.kimaru.expansion.activity;
 
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -59,6 +60,8 @@ import com.expansion.lg.kimaru.expansion.service.MappingsSyncService;
 import com.expansion.lg.kimaru.expansion.service.MappingsSyncServiceAdapter;
 import com.expansion.lg.kimaru.expansion.service.RecruitmentsSyncServiceAdapter;
 import com.expansion.lg.kimaru.expansion.sync.ApiClient;
+import com.expansion.lg.kimaru.expansion.sync.IccmDataSync;
+import com.expansion.lg.kimaru.expansion.sync.LocationDataSync;
 import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
 import com.expansion.lg.kimaru.expansion.tables.MappingTable;
 
@@ -171,7 +174,26 @@ public class MainActivity extends AppCompatActivity {
         if (session.isLoggedIn()){
             RecruitmentsSyncServiceAdapter.initializeSyncAdapter(getApplicationContext());
             MappingsSyncServiceAdapter.initializeSyncAdapter(getApplicationContext());
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+                            new syncLocations().execute(Constants.CLOUD_ADDRESS+"/api/v1/sync/locations");
+                        }else{
+                            IccmDataSync iccmDataSync = new IccmDataSync(getBaseContext());
+                            iccmDataSync.pollNewComponents();
+                            LocationDataSync locationDataSync = new LocationDataSync(getBaseContext());
+                            locationDataSync.getKeSubcounties();
+                        }
+                    } catch (Exception e) {
+
+                    }
+                }
+            }).start();
         }
+
+
 
         //we can now extract User details
         HashMap<String, String> user = session.getUserDetails();
