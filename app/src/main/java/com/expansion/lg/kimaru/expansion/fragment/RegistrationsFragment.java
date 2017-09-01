@@ -52,6 +52,7 @@ import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.other.DisplayDate;
+import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.EducationTable;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
@@ -634,7 +635,8 @@ public class RegistrationsFragment extends Fragment  {
                             "Village/zone/cell, " +
                             "Landmark, " +
                             "CU (Community Unit), " +
-                            "Link Facility, " +
+                            "Link Facility Name, " +
+                            "Link Facility Code, " +
                             "No of Households," +
                             "Read/speak English," +
                             "Years at this CountyLocation," +
@@ -726,9 +728,9 @@ public class RegistrationsFragment extends Fragment  {
                                 registration.getVillage()+","+
                                 registration.getMark().replaceAll(",", ";") +","+
                                 registration.getCuName().replaceAll(",", ";") +","+
-                                registration.getLinkFacility().replaceAll(",", ";") +","+
+                                new CommunityUnitTable(getContext()).getCommunityUnitById(registration.getCuName()).getCommunityUnitName()+","+
                                 new LinkFacilityTable(getContext()).getLinkFacilityById(registration.getLinkFacility()).getFacilityName() +","+
-                                new LinkFacilityTable(getContext()).getLinkFacilityById(registration.getLinkFacility()).getFacilityName() +","+
+                                new LinkFacilityTable(getContext()).getLinkFacilityById(registration.getLinkFacility()).getMflCode() +","+
                                 registration.getLinkFacility().replaceAll(",", ";") +","+
                                 registration.getNoOfHouseholds() +","+
                                 (registration.getReadEnglish().equals(1) ? "Y" : "N") +","+
