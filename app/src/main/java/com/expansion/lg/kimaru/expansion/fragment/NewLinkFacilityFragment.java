@@ -87,7 +87,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
     Button buttonSave, buttonList;
 
-    EditText editFacilityName, editActLevels, editMrdtLevels;
+    EditText editFacilityName, editActLevels, editMrdtLevels,editMflCode;
 
     private int mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 100;
@@ -175,6 +175,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         editFacilityName = (EditText) v.findViewById(R.id.editFacilityName);
         editMrdtLevels = (EditText) v.findViewById(R.id.editMrdtLevels);
         editActLevels = (EditText) v.findViewById(R.id.editActLevels);
+        editMflCode = (EditText) v.findViewById(R.id.editMflCode);
 
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
@@ -416,6 +417,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 Integer addedBy = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
                 String country = user.get(SessionManagement.KEY_USER_COUNTRY);
                 String facilityName = editFacilityName.getText().toString();
+                String mflCode = editMflCode.getText().toString();
                 Long mrdtLevels = 0L;
                 if (!editMrdtLevels.getText().toString().trim().equals("")){
                     mrdtLevels = Long.valueOf(editMrdtLevels.getText().toString());
@@ -433,7 +435,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 }
 
                 LinkFacility linkFacility = new LinkFacility(uuid, facilityName, country, mappingId,
-                        latitude, longitude, subCounty, currentDate, addedBy, actLevels, mrdtLevels);
+                        latitude, longitude, subCounty, currentDate, addedBy, actLevels, mrdtLevels, mflCode, county);
                 LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
                 long id  = linkFacilityTable.addData(linkFacility);
 

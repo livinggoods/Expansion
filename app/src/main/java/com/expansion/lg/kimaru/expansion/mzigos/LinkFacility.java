@@ -6,7 +6,7 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 
 public class LinkFacility {
 
-    String id, facilityName, mappingId, country, subCountyId;
+    String id, facilityName, mappingId, country, subCountyId, mflCode, county;
     Integer addedBy;
     Double lat, lon;
     Long actLevels, mrdtLevels, dateAdded;
@@ -22,7 +22,7 @@ public class LinkFacility {
 
     public LinkFacility(String id, String facilityName, String country, String mappingId, Double lat,
                         Double lon, String subCountyId, Long dateAdded, Integer addedBy,
-                        long actLevels, long mrdtLevels) {
+                        long actLevels, long mrdtLevels, String mflCode, String county) {
         this.id = id;
         this.facilityName = facilityName;
         this.mappingId = mappingId;
@@ -34,13 +34,28 @@ public class LinkFacility {
         this.mrdtLevels = mrdtLevels;
         this.actLevels = actLevels;
         this.country = country;
+        this.mflCode = mflCode;
+        this.county = county;
 
     }
 
     // Get Methods
 
+
+    public String getCounty() {
+        return county;
+    }
+
+    public void setCounty(String county) {
+        this.county = county;
+    }
+
     public String getFacilityName() {
         return facilityName;
+    }
+
+    public String getMflCode() {
+        return mflCode;
     }
 
     public void setFacilityName(String facilityName) {
@@ -149,5 +164,17 @@ public class LinkFacility {
 
     public void setRead(Boolean read) {
         this.read = read;
+    }
+
+    public void setMflCode(String mflCode) {
+        this.mflCode = mflCode;
+    }
+
+    public void setActLevels(Long actLevels) {
+        this.actLevels = actLevels;
+    }
+
+    public void setMrdtLevels(Long mrdtLevels) {
+        this.mrdtLevels = mrdtLevels;
     }
 }

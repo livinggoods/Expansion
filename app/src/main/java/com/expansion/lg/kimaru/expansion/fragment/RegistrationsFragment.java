@@ -55,6 +55,7 @@ import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.tables.EducationTable;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
+import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationListAdapter;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
@@ -725,6 +726,9 @@ public class RegistrationsFragment extends Fragment  {
                                 registration.getVillage()+","+
                                 registration.getMark().replaceAll(",", ";") +","+
                                 registration.getCuName().replaceAll(",", ";") +","+
+                                registration.getLinkFacility().replaceAll(",", ";") +","+
+                                new LinkFacilityTable(getContext()).getLinkFacilityById(registration.getLinkFacility()).getFacilityName() +","+
+                                new LinkFacilityTable(getContext()).getLinkFacilityById(registration.getLinkFacility()).getFacilityName() +","+
                                 registration.getLinkFacility().replaceAll(",", ";") +","+
                                 registration.getNoOfHouseholds() +","+
                                 (registration.getReadEnglish().equals(1) ? "Y" : "N") +","+

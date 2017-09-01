@@ -313,7 +313,13 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 facilityName.setHint("Link Facility Name");
                 facilityName.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                 layout.addView(facilityName);
+
+                final EditText facilityMflCode = new EditText(getContext());
+                facilityMflCode.setHint("MFL Code");
+                facilityMflCode.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                layout.addView(facilityMflCode);
                 builder.setView(layout);
+
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -329,7 +335,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                         lknFacility.setId(uuid);
                         lknFacility.setFacilityName(linkName);
                         lknFacility.setSubCountyId(session.getSavedRecruitment().getSubcounty());
-
+                        lknFacility.setMflCode(facilityMflCode.getText().toString());
                         lknFacility.setMappingId("");
                         lknFacility.setDateAdded(new Date().getTime());
                         lknFacility.setAddedBy(Integer.valueOf(session.getUserDetails().get(SessionManagement.KEY_USERID)));
