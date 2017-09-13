@@ -205,11 +205,25 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                     return;
                 }
                 // Save Recruitment
-                Recruitment recruitment;
-                recruitment = new Recruitment(id, recruitmentName, recruitmentDistrict,
-                        recruitmentSubCounty, recruitmentDivision, recruitmentLat,
-                        recruitmentLon, recruitmentComment, recruitmentAddedBy,
-                        recruitmentDateAdded, recruitmentSync, country, "");
+                Recruitment recruitment = new Recruitment();
+                recruitment.setId(id);
+                recruitment.setName(recruitmentName);
+                recruitment.setDistrict(recruitmentDistrict);
+                recruitment.setSubcounty(recruitmentSubCounty);
+                recruitment.setDivision(recruitmentDivision);
+                recruitment.setLat(recruitmentLat);
+                recruitment.setLon(recruitmentLon);
+                recruitment.setComment(recruitmentComment);
+                recruitment.setAddedBy(recruitmentAddedBy);
+                recruitment.setDateAdded(recruitmentDateAdded);
+                recruitment.setSynced(recruitmentSync);
+                recruitment.setCountry(country);
+                recruitment.setLocationId(countyLocationList.get(mDistrict.getSelectedItemPosition()).getId());
+                recruitment.setSubCountyId(recruitmentSubCounty);
+
+
+
+
                 RecruitmentTable recruitmentTable = new RecruitmentTable(getContext());
                 long statusId = recruitmentTable.addData(recruitment);
 
