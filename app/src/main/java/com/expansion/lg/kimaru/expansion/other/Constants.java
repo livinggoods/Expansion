@@ -1,5 +1,7 @@
 package com.expansion.lg.kimaru.expansion.other;
 
+import android.content.Context;
+
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 
 import java.net.InetAddress;
@@ -15,4 +17,15 @@ public class Constants {
     public static final int PEER_SERVER_PORT = 8090;
     public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "expansion";
+
+    public static String varchar_field = " varchar(512) ";
+    public static String primary_field = " id INTEGER PRIMARY KEY AUTOINCREMENT ";
+    public static String integer_field = " integer default 0 ";
+    public static String text_field = " text ";
+    public static String real_field = " REAL ";
+
+
+    public static String API_TRAINING = "trainings";
+
+
 }
