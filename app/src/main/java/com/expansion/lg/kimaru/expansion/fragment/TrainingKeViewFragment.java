@@ -12,7 +12,9 @@ import android.widget.TextView;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.mzigos.Training;
+import com.expansion.lg.kimaru.expansion.mzigos.TrainingTrainee;
 import com.expansion.lg.kimaru.expansion.mzigos.TrainingTrainer;
+import com.expansion.lg.kimaru.expansion.tables.TrainingTraineeTable;
 import com.expansion.lg.kimaru.expansion.tables.TrainingTrainersTable;
 
 import java.util.ArrayList;
@@ -40,7 +42,9 @@ public class TrainingKeViewFragment extends Fragment {
 
     Training training = null;
     List<TrainingTrainer> trainingTrainers = new ArrayList<TrainingTrainer>();
+    List<TrainingTrainee> trainingTrainees = new ArrayList<TrainingTrainee>();
     int trainers = 0;
+    int trainees = 0;
 
     public TrainingKeViewFragment() {
     }
@@ -85,10 +89,19 @@ public class TrainingKeViewFragment extends Fragment {
             if (trainingTrainers != null){
                 trainers = trainingTrainers.size();
             }
+
+            trainingTrainees =  new TrainingTraineeTable(getContext())
+                    .getTrainingByTraining(training.getId());
+            if (trainingTrainees != null){
+                trainees = trainingTrainees.size();
+            }
         }
 
         TextView trainingTrainersTextView = (TextView) view.findViewById(R.id.trainingTrainers);
+        TextView traineeSummaryTextView = (TextView) view.findViewById(R.id.traineeSummary);
         trainingTrainersTextView.setText(trainers+" Trainers");
+
+        traineeSummaryTextView.setText(trainees +" Trainees");
         return view;
     }
 
