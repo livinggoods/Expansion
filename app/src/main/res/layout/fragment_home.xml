@@ -35,18 +35,47 @@
         android:text="Registrations" />
 
     <!--  Exams Button -->
-    <Button
+   <Button
         android:id="@+id/btnExams"
         style="@style/DashboardButton"
         android:drawableTop="@drawable/ic_exam_black_24dp"
         android:text="Exams" />
 
     <!--  Interviews Button -->
+
     <Button
         android:id="@+id/btnInterviews"
         style="@style/DashboardButton"
         android:drawableTop="@drawable/ic_local_library_black_24dp"
         android:text="Interviews" />
+
+    <!--  Training Button -->
+    <Button
+        android:id="@+id/btnTraining"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/ic_training"
+        android:text="@string/nav_training" />
+
+    <!--  Graduation Button -->
+    <Button
+        android:id="@+id/btnGraduation"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/ic_graduation"
+        android:text="@string/nav_graduation" />
+
+    <!--  Graduation Button -->
+    <Button
+        android:id="@+id/btnRecertifications"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/ic_certificate"
+        android:text="@string/nav_recertification" />
+
+    <!--  Graduation Button -->
+    <Button
+        android:id="@+id/btnCloud"
+        style="@style/DashboardButton"
+        android:drawableTop="@drawable/ic_cloud"
+        android:text="@string/nav_cloud" />
 
     <!--  Sharing Button -->
     <Button
