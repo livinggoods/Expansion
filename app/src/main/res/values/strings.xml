@@ -33,6 +33,10 @@
     <string name="nav_about_us">About Us</string>
     <string name="nav_http_server">Http Server</string>
     <string name="nav_mapping">Mapping</string>
+    <string name="nav_training">Training</string>
+    <string name="nav_graduation">Graduation</string>
+    <string name="nav_recertification">Recertification</string>
+    <string name="nav_cloud">Cloud</string>
     <string name="nav_sub_county_screening">Sub County Screening</string>
 
     <!-- Toolbar titles when navigation menu item is selected -->
@@ -96,4 +100,7 @@
     <string name="content_mapping">mappings</string>
     <string name="content_authority">com.expansion.lg.kimaru.expansion</string>
     <string name="sync_account_type">com.expansion.lg.kimaru.expansion</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
