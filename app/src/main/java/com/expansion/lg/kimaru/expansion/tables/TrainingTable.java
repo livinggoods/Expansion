@@ -33,10 +33,6 @@ public class TrainingTable extends SQLiteOpenHelper {
 
     public static String JSON_ROOT = "trainings";
 
-    String uuid, trainingName, country, county, subCounty, ward, district, parish, location;
-    Integer created_by, status;
-    Double client_time, lat, lon;
-
     public static final String ID = "id";
     public static final String TRAINNIG_NAME= "training_name";
     public static final String COUNTRY = "country";
