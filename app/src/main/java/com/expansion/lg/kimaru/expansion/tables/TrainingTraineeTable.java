@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.expansion.lg.kimaru.expansion.mzigos.Training;
+import com.expansion.lg.kimaru.expansion.mzigos.TrainingTrainee;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 
 import org.json.JSONArray;
@@ -24,53 +24,39 @@ import java.util.List;
 
 public class TrainingTraineeTable extends SQLiteOpenHelper {
 
-    public static final String TABLE_NAME="training";
+    public static final String TABLE_NAME="training_trainees";
     public static final String DATABASE_NAME= Constants.DATABASE_NAME;
     public static final int DATABASE_VERSION= Constants.DATABASE_VERSION;
 
 
-    public static String JSON_ROOT = "trainings";
+    public static String JSON_ROOT = "training_trainees";
 
-    String uuid, trainingName, country, county, subCounty, ward, district, parish, location;
-    Integer created_by, status;
-    Double client_time, lat, lon;
 
     public static final String ID = "id";
-    public static final String TRAINNIG_NAME= "training_name";
+    public static final String REGISTRATION_ID = "registration_id";
+    public static final String CLASS_ID = "class_id";
+    public static final String TRAINING_ID = "training_id";
     public static final String COUNTRY = "country";
-    public static final String COUNTY = "county_id";
-    public static final String SUBCOUNTY = "subcounty_id";
-    public static final String WARD = "ward_id";
-    public static final String RECRUITMENT = "recruitment_id";
-    public static final String DISTRICT = "district";
-    public static final String PARISH = "parish_id";
-    public static final String LOCATION = "location_id";
-    public static final String CREATED_BY = "created_by";
-    public static final String STATUS = "status";
+    public static final String DATE_CREATED = "date_created";
+    public static final String ADDED_BY = "added_by";
     public static final String CLIENT_TIME = "client_time";
-    public static final String LAT = "lat";
-    public static final String LON = "lon";
-    public static final String COMMENT = "comment";
+    public static final String BRANCH = "branch";
+    public static final String COHORT = "cohort";
+    public static final String CHP_CODE = "chp_code";
 
-    public String [] columns=new String[]{ID, TRAINNIG_NAME, COUNTRY, COUNTY, SUBCOUNTY, WARD, DISTRICT,
-            PARISH, LOCATION, CREATED_BY, STATUS, CLIENT_TIME, LAT, LON, COMMENT, RECRUITMENT};
+    public String [] columns=new String[]{ID, REGISTRATION_ID, CLASS_ID, TRAINING_ID, COUNTRY,
+            DATE_CREATED, ADDED_BY, CLIENT_TIME, BRANCH, COHORT, CHP_CODE};
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + Constants.varchar_field + ","
-            + TRAINNIG_NAME + Constants.varchar_field + ", "
+            + REGISTRATION_ID + Constants.varchar_field + ", "
+            + CLASS_ID + Constants.integer_field + ", "
+            + TRAINING_ID + Constants.varchar_field + ", "
             + COUNTRY + Constants.varchar_field + ", "
-            + COUNTY + Constants.varchar_field + ", "
-            + SUBCOUNTY + Constants.varchar_field + ", "
-            + WARD + Constants.varchar_field + ", "
-            + DISTRICT + Constants.varchar_field + ", "
-            + PARISH + Constants.varchar_field + ", "
-            + LOCATION + Constants.varchar_field + ", "
-            + CREATED_BY + Constants.integer_field + ", "
-            + STATUS + Constants.integer_field + ", "
+            + ADDED_BY + Constants.integer_field + ", "
             + CLIENT_TIME + Constants.real_field + ", "
-            + COMMENT + Constants.text_field + ", "
-            + RECRUITMENT + Constants.varchar_field + ", "
-            + LAT + Constants.real_field + ", "
-            + LON + Constants.real_field + "); ";
+            + BRANCH + Constants.varchar_field + ", "
+            + COHORT + Constants.integer_field + ", "
+            + CHP_CODE + Constants.varchar_field + "); ";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
 
@@ -87,9 +73,6 @@ public class TrainingTraineeTable extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //prior to this, there are registrations that have been created using the old Scoring
-        // We need to select all of them, and for each, we shall create the referrals and return the
-        //IDs. Then we update the registration
         Log.w("referral", "upgrading database from" + oldVersion + "to" + newVersion);
 
         if (oldVersion < 2){
@@ -97,42 +80,33 @@ public class TrainingTraineeTable extends SQLiteOpenHelper {
         }
     }
 
-    public long addTraining(Training training) {
+    public long addTrainingTraineer(TrainingTrainee trainingTrainee) {
 
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(ID, training.getId());
-        cv.put(TRAINNIG_NAME, training.getTrainingName());
-        cv.put(COUNTRY, training.getCountry());
-        cv.put(COUNTY, training.getCounty());
-        cv.put(SUBCOUNTY, training.getSubCounty());
-        cv.put(WARD, training.getWard());
-        cv.put(DISTRICT, training.getDistrict());
-        cv.put(PARISH, training.getParish());
-        cv.put(LOCATION, training.getLocation());
-        cv.put(RECRUITMENT, training.getRecruitment());
-        cv.put(COMMENT, training.getComment());
-        cv.put(CREATED_BY, training.getCreatedBy());
-        cv.put(STATUS, training.getStatus());
-        cv.put(CLIENT_TIME, training.getClientTime());
-        cv.put(LAT, training.getLat());
-        cv.put(LON, training.getLon());
-
+        cv.put(ID, trainingTrainee.getId());
+        cv.put(REGISTRATION_ID, trainingTrainee.getRegistrationId());
+        cv.put(CLASS_ID, trainingTrainee.getClassId());
+        cv.put(TRAINING_ID, trainingTrainee.getTrainingId());
+        cv.put(COUNTRY, trainingTrainee.getCountry());
+        cv.put(ADDED_BY, trainingTrainee.getAddedBy());
+        cv.put(CLIENT_TIME, trainingTrainee.getClientTime());
+        cv.put(BRANCH, trainingTrainee.getBranch());
+        cv.put(COHORT, trainingTrainee.getCohort());
+        cv.put(CHP_CODE, trainingTrainee.getChpCode());
         long id;
-        if (isExist(training)){
-            id = db.update(TABLE_NAME, cv, ID+"='"+training.getId()+"'", null);
-            Log.d("Tremap DB Op", "Training updated");
+        if (isExist(trainingTrainee)){
+            id = db.update(TABLE_NAME, cv, ID+"='"+trainingTrainee.getId()+"'", null);
         }else{
             id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
-            Log.d("Tremap DB Op", "Training created");
         }
         db.close();
         return id;
 
     }
-    public boolean isExist(Training training) {
+    public boolean isExist(TrainingTrainee trainingTrainee) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cur = db.rawQuery("SELECT id FROM " + TABLE_NAME + " WHERE "+ID+" = '" + training.getId() + "'", null);
+        Cursor cur = db.rawQuery("SELECT id FROM " + TABLE_NAME + " WHERE "+ID+" = '" + trainingTrainee.getId() + "'", null);
         boolean exist = (cur.getCount() > 0);
         cur.close();
         return exist;
@@ -140,71 +114,53 @@ public class TrainingTraineeTable extends SQLiteOpenHelper {
     }
 
 
-    public List<Training> getTrainingData() {
-
+    public List<TrainingTrainee> getTrainingTraineeData() {
         SQLiteDatabase db=getReadableDatabase();
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
-
-        List<Training> trainingList = new ArrayList<>();
+        List<TrainingTrainee> trainingTrainees = new ArrayList<>();
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-            Training training = new Training();
-            training.setId(cursor.getString(cursor.getColumnIndex(ID)));
-            training.setTrainingName(cursor.getString(cursor.getColumnIndex(TRAINNIG_NAME)));
-            training.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
-            training.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
-            training.setSubCounty(cursor.getString(cursor.getColumnIndex(SUBCOUNTY)));
-            training.setWard(cursor.getString(cursor.getColumnIndex(WARD)));
-            training.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
-            training.setParish(cursor.getString(cursor.getColumnIndex(PARISH)));
-            training.setLocation(cursor.getString(cursor.getColumnIndex(LOCATION)));
-            training.setRecruitment(cursor.getString(cursor.getColumnIndex(RECRUITMENT)));
-            training.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
-            training.setCreatedBy(cursor.getInt(cursor.getColumnIndex(CREATED_BY)));
-            training.setStatus(cursor.getInt(cursor.getColumnIndex(STATUS)));
-            training.setClientTime(cursor.getLong(cursor.getColumnIndex(CLIENT_TIME)));
-            training.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
-            training.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
-
-            trainingList.add(training);
+            TrainingTrainee trainingTrainee = new TrainingTrainee();
+            trainingTrainee.setId(cursor.getString(cursor.getColumnIndex(ID)));
+            trainingTrainee.setRegistrationId(cursor.getString(cursor.getColumnIndex(REGISTRATION_ID)));
+            trainingTrainee.setClassId(cursor.getInt(cursor.getColumnIndex(CLASS_ID)));
+            trainingTrainee.setTrainingId(cursor.getString(cursor.getColumnIndex(TRAINING_ID)));
+            trainingTrainee.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+            trainingTrainee.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
+            trainingTrainee.setClientTime(cursor.getLong(cursor.getColumnIndex(CLIENT_TIME)));
+            trainingTrainee.setBranch(cursor.getInt(cursor.getColumnIndex(BRANCH)));
+            trainingTrainee.setChpCode(cursor.getString(cursor.getColumnIndex(CHP_CODE)));
+            trainingTrainees.add(trainingTrainee);
         }
         db.close();
-        return trainingList;
+        return trainingTrainees;
     }
 
-    public List<Training> getTrainingByCountry (String countryCode){
+    public List<TrainingTrainee> getTrainingByTraining (String trainingId){
 
         SQLiteDatabase db=getReadableDatabase();
-        String whereClause = COUNTRY+" = ?";
+        String whereClause = TRAINING_ID+" = ?";
         String[] whereArgs = new String[] {
-                String.valueOf(countryCode),
+                trainingId,
         };
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
 
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
             return null;
         }else{
-            List<Training> trainingList = new ArrayList<>();
+            List<TrainingTrainee> trainingList = new ArrayList<>();
             for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-                Training training = new Training();
-                training.setId(cursor.getString(cursor.getColumnIndex(ID)));
-                training.setTrainingName(cursor.getString(cursor.getColumnIndex(TRAINNIG_NAME)));
-                training.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
-                training.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
-                training.setSubCounty(cursor.getString(cursor.getColumnIndex(SUBCOUNTY)));
-                training.setWard(cursor.getString(cursor.getColumnIndex(WARD)));
-                training.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
-                training.setParish(cursor.getString(cursor.getColumnIndex(PARISH)));
-                training.setLocation(cursor.getString(cursor.getColumnIndex(LOCATION)));
-                training.setRecruitment(cursor.getString(cursor.getColumnIndex(RECRUITMENT)));
-                training.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
-                training.setCreatedBy(cursor.getInt(cursor.getColumnIndex(CREATED_BY)));
-                training.setStatus(cursor.getInt(cursor.getColumnIndex(STATUS)));
-                training.setClientTime(cursor.getLong(cursor.getColumnIndex(CLIENT_TIME)));
-                training.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
-                training.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
+                TrainingTrainee trainingTrainee = new TrainingTrainee();
+                trainingTrainee.setId(cursor.getString(cursor.getColumnIndex(ID)));
+                trainingTrainee.setRegistrationId(cursor.getString(cursor.getColumnIndex(REGISTRATION_ID)));
+                trainingTrainee.setClassId(cursor.getInt(cursor.getColumnIndex(CLASS_ID)));
+                trainingTrainee.setTrainingId(cursor.getString(cursor.getColumnIndex(TRAINING_ID)));
+                trainingTrainee.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+                trainingTrainee.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
+                trainingTrainee.setClientTime(cursor.getLong(cursor.getColumnIndex(CLIENT_TIME)));
+                trainingTrainee.setBranch(cursor.getInt(cursor.getColumnIndex(BRANCH)));
+                trainingTrainee.setChpCode(cursor.getString(cursor.getColumnIndex(CHP_CODE)));
 
-                trainingList.add(training);
+                trainingList.add(trainingTrainee);
             }
             db.close();
             return trainingList;
@@ -212,7 +168,7 @@ public class TrainingTraineeTable extends SQLiteOpenHelper {
 
     }
 
-    public Training getTrainingById (String id){
+    public TrainingTrainee getTrainingTraineeById (String id){
 
         SQLiteDatabase db=getReadableDatabase();
         String whereClause = ID+" = ?";
@@ -223,23 +179,16 @@ public class TrainingTraineeTable extends SQLiteOpenHelper {
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
             return null;
         }else{
-            Training training = new Training();
-            training.setId(cursor.getString(cursor.getColumnIndex(ID)));
-            training.setTrainingName(cursor.getString(cursor.getColumnIndex(TRAINNIG_NAME)));
-            training.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
-            training.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
-            training.setSubCounty(cursor.getString(cursor.getColumnIndex(SUBCOUNTY)));
-            training.setWard(cursor.getString(cursor.getColumnIndex(WARD)));
-            training.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
-            training.setParish(cursor.getString(cursor.getColumnIndex(PARISH)));
-            training.setLocation(cursor.getString(cursor.getColumnIndex(LOCATION)));
-            training.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
-            training.setRecruitment(cursor.getString(cursor.getColumnIndex(RECRUITMENT)));
-            training.setCreatedBy(cursor.getInt(cursor.getColumnIndex(CREATED_BY)));
-            training.setStatus(cursor.getInt(cursor.getColumnIndex(STATUS)));
-            training.setClientTime(cursor.getLong(cursor.getColumnIndex(CLIENT_TIME)));
-            training.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
-            training.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
+            TrainingTrainee trainingTrainee = new TrainingTrainee();
+            trainingTrainee.setId(cursor.getString(cursor.getColumnIndex(ID)));
+            trainingTrainee.setRegistrationId(cursor.getString(cursor.getColumnIndex(REGISTRATION_ID)));
+            trainingTrainee.setClassId(cursor.getInt(cursor.getColumnIndex(CLASS_ID)));
+            trainingTrainee.setTrainingId(cursor.getString(cursor.getColumnIndex(TRAINING_ID)));
+            trainingTrainee.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+            trainingTrainee.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
+            trainingTrainee.setClientTime(cursor.getLong(cursor.getColumnIndex(CLIENT_TIME)));
+            trainingTrainee.setBranch(cursor.getInt(cursor.getColumnIndex(BRANCH)));
+            trainingTrainee.setChpCode(cursor.getString(cursor.getColumnIndex(CHP_CODE)));
 
             db.close();
 
@@ -248,19 +197,11 @@ public class TrainingTraineeTable extends SQLiteOpenHelper {
              * When one retrieves a referral, it would be good to get all the registrations that (s)he
              * has referred
              */
-            return training;
+            return trainingTrainee;
         }
 
     }
 
-
-    public Cursor getCursor() {
-
-        SQLiteDatabase db=getReadableDatabase();
-
-        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
-        return cursor;
-    }
 
     public JSONObject getJson() {
         SQLiteDatabase db=getReadableDatabase();
@@ -295,54 +236,36 @@ public class TrainingTraineeTable extends SQLiteOpenHelper {
     }
     public void fromJson(JSONObject jsonObject){
         try {
-            Training training = new Training();
-            training.setId(jsonObject.getString(ID));
-            if (!jsonObject.isNull(TRAINNIG_NAME)){
-                training.setTrainingName(jsonObject.getString(TRAINNIG_NAME));
+            TrainingTrainee trainingTrainee = new TrainingTrainee();
+            trainingTrainee.setId(jsonObject.getString(ID));
+            if (!jsonObject.isNull(REGISTRATION_ID)){
+                trainingTrainee.setRegistrationId(jsonObject.getString(REGISTRATION_ID));
+            }
+            if (!jsonObject.isNull(CLASS_ID)){
+                trainingTrainee.setClassId(jsonObject.getInt(CLASS_ID));
+            }
+            if (!jsonObject.isNull(TRAINING_ID)){
+                trainingTrainee.setTrainingId(jsonObject.getString(TRAINING_ID));
             }
             if (!jsonObject.isNull(COUNTRY)){
-                training.setCountry(jsonObject.getString(COUNTRY));
+                trainingTrainee.setCountry(jsonObject.getString(COUNTRY));
             }
-            if (!jsonObject.isNull(COUNTY)){
-                training.setCounty(jsonObject.getString(COUNTY));
-            }
-            if (!jsonObject.isNull(SUBCOUNTY)){
-                training.setSubCounty(jsonObject.getString(SUBCOUNTY));
-            }
-            if (!jsonObject.isNull(WARD)){
-                training.setWard(jsonObject.getString(WARD));
-            }
-            if (!jsonObject.isNull(DISTRICT)){
-                training.setDistrict(jsonObject.getString(DISTRICT));
-            }
-            if (!jsonObject.isNull(PARISH)){
-                training.setParish(jsonObject.getString(PARISH));
-            }
-            if (!jsonObject.isNull(LOCATION)){
-                training.setLocation(jsonObject.getString(LOCATION));
-            }
-            if (!jsonObject.isNull(CREATED_BY)){
-                training.setCreatedBy(jsonObject.getInt(CREATED_BY));
-            }
-            if (!jsonObject.isNull(STATUS)){
-                training.setStatus(jsonObject.getInt(STATUS));
-            }
-            if (!jsonObject.isNull(RECRUITMENT)){
-                training.setRecruitment(jsonObject.getString(RECRUITMENT));
-            }
-            if (!jsonObject.isNull(COMMENT)){
-                training.setComment(jsonObject.getString(COMMENT));
+            if (!jsonObject.isNull(ADDED_BY)){
+                trainingTrainee.setAddedBy(jsonObject.getInt(ADDED_BY));
             }
             if (!jsonObject.isNull(CLIENT_TIME)){
-                training.setClientTime(jsonObject.getLong(CLIENT_TIME));
+                trainingTrainee.setClientTime(jsonObject.getLong(CLIENT_TIME));
             }
-            if (!jsonObject.isNull(LAT)){
-                training.setLat(jsonObject.getDouble(LAT));
+            if (!jsonObject.isNull(BRANCH)){
+                trainingTrainee.setBranch(jsonObject.getInt(BRANCH));
             }
-            if (!jsonObject.isNull(LON)){
-                training.setLon(jsonObject.getDouble(LON));
+            if (!jsonObject.isNull(COHORT)){
+                trainingTrainee.setCohort(jsonObject.getInt(COHORT));
             }
-            addTraining(training);
+            if (!jsonObject.isNull(CHP_CODE)){
+                trainingTrainee.setChpCode(jsonObject.getString(CHP_CODE));
+            }
+            addTrainingTraineer(trainingTrainee);
         }catch (Exception e){
             Log.d("Tremap ChewReferral ERR", "From Json : "+e.getMessage());
         }
