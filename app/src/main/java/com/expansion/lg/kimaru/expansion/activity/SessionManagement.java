@@ -42,6 +42,8 @@ public class SessionManagement {
     public static final String MOBILIZATION = "mobilization";
     public static final String LINK_FACILITY = "link_facility";
 
+    public static final String API_TRAINING = "api_training";
+
 
     public static final String CLOUD_URL = "cloud_url";
 
@@ -103,6 +105,8 @@ public class SessionManagement {
      * Get the stored recruitment
      *
      * */
+
+
     public Recruitment getSavedRecruitment (){
 
         Recruitment recruitment;
@@ -342,6 +346,16 @@ public class SessionManagement {
             //start login
             _context.startActivity(i);
         }
+    }
+
+
+    public String getTrainingEndpoint (){
+        return pref.getString(API_TRAINING, "");
+    }
+
+    public void saveTrainingEndpoint(String endpoint){
+        editor.putString(API_TRAINING, endpoint);
+        editor.commit();
     }
 
     /**
