@@ -54,11 +54,14 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     public static final String COMMENT = "comment";
     public static final String DATE_ADDED = "client_time";
     public static final String SYNCED = "synced";
+    public static final String SUBCOUNTYID = "subcounty_id";
+    public static final String COUNTYID = "county_id";
+    public static final String LOCATIONID = "location_id";
 
     Context context;
 
     String [] columns=new String[]{ID, NAME, DISTRICT, SUB_COUNTY, DIVISION, LAT, LON, ADDED_BY,
-            COMMENT, DATE_ADDED, SYNCED, COUNTRY, COUNTY};
+            COMMENT, DATE_ADDED, SYNCED, COUNTRY, COUNTY, SUBCOUNTYID,COUNTYID, LOCATIONID};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ", "
@@ -73,6 +76,9 @@ public class RecruitmentTable extends SQLiteOpenHelper {
             + ADDED_BY + integer_field + ", "
             + COMMENT + text_field + ", "
             + DATE_ADDED + integer_field + ", "
+            + SUBCOUNTYID + varchar_field + ", "
+            + COUNTYID + varchar_field + ", "
+            + LOCATIONID + varchar_field + ", "
             + SYNCED + integer_field + ");";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
@@ -116,6 +122,9 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         cv.put(COMMENT, recruitment.getComment());
         cv.put(DATE_ADDED, recruitment.getDateAdded());
         cv.put(SYNCED, recruitment.getSynced());
+        cv.put(SUBCOUNTYID, recruitment.getSubCountyId());
+        cv.put(COUNTYID, recruitment.getCountyId());
+        cv.put(LOCATIONID, recruitment.getLocationId());
         long id;
         if (isExist(recruitment)){
             //uupdate
@@ -146,37 +155,30 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     }
 
     public List<Recruitment> getRecruitmentData() {
-
         SQLiteDatabase db=getReadableDatabase();
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
         List<Recruitment> recruitmentList=new ArrayList<>();
-
-
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-
-
             Recruitment recruitment=new Recruitment();
-
-            recruitment.setId(cursor.getString(0));
-            recruitment.setName(cursor.getString(1));
-            recruitment.setDistrict(cursor.getString(2));
-            recruitment.setSubcounty(cursor.getString(3));
-            recruitment.setDivision(cursor.getString(4));
-            recruitment.setLat(cursor.getString(5));
-            recruitment.setLon(cursor.getString(6));
-            recruitment.setAddedBy(cursor.getInt(7));
-            recruitment.setComment(cursor.getString(8));
-            recruitment.setDateAdded(cursor.getLong(9));
-            recruitment.setSynced(cursor.getInt(10));
-            recruitment.setCountry(cursor.getString(11));
-            recruitment.setCounty(cursor.getString(12));
-
+            recruitment.setId(cursor.getString(cursor.getColumnIndex(ID)));
+            recruitment.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+            recruitment.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
+            recruitment.setSubcounty(cursor.getString(cursor.getColumnIndex(SUB_COUNTY)));
+            recruitment.setDivision(cursor.getString(cursor.getColumnIndex(DIVISION)));
+            recruitment.setLat(cursor.getString(cursor.getColumnIndex(LAT)));
+            recruitment.setLon(cursor.getString(cursor.getColumnIndex(LON)));
+            recruitment.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
+            recruitment.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+            recruitment.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATE_ADDED)));
+            recruitment.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED)));
+            recruitment.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+            recruitment.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
+            recruitment.setCountyId(cursor.getInt(cursor.getColumnIndex(COUNTYID)));
+            recruitment.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTYID)));
+            recruitment.setLocationId(cursor.getInt(cursor.getColumnIndex(LOCATIONID)));
             recruitmentList.add(recruitment);
         }
-
         db.close();
-
         return recruitmentList;
     }
 
@@ -190,50 +192,53 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         };
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
         List<Recruitment> recruitmentList=new ArrayList<>();
-
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-
-
             Recruitment recruitment=new Recruitment();
-
-            recruitment.setId(cursor.getString(0));
-            recruitment.setName(cursor.getString(1));
-            recruitment.setDistrict(cursor.getString(2));
-            recruitment.setSubcounty(cursor.getString(3));
-            recruitment.setDivision(cursor.getString(4));
-            recruitment.setLat(cursor.getString(5));
-            recruitment.setLon(cursor.getString(6));
-            recruitment.setAddedBy(cursor.getInt(7));
-            recruitment.setComment(cursor.getString(8));
-            recruitment.setDateAdded(cursor.getLong(9));
-            recruitment.setSynced(cursor.getInt(10));
-            recruitment.setCountry(cursor.getString(11));
-            recruitment.setCounty(cursor.getString(12));
-
+            recruitment.setId(cursor.getString(cursor.getColumnIndex(ID)));
+            recruitment.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+            recruitment.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
+            recruitment.setSubcounty(cursor.getString(cursor.getColumnIndex(SUB_COUNTY)));
+            recruitment.setDivision(cursor.getString(cursor.getColumnIndex(DIVISION)));
+            recruitment.setLat(cursor.getString(cursor.getColumnIndex(LAT)));
+            recruitment.setLon(cursor.getString(cursor.getColumnIndex(LON)));
+            recruitment.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
+            recruitment.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+            recruitment.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATE_ADDED)));
+            recruitment.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED)));
+            recruitment.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+            recruitment.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
+            recruitment.setCountyId(cursor.getInt(cursor.getColumnIndex(COUNTYID)));
+            recruitment.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTYID)));
+            recruitment.setLocationId(cursor.getInt(cursor.getColumnIndex(LOCATIONID)));
             recruitmentList.add(recruitment);
         }
-
         db.close();
-
         return recruitmentList;
     }
 
     public void fromJson(JSONObject jsonObject){
         try{
             Recruitment recruitment = new Recruitment();
-            recruitment.setId(jsonObject.getString(RecruitmentTable.ID));
-            recruitment.setName(jsonObject.getString(RecruitmentTable.NAME));
-            recruitment.setDistrict(jsonObject.getString(RecruitmentTable.DISTRICT));
-            recruitment.setSubcounty(jsonObject.getString(RecruitmentTable.SUB_COUNTY));
-            recruitment.setDivision(jsonObject.getString(RecruitmentTable.DIVISION));
-            recruitment.setCountry(jsonObject.getString(RecruitmentTable.COUNTRY));
-            recruitment.setLat(jsonObject.getString(RecruitmentTable.LAT));
-            recruitment.setLon(jsonObject.getString(RecruitmentTable.LON));
-            recruitment.setAddedBy(jsonObject.getInt(RecruitmentTable.ADDED_BY));
-            recruitment.setComment(jsonObject.getString(RecruitmentTable.COMMENT));
-            recruitment.setDateAdded(jsonObject.getLong(RecruitmentTable.DATE_ADDED));
-            recruitment.setSynced(jsonObject.getInt(RecruitmentTable.SYNCED));
-            recruitment.setCounty(jsonObject.getString(RecruitmentTable.COUNTY));
+            recruitment.setId(jsonObject.getString(ID));
+            recruitment.setName(jsonObject.getString(NAME));
+            recruitment.setDistrict(jsonObject.getString(DISTRICT));
+            recruitment.setSubcounty(jsonObject.getString(SUB_COUNTY));
+            recruitment.setDivision(jsonObject.getString(DIVISION));
+            recruitment.setCountry(jsonObject.getString(COUNTRY));
+            recruitment.setLat(jsonObject.getString(LAT));
+            recruitment.setLon(jsonObject.getString(LON));
+            recruitment.setAddedBy(jsonObject.getInt(ADDED_BY));
+            recruitment.setComment(jsonObject.getString(COMMENT));
+            recruitment.setDateAdded(jsonObject.getLong(DATE_ADDED));
+            recruitment.setSynced(jsonObject.getInt(SYNCED));
+            recruitment.setCounty(jsonObject.getString(COUNTY));
+            recruitment.setSubCountyId(jsonObject.getString(SUBCOUNTYID));
+            try {
+                recruitment.setCountyId(jsonObject.getInt(COUNTYID));
+            }catch (Exception e){}
+            try {
+                recruitment.setLocationId(jsonObject.getInt(LOCATIONID));
+            }catch (Exception e){}
             this.addData(recruitment);
         } catch (Exception e){}
     }
@@ -245,47 +250,37 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         String queryString = "SELECT * FROM  " + TABLE_NAME + " WHERE " + whereClause;
         Cursor cursor = db.rawQuery(queryString, null);
-
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-
-
             Recruitment recruitment=new Recruitment();
-
-            recruitment.setId(cursor.getString(0));
-            recruitment.setName(cursor.getString(1));
-            recruitment.setDistrict(cursor.getString(2));
-            recruitment.setSubcounty(cursor.getString(3));
-            recruitment.setDivision(cursor.getString(4));
-            recruitment.setLat(cursor.getString(5));
-            recruitment.setLon(cursor.getString(6));
-            recruitment.setAddedBy(cursor.getInt(7));
-            recruitment.setComment(cursor.getString(8));
-            recruitment.setDateAdded(cursor.getLong(9));
-            recruitment.setSynced(cursor.getInt(10));
-            recruitment.setCountry(cursor.getString(11));
-            recruitment.setCounty(cursor.getString(12));
-
+            recruitment.setId(cursor.getString(cursor.getColumnIndex(ID)));
+            recruitment.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+            recruitment.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
+            recruitment.setSubcounty(cursor.getString(cursor.getColumnIndex(SUB_COUNTY)));
+            recruitment.setDivision(cursor.getString(cursor.getColumnIndex(DIVISION)));
+            recruitment.setLat(cursor.getString(cursor.getColumnIndex(LAT)));
+            recruitment.setLon(cursor.getString(cursor.getColumnIndex(LON)));
+            recruitment.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
+            recruitment.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+            recruitment.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATE_ADDED)));
+            recruitment.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED)));
+            recruitment.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+            recruitment.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
+            recruitment.setCountyId(cursor.getInt(cursor.getColumnIndex(COUNTYID)));
+            recruitment.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTYID)));
+            recruitment.setLocationId(cursor.getInt(cursor.getColumnIndex(LOCATIONID)));
             recruitments.add(recruitment);
         }
-
         db.close();
-
         return recruitments;
     }
     public JSONObject getRecruitmentJson() {
-
         SQLiteDatabase db=getReadableDatabase();
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
-
         JSONObject results = new JSONObject();
-
         JSONArray resultSet = new JSONArray();
-
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
             int totalColumns = cursor.getColumnCount();
             JSONObject rowObject = new JSONObject();
-
             for (int i =0; i < totalColumns; i++){
                 if (cursor.getColumnName(i) != null){
                     try {
@@ -311,7 +306,6 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     }
 
     public Recruitment getRecruitmentById(String id) {
-
         SQLiteDatabase db=getReadableDatabase();
         String whereClause = ID+" = ?";
         String[] whereArgs = new String[] {
@@ -321,29 +315,30 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
             return null;
         }else {
-
             Recruitment recruitment = new Recruitment();
-
-            recruitment.setId(cursor.getString(0));
-            recruitment.setName(cursor.getString(1));
-            recruitment.setDistrict(cursor.getString(2));
-            recruitment.setSubcounty(cursor.getString(3));
-            recruitment.setDivision(cursor.getString(4));
-            recruitment.setLat(cursor.getString(5));
-            recruitment.setLon(cursor.getString(6));
-            recruitment.setAddedBy(cursor.getInt(7));
-            recruitment.setComment(cursor.getString(8));
-            recruitment.setDateAdded(cursor.getLong(9));
-            recruitment.setSynced(cursor.getInt(10));
-            recruitment.setCountry(cursor.getString(11));
-            recruitment.setCounty(cursor.getString(12));
+            recruitment.setId(cursor.getString(cursor.getColumnIndex(ID)));
+            recruitment.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+            recruitment.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
+            recruitment.setSubcounty(cursor.getString(cursor.getColumnIndex(SUB_COUNTY)));
+            recruitment.setDivision(cursor.getString(cursor.getColumnIndex(DIVISION)));
+            recruitment.setLat(cursor.getString(cursor.getColumnIndex(LAT)));
+            recruitment.setLon(cursor.getString(cursor.getColumnIndex(LON)));
+            recruitment.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
+            recruitment.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+            recruitment.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATE_ADDED)));
+            recruitment.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED)));
+            recruitment.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+            recruitment.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
+            recruitment.setCountyId(cursor.getInt(cursor.getColumnIndex(COUNTYID)));
+            recruitment.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTYID)));
+            recruitment.setLocationId(cursor.getInt(cursor.getColumnIndex(LOCATIONID)));
             SubCountyTable subCountyTable = new SubCountyTable(context);
             KeCountyTable keCountyTable = new KeCountyTable(context);
 
-            if (cursor.getString(11).equalsIgnoreCase("UG")) {
-                recruitment.setSubCountyObj(subCountyTable.getSubCountyById(cursor.getString(3)));
+            if (cursor.getString(cursor.getColumnIndex(COUNTRY)).equalsIgnoreCase("UG")) {
+                recruitment.setSubCountyObj(subCountyTable
+                        .getSubCountyById(cursor.getString(cursor.getColumnIndex(SUB_COUNTY))));
             } else {
-
                 recruitment.setKeCounty(keCountyTable.getCountyById(cursor.getInt(12)));
                 recruitment.setName(keCountyTable.getCountyById(cursor.getInt(12)).getCountyName());
                 recruitment.setSubCountyObj(subCountyTable.getSubCountyById(cursor.getString(3)));
@@ -355,24 +350,17 @@ public class RecruitmentTable extends SQLiteOpenHelper {
     }
 
     public JSONObject getRecruitmentToSyncAsJson() {
-
         SQLiteDatabase db=getReadableDatabase();
-
         String whereClause = SYNCED+" = ?";
         String[] whereArgs = new String[] {
                 "0",
         };
-
         Cursor cursor=db.query(TABLE_NAME,columns, whereClause, whereArgs,null,null,null,null);
-
         JSONObject results = new JSONObject();
-
         JSONArray resultSet = new JSONArray();
-
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
             int totalColumns = cursor.getColumnCount();
             JSONObject rowObject = new JSONObject();
-
             for (int i =0; i < totalColumns; i++){
                 if (cursor.getColumnName(i) != null){
                     try {
@@ -399,9 +387,7 @@ public class RecruitmentTable extends SQLiteOpenHelper {
 
 
     public Cursor getRecruitmentDataCursor() {
-
         SQLiteDatabase db=getReadableDatabase();
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
         return  cursor;
     }
