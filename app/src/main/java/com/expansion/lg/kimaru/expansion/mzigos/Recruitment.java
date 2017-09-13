@@ -6,8 +6,10 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 
 public class Recruitment {
 
-    String id, name, district, subcounty, division, comment, lat, lon, country, county;
-    Integer addedBy, synced;
+
+    String id, name, district, subcounty, division, comment, lat, lon, country,
+            county, subCountyId;
+    Integer addedBy, synced, countyId, locationId;
     Long dateAdded;
 
     boolean isRead, isImportant;
@@ -23,8 +25,10 @@ public class Recruitment {
 
     }
 
-    public Recruitment(String id, String name, String district, String subcounty, String division, String lat, String lon,
-                       String comment, Integer addedBy, Long dateAdded, Integer synced, String country, String county) {
+    public Recruitment(String id, String name, String district, String subcounty,
+                       String division, String lat, String lon, String comment,
+                       Integer addedBy, Long dateAdded, Integer synced, String country,
+                       String county, String subCountyId, Integer countyId, Integer locationId) {
         this.name = name;
         this.district = district;
         this.subcounty = subcounty;
@@ -38,6 +42,9 @@ public class Recruitment {
         this.id = id;
         this.country = country;
         this.county = county;
+        this.subCountyId = subCountyId;
+        this.countyId = countyId;
+        this.locationId = locationId;
     }
 
 
@@ -71,6 +78,30 @@ public class Recruitment {
     }
     public Integer getSynced() {
         return synced;
+    }
+
+    public String getSubCountyId() {
+        return subCountyId;
+    }
+
+    public void setSubCountyId(String subCountyId) {
+        this.subCountyId = subCountyId;
+    }
+
+    public Integer getCountyId() {
+        return countyId;
+    }
+
+    public void setCountyId(Integer countyId) {
+        this.countyId = countyId;
+    }
+
+    public Integer getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(Integer locationId) {
+        this.locationId = locationId;
     }
 
     public String getCountry() {
