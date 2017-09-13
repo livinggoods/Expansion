@@ -1,4 +1,6 @@
 package com.expansion.lg.kimaru.expansion.sync;
+import android.util.Log;
+
 import java.net.HttpURLConnection;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
@@ -25,6 +27,10 @@ public class ApiClient {
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
+            Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Log.d("Tremap", "CLIENT URL -- : "+urlString);
+            Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
             // Check the connection status
             if(urlConnection.getResponseCode() == 200)
             {
@@ -47,15 +53,23 @@ public class ApiClient {
             else
             {
                 // Do something
+                Log.d("Tremap", "==============================");
+                Log.d("Tremap", "NOT 200 STATUS");
+                Log.d("Tremap", "==============================");
             }
         }catch (MalformedURLException e){
-            e.printStackTrace();
+            Log.d("Tremap", "==============================");
+            Log.d("Tremap", "MALFORMED -- : "+e.getMessage());
+            Log.d("Tremap", "==============================");
         }catch(IOException e){
-            e.printStackTrace();
+            Log.d("Tremap", "==============================");
+            Log.d("Tremap", "IO ERROR -- : "+ e.getMessage());
+            Log.d("Tremap", "==============================");
         }finally {
 
         }
         // Return the data from specified url
+
         return stream;
     }
 }
