@@ -37,7 +37,6 @@ public class TrainingTraineeTable extends SQLiteOpenHelper {
     public static final String CLASS_ID = "class_id";
     public static final String TRAINING_ID = "training_id";
     public static final String COUNTRY = "country";
-    public static final String DATE_CREATED = "date_created";
     public static final String ADDED_BY = "added_by";
     public static final String CLIENT_TIME = "client_time";
     public static final String BRANCH = "branch";
@@ -45,7 +44,7 @@ public class TrainingTraineeTable extends SQLiteOpenHelper {
     public static final String CHP_CODE = "chp_code";
 
     public String [] columns=new String[]{ID, REGISTRATION_ID, CLASS_ID, TRAINING_ID, COUNTRY,
-            DATE_CREATED, ADDED_BY, CLIENT_TIME, BRANCH, COHORT, CHP_CODE};
+            ADDED_BY, CLIENT_TIME, BRANCH, COHORT, CHP_CODE};
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + Constants.varchar_field + ","
             + REGISTRATION_ID + Constants.varchar_field + ", "
