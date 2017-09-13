@@ -51,7 +51,7 @@
                 android:text="10 Trainers"
                 android:id="@+id/trainingTrainers"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="#727272" />
+                android:textColor="@color/colorPrimary" />
 
             <ToggleButton
                 android:id="@+id/chkState1"
@@ -103,11 +103,11 @@
                 android:layout_below="@id/registrations"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="8dp"
-                android:id="@+id/recruitmentRegSummary"
+                android:id="@+id/traineeSummary"
                 android:layout_toEndOf="@id/ivContactItem2"
                 android:text="100 selected, 999 Waiting, 999 Not seleceted"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="#727272" />
+                android:textColor="@color/colorPrimary" />
 
             <ToggleButton
                 android:id="@+id/chkState2"
