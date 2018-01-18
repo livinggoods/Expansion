@@ -686,6 +686,15 @@ public class MainActivity extends AppCompatActivity {
                         CURRENT_TAG = TAG_MAPPING;
                         break;
 
+                    case R.id.nav_app_setting:
+                        drawer.closeDrawers();
+                        Fragment fragment = new SettingsFragment();
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                                android.R.anim.fade_out);
+                        fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+                        fragmentTransaction.commitAllowingStateLoss();
+                        return true;
 
                     case R.id.nav_about_us:
                         // launch new intent instead of loading fragment
