@@ -457,6 +457,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 String referralTitle = ""; //editReferralTitle.getText().toString();
                 String applicantParish = editParish.getText().toString();
 
+
                 String applicantDistrict = "";
                 String applicantSubcounty = editSubCounty.getText().toString();
                 String applicantDivision = "";
@@ -535,18 +536,18 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 String country = user.get(SessionManagement.KEY_USER_COUNTRY);
 
                 // Do some validations
-                if (applicantName.toString().trim().equals("")){
+                if (applicantName.trim().equals("")){
                     mName.requestFocus();
                     Toast.makeText(getContext(), "Name cannot be blank", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (applicantVillage.toString().trim().equals("")){
+                if (applicantVillage.trim().equals("")){
                     mVillage.requestFocus();
                     Toast.makeText(getContext(), "Village is required", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (!applicantPhone.toString().trim().equals("")){
-                    if (applicantPhone.toString().trim().startsWith("+")){
+                if (!applicantPhone.trim().equals("")){
+                    if (applicantPhone.trim().startsWith("+")){
                         if (applicantPhone.length() != 13){
                             Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
                             mPhone.requestFocus();
@@ -565,7 +566,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                         return;
                     }
                 }
-                if(applicantEducation.toString().trim().equals("")){
+                if(applicantEducation.trim().equals("")){
                     Toast.makeText(getContext(), "Education is required", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -581,7 +582,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                         country, applicantDateMoved, applicantBrac, applicantBracChp, applicantCommunity,
                         applicantAddedBy, applicantProceed, applicantDateAdded, applicantSync, "",
                         "", "", "", "", 0L, false, false, "", referralName, referralTitle,
-                        referralNumber, isVht, false, applicantParish, 0L, 0L, chewUuid);
+                        referralNumber, isVht, false, applicantParish, 0L, 0L, chewUuid, "");
 
                 // Before saving, do some validations
                 // Years in location should always be less than age
