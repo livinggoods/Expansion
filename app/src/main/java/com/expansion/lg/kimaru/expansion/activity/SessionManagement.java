@@ -42,12 +42,7 @@ public class SessionManagement {
     public static final String MOBILIZATION = "mobilization";
     public static final String LINK_FACILITY = "link_facility";
 
-    public static final String API_TRAINING = "api_training";
-
-
     public static final String CLOUD_URL = "cloud_url";
-
-
     // Recruitment Details
     public static final String RECRUITMENT = "recruitment";
     public static final String IS_RECRUITMENT = "isRecruitment";
