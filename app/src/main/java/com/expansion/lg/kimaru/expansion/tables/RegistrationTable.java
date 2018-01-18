@@ -92,6 +92,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public static final String ACCOUNTS = "financial_accounts";
     public static final String REC_TRANSPORT = "recruitment_transport";
     public static final String BRANCH_TRANPORT = "branch_transport";
+    public static final String MARITAL_STATUS = "marital_status";
 
     Context context;
 
@@ -100,7 +101,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED, RECRUITMENT, COUNTRY,
             CHEW_NAME, CHEW_NUMBER, WARD, CU_NAME, LINK_FACILITY, HOUSEHOLDS, TRAININGS, CHV,
             GOK_TRAINED, REFERRAL_NAME, REFERRAL_NUMBER, REFERRAL_TITLE, VHT, PARISH, ACCOUNTS,
-            REC_TRANSPORT, BRANCH_TRANPORT, CHEW_ID};
+            REC_TRANSPORT, BRANCH_TRANPORT, CHEW_ID, MARITAL_STATUS};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ", "
@@ -145,6 +146,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             + REC_TRANSPORT + integer_field + ", "
             + BRANCH_TRANPORT + integer_field + ", "
             + CHEW_ID + varchar_field + ", "
+            + MARITAL_STATUS + varchar_field + ", "
             + SYNCED + integer_field + "); ";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
@@ -161,7 +163,6 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         db.execSQL(CREATE_DATABASE);
-
     }
 
     @Override
@@ -228,6 +229,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
         cv.put(REC_TRANSPORT, registration.getRecruitmentTransportCost());
         cv.put(BRANCH_TRANPORT, registration.getTransportCostToBranch());
         cv.put(CHEW_ID, registration.getChewUuid());
+        cv.put(MARITAL_STATUS, registration.getMaritalStatus());
 
         long id;
         if (isExist(registration)){
@@ -309,6 +311,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setTransportCostToBranch(cursor.getLong(41));
             registration.setPicture("");
             registration.setChewUuid(cursor.getString(42));
+            registration.setMaritalStatus(cursor.getString(cursor.getColumnIndex(MARITAL_STATUS)));
             registrationList.add(registration);
         }
         db.close();
@@ -383,6 +386,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setRecruitmentTransportCost(cursor.getLong(40));
             registration.setTransportCostToBranch(cursor.getLong(41));
             registration.setChewUuid(cursor.getString(42));
+            registration.setMaritalStatus(cursor.getString(cursor.getColumnIndex(MARITAL_STATUS)));
             registration.setPicture("");
             registrationList.add(registration);
         }
@@ -446,6 +450,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setRecruitmentTransportCost(cursor.getLong(40));
             registration.setTransportCostToBranch(cursor.getLong(41));
             registration.setChewUuid(cursor.getString(42));
+            registration.setMaritalStatus(cursor.getString(cursor.getColumnIndex(MARITAL_STATUS)));
             registration.setPicture("");
             db.close();
             return registration;
@@ -539,6 +544,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setRecruitmentTransportCost(cursor.getLong(40));
             registration.setTransportCostToBranch(cursor.getLong(41));
             registration.setChewUuid(cursor.getString(42));
+            registration.setMaritalStatus(cursor.getString(cursor.getColumnIndex(MARITAL_STATUS)));
             registration.setPicture("");
             registrationList.add(registration);
         }
@@ -607,6 +613,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setRecruitmentTransportCost(cursor.getLong(40));
             registration.setTransportCostToBranch(cursor.getLong(41));
             registration.setChewUuid(cursor.getString(42));
+            registration.setMaritalStatus(cursor.getString(cursor.getColumnIndex(MARITAL_STATUS)));
             registration.setPicture("");
             registrationList.add(registration);
         }
@@ -677,6 +684,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setRecruitmentTransportCost(cursor.getLong(40));
             registration.setTransportCostToBranch(cursor.getLong(41));
             registration.setChewUuid(cursor.getString(42));
+            registration.setMaritalStatus(cursor.getString(cursor.getColumnIndex(MARITAL_STATUS)));
             registration.setPicture("");
             registrationList.add(registration);
         }
@@ -745,6 +753,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setRecruitmentTransportCost(cursor.getLong(40));
             registration.setTransportCostToBranch(cursor.getLong(41));
             registration.setChewUuid(cursor.getString(42));
+            registration.setMaritalStatus(cursor.getString(cursor.getColumnIndex(MARITAL_STATUS)));
             registration.setPicture("");
             registrationList.add(registration);
         }
@@ -799,6 +808,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setRecruitmentTransportCost(jsonObject.getLong(REC_TRANSPORT));
             registration.setTransportCostToBranch(jsonObject.getLong(BRANCH_TRANPORT));
             registration.setChewUuid(jsonObject.getString(CHEW_ID));
+            registration.setMaritalStatus(jsonObject.getString(MARITAL_STATUS));
             registration.setPicture("");
             this.addData(registration);
         }catch (Exception e){}

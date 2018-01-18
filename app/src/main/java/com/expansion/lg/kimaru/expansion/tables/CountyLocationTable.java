@@ -432,7 +432,7 @@ public class CountyLocationTable extends SQLiteOpenHelper {
     }
     public void createLocations(){
         if (getProfilesCount() < 1){
-            new syncLocations().execute(Constants.CLOUD_ADDRESS+"/api/v1/sync/locations");
+            new syncLocations().execute(new Constants(context).getCloudAddress()+"/api/v1/sync/locations");
         }
 
     }

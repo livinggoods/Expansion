@@ -339,13 +339,9 @@ public class VillageTable extends SQLiteOpenHelper {
     public boolean isFieldExist(SQLiteDatabase db, String fieldName)
     {
         boolean isExist = false;
-
         Cursor res = null;
-
         try {
-
             res = db.rawQuery("Select * from "+ TABLE_NAME +" limit 1", null);
-
             int colIndex = res.getColumnIndex(fieldName);
             if (colIndex!=-1){
                 isExist = true;
@@ -355,7 +351,6 @@ public class VillageTable extends SQLiteOpenHelper {
         } finally {
             try { if (res !=null){ res.close(); } } catch (Exception e1) {}
         }
-
         return isExist;
     }
 

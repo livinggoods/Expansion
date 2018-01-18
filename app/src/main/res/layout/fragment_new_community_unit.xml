@@ -118,9 +118,22 @@
                     android:id="@+id/editPrivateFacilityForAct"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Private facility for ACT"
+                    android:hint="Name of private facility for ACT"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textCapWords"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/editPriceofAct"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Price of ACT at the private facility"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="numberDecimal"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
@@ -131,9 +144,22 @@
                     android:id="@+id/editPrivateFacilityForMrdt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Private facility for MRDT"
+                    android:hint="Name of private facility for MRDT"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textCapWords"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/editPriceOfMrdt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Price of MRDT at the private facility"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="numberDecimal"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
@@ -163,6 +189,20 @@
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/editChiefChvHouseHold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="No of CHV's Households as per Chief"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="number"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -171,6 +211,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="No of Households"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="number"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/editChiefPopulation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Population Density As per Chief"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />
@@ -512,6 +565,24 @@
                         />
                 </RadioGroup>
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/editComment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Comments"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="textMultiLine"
+                    android:maxLines="5" />
+            </android.support.design.widget.TextInputLayout>
 
 
 

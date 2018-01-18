@@ -42,6 +42,11 @@
     <item android:title="Other">
         <menu>
             <item
+                android:id="@+id/nav_app_setting"
+                android:icon="@drawable/ic_settings_black_24dp"
+                android:title="@string/nav_app_setting" />
+
+            <item
                 android:id="@+id/nav_about_us"
                 android:title="@string/nav_about_us" />
             <item
