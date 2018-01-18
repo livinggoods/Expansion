@@ -48,10 +48,14 @@ public class HttpServer {
     private AsyncHttpServer server = new AsyncHttpServer();
     private AsyncServer asyncServer = new AsyncServer();
 
+    Context context;
+
     private AsyncHttpClient client = new AsyncHttpClient(asyncServer);
 
-    public static final String SERVER_URL = Constants.PEER_SERVER;
-    public static final int SERVER_PORT = Constants.PEER_SERVER_PORT;
+    public Constants constants;
+
+
+    public int serverPort;
     public static final String RECRUIRMENT_URL = "recruitments";
     public static final String REGISTRATION_URL = "registrations";
     public static final String EXAM_URL = "exams";
@@ -67,10 +71,12 @@ public class HttpServer {
     public static final String VILLAGE_URL = "villages";
 
     public static String url;
-    Context context;
+
 
     public HttpServer(Context context){
         this.context = context;
+        this.constants = new Constants(context);
+        this.serverPort = Integer.valueOf(constants.getPeerServerPort());
     }
 
     public void startServer(){
@@ -302,7 +308,7 @@ public class HttpServer {
                 }
             }
         });
-        server.listen(asyncServer, SERVER_PORT);
+        server.listen(asyncServer, serverPort);
     }
     private void processCus(JSONObject json){
         Log.d("Tremap Sync", "Processing CUs");
