@@ -65,7 +65,7 @@ public class LoginActivity extends Activity {
                     if (loginUser(username, password)){
 
                         if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
-                            new syncLocations().execute(Constants.CLOUD_ADDRESS+"/api/v1/sync/locations");
+                            new syncLocations().execute(new Constants(getApplicationContext()).getCloudAddress()+"/api/v1/sync/locations");
                         }else{
                             IccmDataSync iccmDataSync = new IccmDataSync(getBaseContext());
                             iccmDataSync.pollNewComponents();
@@ -84,7 +84,7 @@ public class LoginActivity extends Activity {
 //                            public void run() {
 //                                try {
 //                                    if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
-//                                        new syncLocations().execute(Constants.CLOUD_ADDRESS+"/api/v1/sync/locations");
+//                                        new syncLocations().execute(new Constants(getBaseContext()).getCloudAddress()+"/api/v1/sync/locations");
 //                                    }else{
 //                                        IccmDataSync iccmDataSync = new IccmDataSync(getBaseContext());
 //                                        iccmDataSync.pollNewComponents();
