@@ -45,9 +45,13 @@ import java.util.TimerTask;
 public class HttpClient{
     Context context;
     boolean isRunning = false;
-    private static String url = HttpServer.SERVER_URL+":"+HttpServer.SERVER_PORT;
+    Constants constants;
+
+    private String url;
     public HttpClient(Context context){
         this.context = context;
+        constants = new Constants(context);
+        url = constants.getPeerServer() + ":" + constants.getPeerServerPort();
     }
 
     // Implement two methods:
@@ -455,7 +459,7 @@ public class HttpClient{
      */
     private String peerClientServer(JSONObject json, String JsonRoot, String apiEndpoint) throws Exception {
         //  get the server URL
-        AsyncHttpPost p = new AsyncHttpPost(HttpServer.SERVER_URL+":"+HttpServer.SERVER_PORT+"/"
+        AsyncHttpPost p = new AsyncHttpPost(url+"/"
                 +apiEndpoint);
         p.setBody(new JSONObjectBody(json));
         JSONObject ret = AsyncHttpClient.getDefaultInstance().executeJSONObject(p, null).get();
@@ -579,15 +583,15 @@ public class HttpClient{
     private String syncClient(JSONObject json, String apiEndpoint) throws Exception {
         //  get the server URL
         Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        Log.d("Tremap", "URL: "+Constants.API_SERVER+apiEndpoint);
+        Log.d("Tremap", "URL: "+ new Constants(context).getApiServer()+apiEndpoint);
         Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
-        AsyncHttpPost p = new AsyncHttpPost(Constants.API_SERVER+apiEndpoint);
+        AsyncHttpPost p = new AsyncHttpPost(new Constants(context).getApiServer()+"/"+apiEndpoint);
         p.setBody(new JSONObjectBody(json));
         JSONObject ret = AsyncHttpClient.getDefaultInstance().executeJSONObject(p, null).get();
 //        return ret.getString(expectedJsonRoot);
         Log.d("RESULTS : Sync", ret.toString());
-        Log.d("API  : Url", Constants.API_SERVER+apiEndpoint);
+        Log.d("API  : Url", new Constants(context).getApiServer()+apiEndpoint);
         return ret.toString();
     }
 
