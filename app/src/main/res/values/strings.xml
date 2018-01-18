@@ -21,6 +21,7 @@
     <string name="select_parish">Select Mapped Parish</string>
     <string name="select_cu">Select Community Unit</string>
     <string name="select_ward">Select Ward</string>
+    <string name="select_marital_status">Marital Status</string>
     <string name="select_link_Facility">Select Link Facility</string>
     <string name="gps_capture">Use GPS of the current location</string>
 
@@ -37,6 +38,7 @@
     <string name="nav_graduation">Graduation</string>
     <string name="nav_recertification">Recertification</string>
     <string name="nav_cloud">Cloud</string>
+    <string name="nav_app_setting">Settings</string>
     <string name="nav_sub_county_screening">Sub County Screening</string>
 
     <!-- Toolbar titles when navigation menu item is selected -->
