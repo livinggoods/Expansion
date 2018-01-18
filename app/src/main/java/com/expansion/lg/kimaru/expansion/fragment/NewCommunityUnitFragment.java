@@ -490,7 +490,12 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                         editDistanceToHealthFacility.setText("");
 
                         editDistributors.setText("");
-                        // editCHVsTrained.setText("");
+                        editPriceOfMrdt.setText("");
+                        editPriceofAct.setText("");
+
+                        editChiefPopulation.setText("");
+                        editChiefChvHouseHold.setText("");
+                        editComment.setText("");
 
                     }
                     if (backFragment != null){
@@ -530,6 +535,12 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
             editDistanceToHealthFacility.setText(String.valueOf(
                     editingCommunityUnit.getDistanceTONearestHealthFacility()));
             editDistributors.setText(String.valueOf(editingCommunityUnit.getNoOfDistibutors()));
+            editPriceofAct.setText(String.valueOf(editingCommunityUnit.getActPrice()));
+            editPriceOfMrdt.setText(String.valueOf(editingCommunityUnit.getMrdtPrice()));
+            editChiefPopulation.setText(String.valueOf(editingCommunityUnit.getPopulationAsPerChief()));
+            editChiefChvHouseHold.setText(String.valueOf(editingCommunityUnit.getChvsHouseholdsAsPerChief()));
+            editComment.setText(editingCommunityUnit.getComment());
+
 
             // set radio Buttons
             //mReadEnglish.check(editingRegistration.getReadEnglish().equals(1) ? R.id.radioCanReadEnglish : R.id.radioCannotReadEnglish);
