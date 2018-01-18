@@ -262,12 +262,37 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                 break;
             case R.id.buttonSave:
                 Long currentDate =  new Date().getTime();
+                CommunityUnitTable communityUnitTable = new CommunityUnitTable(getContext());
+                // check if the field for Chiefs population exists or not.
+                if (!communityUnitTable.isFieldExist(CommunityUnitTable.CHVS_HOUSEHOLDS_AS_PER_CHIEF)){
+                    communityUnitTable.addChiefsFields();
+                }
+                if (!communityUnitTable.isFieldExist(CommunityUnitTable.COMMENT)){
+                    communityUnitTable.addChiefsFields();
+                }
 
+
+
+//                "Private facility \n" +
+//                        " • (Capture)- Name of Private  Facility\n" +
+//                        "                  - Price of ACT at private Facility\n" +
+//                        " • MRDT- same as above\n" +
+//                        "\n" +
+//                        " • No of Households per CHVs as per- Ast Chief\n" +
+//                        " •  Population as per Ast Chief\n" +
+//                        "In the Chief's \n" +
+//                        " \n" +
+//                        "Link Partners with the CU-\n" +
+//                        "Make it possible to capture partners ina specific CU\n" +
+//                        "Comments box- alpha -numeric\n" +
+//                        "Partner save function is not working\n" +
+//                        "List section does not capture partners instead it lists all CUs"
                 String name = editName.getText().toString();
                 String areaChiefName = editAreaChiefName.getText().toString();
                 String areaChiefPhone = editAreaChiefPhone.getText().toString();
                 String ward = editWard.getText().toString();
                 String economicStatus = String.valueOf(editEconomicStatus.getSelectedItemPosition());
+                String comments = editComment.getText().toString();
 
                 String privateFacilityForAct = editPrivateFacilityForAct.getText().toString();
                 String privateFacilityForMrdt = editPrivateFacilityForMrdt.getText().toString();
