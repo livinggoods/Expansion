@@ -282,7 +282,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 startActivity(new Intent(getActivity(), HttpServerActivity.class));
                 break;
             case R.id.btnCloud:
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.CLOUD_ADDRESS));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(new Constants(getContext()).getCloudAddress()));
                 startActivity(browserIntent);
 
         }
