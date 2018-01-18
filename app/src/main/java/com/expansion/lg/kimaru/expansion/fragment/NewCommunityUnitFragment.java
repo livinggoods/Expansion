@@ -320,6 +320,12 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                 Long transportCost = Long.valueOf(editTransportCost.getText().toString()
                         .equalsIgnoreCase("") ? "0" : editTransportCost.getText().toString());
 
+                Long actPrice = Long.valueOf(editPriceofAct.getText().toString()
+                        .equalsIgnoreCase("") ? "0" : editPriceofAct.getText().toString());
+
+                Long mrdtPrice = Long.valueOf(editPriceOfMrdt.getText().toString()
+                        .equalsIgnoreCase("") ? "0" : editPriceOfMrdt.getText().toString());
+
                 Long distanceToMainRoad = Long.valueOf(editDistanceToMainRoad.getText().toString()
                         .equalsIgnoreCase("") ? "0" : editDistanceToMainRoad.getText().toString());
                 Long distanceToHealthFacility = Long.valueOf(editDistanceToHealthFacility.getText().toString()
@@ -335,6 +341,12 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                         linkFacilityId = "";
                     }
                 }
+
+                Long chiefPopulation = Long.valueOf(editChiefPopulation.getText().toString()
+                        .equalsIgnoreCase("") ? "0" : editChiefPopulation.getText().toString());
+                Long chiefChvsHousehold = Long.valueOf(editChiefChvHouseHold.getText().toString()
+                        .equalsIgnoreCase("") ? "0" : editChiefChvHouseHold.getText().toString());
+
 
                 Long distributors = Long.valueOf(editDistributors.getText().toString()
                         .equalsIgnoreCase("") ? "0" : editDistributors.getText().toString());
@@ -389,7 +401,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                 }
 
                 else if(areaChiefPhone.toString().trim().equals("") && mapping != null && backFragment == null){
-                    Toast.makeText(getContext(), "Enter the contact details of the chief", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Enter the phone contact details of the chief", Toast.LENGTH_SHORT).show();
                     editAreaChiefPhone.requestFocus();
                 } else{
                     Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
@@ -435,9 +447,9 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                     communityUnit.setEstimatedPopulationDensity(populationDensity);
                     communityUnit.setDistanceTONearestHealthFacility(distanceToHealthFacility);
                     communityUnit.setActLevels(0);
-                    communityUnit.setActPrice(0);
+                    communityUnit.setActPrice(actPrice);
                     communityUnit.setMrdtLevels(0);
-                    communityUnit.setMrdtPrice(0);
+                    communityUnit.setMrdtPrice(mrdtPrice);
                     communityUnit.setNoOfDistibutors(distributors);
                     communityUnit.setChvsTrained(cHVsTrained);
                     communityUnit.setPresenceOfEstates(presenceEstates);
@@ -448,8 +460,11 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                     communityUnit.setNgosGivingFreeDrugs(ngosGivingFreeDrugs);
                     communityUnit.setNgoDoingIccm(false);
                     communityUnit.setNgoDoingMhealth(false);
+                    communityUnit.setPopulationAsPerChief(chiefPopulation);
+                    communityUnit.setChvsHouseholdsAsPerChief(chiefChvsHousehold);
+                    communityUnit.setComment(comments);
 
-                    CommunityUnitTable communityUnitTable = new CommunityUnitTable(getContext());
+
                     long cid = communityUnitTable.addCommunityUnitData(communityUnit);
                     if (cid != -1){
                         Toast.makeText(getContext(), "Community Unit saved successfully", Toast.LENGTH_SHORT).show();
