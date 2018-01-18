@@ -233,7 +233,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                         partner.setPartnerName(partnerName);
                         partner.setContactPerson(editTextPartnerContactPerson.getText().toString());
                         partner.setContactPersonPhone(editTextPartnerContactPersonPhone.getText().toString());
-                        partner.setParent("");
+                        //partner.setParent("");
                         partner.setMappingId(session.getSavedMapping().getId());
                         partner.setCountry(session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY));
                         partner.setComment(editTextComment.getText().toString());
