@@ -95,7 +95,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
     EditText mDateMoved, editBranchTransportCost, editRecruitmentTransportCost;
     RadioGroup editIsChv, editIsGokTrained;
     RadioGroup mCommunity, mAccounts, chooseAgeFormat;
-    Spinner editCuName;
+    Spinner editCuName, selectMaritalStatus;
     Spinner selectLinkFacility;
     EditText editLinkFacility;
     EditText editNoOfHouseholds;
@@ -212,6 +212,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         editWard = (Spinner) v.findViewById(R.id.editWard);
         editCuName = (Spinner) v.findViewById(R.id.editCuName);
         selectLinkFacility = (Spinner) v.findViewById(R.id.selectLinkFacility);
+        selectMaritalStatus = (Spinner) v.findViewById(R.id.selectMaritalStatus);
         editBranchTransportCost = (EditText) v.findViewById(R.id.editBranchTransportCost);
         editRecruitmentTransportCost = (EditText) v.findViewById(R.id.editRecruitmentTransportCost);
         editNoOfHouseholds = (EditText) v.findViewById(R.id.editNoOfHouseholds);
@@ -710,6 +711,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 String applicantName = mName.getText().toString();
                 String applicantPhone = mPhone.getText().toString();
 
+
                 Integer selectedGender = mGender.getCheckedRadioButtonId();
                 RadioButton genderRadioButton =(RadioButton) mGender.findViewById(selectedGender);
                 String applicantGender = genderRadioButton.getText().toString();
@@ -848,6 +850,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 }
 
                 String chewUuid = chewReferralList.get(selectChew.getSelectedItemPosition()).getId();
+                String maritalStatus = String.valueOf(selectMaritalStatus.getSelectedItem());
 
                 Integer communityParticipation = mCommunity.getCheckedRadioButtonId();
                 RadioButton hasCommunityParticipation =(RadioButton) mCommunity.findViewById(communityParticipation);
@@ -908,7 +911,8 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                         applicantAddedBy, applicantProceed, applicantDateAdded, applicantSync, applicantChewName,
                         applicantChewNumber, applicantWard, applicantCuName, applicantLinkFacility,
                         applicantNoOfHouseholds, applicantIsChv, isGokTrained, applicantOtherTrainings,
-                        "", "","",false, applicantAccounts, "", recruitmentTransportCost,transportCostToBranch, chewUuid);
+                        "", "","",false, applicantAccounts, "", recruitmentTransportCost,
+                        transportCostToBranch, chewUuid, maritalStatus);
 
                 // Before saving, do some validations
                 // Years in location should always be less than age
