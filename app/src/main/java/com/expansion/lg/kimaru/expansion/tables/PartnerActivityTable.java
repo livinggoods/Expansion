@@ -24,7 +24,7 @@ import java.util.List;
 
 public class PartnerActivityTable extends SQLiteOpenHelper {
 
-    public static final String TABLE_NAME="partners";
+    public static final String TABLE_NAME="partner_activity";
     public static final String DATABASE_NAME= Constants.DATABASE_NAME;
     public static final int DATABASE_VERSION= Constants.DATABASE_VERSION;
 
@@ -33,7 +33,7 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
-    public static String CU_JSON_ROOT = "community_unit";
+    public static String CU_JSON_ROOT = "partner_activity";
 
     public static final String ID = "id";
     public static final String PARTNERID = "partner_id";
@@ -82,6 +82,7 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
 
     public PartnerActivityTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);
+
     }
 
 
@@ -124,8 +125,14 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
 
         long id;
         if (isPartnerExisting(partnerActivity)){
+            Log.d("Tremap", "++++++++++++++++++++++++++++++++++++++++++++");
+            Log.d("Tremap", "Updating Partner Activity");
+            Log.d("Tremap", "++++++++++++++++++++++++++++++++++++++++++++");
             id = db.update(TABLE_NAME, cv, ID+"='"+partnerActivity.getId()+"'", null);
         }else{
+            Log.d("Tremap", "++++++++++++++++++++++++++++++++++++++++++++");
+            Log.d("Tremap", "Creating Partner Activity");
+            Log.d("Tremap", "++++++++++++++++++++++++++++++++++++++++++++");
             id = db.insert(TABLE_NAME,null,cv);
         }
         db.close();

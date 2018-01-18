@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -150,7 +151,14 @@ public class SubCountyViewFragment extends Fragment implements  View.OnClickList
                 fragmentTransaction.commitAllowingStateLoss();
                 break;
             case R.id.relativeViewPartners:
-                fragment = new NewPartnerActivityFragment();
+                NewPartnerActivityFragment partnerActivityFragment = new NewPartnerActivityFragment();
+                Log.d("TREMAP", "--------------------------------------------------");
+                Log.d("TREMAP", subCounty.getId());
+                Log.d("TREMAP", "--------------------------------------------------");
+                partnerActivityFragment.subCounty = subCounty;
+                sessionManagement.saveSubCounty(subCounty);
+                partnerActivityFragment.communityUnit = null;
+                fragment = partnerActivityFragment;
                 fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left,

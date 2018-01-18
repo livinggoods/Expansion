@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.telephony.PhoneNumberUtils;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -134,7 +135,12 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_new_partner_activity, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_RECRUITMENT;
-        MainActivity.backFragment = new SubCountyViewFragment();
+        if (subCounty != null){
+            MainActivity.backFragment = new SubCountyViewFragment();
+        }
+        if (communityUnit != null){
+            MainActivity.backFragment = new SubCountyViewFragment();
+        }
 
 
         session = new SessionManagement(getContext());
@@ -231,6 +237,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                         Partners partner = new Partners();
                         partner.setPartnerID(uuid);
                         partner.setPartnerName(partnerName);
+
                         partner.setContactPerson(editTextPartnerContactPerson.getText().toString());
                         partner.setContactPersonPhone(editTextPartnerContactPersonPhone.getText().toString());
                         //partner.setParent("");
@@ -332,10 +339,26 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
 
                 partnerActivity.setCountry(session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY));
                 partnerActivity.setCounty(session.getSavedMapping().getCounty());
-                partnerActivity.setSubcounty(session.getSavedSubCounty().getId());
-                // partnerActivity.setParish(session.getSavedParish().getId());
-                // partnerActivity.setVillage(village.getId());
-                // partnerActivity.setCommunityUnit(communityUnit.getId());
+
+                if (subCounty != null){
+                    Log.d("TREMEAP", subCounty.getId());
+                    Log.d("TREMEAP", ">>>>>>>>>>>>>>>>>>>>>>>");
+                    partnerActivity.setSubcounty(subCounty.getId());
+                    partnerActivity.setCounty(subCounty.getCountyID());
+                }
+
+                if (parish != null){
+                    partnerActivity.setParish(parish.getId());
+                }
+                if (village != null){
+                    partnerActivity.setVillage(village.getId());
+                }
+
+                if (communityUnit != null){
+                    partnerActivity.setCommunityUnit(communityUnit.getId());
+                    partnerActivity.setSubcounty(communityUnit.getSubCountyId());
+                }
+
                 partnerActivity.setMappingId(session.getSavedMapping().getId());
                 partnerActivity.setComment(partnerActivityComment.getText().toString());
 
