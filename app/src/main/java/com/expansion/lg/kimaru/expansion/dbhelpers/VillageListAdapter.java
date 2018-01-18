@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
@@ -99,6 +100,7 @@ public class VillageListAdapter extends RecyclerView.Adapter<VillageListAdapter.
     @Override
     public void onBindViewHolder(final ListHolder holder, final int position){
         Village village = villages.get(position);
+        MappingTable mappingTable = new MappingTable(mContext);
 
         //// displaying text view data
         holder.from.setText(village.getVillageName());
@@ -108,9 +110,17 @@ public class VillageListAdapter extends RecyclerView.Adapter<VillageListAdapter.
         }else{
             holder.subject.setText(village.getSubCountyId());
         }
+        try{
+            //holder.message.setText(new MappingTable(mContext)
+                //.getMappingById(village.getMappingId()).getMappingName());
+            holder.message.setText(mappingTable.getMappingById(village.getMappingId()).getMappingName());
 
-        holder.message.setText(new MappingTable(mContext)
-                .getMappingById(village.getMappingId()).getMappingName());
+            //holder.message.setText(village.getMappingId());
+        }catch (Exception e){
+            holder.message.setText(e.getMessage());
+            Log.d("Tremap", e.getMessage());
+        }
+
         holder.timestamp.setText(new DisplayDate(village.getDateAdded()).dateAndTime());
 
         // displaying the first letter of From in icon text
