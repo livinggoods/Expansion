@@ -320,9 +320,7 @@ public class VillagesFragment extends Fragment  {
     }
     private void getVillages() {
         swipeRefreshLayout.setRefreshing(true);
-
         villages.clear();
-
         try {
             // get CUs
             VillageTable villageTable = new VillageTable(getContext());
