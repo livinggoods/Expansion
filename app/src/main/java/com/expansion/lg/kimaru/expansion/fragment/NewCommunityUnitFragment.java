@@ -568,8 +568,10 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
 
             editNgosGivingFreeDrugs.clearCheck();
             editNgosGivingFreeDrugs.check(editingCommunityUnit.isNgosGivingFreeDrugs() ? R.id.drugsYes : R.id.drugsNo);
+            try{
+                editEconomicStatus.setSelection(Integer.valueOf(editingCommunityUnit.getEconomicStatus()));
+            }catch (Exception e){}
 
-            editEconomicStatus.setSelection(Integer.valueOf(editingCommunityUnit.getEconomicStatus()));
         }
     }
 
