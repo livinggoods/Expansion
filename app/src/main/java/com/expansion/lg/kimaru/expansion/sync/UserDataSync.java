@@ -41,7 +41,7 @@ public class UserDataSync {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        String url = Constants.CLOUD_ADDRESS+"/api/v1/users/json";
+                        String url = new Constants(context).getCloudAddress()+"/api/v1/users/json";
                         new syncUsers().execute(url);
                     }
                 });

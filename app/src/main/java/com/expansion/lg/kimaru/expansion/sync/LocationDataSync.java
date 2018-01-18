@@ -41,7 +41,7 @@ public class LocationDataSync {
     }
 
     public void getKeSubcounties(){
-        new syncKeWards().execute(Constants.CLOUD_ADDRESS+"/api/v1/sync/ke-counties");
+        new syncKeWards().execute(new Constants(context).getCloudAddress()+"/api/v1/sync/ke-counties");
     }
 
 

@@ -42,7 +42,7 @@ public class IccmDataSync {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        String url = Constants.CLOUD_ADDRESS+"/api/v1/sync/iccm-components";
+                        String url = new Constants(context).getApiServer()+"/iccm-components";
                         new syncIccmComponents().execute(url);
                     }
                 });

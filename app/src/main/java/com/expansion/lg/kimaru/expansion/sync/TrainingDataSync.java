@@ -42,7 +42,7 @@ public class TrainingDataSync {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        String url = Constants.API_SERVER+Constants.API_TRAINING;
+                        String url = new Constants(context).getApiServer()+Constants.API_TRAINING;
                         Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                         Log.d("Tremap", "BACKGROUND ");
                         Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
