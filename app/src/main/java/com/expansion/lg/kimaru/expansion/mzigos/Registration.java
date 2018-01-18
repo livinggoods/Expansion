@@ -10,7 +10,7 @@ public class Registration {
 
     String recruitment, name, phone, gender, district, subcounty, division, village, mark, langs, education;
     String id, occupation, comment, picture, country, chewName, chewNumber, ward, cuName, linkFacility;
-    String otherTrainings, referralName, referralTitle, referralPhone, parish, chewUuid;
+    String otherTrainings, referralName, referralTitle, referralPhone, parish, chewUuid, maritalStatus;
     Integer readEnglish, brac, bracChp, community, addedBy, proceed, synced;
     Long dob, dateMoved, dateAdded, noOfHouseholds, recruitmentTransportCost, transportCostToBranch;
     boolean chv, gokTrained, vht, accounts;
@@ -31,7 +31,8 @@ public class Registration {
                         String linkFacility, long noOfHouseholds, boolean isChv, boolean gokTrained,
                         String otherTrainings, String referralName, String referralTitle,
                         String referralPhone, boolean vht, boolean accounts, String parish,
-                        Long recruitmentTransportCost, Long transportCostToBranch, String chewUuid) {
+                        Long recruitmentTransportCost, Long transportCostToBranch, String chewUuid,
+                        String maritalStatus) {
         this.name = mName;
         this.phone = mPhone;
         this.recruitment = mRecruitment;
@@ -75,12 +76,17 @@ public class Registration {
         this.recruitmentTransportCost = recruitmentTransportCost;
         this.transportCostToBranch = transportCostToBranch;
         this.chewUuid = chewUuid;
+        this.maritalStatus = maritalStatus;
     }
 
 
     // Get Methods
     public String getName() {
         return name;
+    }
+
+    public String getMaritalStatus() {
+        return maritalStatus;
     }
 
     public String getChewUuid() {
@@ -242,6 +248,9 @@ public class Registration {
         return id;
     }
 
+    public void setMaritalStatus(String maritalStatus) {
+        this.maritalStatus = maritalStatus;
+    }
 
     public String getPicture() {
         return "";
