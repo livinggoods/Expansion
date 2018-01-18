@@ -12,8 +12,10 @@ import android.widget.TextView;
 
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.mzigos.Training;
+import com.expansion.lg.kimaru.expansion.mzigos.TrainingClass;
 import com.expansion.lg.kimaru.expansion.mzigos.TrainingTrainee;
 import com.expansion.lg.kimaru.expansion.mzigos.TrainingTrainer;
+import com.expansion.lg.kimaru.expansion.tables.TrainingClassTable;
 import com.expansion.lg.kimaru.expansion.tables.TrainingTraineeTable;
 import com.expansion.lg.kimaru.expansion.tables.TrainingTrainersTable;
 
@@ -43,8 +45,10 @@ public class TrainingKeViewFragment extends Fragment {
     Training training = null;
     List<TrainingTrainer> trainingTrainers = new ArrayList<TrainingTrainer>();
     List<TrainingTrainee> trainingTrainees = new ArrayList<TrainingTrainee>();
+    List<TrainingClass> trainingClassesList = new ArrayList<TrainingClass>();
     int trainers = 0;
     int trainees = 0;
+    int traingClasses = 0;
 
     public TrainingKeViewFragment() {
     }
@@ -95,13 +99,21 @@ public class TrainingKeViewFragment extends Fragment {
             if (trainingTrainees != null){
                 trainees = trainingTrainees.size();
             }
+
+            trainingClassesList =  new TrainingClassTable(getContext())
+                    .getTrainingClassesByTraining(training.getId());
+            if (trainingClassesList != null){
+                traingClasses = trainingClassesList.size();
+            }
         }
 
         TextView trainingTrainersTextView = (TextView) view.findViewById(R.id.trainingTrainers);
         TextView traineeSummaryTextView = (TextView) view.findViewById(R.id.traineeSummary);
-        trainingTrainersTextView.setText(trainers+" Trainers");
+        TextView trainingClassesTextView = (TextView) view.findViewById(R.id.classesSummary);
 
+        trainingTrainersTextView.setText(trainers+" Trainers");
         traineeSummaryTextView.setText(trainees +" Trainees");
+        trainingClassesTextView.setText(traingClasses +" Classes");
         return view;
     }
 
