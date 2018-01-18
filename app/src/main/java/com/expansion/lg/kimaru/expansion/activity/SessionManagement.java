@@ -70,16 +70,21 @@ public class SessionManagement {
     //Need to save the selected Village
     public static final String VILLAGE = "village";
 
-
     //interview Details
     private static final String IS_INTERVIEW = "IsInterviewSet";
-
 
 
     public static final String KEY_APPLICANT = "applicant";
 
     public static final String IS_INITIAL_RUN = "initialRun";
 
+    public static final String API_TRAINING = "api_training";
+    public static final String API_TRAINING_ENDPOINT = "api_training_endpoint";
+    public static final String API_PREFIX = "api_prefix";
+    public static final String API_VERSION = "api_version";
+    public static final String API_SUFFIX = "api_suffix";
+    public static final String PEER_SERVER = "peer_server";
+    public static final String PEER_SERVER_PORT = "peer_server_port";
 
     //constructor
     public SessionManagement (Context context){
