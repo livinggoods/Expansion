@@ -27,8 +27,9 @@ public class CommunityUnit {
 
     // Some community units are split into 2 and they share some data
 
+
     String id, communityUnitName, mappingId, country, subCountyId, linkFacilityId, areaChiefName;
-    String ward;
+    String ward, comment;
     Double lat, lon;
     long dateAdded, addedBy, numberOfChvs, householdPerChv, numberOfVillages, distanceToBranch, transportCost;
     long distanceTOMainRoad, noOfHouseholds, mohPoplationDensity, estimatedPopulationDensity;
@@ -36,7 +37,7 @@ public class CommunityUnit {
     String economicStatus, areaChiefPhone; //lower, middle or upper
     String privateFacilityForAct, privateFacilityForMrdt;
     String nameOfNgoDoingIccm, nameOfNgoDoingMhealth;
-    Long presenceOfFactories;
+    Long presenceOfFactories, populationAsPerChief, chvsHouseholdsAsPerChief;
 
     boolean chvsTrained, presenceOfEstates, presenceOfHostels, traderMarket, largeSupermarket, ngosGivingFreeDrugs;
     boolean ngoDoingIccm, ngoDoingMhealth;
@@ -63,7 +64,8 @@ public class CommunityUnit {
                          long mrdtLevels, long mrdtPrice, long noOfDistibutors, boolean chvsTrained,
                          boolean presenceOfEstates, Long presenceOfFactories,
                          boolean presenceOfHostels, boolean traderMarket, boolean largeSupermarket,
-                         boolean ngosGivingFreeDrugs, boolean ngoDoingIccm, boolean ngoDoingMhealth) {
+                         boolean ngosGivingFreeDrugs, boolean ngoDoingIccm, boolean ngoDoingMhealth,
+                         Long populationAsPerChief, Long chvsHouseholdsAsPerChief, String comment) {
         this.id = id;
         this.communityUnitName = communityUnitName;
         this.mappingId = mappingId;
