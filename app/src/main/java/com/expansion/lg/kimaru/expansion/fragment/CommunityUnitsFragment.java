@@ -174,10 +174,16 @@ public class CommunityUnitsFragment extends Fragment  {
 
             @Override
             public void onRowLongClicked(int position) {
-                // When one long presses a registration, we give them a chance to
-                // Interview the selected applicant
-
-                //extract the clicked recruitment
+                //extract the clicked community Unit
+                CommunityUnit communityUnit = communityUnits.get(position);
+                session.saveCommunityUnit(communityUnit);
+                NewCommunityUnitFragment newCommunityUnitFragment = new NewCommunityUnitFragment();
+                newCommunityUnitFragment.editingCommunityUnit = communityUnit;
+                Fragment fragment = newCommunityUnitFragment;
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "mappings");
+                fragmentTransaction.commitAllowingStateLoss();
 
 
 
