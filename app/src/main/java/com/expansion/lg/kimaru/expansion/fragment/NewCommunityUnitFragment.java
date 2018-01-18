@@ -158,6 +158,12 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
         editPrivateFacilityForMrdt = (EditText) v.findViewById(R.id.editPrivateFacilityForMrdt);
         editNumberOfChvs = (EditText) v.findViewById(R.id.editNumberOfChvs);
         editChvHouseHold = (EditText) v.findViewById(R.id.editChvHouseHold);
+        editPriceofAct = (EditText) v.findViewById(R.id.editPriceOfMrdt);
+        editPriceOfMrdt = (EditText) v.findViewById(R.id.editPriceofAct);
+
+        editChiefPopulation = (EditText) v.findViewById(R.id.editChiefPopulation);
+        editChiefChvHouseHold = (EditText) v.findViewById(R.id.editChiefChvHouseHold);
+
 
         editNumberOfHouseHolds = (EditText) v.findViewById(R.id.editNumberOfHouseHolds);
         editMohPopulation = (EditText) v.findViewById(R.id.editMohPopulation);
@@ -168,6 +174,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
         editTransportCost = (EditText) v.findViewById(R.id.editTransportCost);
         editDistanceToMainRoad = (EditText) v.findViewById(R.id.editDistanceToMainRoad);
         editDistanceToHealthFacility = (EditText) v.findViewById(R.id.editDistanceToHealthFacility);
+        editComment = (EditText) v.findViewById(R.id.editComment);
 
         spinnerLinkFacility = (Spinner) v.findViewById(R.id.spinnerLinkFacility);
         editDistributors = (EditText) v.findViewById(R.id.editDistributors);
