@@ -509,4 +509,16 @@ public class CommunityUnit {
     public void setRead(boolean read) {
         isRead = read;
     }
+
+    public void setPopulationAsPerChief(Long populationAsPerChief) {
+        this.populationAsPerChief = populationAsPerChief;
+    }
+
+    public void setChvsHouseholdsAsPerChief(Long chvsHouseholdsAsPerChief) {
+        this.chvsHouseholdsAsPerChief = chvsHouseholdsAsPerChief;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 }
