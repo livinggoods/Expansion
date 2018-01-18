@@ -721,22 +721,27 @@ public class RegistrationsFragment extends Fragment  {
                             userNames = new UserTable(getContext()).getUserById(interview.getAddedBy()).getName();
                         }catch (Exception e){}
 
-                        String strRegistration = registration.getChewName() +","+
-                                registration.getChewNumber()+","+
+                        ChewReferral chewReferral = new ChewReferralTable(getContext()).getChewReferralById(registration.getChewUuid());
+
+                        String strRegistration = chewReferral.getName() +","+
+                                chewReferral.getPhone()+","+
                                 registration.getName() +","+
                                 registration.getPhone().replaceAll(",", ";") +","+
                                 registration.getGender() +","+
+                                registration.getMaritalStatus() +","+
                                 new DisplayDate(registration.getDob()).dateOnly() +","+  //dd/mm/yyyy format
                                 registration.getAge() +","+
-                                registration.getSubcounty() +","+
-                                registration.getWard()+","+
+                                //registration.getSubcounty() +","+
+                                new SubCountyTable(getContext()).getSubCountyById(registration.getSubcounty()).getSubCountyName()+","+
+                                //registration.getWard()+","+
+                                new WardTable(getContext()).getWardById(registration.getWard()).getName()+","+
                                 registration.getVillage()+","+
                                 registration.getMark().replaceAll(",", ";") +","+
-                                registration.getCuName().replaceAll(",", ";") +","+
+                                // registration.getCuName().replaceAll(",", ";") +","+
                                 new CommunityUnitTable(getContext()).getCommunityUnitById(registration.getCuName()).getCommunityUnitName()+","+
                                 new LinkFacilityTable(getContext()).getLinkFacilityById(registration.getLinkFacility()).getFacilityName() +","+
                                 new LinkFacilityTable(getContext()).getLinkFacilityById(registration.getLinkFacility()).getMflCode() +","+
-                                registration.getLinkFacility().replaceAll(",", ";") +","+
+                                // registration.getLinkFacility().replaceAll(",", ";") +","+
                                 registration.getNoOfHouseholds() +","+
                                 (registration.getReadEnglish().equals(1) ? "Y" : "N") +","+
                                 registration.getDateMoved() +","+
