@@ -11,8 +11,8 @@ import java.net.InetAddress;
  */
 
 public class Constants {
-    public static final String CLOUD_ADDRESS = "https://expansion.lg-apps.com";
-    public static final String API_SERVER = CLOUD_ADDRESS + "/api/v1/sync/";
+    Context context;
+    SessionManagement session;
     public static final String PEER_SERVER = "http://192.168.43.1";
     public static final int PEER_SERVER_PORT = 8090;
     public static final int DATABASE_VERSION = 2;
@@ -27,5 +27,32 @@ public class Constants {
 
     public static String API_TRAINING = "trainings";
 
+    public Constants (Context context){
+        this.context = context;
+        this.session = new SessionManagement(context);
+    }
 
+    public String getCloudAddress() {
+        return session.getCloudUrl();
+    }
+
+    public String getApiServer(){
+        String apiPrefix = session.getApiPrefix() == null ? "" : session.getApiPrefix()+"/";
+        String apiVersion = session.getApiVersion() == null ? "" : session.getApiVersion()+"/";
+        String apiSuffix = session.getApiSuffix() == null ? "" : session.getApiSuffix();
+        return getCloudAddress()+"/"+apiPrefix+apiVersion+apiSuffix;
+    }
+
+    public String getPeerServer(){
+        return session.getPeerServer();
+    }
+
+    public String getPeerServerPort(){
+
+        return session.getPeerServerPort();
+    }
+
+    public String getApiTrainingEndpoint(){
+        return session.getApiTrainingEndpoint();
+    }
 }
