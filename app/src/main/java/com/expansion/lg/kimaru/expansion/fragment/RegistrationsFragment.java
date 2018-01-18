@@ -45,6 +45,7 @@ import android.view.MenuItem;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Education;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
@@ -52,6 +53,7 @@ import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.other.DisplayDate;
+import com.expansion.lg.kimaru.expansion.tables.ChewReferralTable;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.EducationTable;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
@@ -60,7 +62,9 @@ import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 import com.expansion.lg.kimaru.expansion.dbhelpers.RegistrationListAdapter;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
+import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
 import com.expansion.lg.kimaru.expansion.tables.UserTable;
+import com.expansion.lg.kimaru.expansion.tables.WardTable;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -628,13 +632,14 @@ public class RegistrationsFragment extends Fragment  {
                             "Candidate Name," +
                             "Candidate Mobile," +
                             "Gender," +
+                            "Marital Status," +
                             "Year of Birth," +
                             "Age," +
-                            "Subcounty," +
-                            "Ward," +
+                            "Subcounty," +  // Shown as UUID, Requires a name
+                            "Ward," + // Shown as UUID, Requires a name
                             "Village/zone/cell, " +
                             "Landmark, " +
-                            "CU (Community Unit), " +
+                            "CU (Community Unit), " + // Shown as UUID, Requires a name
                             "Link Facility Name, " +
                             "Link Facility Code, " +
                             "No of Households," +
