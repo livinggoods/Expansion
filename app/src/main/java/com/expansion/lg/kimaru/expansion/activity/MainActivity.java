@@ -53,6 +53,7 @@ import com.expansion.lg.kimaru.expansion.fragment.NewUgMappingFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RegistrationsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.ExamsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
+import com.expansion.lg.kimaru.expansion.fragment.SettingsFragment;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.other.SetUpApp;
