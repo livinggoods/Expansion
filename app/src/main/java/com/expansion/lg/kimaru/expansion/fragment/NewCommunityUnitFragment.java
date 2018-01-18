@@ -11,6 +11,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -65,11 +66,11 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
 
     private OnFragmentInteractionListener mListener;
 
-    EditText editName, editAreaChiefName, editAreaChiefPhone, editWard;
+    EditText editName, editAreaChiefName, editAreaChiefPhone, editWard, editComment;
     EditText editPrivateFacilityForAct, editPrivateFacilityForMrdt, editNumberOfChvs, editChvHouseHold;
     EditText editNumberOfHouseHolds, editMohPopulation, editPopulationDensity, editNumberOfVillages;
     EditText editDistanceToBranch, editTransportCost, editDistanceToMainRoad, editDistanceToHealthFacility;
-    EditText editDistributors, editCHVsTrained;
+    EditText editDistributors, editCHVsTrained, editPriceofAct, editPriceOfMrdt, editChiefPopulation, editChiefChvHouseHold;
 
     Spinner editEconomicStatus, spinnerLinkFacility;
 
