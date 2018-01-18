@@ -85,6 +85,8 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
     public static final String COMMENT = "comment";
     public static final String PARTNERID = "partner_id";
     public static final String CUID = "cu_id";
+    public static final String CHVS_HOUSEHOLDS_AS_PER_CHIEF = "chief_households_per_chv";
+    public static final String POPULATION_AS_PER_CHIEF = "population_as_per_chief";
     public String [] columns=new String[]{ID, NAME, MAPPINGID, LAT, LON, COUNTRY,
             SUBCOUNTYID, LINKFACILITYID, AREACHIEFNAME, WARD, ECONOMICSTATUS,
             PRIVATEFACILITYFORACT, PRIVATEFACILITYFORMRDT, NAMEOFNGODOINGICCM,
@@ -94,7 +96,7 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
             DISTANCETONEARESTHEALTHFACILITY, ACTLEVELS, ACTPRICE, MRDTLEVELS,
             MRDTPRICE, NOOFDISTIBUTORS, CHVSTRAINED, PRESENCEOFESTATES, PRESENCEOFFACTORIES,
             PRESENCEOFHOSTELS, TRADERMARKET, LARGESUPERMARKET, NGOSGIVINGFREEDRUGS,
-            NGODOINGICCM, NGODOINGMHEALTH};
+            NGODOINGICCM, NGODOINGMHEALTH,CHVS_HOUSEHOLDS_AS_PER_CHIEF, POPULATION_AS_PER_CHIEF, COMMENT};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ","
@@ -128,6 +130,7 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
             + ACTPRICE + integer_field + ","
             + MRDTLEVELS + integer_field + ","
             + MRDTPRICE + integer_field + ","
+            + COMMENT + text_field + ","
             + NOOFDISTIBUTORS + integer_field + ","
             + CHVSTRAINED + integer_field + ","
             + PRESENCEOFESTATES + integer_field + ","
@@ -137,10 +140,33 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
             + LARGESUPERMARKET + integer_field + ","
             + NGOSGIVINGFREEDRUGS + integer_field + ","
             + NGODOINGICCM + integer_field + ","
+            + CHVS_HOUSEHOLDS_AS_PER_CHIEF + integer_field + ","
+            + POPULATION_AS_PER_CHIEF + integer_field + ","
             + NGODOINGMHEALTH + integer_field + ");";
 
     String [] partnerColumns = {ID, NAME, ICCM, ICCMCOMPONENT, MHEALTH, COMMENT, DATEADDED, ADDEDBY};
     String [] partnerCuColumns = {ID, PARTNERID, CUID};
+
+    public static final String ADD_CHIEF_POP = "ALTER TABLE " + TABLE_NAME +
+            "  ADD "+ POPULATION_AS_PER_CHIEF + integer_field +";";
+
+    public static final String ADD_CHIEF_HOUSEHOLDS_PER_CHV = "ALTER TABLE " + TABLE_NAME +
+            "  ADD "+ CHVS_HOUSEHOLDS_AS_PER_CHIEF + integer_field +";";
+
+    public static final String ADD_COMMENT_FIELD = "ALTER TABLE " + TABLE_NAME +
+            "  ADD "+ COMMENT + text_field +";";
+
+    public void addChiefsFields(){
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL(ADD_CHIEF_POP);
+        db.execSQL(ADD_CHIEF_HOUSEHOLDS_PER_CHV);
+    }
+
+    public void addCommentField(){
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL(ADD_COMMENT_FIELD);
+    }
+
 
     public static final String CREATE_PARTNERS = "CREATE TABLE " + PARTNERS_TABLE + "("
             + ID + varchar_field + ","
@@ -164,6 +190,13 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
 
     public CommunityUnitTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);
+
+        if (!isFieldExist(POPULATION_AS_PER_CHIEF)){
+            this.addChiefsFields();
+        }
+        if (!isFieldExist(COMMENT)){
+            this.addCommentField();
+        }
     }
 
 
@@ -227,6 +260,9 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
         cv.put(NGOSGIVINGFREEDRUGS, communityUnit.isNgosGivingFreeDrugs());
         cv.put(NGODOINGICCM, communityUnit.isNgoDoingIccm());
         cv.put(NGODOINGMHEALTH, communityUnit.isNgoDoingMhealth());
+        cv.put(CHVS_HOUSEHOLDS_AS_PER_CHIEF, communityUnit.getPopulationAsPerChief());
+        cv.put(POPULATION_AS_PER_CHIEF, communityUnit.getChvsHouseholdsAsPerChief());
+        cv.put(COMMENT, communityUnit.getComment());
 
         long id;
         if (isCommunityUnitExisting(communityUnit)){
@@ -316,6 +352,9 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
             communityUnit.setNgosGivingFreeDrugs((cursor.getInt(cursor.getColumnIndex(NGOSGIVINGFREEDRUGS)) ==  1));
             communityUnit.setNgoDoingIccm((cursor.getInt(cursor.getColumnIndex(NGODOINGICCM)) ==  1));
             communityUnit.setNgoDoingMhealth((cursor.getInt(cursor.getColumnIndex(NGODOINGMHEALTH)) ==  1));
+            communityUnit.setPopulationAsPerChief(cursor.getLong(cursor.getColumnIndex(POPULATION_AS_PER_CHIEF)));
+            communityUnit.setChvsHouseholdsAsPerChief(cursor.getLong(cursor.getColumnIndex(CHVS_HOUSEHOLDS_AS_PER_CHIEF)));
+            communityUnit.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
 
             communityUnitList.add(communityUnit);
         }
@@ -381,6 +420,9 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
             communityUnit.setNgosGivingFreeDrugs((cursor.getInt(cursor.getColumnIndex(NGOSGIVINGFREEDRUGS)) ==  1));
             communityUnit.setNgoDoingIccm((cursor.getInt(cursor.getColumnIndex(NGODOINGICCM)) ==  1));
             communityUnit.setNgoDoingMhealth((cursor.getInt(cursor.getColumnIndex(NGODOINGMHEALTH)) ==  1));
+            communityUnit.setPopulationAsPerChief(cursor.getLong(cursor.getColumnIndex(POPULATION_AS_PER_CHIEF)));
+            communityUnit.setChvsHouseholdsAsPerChief(cursor.getLong(cursor.getColumnIndex(CHVS_HOUSEHOLDS_AS_PER_CHIEF)));
+            communityUnit.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
 
             db.close();
             return communityUnit;
@@ -444,6 +486,9 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
             communityUnit.setNgosGivingFreeDrugs((cursor.getInt(cursor.getColumnIndex(NGOSGIVINGFREEDRUGS)) ==  1));
             communityUnit.setNgoDoingIccm((cursor.getInt(cursor.getColumnIndex(NGODOINGICCM)) ==  1));
             communityUnit.setNgoDoingMhealth((cursor.getInt(cursor.getColumnIndex(NGODOINGMHEALTH)) ==  1));
+            communityUnit.setPopulationAsPerChief(cursor.getLong(cursor.getColumnIndex(POPULATION_AS_PER_CHIEF)));
+            communityUnit.setChvsHouseholdsAsPerChief(cursor.getLong(cursor.getColumnIndex(CHVS_HOUSEHOLDS_AS_PER_CHIEF)));
+            communityUnit.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
 
             db.close();
             return communityUnit;
@@ -507,6 +552,9 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
             communityUnit.setNgosGivingFreeDrugs((cursor.getInt(cursor.getColumnIndex(NGOSGIVINGFREEDRUGS)) ==  1));
             communityUnit.setNgoDoingIccm((cursor.getInt(cursor.getColumnIndex(NGODOINGICCM)) ==  1));
             communityUnit.setNgoDoingMhealth((cursor.getInt(cursor.getColumnIndex(NGODOINGMHEALTH)) ==  1));
+            communityUnit.setPopulationAsPerChief(cursor.getLong(cursor.getColumnIndex(POPULATION_AS_PER_CHIEF)));
+            communityUnit.setChvsHouseholdsAsPerChief(cursor.getLong(cursor.getColumnIndex(CHVS_HOUSEHOLDS_AS_PER_CHIEF)));
+            communityUnit.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
 
             communityUnitList.add(communityUnit);
         }
@@ -572,6 +620,9 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
             communityUnit.setNgosGivingFreeDrugs((cursor.getInt(cursor.getColumnIndex(NGOSGIVINGFREEDRUGS)) ==  1));
             communityUnit.setNgoDoingIccm((cursor.getInt(cursor.getColumnIndex(NGODOINGICCM)) ==  1));
             communityUnit.setNgoDoingMhealth((cursor.getInt(cursor.getColumnIndex(NGODOINGMHEALTH)) ==  1));
+            communityUnit.setPopulationAsPerChief(cursor.getLong(cursor.getColumnIndex(POPULATION_AS_PER_CHIEF)));
+            communityUnit.setChvsHouseholdsAsPerChief(cursor.getLong(cursor.getColumnIndex(CHVS_HOUSEHOLDS_AS_PER_CHIEF)));
+            communityUnit.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
 
             communityUnitList.add(communityUnit);
         }
@@ -583,6 +634,39 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
     public void deleteCommunityUnit (CommunityUnit communityUnit){
         SQLiteDatabase db = getReadableDatabase();
         db.delete(TABLE_NAME, ID + " = ?", new String[] { communityUnit.getId() });
+    }
+
+
+    public boolean isFieldExist(String fieldName)
+    {
+        SQLiteDatabase db = getReadableDatabase();
+        Log.d("Tremap", fieldName);
+        boolean isExist = false;
+        Cursor res = null;
+        try {
+            res = db.rawQuery("Select * from "+ TABLE_NAME +" limit 1", null);
+            int colIndex = res.getColumnIndex(fieldName);
+            Log.d("Tremap", "The index of col "+fieldName+" is "+String.valueOf(colIndex));
+            if (colIndex!=-1){
+                Log.d("Tremap", "The col "+fieldName+" is found");
+                isExist = true;
+            }else{
+                Log.d("Tremap", "==========");
+                Log.d("Tremap", "The col "+fieldName+" is NOT found");
+                Log.d("Tremap", "T==============");
+            }
+
+        } catch (Exception e) {
+            Log.d("Tremap", "Error getting  "+fieldName);
+        } finally {
+            try {
+                if (res !=null){ res.close();}
+            } catch (Exception e1) {
+                Log.d("Tremap", "Error closing the  DB  "+fieldName);
+            }
+        }
+        Log.d("Tremap", "the result is "+String.valueOf(isExist));
+        return isExist;
     }
 
 
@@ -677,6 +761,9 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
             communityUnit.setNgosGivingFreeDrugs(jsonObject.getString(NGOSGIVINGFREEDRUGS).equalsIgnoreCase("1"));
             communityUnit.setNgoDoingIccm(jsonObject.getString(NGODOINGICCM).equalsIgnoreCase("1"));
             communityUnit.setNgoDoingMhealth(jsonObject.getString(NGODOINGMHEALTH).equalsIgnoreCase("1"));
+            communityUnit.setPopulationAsPerChief(jsonObject.getLong(POPULATION_AS_PER_CHIEF));
+            communityUnit.setChvsHouseholdsAsPerChief(jsonObject.getLong(CHVS_HOUSEHOLDS_AS_PER_CHIEF));
+            communityUnit.setComment(jsonObject.getString(COMMENT));
 
             addCommunityUnitData(communityUnit);
         }catch (Exception e){
