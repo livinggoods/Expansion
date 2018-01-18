@@ -405,7 +405,7 @@ public class SessionManagement {
     }
 
     public String getCloudUrl (){
-        String cloudUrl = pref.getString(CLOUD_URL, HttpServer.SERVER_URL);
+        String cloudUrl = pref.getString(CLOUD_URL, "https://expansion.lg-apps.com");
         return cloudUrl;
     }
 
@@ -501,4 +501,54 @@ public class SessionManagement {
         editor.putBoolean(IS_INITIAL_RUN, status);
         editor.commit();
     }
+
+
+    public void saveApiPrefix(String apiPrefix){
+        editor.putString(API_PREFIX, apiPrefix);
+        editor.commit();
+    }
+    public String getApiPrefix (){
+        return  pref.getString(API_PREFIX, "api");
+    }
+
+    public void saveApiVersion(String apiVersion){
+        editor.putString(API_VERSION, apiVersion);
+        editor.commit();
+    }
+    public String getApiVersion (){
+        return  pref.getString(API_VERSION, "v1");
+    }
+
+    public void saveApiSuffix(String apiSuffix){
+        editor.putString(API_SUFFIX, apiSuffix);
+        editor.commit();
+    }
+    public String getApiSuffix (){
+        return  pref.getString(API_SUFFIX, "sync");
+    }
+
+    public void savePeerServer(String peerServer){
+        editor.putString(PEER_SERVER, peerServer);
+        editor.commit();
+    }
+    public String getPeerServer (){
+        return  pref.getString(PEER_SERVER, "http://192.168.43.1");
+    }
+
+    public void savePeerServerPort(String peerServerPort){
+        editor.putString(PEER_SERVER_PORT, String.valueOf(peerServerPort));
+        editor.commit();
+    }
+    public String getPeerServerPort (){
+        return  pref.getString(PEER_SERVER_PORT, "8090");
+    }
+
+    public void saveApiTrainingEndpoint(String apiTrainingEndpoint){
+        editor.putString(API_TRAINING_ENDPOINT, apiTrainingEndpoint);
+        editor.commit();
+    }
+    public String getApiTrainingEndpoint (){
+        return  pref.getString(API_TRAINING_ENDPOINT, "trainings");
+    }
+
 }
