@@ -108,10 +108,26 @@ public class CommunityUnit {
         this.ngoDoingIccm = ngoDoingIccm;
         this.ngoDoingMhealth = ngoDoingMhealth;
         this.areaChiefPhone = areaChiefPhone;
+        this.populationAsPerChief = populationAsPerChief;
+        this.chvsHouseholdsAsPerChief = chvsHouseholdsAsPerChief;
+        this.comment = comment;
 
     }
 
     // Get Methods
+
+
+    public String getComment() {
+        return comment;
+    }
+
+    public Long getPopulationAsPerChief() {
+        return populationAsPerChief;
+    }
+
+    public Long getChvsHouseholdsAsPerChief() {
+        return chvsHouseholdsAsPerChief;
+    }
 
     public String getAreaChiefPhone() {
         return areaChiefPhone;
