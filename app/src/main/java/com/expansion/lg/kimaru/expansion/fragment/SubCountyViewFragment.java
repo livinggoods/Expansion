@@ -160,6 +160,7 @@ public class SubCountyViewFragment extends Fragment implements  View.OnClickList
                 break;
             case R.id.relativeViewPartners:
                 PartnerActivityFragment partnerActivityFragment = new PartnerActivityFragment();
+                partnerActivityFragment.subCounty = subCounty;
                 fragment = partnerActivityFragment;
                 fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentTransaction = fragmentManager.beginTransaction();

@@ -125,10 +125,6 @@ public class PartnersFragment extends Fragment  {
         //session Management
         session = new SessionManagement(getContext());
 
-
-        // ============Gmail View starts here =======================
-        // Gmail View.
-
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
@@ -152,13 +148,11 @@ public class PartnersFragment extends Fragment  {
 
             @Override
             public void onIconImportantClicked(int position) {
-                Toast.makeText(getContext(), "An iconImportant is clicked", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onMessageRowClicked(int position) {
-                // read the message which removes bold from the row
-                CommunityUnit communityUnit = communityUnits.get(position);
+               CommunityUnit communityUnit = communityUnits.get(position);
 
                 communityUnit.setRead(true);
                 communityUnits.set(position, communityUnit);
@@ -167,13 +161,6 @@ public class PartnersFragment extends Fragment  {
 
             @Override
             public void onRowLongClicked(int position) {
-                // When one long presses a registration, we give them a chance to
-                // Interview the selected applicant
-
-                //extract the clicked recruitment
-
-
-
             }
 
         });
