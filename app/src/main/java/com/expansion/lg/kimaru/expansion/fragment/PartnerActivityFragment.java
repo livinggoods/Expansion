@@ -31,7 +31,9 @@ import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.dbhelpers.PartnerActivityListAdapter;
+import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.PartnerActivity;
+import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 import com.expansion.lg.kimaru.expansion.tables.PartnerActivityTable;
 
@@ -70,6 +72,8 @@ public class PartnerActivityFragment extends Fragment  {
     private ActionMode actionMode;
     private ActionModeCallback actionModeCallback;
 
+    SubCounty subCounty = null;
+    CommunityUnit communityUnit = null;
     SessionManagement session;
 
     public PartnerActivityFragment() {
@@ -118,7 +122,18 @@ public class PartnerActivityFragment extends Fragment  {
         textshow = (TextView) v.findViewById(R.id.textShow);
 
         fab = (FloatingActionButton) v.findViewById(R.id.fab);
-        fab.hide();
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NewPartnerActivityFragment newPartnerActivityFragment = new NewPartnerActivityFragment();
+                newPartnerActivityFragment.subCounty = subCounty;
+                Fragment fragment = newPartnerActivityFragment;
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        });
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
@@ -132,26 +147,18 @@ public class PartnerActivityFragment extends Fragment  {
             @Override
             public void onIconClicked(int position) {
 
-                // get the PA
-                PartnerActivity activity = partnerActivities.get(position);
-                NewPartnerActivityFragment newPartnerActivityFragment = new NewPartnerActivityFragment();
-
-                Fragment fragment = newPartnerActivityFragment;
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, "registrations");
-                fragmentTransaction.commitAllowingStateLoss();
+               this.onRowLongClicked(position);
 
             }
 
             @Override
             public void onIconImportantClicked(int position) {
-                this.onIconClicked(position);
+                this.onRowLongClicked(position);
             }
 
             @Override
             public void onMessageRowClicked(int position) {
-                this.onIconClicked(position);
+                this.onRowLongClicked(position);
 
             }
 
@@ -341,7 +348,4 @@ public class PartnerActivityFragment extends Fragment  {
         }
         swipeRefreshLayout.setRefreshing(false);
     }
-
-    //====================================== End Gmail Methods======================================
-
 }
