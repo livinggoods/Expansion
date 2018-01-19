@@ -138,10 +138,6 @@ public class CommunityUnitsFragment extends Fragment  {
         }
         subCounty = session.getSavedSubCounty();
 
-
-        // ============Gmail View starts here =======================
-        // Gmail View.
-
         recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
 
@@ -149,27 +145,25 @@ public class CommunityUnitsFragment extends Fragment  {
         rAdapter = new CommunityUnitListAdapter(this.getContext(), communityUnits, new CommunityUnitListAdapter.CommunityUnitListAdapterListener() {
             @Override
             public void onIconClicked(int position) {
-                if (actionMode == null) {
-//                    actionMode = startSupportActionMode(actionModeCallback);
-                    Toast.makeText(getContext(), "An Icon is clicked "+ position, Toast.LENGTH_SHORT).show();
-                }
-
-//                toggleSelection(position);
+                CommunityUnit communityUnit = communityUnits.get(position);
+                session.saveCommunityUnit(communityUnit);
+                CommunityUnitViewFragment communityUnitViewFragment = new CommunityUnitViewFragment();
+                communityUnitViewFragment.communityUnit = communityUnit;
+                Fragment fragment = communityUnitViewFragment;
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "mappings");
+                fragmentTransaction.commitAllowingStateLoss();
             }
 
             @Override
             public void onIconImportantClicked(int position) {
-                Toast.makeText(getContext(), "An iconImportant is clicked", Toast.LENGTH_SHORT).show();
+                this.onIconClicked(position);
             }
 
             @Override
             public void onMessageRowClicked(int position) {
-                // read the message which removes bold from the row
-                CommunityUnit communityUnit = communityUnits.get(position);
-
-                communityUnit.setRead(true);
-                communityUnits.set(position, communityUnit);
-                rAdapter.notifyDataSetChanged();
+                this.onIconClicked(position);
             }
 
             @Override

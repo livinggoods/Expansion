@@ -216,7 +216,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
 
                 final EditText editTextComment = new EditText(getContext());
                 editTextComment.setHint("Comment");
-                editTextComment.setInputType(InputType.TYPE_CLASS_TEXT);
+                editTextComment.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
                 layout.addView(editTextComment);
 
 
@@ -339,8 +339,6 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                 partnerActivity.setCounty(session.getSavedMapping().getCounty());
 
                 if (subCounty != null){
-                    Log.d("TREMEAP", subCounty.getId());
-                    Log.d("TREMEAP", ">>>>>>>>>>>>>>>>>>>>>>>");
                     partnerActivity.setSubcounty(subCounty.getId());
                     partnerActivity.setCounty(subCounty.getCountyID());
                 }

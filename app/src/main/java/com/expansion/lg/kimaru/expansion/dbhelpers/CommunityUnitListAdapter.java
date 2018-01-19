@@ -103,7 +103,7 @@ public class CommunityUnitListAdapter extends RecyclerView.Adapter<CommunityUnit
 
         //// displaying text view data
         holder.from.setText(communityUnit.getCommunityUnitName());
-        holder.subject.setText("Households "+String.valueOf(communityUnit.getNoOfHouseholds())+" Households per CHV " +
+        holder.subject.setText("Households "+String.valueOf(communityUnit.getNoOfHouseholds())+"\nHouseholds per CHV " +
                 communityUnit.getHouseholdPerChv());
         if (!communityUnit.getLinkFacilityId().equalsIgnoreCase("")){
             holder.message.setText(communityUnit.getLinkFacilityId()); // show Households and per Chv
@@ -117,7 +117,7 @@ public class CommunityUnitListAdapter extends RecyclerView.Adapter<CommunityUnit
             holder.message.setText("Villages "+String.valueOf(communityUnit.getNumberOfVillages()));
         }
 
-        holder.timestamp.setText(new DisplayDate(communityUnit.getDateAdded()).dateAndTime());
+        holder.timestamp.setText(new DisplayDate(communityUnit.getDateAdded()).dateOnly());
 
         // displaying the first letter of From in icon text
         holder.iconText.setText(communityUnit.getCommunityUnitName().substring(0,1));
