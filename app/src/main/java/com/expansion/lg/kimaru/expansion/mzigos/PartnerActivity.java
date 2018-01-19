@@ -14,6 +14,8 @@ public class PartnerActivity {
     boolean doingMhealth, doingIccm, givingFreeDrugs, givingStipend, synced;
     Long dateAdded, addedBy;
 
+    int color = -1;
+
     //empty constructor
     public PartnerActivity(){}
 
@@ -184,5 +186,13 @@ public class PartnerActivity {
 
     public void setSynced(boolean synced) {
         this.synced = synced;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 }

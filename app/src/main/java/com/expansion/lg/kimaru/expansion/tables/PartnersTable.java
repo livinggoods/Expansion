@@ -187,11 +187,34 @@ public class PartnersTable extends SQLiteOpenHelper {
         return partnersList;
     }
 
+    public Partners getPartnerById(String partnerUUID){
+        SQLiteDatabase db = getReadableDatabase();
 
-    public Cursor getCommunityUnitDataCursor() {
-        SQLiteDatabase db=getReadableDatabase();
-        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
-        return cursor;
+        String whereClause = ID+" = ?";
+        String[] whereArgs = new String[] {
+                partnerUUID,
+        };
+        Cursor c=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+
+        if (!(c.moveToFirst()) || c.getCount() ==0){
+            return null;
+        }else{
+            Partners partners = new Partners();
+            partners.setPartnerID(c.getString(c.getColumnIndex(ID)));
+            partners.setPartnerName(c.getString(c.getColumnIndex(NAME)));
+            partners.setContactPerson(c.getString(c.getColumnIndex(CONTACTPERSON)));
+            partners.setContactPersonPhone(c.getString(c.getColumnIndex(CONTACTPERSONPHONE)));
+            partners.setParent(c.getString(c.getColumnIndex(PARENT)));
+            partners.setMappingId(c.getString(c.getColumnIndex(MAPPINGID)));
+            partners.setCountry(c.getString(c.getColumnIndex(COUNTRY)));
+            partners.setComment(c.getString(c.getColumnIndex(COMMENT)));
+            partners.setSynced(c.getInt(c.getColumnIndex(SYNCED))==1);
+            partners.setArchived(c.getInt(c.getColumnIndex(ARCHIVED))==1);
+            partners.setDateAdded(c.getLong(c.getColumnIndex(DATEADDED)));
+            partners.setAddedBy(c.getLong(c.getColumnIndex(ADDEDBY)));
+            return partners;
+        }
+
     }
 
     //JSON

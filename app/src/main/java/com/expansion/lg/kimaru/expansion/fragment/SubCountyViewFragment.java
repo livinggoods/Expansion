@@ -27,6 +27,7 @@ import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.KeCountyTable;
 import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
+import com.expansion.lg.kimaru.expansion.tables.PartnerActivityTable;
 import com.expansion.lg.kimaru.expansion.tables.PartnersTable;
 import com.poliveira.parallaxrecycleradapter.ParallaxRecyclerAdapter;
 
@@ -46,7 +47,8 @@ public class SubCountyViewFragment extends Fragment implements  View.OnClickList
 
     TextView mappingComment, contactPhone, contactPerson, subCountyName, subCountyCounty;
     TextView linkFacilitySummary, communityUnitSummary, partnersSummary;
-    RelativeLayout relativeViewPartners, relativeViewCommunityUnits, relativeLinkFacilities;
+    RelativeLayout relativeViewPartners, relativeViewCommunityUnits, relativeLinkFacilities,
+            createNewPartner;
 
 
 
@@ -96,8 +98,12 @@ public class SubCountyViewFragment extends Fragment implements  View.OnClickList
             communityUnitSummary.setText(String.valueOf(communityUnits) +" COMMUNITY UNITS");
         }
 
-        Integer partners = new PartnersTable(getContext())
-                .getPartnersBySubCounty(subCounty.getId()).size();
+        PartnerActivityTable partnerActivityTable = new PartnerActivityTable(getContext());
+//        Integer partners = partnerActivityTable
+//                .getPartnersBySubCounty(subCounty.getId()).size();
+        Integer partners = partnerActivityTable
+                .getPartnerActivityByField(PartnerActivityTable.SUBCOUNTY,subCounty.getId())
+                .size();
         if (partners.equals(0)){
             partnersSummary.setText("NO PARTNERS");
         }else if (partners.equals(1)){
@@ -109,10 +115,12 @@ public class SubCountyViewFragment extends Fragment implements  View.OnClickList
         relativeViewPartners = (RelativeLayout) v.findViewById(R.id.relativeViewPartners);
         relativeViewCommunityUnits = (RelativeLayout) v.findViewById(R.id.relativeViewCommunityUnits);
         relativeLinkFacilities = (RelativeLayout) v.findViewById(R.id.relativeLinkFacilities);
+        createNewPartner = (RelativeLayout) v.findViewById(R.id.createNewPartner);
 
         relativeLinkFacilities.setOnClickListener(this);
         relativeViewCommunityUnits.setOnClickListener(this);
         relativeViewPartners.setOnClickListener(this);
+        createNewPartner.setOnClickListener(this);
 
 
         return v;
@@ -151,14 +159,22 @@ public class SubCountyViewFragment extends Fragment implements  View.OnClickList
                 fragmentTransaction.commitAllowingStateLoss();
                 break;
             case R.id.relativeViewPartners:
-                NewPartnerActivityFragment partnerActivityFragment = new NewPartnerActivityFragment();
-                Log.d("TREMAP", "--------------------------------------------------");
-                Log.d("TREMAP", subCounty.getId());
-                Log.d("TREMAP", "--------------------------------------------------");
-                partnerActivityFragment.subCounty = subCounty;
-                sessionManagement.saveSubCounty(subCounty);
-                partnerActivityFragment.communityUnit = null;
+                PartnerActivityFragment partnerActivityFragment = new PartnerActivityFragment();
                 fragment = partnerActivityFragment;
+                fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left,
+                        android.R.anim.slide_out_right);
+                fragmentTransaction.replace(R.id.frame, fragment, "subcounties");
+                fragmentTransaction.commitAllowingStateLoss();
+                break;
+
+            case R.id.createNewPartner:
+                NewPartnerActivityFragment newPartnerActivityFragment = new NewPartnerActivityFragment();
+                newPartnerActivityFragment.subCounty = subCounty;
+                sessionManagement.saveSubCounty(subCounty);
+                newPartnerActivityFragment.communityUnit = null;
+                fragment = newPartnerActivityFragment;
                 fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left,

@@ -43,11 +43,13 @@ import com.expansion.lg.kimaru.expansion.tables.IccmComponentTable;
 import com.expansion.lg.kimaru.expansion.tables.PartnerActivityTable;
 import com.expansion.lg.kimaru.expansion.tables.PartnersTable;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -135,12 +137,8 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_new_partner_activity, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_RECRUITMENT;
-        if (subCounty != null){
-            MainActivity.backFragment = new SubCountyViewFragment();
-        }
-        if (communityUnit != null){
-            MainActivity.backFragment = new SubCountyViewFragment();
-        }
+        MainActivity.backFragment = new PartnerActivityFragment();
+
 
 
         session = new SessionManagement(getContext());
@@ -310,7 +308,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
     public void onClick(View view){
         switch (view.getId()){
             case R.id.buttonList:
-                Fragment fragment = new PartnersFragment();
+                Fragment fragment = new PartnerActivityFragment();
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
@@ -441,7 +439,43 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
 
     public void setUpEditingMode(){
         if (editingPartnerActivity != null){
+            int x = 0;
+            for (Partners e : partnersList) {
+                if (e.getPartnerID().equalsIgnoreCase(editingPartnerActivity.getPartnerId())){
+                    selectPartner.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
 
+            editIsDoingIccm.clearCheck();
+            editIsDoingIccm.check(editingPartnerActivity.isDoingIccm() ?
+                    R.id.editIsDoingIccmYes : R.id.editIsDoingIccmNo);
+
+            editIsGivingFreeMedicine.clearCheck();
+            editIsGivingFreeMedicine.check(editingPartnerActivity.isGivingFreeDrugs() ?
+                    R.id.editIsGivingFreeMedicineYes : R.id.editIsGivingFreeMedicineNo);
+
+            editIsGivingStipend.clearCheck();
+            editIsGivingStipend.check(editingPartnerActivity.isGivingStipend() ?
+                    R.id.editIsGivingStipendYes : R.id.editIsGivingStipendNo);
+
+            editIsDoingMhealth.clearCheck();
+            editIsDoingMhealth.check(editingPartnerActivity.isDoingMhealth() ?
+                    R.id.editIsDoingMhealthYes : R.id.editIsDoingMhealthNo);
+
+            try{
+                JSONObject activities = new JSONObject(editingPartnerActivity.getActivities());
+                Iterator<?> keys = activities.keys();
+                while(keys.hasNext()){
+                    String key = (String) keys.next();
+                    Integer iccm = Integer.valueOf(key);
+
+                    Log.d("Tremap", iccm +" -- "+ activities.getString(key));
+                    CheckBox checkbox = (CheckBox) parentLayout.findViewById(iccm);
+                    checkbox.setChecked(activities.getBoolean(String.valueOf(key)));
+                }
+            } catch (JSONException je){}
         }
     }
 }

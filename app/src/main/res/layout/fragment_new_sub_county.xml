@@ -552,8 +552,8 @@
                     android:layout_height="wrap_content"
                     android:hint="Comments"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="text"
-                    android:maxLines="1" />
+                    android:inputType="textMultiLine"
+                    android:minLines="@integer/comment_box_size" />
             </android.support.design.widget.TextInputLayout>
 
             <View

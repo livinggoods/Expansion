@@ -83,7 +83,7 @@ public class MapKeViewFragment extends Fragment implements View.OnClickListener 
         getSubcounties();
 
         txtSubCounty = (TextView) v.findViewById(R.id.addSubCounty);
-        txtSubCounty.setText(String.valueOf(subCountyList.size())+" COUNTIES");
+        txtSubCounty.setText(String.valueOf(subCountyList.size())+" SUB COUNTIES");
         txtSubCounty.setOnClickListener(this);
 
         relativeSubCountySummary = (RelativeLayout) v.findViewById(R.id.subCountySummary);

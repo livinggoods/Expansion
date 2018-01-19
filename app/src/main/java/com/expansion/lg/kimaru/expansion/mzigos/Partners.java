@@ -14,6 +14,8 @@ public class Partners {
     boolean synced, archived;
     Long dateAdded, addedBy;
 
+    int color = -1;
+
     //empty constructor
     public Partners(){}
 
@@ -129,5 +131,13 @@ public class Partners {
 
     public void setAddedBy(Long addedBy) {
         this.addedBy = addedBy;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 }

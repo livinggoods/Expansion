@@ -516,7 +516,7 @@
                     android:hint="Comments"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textMultiLine"
-                    android:maxLines="1" />
+                    android:minLines="@integer/comment_box_size" />
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
