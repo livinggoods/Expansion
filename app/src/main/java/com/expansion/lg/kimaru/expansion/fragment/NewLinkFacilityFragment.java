@@ -7,6 +7,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -26,6 +27,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,6 +87,12 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     List<EditText> communityUnitsCreated = new ArrayList<EditText>();
     List<EditText> cuPartner = new ArrayList<EditText>();
 
+    String[] permissionsRequired = new String[]{
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION};
+    private SharedPreferences permissionStatus;
+    private boolean sentToSettings = false;
+
     Button buttonSave, buttonList;
 
     EditText editFacilityName, editActLevels, editMrdtLevels,editMflCode;
@@ -110,10 +118,6 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     // Due to Runtime Perms, let us declare some constants for the permissions
     private static final int PERMISSION_CALLBACK_CONSTANT = 101;
     private static final int REQUEST_PERMISSION_SETTING = 102;
-    String[] permissionsRequired = new String[]{
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION};
-
 
     // The minimum distance to change Updates in meters
     public static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1; // 10 meters
@@ -177,6 +181,11 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         editActLevels = (EditText) v.findViewById(R.id.editActLevels);
         editMflCode = (EditText) v.findViewById(R.id.editMflCode);
 
+        if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+            editActLevels.setVisibility(View.GONE);
+            editMrdtLevels.setVisibility(View.GONE);
+        }
+
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
@@ -187,91 +196,6 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         return v;
     }
 
-    public void checkPermissions(){
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    Manifest.permission.READ_CONTACTS)) {
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Needs GPS Permission");
-                builder.setMessage("In order to work properly, this app needs GPS permission");
-                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        ActivityCompat.requestPermissions(getActivity(), new String[]{
-                                Manifest.permission.ACCESS_COARSE_LOCATION,
-                                Manifest.permission.ACCESS_FINE_LOCATION
-                        }, PERMISSION_CALLBACK_CONSTANT);
-                    }
-                });
-                builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        ActivityCompat.requestPermissions(getActivity(), new String[]{
-                                Manifest.permission.ACCESS_COARSE_LOCATION,
-                                Manifest.permission.ACCESS_FINE_LOCATION
-                        }, PERMISSION_CALLBACK_CONSTANT);
-                    }
-                });
-                builder.show();
-
-            } else {
-
-                ActivityCompat.requestPermissions(getActivity(), new String[]{
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                }, PERMISSION_CALLBACK_CONSTANT);
-            }
-
-        }
-    }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == PERMISSION_CALLBACK_CONSTANT){
-            //check if all permissions are granted
-            boolean allgranted = false;
-            for(int i=0;i<grantResults.length;i++){
-                if(grantResults[i]==PackageManager.PERMISSION_GRANTED){
-                    allgranted = true;
-                } else {
-                    allgranted = false;
-                    break;
-                }
-            }
-
-            if(allgranted){
-                proceedAfterPermission();
-            } else if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),permissionsRequired[0])
-                    || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),permissionsRequired[1])){
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Need Multiple Permissions");
-                builder.setMessage("This app needs Location permissions.");
-                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        ActivityCompat.requestPermissions(getActivity(),permissionsRequired,PERMISSION_CALLBACK_CONSTANT);
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.show();
-            } else {
-                Toast.makeText(getContext(),"Unable to get Permission",Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-    private void proceedAfterPermission() {
-        getLocation();
-    }
     public void getLocation(){
         //get the location
         try {
@@ -372,6 +296,133 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
         } catch (Exception e){}
     }
+    public void checkPermissions(){
+        try{
+            if(ActivityCompat.checkSelfPermission(getActivity(), permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(getActivity(), permissionsRequired[1]) != PackageManager.PERMISSION_GRANTED){
+                if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),permissionsRequired[0])
+                        || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),permissionsRequired[1])){
+                    //Show Information about why you need the permission
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Multiple Permissions Request");
+                    builder.setMessage("This app needs Location permissions");
+                    builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            ActivityCompat.requestPermissions(getActivity(),permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+                }else if (permissionStatus.getBoolean(permissionsRequired[0], false)){
+                    //Previously Permission Request was cancelled with 'Dont Ask Again',
+                    // Redirect to Settings after showing Information about why you need the permission
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Multiple Permissions Request");
+                    builder.setMessage("This app needs Location permissions");
+                    builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            sentToSettings = true;
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getContext().getPackageName(), null);
+                            intent.setData(uri);
+                            startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
+                            Toast.makeText(getContext(), "Go to Permissions to Grant Location Permissions",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+                }else {
+                    ActivityCompat.requestPermissions(getActivity(), permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
+                }
+                SharedPreferences.Editor editor = permissionStatus.edit();
+                editor.putBoolean(permissionsRequired[0],true);
+                editor.commit();
+            }else{
+                proceedAfterPermission();
+            }
+        }catch (Exception e){}
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == PERMISSION_CALLBACK_CONSTANT){
+            //check if all permissions are granted
+            boolean allgranted = false;
+            for(int i=0;i<grantResults.length;i++){
+                if(grantResults[i]==PackageManager.PERMISSION_GRANTED){
+                    allgranted = true;
+                } else {
+                    allgranted = false;
+                    break;
+                }
+            }
+
+            if(allgranted){
+                proceedAfterPermission();
+            } else if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),permissionsRequired[0])
+                    || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),permissionsRequired[1])){
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Need Multiple Permissions");
+                builder.setMessage("This app needs Location permissions.");
+                builder.setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        ActivityCompat.requestPermissions(getActivity(),permissionsRequired,PERMISSION_CALLBACK_CONSTANT);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            } else {
+                Toast.makeText(getContext(),"Unable to get Permission",Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_PERMISSION_SETTING) {
+            if (ActivityCompat.checkSelfPermission(getContext(), permissionsRequired[0]) == PackageManager.PERMISSION_GRANTED) {
+                //Got Permission
+                proceedAfterPermission();
+            }
+        }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (sentToSettings) {
+            if (ActivityCompat.checkSelfPermission(getContext(), permissionsRequired[0]) == PackageManager.PERMISSION_GRANTED) {
+                //Got Permission
+                proceedAfterPermission();
+            }
+        }
+    }
+    private void proceedAfterPermission() {
+        getLocation();
+    }
+
 
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -406,13 +457,20 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
                 Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
                 Long currentDate =  new Date().getTime();
-
                 Mapping mapping = session.getSavedMapping();
-                String subCountyId = session.getSavedSubCounty().getId();
+                String subCountyId;
 
                 String uuid = UUID.randomUUID().toString();
                 String county = mapping.getCounty();
-                String subCounty = session.getSavedSubCounty().getId();
+                String subCounty;
+                if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+                    subCounty = mapping.getSubCounty();
+                    subCountyId = mapping.getSubCounty();
+                }else {
+                    subCounty = session.getSavedSubCounty().getId();
+                    subCountyId = session.getSavedSubCounty().getId();
+                }
+
                 String mappingId = mapping.getId();
                 Integer addedBy = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
                 String country = user.get(SessionManagement.KEY_USER_COUNTRY);
@@ -433,9 +491,12 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                     Toast.makeText(getContext(), "Enter the name of the facility", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                String parishId = session.getSavedParish().getId();
                 LinkFacility linkFacility = new LinkFacility(uuid, facilityName, country, mappingId,
-                        latitude, longitude, subCounty, currentDate, addedBy, actLevels, mrdtLevels, mflCode, county);
+                        latitude, longitude, subCounty, currentDate, addedBy, actLevels, mrdtLevels, mflCode, county, parishId);
+
                 LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
                 long id  = linkFacilityTable.addData(linkFacility);
 
