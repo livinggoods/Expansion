@@ -172,12 +172,10 @@ public class MappingFragment extends Fragment  {
                 Fragment fragment;
                 if (country.equalsIgnoreCase("KE")){
                     //show ke fragment
-                    MapKeViewFragment mapKeViewFragment = new MapKeViewFragment();
-                    fragment = mapKeViewFragment;
+                    fragment = new MapKeViewFragment();
                 } else{
                     //UG is the default
-                    MapViewFragment mappingViewFragment = new MapViewFragment();
-                    fragment = mappingViewFragment;
+                    fragment = new MapViewFragment();
                 }
 
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
