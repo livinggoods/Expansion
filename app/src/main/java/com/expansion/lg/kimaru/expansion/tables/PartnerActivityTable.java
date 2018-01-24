@@ -153,27 +153,7 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
         Cursor c = db.query(TABLE_NAME, columns,null,null,null,null,null,null);
         List<PartnerActivity> partnersActivityList = new ArrayList<>();
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
-            PartnerActivity partners = new PartnerActivity();
-            partners.setId(c.getString(c.getColumnIndex(ID)));
-            partners.setPartnerId(c.getString(c.getColumnIndex(PARTNERID)));
-            partners.setCountry(c.getString(c.getColumnIndex(COUNTRY)));
-            partners.setCounty(c.getString(c.getColumnIndex(COUNTY)));
-            partners.setSubcounty(c.getString(c.getColumnIndex(SUBCOUNTY)));
-            partners.setParish(c.getString(c.getColumnIndex(PARISH)));
-            partners.setVillage(c.getString(c.getColumnIndex(VILLAGE)));
-            partners.setCommunityUnit(c.getString(c.getColumnIndex(COMMUNITYUNIT)));
-            partners.setMappingId(c.getString(c.getColumnIndex(MAPPINGID)));
-            partners.setComment(c.getString(c.getColumnIndex(COMMENT)));
-            partners.setDoingMhealth(c.getInt(c.getColumnIndex(DOINGMHEALTH))==1);
-            partners.setDoingIccm(c.getInt(c.getColumnIndex(DOINGICCM))==1);
-            partners.setGivingFreeDrugs(c.getInt(c.getColumnIndex(GIVINGFREEDRUGS))==1);
-            partners.setGivingStipend(c.getInt(c.getColumnIndex(GIVINGSTIPEND))==1);
-            partners.setDateAdded(c.getLong(c.getColumnIndex(ADDEDBY)));
-            partners.setAddedBy(c.getLong(c.getColumnIndex(ADDEDBY)));
-            partners.setActivities(c.getString(c.getColumnIndex(ACTIVITIES)));
-            partners.setSynced(c.getInt(c.getColumnIndex(SYNCED))==1);
-
-            partnersActivityList.add(partners);
+            partnersActivityList.add(cursorToPartner(c));
         }
         db.close();
         return partnersActivityList;
@@ -190,30 +170,48 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
         Cursor c = db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
         List<PartnerActivity> partnerActivityList = new ArrayList<>();
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
-            PartnerActivity partners = new PartnerActivity();
-            partners.setId(c.getString(c.getColumnIndex(ID)));
-            partners.setPartnerId(c.getString(c.getColumnIndex(PARTNERID)));
-            partners.setCountry(c.getString(c.getColumnIndex(COUNTRY)));
-            partners.setCounty(c.getString(c.getColumnIndex(COUNTY)));
-            partners.setSubcounty(c.getString(c.getColumnIndex(SUBCOUNTY)));
-            partners.setParish(c.getString(c.getColumnIndex(PARISH)));
-            partners.setVillage(c.getString(c.getColumnIndex(VILLAGE)));
-            partners.setCommunityUnit(c.getString(c.getColumnIndex(COMMUNITYUNIT)));
-            partners.setMappingId(c.getString(c.getColumnIndex(MAPPINGID)));
-            partners.setComment(c.getString(c.getColumnIndex(COMMENT)));
-            partners.setDoingMhealth(c.getInt(c.getColumnIndex(DOINGMHEALTH))==1);
-            partners.setDoingIccm(c.getInt(c.getColumnIndex(DOINGICCM))==1);
-            partners.setGivingFreeDrugs(c.getInt(c.getColumnIndex(GIVINGFREEDRUGS))==1);
-            partners.setGivingStipend(c.getInt(c.getColumnIndex(GIVINGSTIPEND))==1);
-            partners.setDateAdded(c.getLong(c.getColumnIndex(ADDEDBY)));
-            partners.setAddedBy(c.getLong(c.getColumnIndex(ADDEDBY)));
-            partners.setActivities(c.getString(c.getColumnIndex(ACTIVITIES)));
-            partners.setSynced(c.getInt(c.getColumnIndex(SYNCED))==1);
-
-            partnerActivityList.add(partners);
+            partnerActivityList.add(cursorToPartner(c));
         }
         db.close();
         return partnerActivityList;
+    }
+
+    public PartnerActivity getPartnerActivityById(String uuid) {
+
+        SQLiteDatabase db=getReadableDatabase();
+        String whereClause = ID+" = ? ";
+        String[] whereArgs = new String[] {
+                uuid
+        };
+        Cursor c = db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        PartnerActivity partnerActivity  = cursorToPartner(c);
+        db.close();
+        return partnerActivity;
+    }
+
+
+    private PartnerActivity cursorToPartner(Cursor c){
+        PartnerActivity partners = new PartnerActivity();
+
+        partners.setId(c.getString(c.getColumnIndex(ID)));
+        partners.setPartnerId(c.getString(c.getColumnIndex(PARTNERID)));
+        partners.setCountry(c.getString(c.getColumnIndex(COUNTRY)));
+        partners.setCounty(c.getString(c.getColumnIndex(COUNTY)));
+        partners.setSubcounty(c.getString(c.getColumnIndex(SUBCOUNTY)));
+        partners.setParish(c.getString(c.getColumnIndex(PARISH)));
+        partners.setVillage(c.getString(c.getColumnIndex(VILLAGE)));
+        partners.setCommunityUnit(c.getString(c.getColumnIndex(COMMUNITYUNIT)));
+        partners.setMappingId(c.getString(c.getColumnIndex(MAPPINGID)));
+        partners.setComment(c.getString(c.getColumnIndex(COMMENT)));
+        partners.setDoingMhealth(c.getInt(c.getColumnIndex(DOINGMHEALTH))==1);
+        partners.setDoingIccm(c.getInt(c.getColumnIndex(DOINGICCM))==1);
+        partners.setGivingFreeDrugs(c.getInt(c.getColumnIndex(GIVINGFREEDRUGS))==1);
+        partners.setGivingStipend(c.getInt(c.getColumnIndex(GIVINGSTIPEND))==1);
+        partners.setDateAdded(c.getLong(c.getColumnIndex(ADDEDBY)));
+        partners.setAddedBy(c.getLong(c.getColumnIndex(ADDEDBY)));
+        partners.setActivities(c.getString(c.getColumnIndex(ACTIVITIES)));
+        partners.setSynced(c.getInt(c.getColumnIndex(SYNCED))==1);
+        return partners;
     }
 
     //JSON
