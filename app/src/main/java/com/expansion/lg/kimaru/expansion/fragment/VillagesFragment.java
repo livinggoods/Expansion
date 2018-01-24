@@ -326,7 +326,7 @@ public class VillagesFragment extends Fragment  {
             VillageTable villageTable = new VillageTable(getContext());
             List<Village> villageList = new ArrayList<>();
 
-            villageList = villageTable.getVillageData();
+            villageList = villageTable.getVillageDataByParishId(session.getSavedParish().getId());
             for (Village village:villageList){
                 village.setColor(getRandomMaterialColor("400"));
                 villages.add(village);

@@ -6,7 +6,7 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 
 public class LinkFacility {
 
-    String id, facilityName, mappingId, country, subCountyId, mflCode, county;
+    String id, facilityName, mappingId, country, subCountyId, mflCode, county, parish;
     Integer addedBy;
     Double lat, lon;
     Long actLevels, mrdtLevels, dateAdded;
@@ -22,7 +22,7 @@ public class LinkFacility {
 
     public LinkFacility(String id, String facilityName, String country, String mappingId, Double lat,
                         Double lon, String subCountyId, Long dateAdded, Integer addedBy,
-                        long actLevels, long mrdtLevels, String mflCode, String county) {
+                        long actLevels, long mrdtLevels, String mflCode, String county, String parish) {
         this.id = id;
         this.facilityName = facilityName;
         this.mappingId = mappingId;
@@ -36,11 +36,20 @@ public class LinkFacility {
         this.country = country;
         this.mflCode = mflCode;
         this.county = county;
+        this.parish = parish;
 
     }
 
     // Get Methods
 
+
+    public String getParish() {
+        return parish;
+    }
+
+    public void setParish(String parish) {
+        this.parish = parish;
+    }
 
     public String getCounty() {
         return county;

@@ -49,8 +49,9 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
     public static final String MRDTLEVELS = "mrdt_levels";
     public static final String ACTLEVELS = "act_levels";
     public static final String COUNTRY = "country";
+    public static final String PARISH = "parish";
     String [] columns=new String[]{ID, NAME, COUNTY, LAT, LON, SUBCOUNTY, ADDED, ADDEDBY,
-            MRDTLEVELS, ACTLEVELS, COUNTRY, MFLCODE, MAPPING};
+            MRDTLEVELS, ACTLEVELS, COUNTRY, MFLCODE, MAPPING, PARISH};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field +", "
@@ -65,12 +66,16 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
             + ADDEDBY + integer_field + ", "
             + MRDTLEVELS + integer_field + ", "
             + ACTLEVELS + integer_field + ", "
+            + PARISH + varchar_field + ", "
             + COUNTRY + varchar_field + "); ";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
 
     public LinkFacilityTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);
+        if (!isFieldExist(PARISH)){
+            this.addParishFields();
+        }
     }
 
     @Override
@@ -78,6 +83,12 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
 
         db.execSQL(CREATE_DATABASE);
 
+    }
+    public void addParishFields(){
+        String ADD_PARISH = "ALTER TABLE " + TABLE_NAME +
+                "  ADD "+ PARISH + varchar_field +";";
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL(ADD_PARISH);
     }
 
     @Override
@@ -106,6 +117,7 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
         cv.put(MRDTLEVELS, linkFacility.getMrdtLevels());
         cv.put(ACTLEVELS, linkFacility.getActLevels());
         cv.put(COUNTRY, linkFacility.getCountry());
+        cv.put(PARISH, linkFacility.getParish());
 
         long id;
         if (isExist(linkFacility)){
@@ -136,22 +148,27 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
 
         List<LinkFacility> facilityList =new ArrayList<>();
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-            LinkFacility linkFacility =new LinkFacility();
+            LinkFacility linkFacility= cursorToLinkFacility(cursor);
+            facilityList.add(linkFacility);
+        }
+        db.close();
+        return facilityList;
+    }
 
-            linkFacility.setId(cursor.getString(cursor.getColumnIndex(ID)));
-            linkFacility.setFacilityName(cursor.getString(cursor.getColumnIndex(NAME)));
-            linkFacility.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPING)));
-            linkFacility.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
-            linkFacility.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
-            linkFacility.setMflCode(cursor.getString(cursor.getColumnIndex(MFLCODE)));
-            linkFacility.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
-            linkFacility.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTY)));
-            linkFacility.setDateAdded(cursor.getLong(cursor.getColumnIndex(ADDED)));
-            linkFacility.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDEDBY)));
-            linkFacility.setMrdtLevels(cursor.getInt(cursor.getColumnIndex(MRDTLEVELS)));
-            linkFacility.setActLevels(cursor.getInt(cursor.getColumnIndex(ACTLEVELS)));
-            linkFacility.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+    public List<LinkFacility> getLinkFacilityByParish(String parishId) {
 
+        SQLiteDatabase db=getReadableDatabase();
+
+        String whereClause = PARISH+" = ? ";
+
+        String[] whereArgs = new String[] {
+                parishId
+        };
+
+        List<LinkFacility> facilityList =new ArrayList<>();
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            LinkFacility linkFacility = cursorToLinkFacility(cursor);
             facilityList.add(linkFacility);
         }
         db.close();
@@ -171,20 +188,7 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
         List<LinkFacility> facilityList =new ArrayList<>();
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-            LinkFacility linkFacility =new LinkFacility();
-            linkFacility.setId(cursor.getString(cursor.getColumnIndex(ID)));
-            linkFacility.setFacilityName(cursor.getString(cursor.getColumnIndex(NAME)));
-            linkFacility.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPING)));
-            linkFacility.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
-            linkFacility.setMflCode(cursor.getString(cursor.getColumnIndex(MFLCODE)));
-            linkFacility.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
-            linkFacility.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
-            linkFacility.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTY)));
-            linkFacility.setDateAdded(cursor.getLong(cursor.getColumnIndex(ADDED)));
-            linkFacility.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDEDBY)));
-            linkFacility.setMrdtLevels(cursor.getInt(cursor.getColumnIndex(MRDTLEVELS)));
-            linkFacility.setActLevels(cursor.getInt(cursor.getColumnIndex(ACTLEVELS)));
-            linkFacility.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+            LinkFacility linkFacility = cursorToLinkFacility(cursor);
             facilityList.add(linkFacility);
         }
         db.close();
@@ -205,21 +209,7 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
             return null;
         }else {
-            LinkFacility linkFacility =new LinkFacility();
-
-            linkFacility.setId(cursor.getString(cursor.getColumnIndex(ID)));
-            linkFacility.setFacilityName(cursor.getString(cursor.getColumnIndex(NAME)));
-            linkFacility.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPING)));
-            linkFacility.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
-            linkFacility.setMflCode(cursor.getString(cursor.getColumnIndex(MFLCODE)));
-            linkFacility.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
-            linkFacility.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTY)));
-            linkFacility.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
-            linkFacility.setDateAdded(cursor.getLong(cursor.getColumnIndex(ADDED)));
-            linkFacility.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDEDBY)));
-            linkFacility.setMrdtLevels(cursor.getInt(cursor.getColumnIndex(MRDTLEVELS)));
-            linkFacility.setActLevels(cursor.getInt(cursor.getColumnIndex(ACTLEVELS)));
-            linkFacility.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+            LinkFacility linkFacility =  cursorToLinkFacility(cursor);
             db.close();
             return linkFacility;
         }
@@ -239,21 +229,7 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
             return null;
         }else {
-            LinkFacility linkFacility =new LinkFacility();
-
-            linkFacility.setId(cursor.getString(cursor.getColumnIndex(ID)));
-            linkFacility.setFacilityName(cursor.getString(cursor.getColumnIndex(NAME)));
-            linkFacility.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPING)));
-            linkFacility.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
-            linkFacility.setMflCode(cursor.getString(cursor.getColumnIndex(MFLCODE)));
-            linkFacility.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
-            linkFacility.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTY)));
-            linkFacility.setDateAdded(cursor.getLong(cursor.getColumnIndex(ADDED)));
-            linkFacility.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
-            linkFacility.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDEDBY)));
-            linkFacility.setMrdtLevels(cursor.getInt(cursor.getColumnIndex(MRDTLEVELS)));
-            linkFacility.setActLevels(cursor.getInt(cursor.getColumnIndex(ACTLEVELS)));
-            linkFacility.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+            LinkFacility linkFacility =cursorToLinkFacility(cursor);
             db.close();
             return linkFacility;
         }
@@ -333,13 +309,59 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
             linkFacility.setMrdtLevels(jsonObject.getInt(MRDTLEVELS));
             linkFacility.setActLevels(jsonObject.getInt(ACTLEVELS));
             linkFacility.setCountry(jsonObject.getString(COUNTRY));
+            linkFacility.setParish(jsonObject.getString(PARISH));
             ///////
             addData(linkFacility);
         }catch (Exception e){
             Log.d("Tremap ERR", "Link Facility from JSON "+e.getMessage());
         }
     }
+    private LinkFacility cursorToLinkFacility(Cursor cursor){
+        LinkFacility linkFacility =new LinkFacility();
+        linkFacility.setId(cursor.getString(cursor.getColumnIndex(ID)));
+        linkFacility.setFacilityName(cursor.getString(cursor.getColumnIndex(NAME)));
+        linkFacility.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPING)));
+        linkFacility.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
+        linkFacility.setMflCode(cursor.getString(cursor.getColumnIndex(MFLCODE)));
+        linkFacility.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
+        linkFacility.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
+        linkFacility.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTY)));
+        linkFacility.setDateAdded(cursor.getLong(cursor.getColumnIndex(ADDED)));
+        linkFacility.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDEDBY)));
+        linkFacility.setMrdtLevels(cursor.getInt(cursor.getColumnIndex(MRDTLEVELS)));
+        linkFacility.setActLevels(cursor.getInt(cursor.getColumnIndex(ACTLEVELS)));
+        linkFacility.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+        linkFacility.setParish(cursor.getString(cursor.getColumnIndex(PARISH)));
+
+        return linkFacility;
+    }
     private void upgradeVersion2(SQLiteDatabase db) {}
+
+    public boolean isFieldExist(String fieldName)
+    {
+        SQLiteDatabase db = getReadableDatabase();
+        boolean isExist = false;
+        Cursor res = null;
+        try {
+            res = db.rawQuery("Select * from "+ TABLE_NAME +" limit 1", null);
+            int colIndex = res.getColumnIndex(fieldName);
+            if (colIndex!=-1){
+                isExist = true;
+            }else{
+                Log.d("Tremap", "The col "+fieldName+" is NOT found");
+            }
+
+        } catch (Exception e) {
+            Log.d("Tremap", "Error getting  "+fieldName);
+        } finally {
+            try {
+                if (res !=null){ res.close();}
+            } catch (Exception e1) {
+                Log.d("Tremap", "Error closing the  DB  "+fieldName);
+            }
+        }
+        return isExist;
+    }
 
 }
 

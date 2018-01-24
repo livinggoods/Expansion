@@ -61,7 +61,6 @@ public class SubCountyViewFragment extends Fragment implements  View.OnClickList
         sessionManagement = new SessionManagement(getContext());
         mapping = sessionManagement.getSavedMapping();
         subCounty = sessionManagement.getSavedSubCounty();
-
         mappingComment = (TextView) v.findViewById(R.id.mappingComment);
         contactPhone = (TextView) v.findViewById(R.id.contactPhone);
         contactPerson = (TextView) v.findViewById(R.id.contactPerson);
