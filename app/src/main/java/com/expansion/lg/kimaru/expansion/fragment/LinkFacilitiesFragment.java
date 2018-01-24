@@ -169,17 +169,18 @@ public class LinkFacilitiesFragment extends Fragment  {
 
             @Override
             public void onMessageRowClicked(int position) {
-                // read the message which removes bold from the row
-                LinkFacility linkFacility = linkFacilities.get(position);
-                session.saveLinkFacility(linkFacilities.get(position));
+                if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("KE")) {
+                    LinkFacility linkFacility = linkFacilities.get(position);
+                    session.saveLinkFacility(linkFacilities.get(position));
 
-                Fragment fragment = new LinkFacilityViewFragment();
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left,
-                        android.R.anim.slide_out_right);
-                fragmentTransaction.replace(R.id.frame, fragment, "subcounties");
-                fragmentTransaction.commitAllowingStateLoss();
+                    Fragment fragment = new LinkFacilityViewFragment();
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left,
+                            android.R.anim.slide_out_right);
+                    fragmentTransaction.replace(R.id.frame, fragment, "subcounties");
+                    fragmentTransaction.commitAllowingStateLoss();
+                }
 
             }
 
@@ -203,11 +204,6 @@ public class LinkFacilitiesFragment extends Fragment  {
                     }
                 }
         );
-
-//        actionModeCallback = new ActionMode().Callback;
-
-
-        //===========Gmail View Ends here ============================
         return v;
     }
 
