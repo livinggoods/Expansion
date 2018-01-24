@@ -22,10 +22,12 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -37,12 +39,15 @@ import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
+import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.mzigos.Village;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
+import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
 import com.expansion.lg.kimaru.expansion.tables.VillageTable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -73,11 +78,13 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
     EditText editName, editAreaChiefName, editAreaChiefPhone, editComment, editDistanceToBranch,
             editTransportCost, editDistanceToMainRoad, editNumberOfHouseHolds, editPopulationDensity,
             editDistributors, editDistanceToHealthFacility;
-    Spinner editEconomicStatus;
+    Spinner editEconomicStatus, spinnerLinkFacility;
     RadioGroup editPresenceEstates, editPresenceOfFactories, editPresenceOfTraderMarket,
             editPresenceOfSuperMarket, editNgosGivingFreeDrugs, editBrac, editNgosIccms, mtn, airtel,
             orange, editNgosMhealth, editPresenceDistributors, actStock, editActCost;
     List<String> economicStatusList;
+    List<LinkFacility> linkFacilityList = new ArrayList<LinkFacility>();
+    List<String> linkFacilities = new ArrayList<String>();
 
     //location
     double latitude, longitude;
@@ -108,8 +115,7 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
     SessionManagement session;
     Village editingVillage = null;
     HashMap<String, String> user;
-
-
+    LinkFacility linkFacility = null;
 
     public NewVillageFragment() {
         // Required empty public constructor
@@ -168,6 +174,14 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
         editDistanceToMainRoad = (EditText) v.findViewById(R.id.editDistanceToMainRoad);
         editNumberOfHouseHolds = (EditText) v.findViewById(R.id.editNumberOfHouseHolds);
         editPopulationDensity = (EditText) v.findViewById(R.id.editPopulationDensity);
+        /**
+         * Hide population density
+         * @requested by trainingTeam-Ug
+         * @date Jan 23rd, 2018
+         */
+        if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+            editPopulationDensity.setVisibility(View.GONE);
+        }
         editDistributors = (EditText) v.findViewById(R.id.editDistributors);
         editDistanceToHealthFacility = (EditText) v.findViewById(R.id.editDistanceToHealthFacility);
 //        editActLevels = (EditText) v.findViewById(R.id.editActLevels);
@@ -186,7 +200,28 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
         airtel = (RadioGroup) v.findViewById(R.id.airtel);
         orange = (RadioGroup) v.findViewById(R.id.orange);
         editEconomicStatus = (Spinner) v.findViewById(R.id.editEconomicStatus);
+        spinnerLinkFacility = (Spinner) v.findViewById(R.id.editLinkFacilityId);
         economicStatusList = Arrays.asList(getResources().getStringArray(R.array.economic_status));
+
+        // populate the link Facilities;
+        linkFacilityList.clear();
+        linkFacilities.clear();
+        addLinkFacilities();
+        ArrayAdapter<String> linkFacilityAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, linkFacilities);
+        linkFacilityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLinkFacility.setAdapter(linkFacilityAdapter);
+        //lets set the selected
+        if (linkFacility != null){
+            int x = 0;
+            for (LinkFacility e : linkFacilityList) {
+                if (e.getId().equalsIgnoreCase(linkFacility.getId())){
+                    spinnerLinkFacility.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
+        }
 
         //in case we are editing
         setupEditingMode();
@@ -485,12 +520,13 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
                     editNumberOfHouseHolds.requestFocus();
                     return;
                 }
-                String populationDensity = editPopulationDensity.getText().toString();
-                if (populationDensity.equalsIgnoreCase("")){
-                    Toast.makeText(getContext(), "Population density is required", Toast.LENGTH_LONG).show();
-                    editPopulationDensity.requestFocus();
-                    return;
-                }
+                String populationDensity = "0";
+//                String populationDensity = editPopulationDensity.getText().toString();
+//                if (populationDensity.equalsIgnoreCase("")){
+//                    Toast.makeText(getContext(), "Population density is required", Toast.LENGTH_LONG).show();
+//                    editPopulationDensity.requestFocus();
+//                    return;
+//                }
                 String distanceToHealthFacility = editDistanceToHealthFacility.getText().toString();
                 if (distanceToHealthFacility.equalsIgnoreCase("")){
                     Toast.makeText(getContext(), "Enter the distance to the nearest health facility",
@@ -516,6 +552,13 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
                 String subCountyId = session.getSavedMapping().getSubCounty();
                 String communityUnit = ""; //UG does not have the community units, but provide for one.
                 String linkFacilityId = ""; //UG does not have the link facilities, but provide for one.
+                Integer lFacility = spinnerLinkFacility.getSelectedItemPosition();
+                if (linkFacilityList.size() != 0 && lFacility != -1) {
+                    linkFacilityId = linkFacilityList.get(spinnerLinkFacility.getSelectedItemPosition()).getId();
+                }else{
+                    linkFacilityId = "";
+                }
+
                 String areaChiefName = editAreaChiefName.getText().toString();
                 String areaChiefPhone = editAreaChiefPhone.getText().toString();
                 String distributorsInTheArea = editDistributors.getText().toString();
@@ -795,6 +838,16 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
                 }
                 x++;
             }
+
+            //Health Facility
+            x = 0;
+            for (LinkFacility e : linkFacilityList) {
+                if (e.getId().equalsIgnoreCase(editingVillage.getLinkFacilityId())){
+                    spinnerLinkFacility.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
         }
     }
     //Location Methods
@@ -825,5 +878,15 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
         RadioButton selectedRadioButton =(RadioButton) radioGroup.findViewById(selectedButton);
         String selectedValue = selectedRadioButton.getText().toString();
         return selectedValue;
+    }
+    public void addLinkFacilities() {
+        LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
+        Log.d("TREMAP", "Testing");
+        session.getSavedSubCounty();
+
+        linkFacilityList = linkFacilityTable.getLinkFacilityBySubCounty(session.getSavedMapping().getSubCounty());
+        for (LinkFacility lFacility: linkFacilityList){
+            linkFacilities.add(lFacility.getFacilityName());
+        }
     }
 }
