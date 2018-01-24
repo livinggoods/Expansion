@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,9 +34,11 @@ import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.dbhelpers.CommunityUnitListAdapter;
 import com.expansion.lg.kimaru.expansion.dbhelpers.LinkFacilityListAdapter;
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
+import com.expansion.lg.kimaru.expansion.mzigos.CountyLocation;
 import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.other.DividerItemDecoration;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
+import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
 import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
 
 import java.util.ArrayList;
@@ -124,7 +127,14 @@ public class LinkFacilitiesFragment extends Fragment  {
         //session Management
         session = new SessionManagement(getContext());
         MainActivity.CURRENT_TAG = MainActivity.TAG_LINK_FACILITIES;
-        MainActivity.backFragment = new SubCountyViewFragment();
+
+
+        if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+            MainActivity.backFragment = new ParishViewFragment();
+        }else{
+            MainActivity.backFragment = new SubCountyViewFragment();
+        }
+
 
         fab = (FloatingActionButton) v.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
