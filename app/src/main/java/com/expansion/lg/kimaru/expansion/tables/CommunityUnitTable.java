@@ -300,63 +300,11 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
     }
 
     public List<CommunityUnit> getCommunityUnitData() {
-
         SQLiteDatabase db=getReadableDatabase();
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
-
         List<CommunityUnit> communityUnitList = new ArrayList<>();
-
-
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-            CommunityUnit communityUnit = new CommunityUnit();
-
-            communityUnit.setId(cursor.getString(cursor.getColumnIndex(ID)));
-            communityUnit.setCommunityUnitName(cursor.getString(cursor.getColumnIndex(NAME)));
-            communityUnit.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPINGID)));
-            communityUnit.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
-            communityUnit.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
-            communityUnit.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
-            communityUnit.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTYID)));
-            communityUnit.setLinkFacilityId(cursor.getString(cursor.getColumnIndex(LINKFACILITYID)));
-            communityUnit.setAreaChiefName(cursor.getString(cursor.getColumnIndex(AREACHIEFNAME)));
-            communityUnit.setWard(cursor.getString(cursor.getColumnIndex(WARD)));
-            communityUnit.setEconomicStatus(cursor.getString(cursor.getColumnIndex(ECONOMICSTATUS)));
-            communityUnit.setPrivateFacilityForAct(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORACT)));
-            communityUnit.setPrivateFacilityForMrdt(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORMRDT)));
-            communityUnit.setNameOfNgoDoingIccm(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGICCM)));
-            communityUnit.setNameOfNgoDoingMhealth(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGMHEALTH)));
-            communityUnit.setDateAdded(cursor.getInt(cursor.getColumnIndex(DATEADDED)));
-            communityUnit.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDEDBY)));
-            communityUnit.setNumberOfChvs(cursor.getInt(cursor.getColumnIndex(NUMBEROFCHVS)));
-            communityUnit.setHouseholdPerChv(cursor.getInt(cursor.getColumnIndex(HOUSEHOLDPERCHV)));
-            communityUnit.setNumberOfVillages(cursor.getInt(cursor.getColumnIndex(NUMBEROFVILLAGES)));
-            communityUnit.setDistanceToBranch(cursor.getInt(cursor.getColumnIndex(DISTANCETOBRANCH)));
-            communityUnit.setTransportCost(cursor.getInt(cursor.getColumnIndex(TRANSPORTCOST)));
-            communityUnit.setDistanceTOMainRoad(cursor.getInt(cursor.getColumnIndex(DISTANCETOMAINROAD)));
-            communityUnit.setNoOfHouseholds(cursor.getInt(cursor.getColumnIndex(NOOFHOUSEHOLDS)));
-            communityUnit.setMohPoplationDensity(cursor.getInt(cursor.getColumnIndex(MOHPOPLATIONDENSITY)));
-            communityUnit.setEstimatedPopulationDensity(cursor.getInt(cursor.getColumnIndex(ESTIMATEDPOPULATIONDENSITY)));
-            communityUnit.setDistanceTONearestHealthFacility(cursor.getInt(cursor.getColumnIndex(DISTANCETONEARESTHEALTHFACILITY)));
-            communityUnit.setActLevels(cursor.getInt(cursor.getColumnIndex(ACTLEVELS)));
-            communityUnit.setActPrice(cursor.getInt(cursor.getColumnIndex(ACTPRICE)));
-            communityUnit.setMrdtLevels(cursor.getInt(cursor.getColumnIndex(MRDTLEVELS)));
-            communityUnit.setMrdtPrice(cursor.getInt(cursor.getColumnIndex(MRDTPRICE)));
-            communityUnit.setNoOfDistibutors(cursor.getInt(cursor.getColumnIndex(NOOFDISTIBUTORS)));
-            communityUnit.setChvsTrained((cursor.getInt(cursor.getColumnIndex(CHVSTRAINED)) ==  1));
-            communityUnit.setPresenceOfEstates((cursor.getInt(cursor.getColumnIndex(PRESENCEOFESTATES)) == 1));
-            communityUnit.setPresenceOfFactories((cursor.getLong(cursor.getColumnIndex(PRESENCEOFFACTORIES))));
-            communityUnit.setPresenceOfHostels((cursor.getInt(cursor.getColumnIndex(PRESENCEOFHOSTELS)) ==  1));
-            communityUnit.setTraderMarket((cursor.getInt(cursor.getColumnIndex(TRADERMARKET)) ==  1));
-            communityUnit.setLargeSupermarket((cursor.getInt(cursor.getColumnIndex(LARGESUPERMARKET)) ==  1));
-            communityUnit.setNgosGivingFreeDrugs((cursor.getInt(cursor.getColumnIndex(NGOSGIVINGFREEDRUGS)) ==  1));
-            communityUnit.setNgoDoingIccm((cursor.getInt(cursor.getColumnIndex(NGODOINGICCM)) ==  1));
-            communityUnit.setNgoDoingMhealth((cursor.getInt(cursor.getColumnIndex(NGODOINGMHEALTH)) ==  1));
-            communityUnit.setPopulationAsPerChief(cursor.getLong(cursor.getColumnIndex(POPULATION_AS_PER_CHIEF)));
-            communityUnit.setChvsHouseholdsAsPerChief(cursor.getLong(cursor.getColumnIndex(CHVS_HOUSEHOLDS_AS_PER_CHIEF)));
-            communityUnit.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
-
-            communityUnitList.add(communityUnit);
+            communityUnitList.add(cursorToCommunityUnit(cursor));
         }
         db.close();
 
@@ -377,185 +325,38 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
             return null;
         }else {
-            CommunityUnit communityUnit = new CommunityUnit();
-
-            communityUnit.setId(cursor.getString(cursor.getColumnIndex(ID)));
-            communityUnit.setCommunityUnitName(cursor.getString(cursor.getColumnIndex(NAME)));
-            communityUnit.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPINGID)));
-            communityUnit.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
-            communityUnit.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
-            communityUnit.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
-            communityUnit.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTYID)));
-            communityUnit.setLinkFacilityId(cursor.getString(cursor.getColumnIndex(LINKFACILITYID)));
-            communityUnit.setAreaChiefName(cursor.getString(cursor.getColumnIndex(AREACHIEFNAME)));
-            communityUnit.setWard(cursor.getString(cursor.getColumnIndex(WARD)));
-            communityUnit.setEconomicStatus(cursor.getString(cursor.getColumnIndex(ECONOMICSTATUS)));
-            communityUnit.setPrivateFacilityForAct(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORACT)));
-            communityUnit.setPrivateFacilityForMrdt(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORMRDT)));
-            communityUnit.setNameOfNgoDoingIccm(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGICCM)));
-            communityUnit.setNameOfNgoDoingMhealth(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGMHEALTH)));
-            communityUnit.setDateAdded(cursor.getInt(cursor.getColumnIndex(DATEADDED)));
-            communityUnit.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDEDBY)));
-            communityUnit.setNumberOfChvs(cursor.getInt(cursor.getColumnIndex(NUMBEROFCHVS)));
-            communityUnit.setHouseholdPerChv(cursor.getInt(cursor.getColumnIndex(HOUSEHOLDPERCHV)));
-            communityUnit.setNumberOfVillages(cursor.getInt(cursor.getColumnIndex(NUMBEROFVILLAGES)));
-            communityUnit.setDistanceToBranch(cursor.getInt(cursor.getColumnIndex(DISTANCETOBRANCH)));
-            communityUnit.setTransportCost(cursor.getInt(cursor.getColumnIndex(TRANSPORTCOST)));
-            communityUnit.setDistanceTOMainRoad(cursor.getInt(cursor.getColumnIndex(DISTANCETOMAINROAD)));
-            communityUnit.setNoOfHouseholds(cursor.getInt(cursor.getColumnIndex(NOOFHOUSEHOLDS)));
-            communityUnit.setMohPoplationDensity(cursor.getInt(cursor.getColumnIndex(MOHPOPLATIONDENSITY)));
-            communityUnit.setEstimatedPopulationDensity(cursor.getInt(cursor.getColumnIndex(ESTIMATEDPOPULATIONDENSITY)));
-            communityUnit.setDistanceTONearestHealthFacility(cursor.getInt(cursor.getColumnIndex(DISTANCETONEARESTHEALTHFACILITY)));
-            communityUnit.setActLevels(cursor.getInt(cursor.getColumnIndex(ACTLEVELS)));
-            communityUnit.setActPrice(cursor.getInt(cursor.getColumnIndex(ACTPRICE)));
-            communityUnit.setMrdtLevels(cursor.getInt(cursor.getColumnIndex(MRDTLEVELS)));
-            communityUnit.setMrdtPrice(cursor.getInt(cursor.getColumnIndex(MRDTPRICE)));
-            communityUnit.setNoOfDistibutors(cursor.getInt(cursor.getColumnIndex(NOOFDISTIBUTORS)));
-            communityUnit.setChvsTrained((cursor.getInt(cursor.getColumnIndex(CHVSTRAINED)) ==  1));
-            communityUnit.setPresenceOfEstates((cursor.getInt(cursor.getColumnIndex(PRESENCEOFESTATES)) == 1));
-            communityUnit.setPresenceOfFactories((cursor.getLong(cursor.getColumnIndex(PRESENCEOFFACTORIES))));
-            communityUnit.setPresenceOfHostels((cursor.getInt(cursor.getColumnIndex(PRESENCEOFHOSTELS)) ==  1));
-            communityUnit.setTraderMarket((cursor.getInt(cursor.getColumnIndex(TRADERMARKET)) ==  1));
-            communityUnit.setLargeSupermarket((cursor.getInt(cursor.getColumnIndex(LARGESUPERMARKET)) ==  1));
-            communityUnit.setNgosGivingFreeDrugs((cursor.getInt(cursor.getColumnIndex(NGOSGIVINGFREEDRUGS)) ==  1));
-            communityUnit.setNgoDoingIccm((cursor.getInt(cursor.getColumnIndex(NGODOINGICCM)) ==  1));
-            communityUnit.setNgoDoingMhealth((cursor.getInt(cursor.getColumnIndex(NGODOINGMHEALTH)) ==  1));
-            communityUnit.setPopulationAsPerChief(cursor.getLong(cursor.getColumnIndex(POPULATION_AS_PER_CHIEF)));
-            communityUnit.setChvsHouseholdsAsPerChief(cursor.getLong(cursor.getColumnIndex(CHVS_HOUSEHOLDS_AS_PER_CHIEF)));
-            communityUnit.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
-
+            CommunityUnit communityUnit = cursorToCommunityUnit(cursor);
             db.close();
             return communityUnit;
         }
     }
 
     public CommunityUnit getCommunityUnitByName(String communityUnitName) {
-
         SQLiteDatabase db=getReadableDatabase();
-
         String whereClause = NAME+" = ? ";
-
         String[] whereArgs = new String[] {
                 communityUnitName
         };
-
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
             return null;
         }else {
-            CommunityUnit communityUnit = new CommunityUnit();
-
-            communityUnit.setId(cursor.getString(cursor.getColumnIndex(ID)));
-            communityUnit.setCommunityUnitName(cursor.getString(cursor.getColumnIndex(NAME)));
-            communityUnit.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPINGID)));
-            communityUnit.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
-            communityUnit.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
-            communityUnit.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
-            communityUnit.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTYID)));
-            communityUnit.setLinkFacilityId(cursor.getString(cursor.getColumnIndex(LINKFACILITYID)));
-            communityUnit.setAreaChiefName(cursor.getString(cursor.getColumnIndex(AREACHIEFNAME)));
-            communityUnit.setWard(cursor.getString(cursor.getColumnIndex(WARD)));
-            communityUnit.setEconomicStatus(cursor.getString(cursor.getColumnIndex(ECONOMICSTATUS)));
-            communityUnit.setPrivateFacilityForAct(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORACT)));
-            communityUnit.setPrivateFacilityForMrdt(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORMRDT)));
-            communityUnit.setNameOfNgoDoingIccm(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGICCM)));
-            communityUnit.setNameOfNgoDoingMhealth(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGMHEALTH)));
-            communityUnit.setDateAdded(cursor.getInt(cursor.getColumnIndex(DATEADDED)));
-            communityUnit.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDEDBY)));
-            communityUnit.setNumberOfChvs(cursor.getInt(cursor.getColumnIndex(NUMBEROFCHVS)));
-            communityUnit.setHouseholdPerChv(cursor.getInt(cursor.getColumnIndex(HOUSEHOLDPERCHV)));
-            communityUnit.setNumberOfVillages(cursor.getInt(cursor.getColumnIndex(NUMBEROFVILLAGES)));
-            communityUnit.setDistanceToBranch(cursor.getInt(cursor.getColumnIndex(DISTANCETOBRANCH)));
-            communityUnit.setTransportCost(cursor.getInt(cursor.getColumnIndex(TRANSPORTCOST)));
-            communityUnit.setDistanceTOMainRoad(cursor.getInt(cursor.getColumnIndex(DISTANCETOMAINROAD)));
-            communityUnit.setNoOfHouseholds(cursor.getInt(cursor.getColumnIndex(NOOFHOUSEHOLDS)));
-            communityUnit.setMohPoplationDensity(cursor.getInt(cursor.getColumnIndex(MOHPOPLATIONDENSITY)));
-            communityUnit.setEstimatedPopulationDensity(cursor.getInt(cursor.getColumnIndex(ESTIMATEDPOPULATIONDENSITY)));
-            communityUnit.setDistanceTONearestHealthFacility(cursor.getInt(cursor.getColumnIndex(DISTANCETONEARESTHEALTHFACILITY)));
-            communityUnit.setActLevels(cursor.getInt(cursor.getColumnIndex(ACTLEVELS)));
-            communityUnit.setActPrice(cursor.getInt(cursor.getColumnIndex(ACTPRICE)));
-            communityUnit.setMrdtLevels(cursor.getInt(cursor.getColumnIndex(MRDTLEVELS)));
-            communityUnit.setMrdtPrice(cursor.getInt(cursor.getColumnIndex(MRDTPRICE)));
-            communityUnit.setNoOfDistibutors(cursor.getInt(cursor.getColumnIndex(NOOFDISTIBUTORS)));
-            communityUnit.setChvsTrained((cursor.getInt(cursor.getColumnIndex(CHVSTRAINED)) ==  1));
-            communityUnit.setPresenceOfEstates((cursor.getInt(cursor.getColumnIndex(PRESENCEOFESTATES)) == 1));
-            communityUnit.setPresenceOfFactories((cursor.getLong(cursor.getColumnIndex(PRESENCEOFFACTORIES))));
-            communityUnit.setPresenceOfHostels((cursor.getInt(cursor.getColumnIndex(PRESENCEOFHOSTELS)) ==  1));
-            communityUnit.setTraderMarket((cursor.getInt(cursor.getColumnIndex(TRADERMARKET)) ==  1));
-            communityUnit.setLargeSupermarket((cursor.getInt(cursor.getColumnIndex(LARGESUPERMARKET)) ==  1));
-            communityUnit.setNgosGivingFreeDrugs((cursor.getInt(cursor.getColumnIndex(NGOSGIVINGFREEDRUGS)) ==  1));
-            communityUnit.setNgoDoingIccm((cursor.getInt(cursor.getColumnIndex(NGODOINGICCM)) ==  1));
-            communityUnit.setNgoDoingMhealth((cursor.getInt(cursor.getColumnIndex(NGODOINGMHEALTH)) ==  1));
-            communityUnit.setPopulationAsPerChief(cursor.getLong(cursor.getColumnIndex(POPULATION_AS_PER_CHIEF)));
-            communityUnit.setChvsHouseholdsAsPerChief(cursor.getLong(cursor.getColumnIndex(CHVS_HOUSEHOLDS_AS_PER_CHIEF)));
-            communityUnit.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
-
+            CommunityUnit communityUnit = cursorToCommunityUnit(cursor);
             db.close();
             return communityUnit;
         }
     }
 
     public List<CommunityUnit> getCommunityUnitBySubCounty(String subCountyUUID) {
-
         SQLiteDatabase db=getReadableDatabase();
-
         String whereClause = SUBCOUNTYID+" = ? ";
-
         String[] whereArgs = new String[] {
                 subCountyUUID
         };
-
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
-
         List<CommunityUnit> communityUnitList = new ArrayList<>();
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-            CommunityUnit communityUnit = new CommunityUnit();
-
-            communityUnit.setId(cursor.getString(cursor.getColumnIndex(ID)));
-            communityUnit.setCommunityUnitName(cursor.getString(cursor.getColumnIndex(NAME)));
-            communityUnit.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPINGID)));
-            communityUnit.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
-            communityUnit.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
-            communityUnit.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
-            communityUnit.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTYID)));
-            communityUnit.setLinkFacilityId(cursor.getString(cursor.getColumnIndex(LINKFACILITYID)));
-            communityUnit.setAreaChiefName(cursor.getString(cursor.getColumnIndex(AREACHIEFNAME)));
-            communityUnit.setWard(cursor.getString(cursor.getColumnIndex(WARD)));
-            communityUnit.setEconomicStatus(cursor.getString(cursor.getColumnIndex(ECONOMICSTATUS)));
-            communityUnit.setPrivateFacilityForAct(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORACT)));
-            communityUnit.setPrivateFacilityForMrdt(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORMRDT)));
-            communityUnit.setNameOfNgoDoingIccm(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGICCM)));
-            communityUnit.setNameOfNgoDoingMhealth(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGMHEALTH)));
-            communityUnit.setDateAdded(cursor.getInt(cursor.getColumnIndex(DATEADDED)));
-            communityUnit.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDEDBY)));
-            communityUnit.setNumberOfChvs(cursor.getInt(cursor.getColumnIndex(NUMBEROFCHVS)));
-            communityUnit.setHouseholdPerChv(cursor.getInt(cursor.getColumnIndex(HOUSEHOLDPERCHV)));
-            communityUnit.setNumberOfVillages(cursor.getInt(cursor.getColumnIndex(NUMBEROFVILLAGES)));
-            communityUnit.setDistanceToBranch(cursor.getInt(cursor.getColumnIndex(DISTANCETOBRANCH)));
-            communityUnit.setTransportCost(cursor.getInt(cursor.getColumnIndex(TRANSPORTCOST)));
-            communityUnit.setDistanceTOMainRoad(cursor.getInt(cursor.getColumnIndex(DISTANCETOMAINROAD)));
-            communityUnit.setNoOfHouseholds(cursor.getInt(cursor.getColumnIndex(NOOFHOUSEHOLDS)));
-            communityUnit.setMohPoplationDensity(cursor.getInt(cursor.getColumnIndex(MOHPOPLATIONDENSITY)));
-            communityUnit.setEstimatedPopulationDensity(cursor.getInt(cursor.getColumnIndex(ESTIMATEDPOPULATIONDENSITY)));
-            communityUnit.setDistanceTONearestHealthFacility(cursor.getInt(cursor.getColumnIndex(DISTANCETONEARESTHEALTHFACILITY)));
-            communityUnit.setActLevels(cursor.getInt(cursor.getColumnIndex(ACTLEVELS)));
-            communityUnit.setActPrice(cursor.getInt(cursor.getColumnIndex(ACTPRICE)));
-            communityUnit.setMrdtLevels(cursor.getInt(cursor.getColumnIndex(MRDTLEVELS)));
-            communityUnit.setMrdtPrice(cursor.getInt(cursor.getColumnIndex(MRDTPRICE)));
-            communityUnit.setNoOfDistibutors(cursor.getInt(cursor.getColumnIndex(NOOFDISTIBUTORS)));
-            communityUnit.setChvsTrained((cursor.getInt(cursor.getColumnIndex(CHVSTRAINED)) ==  1));
-            communityUnit.setPresenceOfEstates((cursor.getInt(cursor.getColumnIndex(PRESENCEOFESTATES)) == 1));
-            communityUnit.setPresenceOfFactories((cursor.getLong(cursor.getColumnIndex(PRESENCEOFFACTORIES))));
-            communityUnit.setPresenceOfHostels((cursor.getInt(cursor.getColumnIndex(PRESENCEOFHOSTELS)) ==  1));
-            communityUnit.setTraderMarket((cursor.getInt(cursor.getColumnIndex(TRADERMARKET)) ==  1));
-            communityUnit.setLargeSupermarket((cursor.getInt(cursor.getColumnIndex(LARGESUPERMARKET)) ==  1));
-            communityUnit.setNgosGivingFreeDrugs((cursor.getInt(cursor.getColumnIndex(NGOSGIVINGFREEDRUGS)) ==  1));
-            communityUnit.setNgoDoingIccm((cursor.getInt(cursor.getColumnIndex(NGODOINGICCM)) ==  1));
-            communityUnit.setNgoDoingMhealth((cursor.getInt(cursor.getColumnIndex(NGODOINGMHEALTH)) ==  1));
-            communityUnit.setPopulationAsPerChief(cursor.getLong(cursor.getColumnIndex(POPULATION_AS_PER_CHIEF)));
-            communityUnit.setChvsHouseholdsAsPerChief(cursor.getLong(cursor.getColumnIndex(CHVS_HOUSEHOLDS_AS_PER_CHIEF)));
-            communityUnit.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
-
+            CommunityUnit communityUnit = cursorToCommunityUnit(cursor);
             communityUnitList.add(communityUnit);
         }
         db.close();
@@ -564,70 +365,17 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
     }
 
 public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId) {
-
         SQLiteDatabase db=getReadableDatabase();
-
         String whereClause = LINKFACILITYID+" = ? ";
-
         String[] whereArgs = new String[] {
                 linkFacilityId
         };
-
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
-
         List<CommunityUnit> communityUnitList = new ArrayList<>();
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-            CommunityUnit communityUnit = new CommunityUnit();
-
-            communityUnit.setId(cursor.getString(cursor.getColumnIndex(ID)));
-            communityUnit.setCommunityUnitName(cursor.getString(cursor.getColumnIndex(NAME)));
-            communityUnit.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPINGID)));
-            communityUnit.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
-            communityUnit.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
-            communityUnit.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
-            communityUnit.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTYID)));
-            communityUnit.setLinkFacilityId(cursor.getString(cursor.getColumnIndex(LINKFACILITYID)));
-            communityUnit.setAreaChiefName(cursor.getString(cursor.getColumnIndex(AREACHIEFNAME)));
-            communityUnit.setWard(cursor.getString(cursor.getColumnIndex(WARD)));
-            communityUnit.setEconomicStatus(cursor.getString(cursor.getColumnIndex(ECONOMICSTATUS)));
-            communityUnit.setPrivateFacilityForAct(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORACT)));
-            communityUnit.setPrivateFacilityForMrdt(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORMRDT)));
-            communityUnit.setNameOfNgoDoingIccm(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGICCM)));
-            communityUnit.setNameOfNgoDoingMhealth(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGMHEALTH)));
-            communityUnit.setDateAdded(cursor.getInt(cursor.getColumnIndex(DATEADDED)));
-            communityUnit.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDEDBY)));
-            communityUnit.setNumberOfChvs(cursor.getInt(cursor.getColumnIndex(NUMBEROFCHVS)));
-            communityUnit.setHouseholdPerChv(cursor.getInt(cursor.getColumnIndex(HOUSEHOLDPERCHV)));
-            communityUnit.setNumberOfVillages(cursor.getInt(cursor.getColumnIndex(NUMBEROFVILLAGES)));
-            communityUnit.setDistanceToBranch(cursor.getInt(cursor.getColumnIndex(DISTANCETOBRANCH)));
-            communityUnit.setTransportCost(cursor.getInt(cursor.getColumnIndex(TRANSPORTCOST)));
-            communityUnit.setDistanceTOMainRoad(cursor.getInt(cursor.getColumnIndex(DISTANCETOMAINROAD)));
-            communityUnit.setNoOfHouseholds(cursor.getInt(cursor.getColumnIndex(NOOFHOUSEHOLDS)));
-            communityUnit.setMohPoplationDensity(cursor.getInt(cursor.getColumnIndex(MOHPOPLATIONDENSITY)));
-            communityUnit.setEstimatedPopulationDensity(cursor.getInt(cursor.getColumnIndex(ESTIMATEDPOPULATIONDENSITY)));
-            communityUnit.setDistanceTONearestHealthFacility(cursor.getInt(cursor.getColumnIndex(DISTANCETONEARESTHEALTHFACILITY)));
-            communityUnit.setActLevels(cursor.getInt(cursor.getColumnIndex(ACTLEVELS)));
-            communityUnit.setActPrice(cursor.getInt(cursor.getColumnIndex(ACTPRICE)));
-            communityUnit.setMrdtLevels(cursor.getInt(cursor.getColumnIndex(MRDTLEVELS)));
-            communityUnit.setMrdtPrice(cursor.getInt(cursor.getColumnIndex(MRDTPRICE)));
-            communityUnit.setNoOfDistibutors(cursor.getInt(cursor.getColumnIndex(NOOFDISTIBUTORS)));
-            communityUnit.setChvsTrained((cursor.getInt(cursor.getColumnIndex(CHVSTRAINED)) ==  1));
-            communityUnit.setPresenceOfEstates((cursor.getInt(cursor.getColumnIndex(PRESENCEOFESTATES)) == 1));
-            communityUnit.setPresenceOfFactories((cursor.getLong(cursor.getColumnIndex(PRESENCEOFFACTORIES))));
-            communityUnit.setPresenceOfHostels((cursor.getInt(cursor.getColumnIndex(PRESENCEOFHOSTELS)) ==  1));
-            communityUnit.setTraderMarket((cursor.getInt(cursor.getColumnIndex(TRADERMARKET)) ==  1));
-            communityUnit.setLargeSupermarket((cursor.getInt(cursor.getColumnIndex(LARGESUPERMARKET)) ==  1));
-            communityUnit.setNgosGivingFreeDrugs((cursor.getInt(cursor.getColumnIndex(NGOSGIVINGFREEDRUGS)) ==  1));
-            communityUnit.setNgoDoingIccm((cursor.getInt(cursor.getColumnIndex(NGODOINGICCM)) ==  1));
-            communityUnit.setNgoDoingMhealth((cursor.getInt(cursor.getColumnIndex(NGODOINGMHEALTH)) ==  1));
-            communityUnit.setPopulationAsPerChief(cursor.getLong(cursor.getColumnIndex(POPULATION_AS_PER_CHIEF)));
-            communityUnit.setChvsHouseholdsAsPerChief(cursor.getLong(cursor.getColumnIndex(CHVS_HOUSEHOLDS_AS_PER_CHIEF)));
-            communityUnit.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
-
-            communityUnitList.add(communityUnit);
+            communityUnitList.add(cursorToCommunityUnit(cursor));
         }
         db.close();
-
         return communityUnitList;
     }
 
@@ -640,32 +388,23 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
     public boolean isFieldExist(String fieldName)
     {
         SQLiteDatabase db = getReadableDatabase();
-        Log.d("Tremap", fieldName);
         boolean isExist = false;
         Cursor res = null;
         try {
             res = db.rawQuery("Select * from "+ TABLE_NAME +" limit 1", null);
             int colIndex = res.getColumnIndex(fieldName);
-            Log.d("Tremap", "The index of col "+fieldName+" is "+String.valueOf(colIndex));
             if (colIndex!=-1){
-                Log.d("Tremap", "The col "+fieldName+" is found");
                 isExist = true;
             }else{
-                Log.d("Tremap", "==========");
                 Log.d("Tremap", "The col "+fieldName+" is NOT found");
-                Log.d("Tremap", "T==============");
             }
-
         } catch (Exception e) {
             Log.d("Tremap", "Error getting  "+fieldName);
         } finally {
             try {
                 if (res !=null){ res.close();}
-            } catch (Exception e1) {
-                Log.d("Tremap", "Error closing the  DB  "+fieldName);
-            }
+            } catch (Exception e1) {}
         }
-        Log.d("Tremap", "the result is "+String.valueOf(isExist));
         return isExist;
     }
 
@@ -715,7 +454,6 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
     }
 
     public void CuFromJson (JSONObject jsonObject){
-        Log.d("Tremap", "+++++++++++++++++++++++++++++++++++++++");
         Log.d("Tremap", "Trying to Save teh CU from JSON");
         CommunityUnit communityUnit = new CommunityUnit();
         try {
@@ -774,5 +512,54 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
     }
 
     private void upgradeVersion2(SQLiteDatabase db) {}
+
+    private CommunityUnit cursorToCommunityUnit(Cursor cursor){
+        CommunityUnit communityUnit = new CommunityUnit();
+        communityUnit.setId(cursor.getString(cursor.getColumnIndex(ID)));
+        communityUnit.setCommunityUnitName(cursor.getString(cursor.getColumnIndex(NAME)));
+        communityUnit.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPINGID)));
+        communityUnit.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
+        communityUnit.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
+        communityUnit.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+        communityUnit.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTYID)));
+        communityUnit.setLinkFacilityId(cursor.getString(cursor.getColumnIndex(LINKFACILITYID)));
+        communityUnit.setAreaChiefName(cursor.getString(cursor.getColumnIndex(AREACHIEFNAME)));
+        communityUnit.setWard(cursor.getString(cursor.getColumnIndex(WARD)));
+        communityUnit.setEconomicStatus(cursor.getString(cursor.getColumnIndex(ECONOMICSTATUS)));
+        communityUnit.setPrivateFacilityForAct(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORACT)));
+        communityUnit.setPrivateFacilityForMrdt(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORMRDT)));
+        communityUnit.setNameOfNgoDoingIccm(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGICCM)));
+        communityUnit.setNameOfNgoDoingMhealth(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGMHEALTH)));
+        communityUnit.setDateAdded(cursor.getInt(cursor.getColumnIndex(DATEADDED)));
+        communityUnit.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDEDBY)));
+        communityUnit.setNumberOfChvs(cursor.getInt(cursor.getColumnIndex(NUMBEROFCHVS)));
+        communityUnit.setHouseholdPerChv(cursor.getInt(cursor.getColumnIndex(HOUSEHOLDPERCHV)));
+        communityUnit.setNumberOfVillages(cursor.getInt(cursor.getColumnIndex(NUMBEROFVILLAGES)));
+        communityUnit.setDistanceToBranch(cursor.getInt(cursor.getColumnIndex(DISTANCETOBRANCH)));
+        communityUnit.setTransportCost(cursor.getInt(cursor.getColumnIndex(TRANSPORTCOST)));
+        communityUnit.setDistanceTOMainRoad(cursor.getInt(cursor.getColumnIndex(DISTANCETOMAINROAD)));
+        communityUnit.setNoOfHouseholds(cursor.getInt(cursor.getColumnIndex(NOOFHOUSEHOLDS)));
+        communityUnit.setMohPoplationDensity(cursor.getInt(cursor.getColumnIndex(MOHPOPLATIONDENSITY)));
+        communityUnit.setEstimatedPopulationDensity(cursor.getInt(cursor.getColumnIndex(ESTIMATEDPOPULATIONDENSITY)));
+        communityUnit.setDistanceTONearestHealthFacility(cursor.getInt(cursor.getColumnIndex(DISTANCETONEARESTHEALTHFACILITY)));
+        communityUnit.setActLevels(cursor.getInt(cursor.getColumnIndex(ACTLEVELS)));
+        communityUnit.setActPrice(cursor.getInt(cursor.getColumnIndex(ACTPRICE)));
+        communityUnit.setMrdtLevels(cursor.getInt(cursor.getColumnIndex(MRDTLEVELS)));
+        communityUnit.setMrdtPrice(cursor.getInt(cursor.getColumnIndex(MRDTPRICE)));
+        communityUnit.setNoOfDistibutors(cursor.getInt(cursor.getColumnIndex(NOOFDISTIBUTORS)));
+        communityUnit.setChvsTrained((cursor.getInt(cursor.getColumnIndex(CHVSTRAINED)) ==  1));
+        communityUnit.setPresenceOfEstates((cursor.getInt(cursor.getColumnIndex(PRESENCEOFESTATES)) == 1));
+        communityUnit.setPresenceOfFactories((cursor.getLong(cursor.getColumnIndex(PRESENCEOFFACTORIES))));
+        communityUnit.setPresenceOfHostels((cursor.getInt(cursor.getColumnIndex(PRESENCEOFHOSTELS)) ==  1));
+        communityUnit.setTraderMarket((cursor.getInt(cursor.getColumnIndex(TRADERMARKET)) ==  1));
+        communityUnit.setLargeSupermarket((cursor.getInt(cursor.getColumnIndex(LARGESUPERMARKET)) ==  1));
+        communityUnit.setNgosGivingFreeDrugs((cursor.getInt(cursor.getColumnIndex(NGOSGIVINGFREEDRUGS)) ==  1));
+        communityUnit.setNgoDoingIccm((cursor.getInt(cursor.getColumnIndex(NGODOINGICCM)) ==  1));
+        communityUnit.setNgoDoingMhealth((cursor.getInt(cursor.getColumnIndex(NGODOINGMHEALTH)) ==  1));
+        communityUnit.setPopulationAsPerChief(cursor.getLong(cursor.getColumnIndex(POPULATION_AS_PER_CHIEF)));
+        communityUnit.setChvsHouseholdsAsPerChief(cursor.getLong(cursor.getColumnIndex(CHVS_HOUSEHOLDS_AS_PER_CHIEF)));
+        communityUnit.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+        return communityUnit;
+    }
 }
 
