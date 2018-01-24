@@ -253,72 +253,48 @@ public class VillageTable extends SQLiteOpenHelper {
     }
 
     public List<Village> getVillageData() {
-
         SQLiteDatabase db=getReadableDatabase();
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+        List<Village> villages = new ArrayList<>();
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            villages.add(cursorToVillage(cursor));
+        }
+        db.close();
+        return villages;
+    }
+
+
+    public List<Village> getVillagesByLinkFacility(String linkFacilityId) {
+        SQLiteDatabase db=getReadableDatabase();
+        String orderBy = DATEADDED +" desc";
+        String whereClause = LINKFACILITYID+" = ?";
+        String[] whereArgs = new String[] {
+                linkFacilityId,
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
+        List<Village> villages = new ArrayList<>();
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            villages.add(cursorToVillage(cursor));
+        }
+        db.close();
+        return villages;
+    }
+
+
+    public List<Village> getVillageDataByParishId(String parishUUID) {
+        SQLiteDatabase db=getReadableDatabase();
+        String orderBy = DATEADDED +" desc";
+        String whereClause = PARISH+" = ?";
+        String[] whereArgs = new String[] {
+                parishUUID,
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
 
         List<Village> villages = new ArrayList<>();
 
 
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-            Village village = new Village();
-
-
-            village.setId(cursor.getString(cursor.getColumnIndex(ID)));
-            village.setVillageName(cursor.getString(cursor.getColumnIndex(VILLAGENAME)));
-            village.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPINGID)));
-            village.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
-            village.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
-            village.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
-            village.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
-            village.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
-            village.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTYID)));
-            village.setParish(cursor.getString(cursor.getColumnIndex(PARISH)));
-            village.setCommunityUnit(cursor.getString(cursor.getColumnIndex(COMMUNITY_UNIT)));
-            village.setWard(cursor.getString(cursor.getColumnIndex(WARD)));
-            village.setLinkFacilityId(cursor.getString(cursor.getColumnIndex(LINKFACILITYID)));
-            village.setAreaChiefName(cursor.getString(cursor.getColumnIndex(AREACHIEFNAME)));
-            village.setAreaChiefPhone(cursor.getString(cursor.getColumnIndex(AREACHIEFPHONE)));
-            village.setDistanceToBranch(cursor.getLong(cursor.getColumnIndex(DISTANCETOBRANCH)));
-            village.setTransportCost(cursor.getLong(cursor.getColumnIndex(TRANSPORTCOST)));
-            village.setDistanceToMainRoad(cursor.getLong(cursor.getColumnIndex(DISTANCETOMAINROAD)));
-            village.setNoOfHouseholds(cursor.getLong(cursor.getColumnIndex(NOOFHOUSEHOLDS)));
-            village.setMohPoplationDensity(cursor.getLong(cursor.getColumnIndex(MOHPOPLATIONDENSITY)));
-            village.setEstimatedPopulationDensity(cursor.getLong(cursor.getColumnIndex(ESTIMATEDPOPULATIONDENSITY)));
-            village.setEconomicStatus(cursor.getString(cursor.getColumnIndex(ECONOMICSTATUS)));
-            village.setDistanceToNearestHealthFacility(cursor.getLong(cursor.getColumnIndex(DISTANCETONEARESTHEALTHFACILITY)));
-            village.setActLevels(cursor.getLong(cursor.getColumnIndex(ACTLEVELS)));
-            village.setActPrice(cursor.getLong(cursor.getColumnIndex(ACTPRICE)));
-            village.setMrdtLevels(cursor.getLong(cursor.getColumnIndex(MRDTLEVELS)));
-            village.setMrdtPrice(cursor.getLong(cursor.getColumnIndex(MRDTPRICE)));
-            village.setPresenceOfHostels(cursor.getInt(cursor.getColumnIndex(PRESENCEOFHOSTELS))==1);
-            village.setPresenceOfEstates(cursor.getInt(cursor.getColumnIndex(PRESENCEOFESTATES))==1);
-            village.setNumberOfFactories(cursor.getInt(cursor.getColumnIndex(NUMBEROFFACTORIES)));
-            village.setPresenceOfDistributors(cursor.getInt(cursor.getColumnIndex(PRESENCEOFDISTRIBUTORS)) ==1);
-            village.setDistributorsInTheArea(cursor.getString(cursor.getColumnIndex(DISTRIBUTORSINTHEAREA)));
-            village.setTraderMarket(cursor.getInt(cursor.getColumnIndex(TRADERMARKET))==1);
-            village.setLargeSupermarket(cursor.getInt(cursor.getColumnIndex(LARGESUPERMARKET))==1);
-            village.setNgosGivingFreeDrugs(cursor.getInt(cursor.getColumnIndex(NGOSGIVINGFREEDRUGS))==1);
-            village.setNgoDoingIccm(cursor.getInt(cursor.getColumnIndex(NGODOINGICCM))==1);
-            village.setNgoDoingMhealth(cursor.getInt(cursor.getColumnIndex(NGODOINGMHEALTH))==1);
-            village.setNameOfNgoDoingIccm(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGICCM)));
-            village.setNameOfNgoDoingMhealth(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGMHEALTH)));
-            village.setPrivateFacilityForAct(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORACT)));
-            village.setPrivateFacilityForMrdt(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORMRDT)));
-            village.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATEADDED)));
-            village.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDEDBY)));
-            village.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
-            village.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED))==1);
-            village.setChvsTrained(cursor.getInt(cursor.getColumnIndex(CHVS_TRAINED))==1);
-            village.setBracOperating(cursor.getInt(cursor.getColumnIndex(BRAC_OPERATING))==1);
-            village.setSafaricomSignalStrength(cursor.getInt(cursor.getColumnIndex(SAFARICOM)));
-            village.setMtnSignalStrength(cursor.getInt(cursor.getColumnIndex(MTN)));
-            village.setAirtelSignalStrength(cursor.getInt(cursor.getColumnIndex(AIRTEL)));
-            village.setOrangeSignalStrength(cursor.getInt(cursor.getColumnIndex(ORANGE)));
-            village.setActStock(cursor.getInt(cursor.getColumnIndex(ACTSTOCK))==1);
-
-            villages.add(village);
+            villages.add(cursorToVillage(cursor));
         }
         db.close();
 
@@ -386,6 +362,63 @@ public class VillageTable extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return results;
+    }
+
+    private Village cursorToVillage(Cursor cursor){
+        Village village = new Village();
+        village.setId(cursor.getString(cursor.getColumnIndex(ID)));
+        village.setVillageName(cursor.getString(cursor.getColumnIndex(VILLAGENAME)));
+        village.setMappingId(cursor.getString(cursor.getColumnIndex(MAPPINGID)));
+        village.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
+        village.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
+        village.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+        village.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
+        village.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
+        village.setSubCountyId(cursor.getString(cursor.getColumnIndex(SUBCOUNTYID)));
+        village.setParish(cursor.getString(cursor.getColumnIndex(PARISH)));
+        village.setCommunityUnit(cursor.getString(cursor.getColumnIndex(COMMUNITY_UNIT)));
+        village.setWard(cursor.getString(cursor.getColumnIndex(WARD)));
+        village.setLinkFacilityId(cursor.getString(cursor.getColumnIndex(LINKFACILITYID)));
+        village.setAreaChiefName(cursor.getString(cursor.getColumnIndex(AREACHIEFNAME)));
+        village.setAreaChiefPhone(cursor.getString(cursor.getColumnIndex(AREACHIEFPHONE)));
+        village.setDistanceToBranch(cursor.getLong(cursor.getColumnIndex(DISTANCETOBRANCH)));
+        village.setTransportCost(cursor.getLong(cursor.getColumnIndex(TRANSPORTCOST)));
+        village.setDistanceToMainRoad(cursor.getLong(cursor.getColumnIndex(DISTANCETOMAINROAD)));
+        village.setNoOfHouseholds(cursor.getLong(cursor.getColumnIndex(NOOFHOUSEHOLDS)));
+        village.setMohPoplationDensity(cursor.getLong(cursor.getColumnIndex(MOHPOPLATIONDENSITY)));
+        village.setEstimatedPopulationDensity(cursor.getLong(cursor.getColumnIndex(ESTIMATEDPOPULATIONDENSITY)));
+        village.setEconomicStatus(cursor.getString(cursor.getColumnIndex(ECONOMICSTATUS)));
+        village.setDistanceToNearestHealthFacility(cursor.getLong(cursor.getColumnIndex(DISTANCETONEARESTHEALTHFACILITY)));
+        village.setActLevels(cursor.getLong(cursor.getColumnIndex(ACTLEVELS)));
+        village.setActPrice(cursor.getLong(cursor.getColumnIndex(ACTPRICE)));
+        village.setMrdtLevels(cursor.getLong(cursor.getColumnIndex(MRDTLEVELS)));
+        village.setMrdtPrice(cursor.getLong(cursor.getColumnIndex(MRDTPRICE)));
+        village.setPresenceOfHostels(cursor.getInt(cursor.getColumnIndex(PRESENCEOFHOSTELS))==1);
+        village.setPresenceOfEstates(cursor.getInt(cursor.getColumnIndex(PRESENCEOFESTATES))==1);
+        village.setNumberOfFactories(cursor.getInt(cursor.getColumnIndex(NUMBEROFFACTORIES)));
+        village.setPresenceOfDistributors(cursor.getInt(cursor.getColumnIndex(PRESENCEOFDISTRIBUTORS)) ==1);
+        village.setDistributorsInTheArea(cursor.getString(cursor.getColumnIndex(DISTRIBUTORSINTHEAREA)));
+        village.setTraderMarket(cursor.getInt(cursor.getColumnIndex(TRADERMARKET))==1);
+        village.setLargeSupermarket(cursor.getInt(cursor.getColumnIndex(LARGESUPERMARKET))==1);
+        village.setNgosGivingFreeDrugs(cursor.getInt(cursor.getColumnIndex(NGOSGIVINGFREEDRUGS))==1);
+        village.setNgoDoingIccm(cursor.getInt(cursor.getColumnIndex(NGODOINGICCM))==1);
+        village.setNgoDoingMhealth(cursor.getInt(cursor.getColumnIndex(NGODOINGMHEALTH))==1);
+        village.setNameOfNgoDoingIccm(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGICCM)));
+        village.setNameOfNgoDoingMhealth(cursor.getString(cursor.getColumnIndex(NAMEOFNGODOINGMHEALTH)));
+        village.setPrivateFacilityForAct(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORACT)));
+        village.setPrivateFacilityForMrdt(cursor.getString(cursor.getColumnIndex(PRIVATEFACILITYFORMRDT)));
+        village.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATEADDED)));
+        village.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDEDBY)));
+        village.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+        village.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED))==1);
+        village.setChvsTrained(cursor.getInt(cursor.getColumnIndex(CHVS_TRAINED))==1);
+        village.setBracOperating(cursor.getInt(cursor.getColumnIndex(BRAC_OPERATING))==1);
+        village.setSafaricomSignalStrength(cursor.getInt(cursor.getColumnIndex(SAFARICOM)));
+        village.setMtnSignalStrength(cursor.getInt(cursor.getColumnIndex(MTN)));
+        village.setAirtelSignalStrength(cursor.getInt(cursor.getColumnIndex(AIRTEL)));
+        village.setOrangeSignalStrength(cursor.getInt(cursor.getColumnIndex(ORANGE)));
+        village.setActStock(cursor.getInt(cursor.getColumnIndex(ACTSTOCK))==1);
+        return village;
     }
 }
 
