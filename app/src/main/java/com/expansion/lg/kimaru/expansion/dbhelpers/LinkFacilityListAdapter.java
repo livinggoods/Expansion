@@ -24,6 +24,7 @@ import com.expansion.lg.kimaru.expansion.other.CircleTransform;
 import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.other.FlipAnimator;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
+import com.expansion.lg.kimaru.expansion.tables.VillageTable;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -101,12 +102,17 @@ public class LinkFacilityListAdapter extends RecyclerView.Adapter<LinkFacilityLi
 
         //// displaying text view data
         holder.from.setText(linkfacility.getFacilityName());
-        // Show the umber of linked Cus
-        CommunityUnitTable communityUnitTable = new CommunityUnitTable(mContext);
-        Integer communityUnits = communityUnitTable.getCommunityUnitByLinkFacility(linkfacility.getId()).size();
-
-        holder.subject.setText(String.valueOf(communityUnits)+" Linked CUs");
-        holder.message.setText("ACT "+ linkfacility.getActLevels() + " MRDT: "+ linkfacility.getMrdtLevels());
+        if (linkfacility.getCountry().equalsIgnoreCase("KE")){
+            CommunityUnitTable communityUnitTable = new CommunityUnitTable(mContext);
+            Integer communityUnits = communityUnitTable.getCommunityUnitByLinkFacility(linkfacility.getId()).size();
+            holder.subject.setText(String.valueOf(communityUnits)+" Linked CUs");
+            holder.message.setText("MFL CODE: "+linkfacility.getMflCode()+" ACT "+ linkfacility.getActLevels() + " MRDT: "+ linkfacility.getMrdtLevels());
+        }else{
+            VillageTable villageTable = new VillageTable(mContext);
+            Integer villages = villageTable.getVillagesByLinkFacility(linkfacility.getId()).size();
+            holder.subject.setText(String.valueOf(villages)+" Linked Villages");
+            holder.message.setText(linkfacility.getMflCode());
+        }
         holder.timestamp.setText(new DisplayDate(linkfacility.getDateAdded()).dateAndTime());
 
         // displaying the first letter of From in icon text
