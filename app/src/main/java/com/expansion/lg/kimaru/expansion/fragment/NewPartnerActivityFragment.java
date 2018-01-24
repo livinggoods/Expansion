@@ -72,6 +72,8 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
     private String mParam1;
     private String mParam2;
 
+    Fragment backFragment = null;
+
     private OnFragmentInteractionListener mListener;
 
     Spinner selectPartner;
@@ -137,10 +139,11 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_new_partner_activity, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_RECRUITMENT;
-        MainActivity.backFragment = new PartnerActivityFragment();
-
-
-
+        if (backFragment == null){
+            MainActivity.backFragment = new PartnerActivityFragment();
+        }else{
+            MainActivity.backFragment = backFragment;
+        }
         session = new SessionManagement(getContext());
         user = session.getUserDetails();
         country = user.get(SessionManagement.KEY_USER_COUNTRY);
