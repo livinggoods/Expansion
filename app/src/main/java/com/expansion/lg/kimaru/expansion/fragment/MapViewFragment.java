@@ -188,7 +188,9 @@ public class MapViewFragment extends Fragment implements View.OnClickListener {
                 public void onClick(View v) {
                     // go to the village listing
                     sessionManagement.saveParish(p);
-                    Fragment fragment = new VillagesFragment();
+                    ParishViewFragment parishViewFragment =  new ParishViewFragment();
+                    parishViewFragment.parish = p;
+                    Fragment fragment = parishViewFragment;
                     FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                     fragmentTransaction.replace(R.id.frame, fragment, "villages");
