@@ -242,9 +242,9 @@ public class LinkFacilitiesFragment extends Fragment  {
 
     private void enableActionMode(int position) {
         if (actionMode == null) {
-            Toast.makeText(getContext(), "Values of Enabled", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "Values of Enabled", Toast.LENGTH_SHORT).show();
         }
-        Toast.makeText(getContext(), "Values of Enabled", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "Values of Enabled", Toast.LENGTH_SHORT).show();
         toggleSelection(position);
     }
 
@@ -321,6 +321,18 @@ public class LinkFacilitiesFragment extends Fragment  {
         }
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        String parishName;
+        if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+            parishName = session.getSavedParish().getName();
+        }else{
+            parishName = session.getSavedParish().getName();
+        }
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(parishName + " Health Facilities");
+    }
+
     // deleting the messages from recycler view
     private void deleteMessages() {
         rAdapter.resetAnimationIndex();
@@ -341,7 +353,17 @@ public class LinkFacilitiesFragment extends Fragment  {
             LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
             List<LinkFacility> linkFacilityList = new ArrayList<>();
 
-            linkFacilityList = linkFacilityTable.getLinkFacilityBySubCounty(session.getSavedSubCounty().getId());
+            //linkFacilityList = linkFacilityTable.getLinkFacilityBySubCounty(session.getSavedSubCounty().getId());
+
+//            Integer linkFacilities = linkFacilityTable
+//                    .getLinkFacilityBySubCounty(String.valueOf(subCounty.getId())).size();
+//
+            if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+                linkFacilityList = linkFacilityTable.getLinkFacilityByParish(session.getSavedParish().getId());
+            }else{
+                linkFacilityList = linkFacilityTable.getLinkFacilityBySubCounty(session.getSavedSubCounty().getId());
+            }
+
             for (LinkFacility linkFacility:linkFacilityList){
                 linkFacility.setColor(getRandomMaterialColor("400"));
                 linkFacilities.add(linkFacility);
@@ -350,7 +372,8 @@ public class LinkFacilitiesFragment extends Fragment  {
             swipeRefreshLayout.setRefreshing(false);
         } catch (Exception error){
             Toast.makeText(getContext(), "No Link facility found ", Toast.LENGTH_SHORT).show();
-            textshow.setText(" No  Link facility recorded ");
+            textshow.setText("Error "+"\n\n\n"+error.getMessage());
+            swipeRefreshLayout.setRefreshing(false);
         }
         swipeRefreshLayout.setRefreshing(false);
     }
