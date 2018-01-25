@@ -543,6 +543,11 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
 //                }
 
                 String villageName = editName.getText().toString();
+                if (villageName.trim().equalsIgnoreCase("")){
+                    Toast.makeText(getContext(), "Village Name is required", Toast.LENGTH_SHORT).show();
+                    editName.requestFocus();
+                    return;
+                }
                 String mappingId = session.getSavedMapping().getId();
                 Double lat = latitude;
                 Double lon = longitude;
@@ -712,7 +717,7 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
     public void setupEditingMode(){
         if (editingVillage != null){
 
-            editName.setText(editingVillage.getVillageName());
+            editName.setText(editingVillage.getVillageName().toString());
             editName.requestFocus();
             editAreaChiefName.setText(editingVillage.getAreaChiefName());
             editAreaChiefPhone.setText(editingVillage.getAreaChiefPhone());

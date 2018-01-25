@@ -107,6 +107,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     double longitude;
     //flag for GPS Status
     boolean isGPSEnabled = false;
+    boolean hasLocation = false;
 
     //flag for net status
     boolean isNetworkEnabled = false;

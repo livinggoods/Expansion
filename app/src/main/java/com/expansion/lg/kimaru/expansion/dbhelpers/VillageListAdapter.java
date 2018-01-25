@@ -124,7 +124,12 @@ public class VillageListAdapter extends RecyclerView.Adapter<VillageListAdapter.
         holder.timestamp.setText(new DisplayDate(village.getDateAdded()).dateAndTime());
 
         // displaying the first letter of From in icon text
-        holder.iconText.setText(village.getVillageName().substring(0,1));
+        if (village.getVillageName().equalsIgnoreCase("")){
+            holder.iconText.setText("");
+        }else{
+            holder.iconText.setText(village.getVillageName().substring(0,1));
+        }
+
 
         // change the row state to activated
         holder.itemView.setActivated(selectedItems.get(position, false));
