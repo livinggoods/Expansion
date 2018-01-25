@@ -106,7 +106,7 @@ public class CountyLocationTable extends SQLiteOpenHelper {
 
         long id;
         if (isExist(countyLocation)){
-            id = db.update(TABLE_NAME, cv, ID+"='"+countyLocation.getId()+"'", null);
+            id = db.update(TABLE_NAME, cv, ID+" = '"+countyLocation.getId()+"'", null);
             Log.e("expansion ugcountytable", "Updated ID : " + String.valueOf(id));
         }else{
             id = db.insert(TABLE_NAME, null, cv);

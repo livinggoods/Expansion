@@ -82,11 +82,14 @@ public class EducationTable extends SQLiteOpenHelper {
         cv.put(HIERACHY, education.getHierachy());
         cv.put(COUNTRY, education.getCountry());
 
-        long id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
-
+        long id;
+        if (isExist(education)){
+            id = db.update(TABLE_NAME, cv, ID+"='"+education.getId()+"'", null);
+        }else{
+            id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+        }
         db.close();
         return id;
-
     }
     public List<Education> getEducationData() {
 
@@ -96,13 +99,7 @@ public class EducationTable extends SQLiteOpenHelper {
 
         List<Education> educationList=new ArrayList<>();
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-            Education education=new Education();
-
-            education.setId(cursor.getInt(0));
-            education.setLevelName(cursor.getString(1));
-            education.setLevelType(cursor.getString(2));
-            education.setHierachy(cursor.getInt(3));
-            education.setCountry(cursor.getString(4));
+            Education education=cursorToEducation(cursor);
 
             educationList.add(education);
         }
@@ -121,16 +118,20 @@ public class EducationTable extends SQLiteOpenHelper {
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
             return null;
         }else{
-            Education education=new Education();
-
-            education.setId(cursor.getInt(0));
-            education.setLevelName(cursor.getString(1));
-            education.setLevelType(cursor.getString(2));
-            education.setHierachy(cursor.getInt(3));
-            education.setCountry(cursor.getString(4));
-            db.close();
+            Education education=cursorToEducation(cursor);
             return education;
         }
+    }
+
+    private Education cursorToEducation(Cursor cursor){
+        Education education=new Education();
+
+        education.setId(cursor.getInt(cursor.getColumnIndex(ID)));
+        education.setLevelName(cursor.getString(cursor.getColumnIndex(LEVEL_NAME)));
+        education.setLevelType(cursor.getString(cursor.getColumnIndex(TYPE)));
+        education.setHierachy(cursor.getInt(cursor.getColumnIndex(HIERACHY)));
+        education.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+        return education;
     }
 
 
@@ -230,6 +231,28 @@ public class EducationTable extends SQLiteOpenHelper {
             this.addEducation(education);
         }
     }
+
+    public boolean isExist(Education education) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cur = db.rawQuery("SELECT "+ID+" FROM " + TABLE_NAME + " WHERE "+ID+" = '" + education.getId() + "'", null);
+        boolean exist = (cur.getCount() > 0);
+        cur.close();
+        return exist;
+
+    }
+
+    public void fromJson(JSONObject jsonObject){
+        try{
+            Education education = new Education();
+            education.setId(jsonObject.getInt(ID));
+            education.setLevelName(jsonObject.getString(LEVEL_NAME));
+            education.setLevelType(jsonObject.getString(TYPE));
+            education.setHierachy(jsonObject.getInt(HIERACHY));
+            education.setCountry(jsonObject.getString(COUNTRY));
+            this.addEducation(education);
+        }catch (Exception e){}
+    }
+
     private void upgradeVersion2(SQLiteDatabase db) {}
 
 
