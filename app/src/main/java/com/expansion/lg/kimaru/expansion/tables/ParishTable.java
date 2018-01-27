@@ -304,7 +304,7 @@ public class ParishTable extends SQLiteOpenHelper {
             parish.setComment(jsonObject.getString(COMMENT));
             addData(parish);
         }catch (Exception e){
-            Log.d("Tremap ERR", "Link Facility from JSON "+e.getMessage());
+            Log.d("Tremap ERR", "Parish from JSON "+e.getMessage());
         }
     }
 
