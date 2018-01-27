@@ -42,6 +42,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
@@ -96,6 +97,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     Button buttonSave, buttonList;
 
     EditText editFacilityName, editActLevels, editMrdtLevels,editMflCode;
+    TextView textLat, textLon;
 
     private int mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 100;
@@ -181,6 +183,11 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         editMrdtLevels = (EditText) v.findViewById(R.id.editMrdtLevels);
         editActLevels = (EditText) v.findViewById(R.id.editActLevels);
         editMflCode = (EditText) v.findViewById(R.id.editMflCode);
+        textLat = (TextView) v.findViewById(R.id.textLat);
+        textLon = (TextView) v.findViewById(R.id.textLon);
+
+        textLat.setText("Capturing GPS");
+        textLon.setText("Capturing GPS");
 
         if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
             editActLevels.setVisibility(View.GONE);
@@ -276,6 +283,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                         if (location != null){
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
+                            textLat.setText(String.valueOf(latitude));
+                            textLon.setText(String.valueOf(longitude));
                         }
                     }
                 }
@@ -289,6 +298,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                         if (location != null){
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
+                            textLat.setText(String.valueOf(latitude));
+                            textLon.setText(String.valueOf(longitude));
                         }
                     }
                 }
@@ -492,8 +503,12 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                     Toast.makeText(getContext(), "Enter the name of the facility", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
+
+                if (location == null){
+                    Toast.makeText(getContext(),
+                            "The location has not been captured",
+                            Toast.LENGTH_SHORT).show();
+                }
                 String parishId = session.getSavedParish().getId();
                 LinkFacility linkFacility = new LinkFacility(uuid, facilityName, country, mappingId,
                         latitude, longitude, subCounty, currentDate, addedBy, actLevels, mrdtLevels, mflCode, county, parishId);
@@ -563,6 +578,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     public void onLocationChanged(Location location){
         longitude = location.getLongitude();
         latitude = location.getLatitude();
+        textLat.setText(String.valueOf(latitude));
+        textLon.setText(String.valueOf(longitude));
 
     }
 
