@@ -33,6 +33,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
@@ -78,6 +79,7 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
     EditText editName, editAreaChiefName, editAreaChiefPhone, editComment, editDistanceToBranch,
             editTransportCost, editDistanceToMainRoad, editNumberOfHouseHolds, editPopulationDensity,
             editDistributors, editDistanceToHealthFacility;
+    TextView textLat, textLon;
     Spinner editEconomicStatus, spinnerLinkFacility;
     RadioGroup editPresenceEstates, editPresenceOfFactories, editPresenceOfTraderMarket,
             editPresenceOfSuperMarket, editNgosGivingFreeDrugs, editBrac, editNgosIccms, mtn, airtel,
@@ -174,6 +176,14 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
         editDistanceToMainRoad = (EditText) v.findViewById(R.id.editDistanceToMainRoad);
         editNumberOfHouseHolds = (EditText) v.findViewById(R.id.editNumberOfHouseHolds);
         editPopulationDensity = (EditText) v.findViewById(R.id.editPopulationDensity);
+        textLat = (TextView) v.findViewById(R.id.textLat);
+        textLon = (TextView) v.findViewById(R.id.textLon);
+        latitude=0D;
+        longitude=0D;
+        textLat.setText("Capturing LAT");
+        textLon.setText("Capturing LON");
+
+
         /**
          * Hide population density
          * @requested by trainingTeam-Ug
@@ -312,6 +322,8 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
                         if (location != null){
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
+                            textLat.setText("LAT: "+String.valueOf(latitude));
+                            textLon.setText("LON: "+String.valueOf(longitude));
                         }
                     }
                 }
@@ -325,6 +337,8 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
                         if (location != null){
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
+                            textLat.setText("LAT: "+String.valueOf(latitude));
+                            textLon.setText("LON: "+String.valueOf(longitude));
                         }
                     }
                 }
@@ -861,6 +875,8 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
         if (location != null){
             latitude = location.getLatitude();
             longitude = location.getLongitude();
+            textLat.setText("LAT: "+String.valueOf(latitude));
+            textLon.setText("LON: "+String.valueOf(longitude));
         }
     }
 
