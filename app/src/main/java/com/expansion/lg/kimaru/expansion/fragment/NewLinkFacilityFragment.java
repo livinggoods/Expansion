@@ -186,8 +186,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         textLat = (TextView) v.findViewById(R.id.textLat);
         textLon = (TextView) v.findViewById(R.id.textLon);
 
-        textLat.setText("Capturing GPS");
-        textLon.setText("Capturing GPS");
+        textLat.setText("Capturing LAT");
+        textLon.setText("Capturing LON");
 
         if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
             editActLevels.setVisibility(View.GONE);
@@ -283,8 +283,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                         if (location != null){
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
-                            textLat.setText(String.valueOf(latitude));
-                            textLon.setText(String.valueOf(longitude));
+                            textLat.setText("LAT: "+String.valueOf(latitude));
+                            textLon.setText("LON: "+String.valueOf(longitude));
                         }
                     }
                 }
@@ -298,8 +298,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                         if (location != null){
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
-                            textLat.setText(String.valueOf(latitude));
-                            textLon.setText(String.valueOf(longitude));
+                            textLat.setText("LAT: "+String.valueOf(latitude));
+                            textLon.setText("LON: "+String.valueOf(longitude));
                         }
                     }
                 }
@@ -578,8 +578,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     public void onLocationChanged(Location location){
         longitude = location.getLongitude();
         latitude = location.getLatitude();
-        textLat.setText(String.valueOf(latitude));
-        textLon.setText(String.valueOf(longitude));
+        textLat.setText("LAT: "+String.valueOf(latitude));
+        textLon.setText("LON: "+String.valueOf(longitude));
 
     }
 
