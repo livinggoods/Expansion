@@ -583,7 +583,7 @@ public class HttpClient{
     private String syncClient(JSONObject json, String apiEndpoint) throws Exception {
         //  get the server URL
         Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        Log.d("Tremap", "URL: "+ new Constants(context).getApiServer()+apiEndpoint);
+        Log.d("Tremap", "URL: "+ new Constants(context).getApiServer()+"/"+apiEndpoint);
         Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
         AsyncHttpPost p = new AsyncHttpPost(new Constants(context).getApiServer()+"/"+apiEndpoint);
