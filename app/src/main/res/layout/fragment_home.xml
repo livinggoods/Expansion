@@ -28,33 +28,33 @@
         android:text="Recruitments" />
 
     <!--  Registrations Button -->
-    <Button
-        android:id="@+id/btnRegistrations"
-        style="@style/DashboardButton"
-        android:drawableTop="@drawable/ic_registrations_24dp"
-        android:text="Registrations" />
+    <!--<Button-->
+        <!--android:id="@+id/btnRegistrations"-->
+        <!--style="@style/DashboardButton"-->
+        <!--android:drawableTop="@drawable/ic_registrations_24dp"-->
+        <!--android:text="Registrations" />-->
 
     <!--  Exams Button -->
-   <Button
-        android:id="@+id/btnExams"
-        style="@style/DashboardButton"
-        android:drawableTop="@drawable/ic_exam_black_24dp"
-        android:text="Exams" />
+   <!--<Button-->
+        <!--android:id="@+id/btnExams"-->
+        <!--style="@style/DashboardButton"-->
+        <!--android:drawableTop="@drawable/ic_exam_black_24dp"-->
+        <!--android:text="Exams" />-->
 
     <!--  Interviews Button -->
 
-    <Button
-        android:id="@+id/btnInterviews"
-        style="@style/DashboardButton"
-        android:drawableTop="@drawable/ic_local_library_black_24dp"
-        android:text="Interviews" />
+    <!--<Button-->
+        <!--android:id="@+id/btnInterviews"-->
+        <!--style="@style/DashboardButton"-->
+        <!--android:drawableTop="@drawable/ic_local_library_black_24dp"-->
+        <!--android:text="Interviews" />-->
 
     <!--  Training Button -->
-    <Button
-        android:id="@+id/btnTraining"
-        style="@style/DashboardButton"
-        android:drawableTop="@drawable/ic_training"
-        android:text="@string/nav_training" />
+    <!--<Button-->
+        <!--android:id="@+id/btnTraining"-->
+        <!--style="@style/DashboardButton"-->
+        <!--android:drawableTop="@drawable/ic_training"-->
+        <!--android:text="@string/nav_training" />-->
 
     <!--  Graduation Button -->
     <Button
@@ -65,10 +65,10 @@
 
     <!--  Graduation Button -->
     <Button
-        android:id="@+id/btnRecertifications"
+        android:id="@+id/btnSettings"
         style="@style/DashboardButton"
-        android:drawableTop="@drawable/ic_certificate"
-        android:text="@string/nav_recertification" />
+        android:drawableTop="@drawable/ic_settings_black_24dp"
+        android:text="@string/nav_app_setting" />
 
     <!--  Graduation Button -->
     <Button
