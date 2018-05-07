@@ -53,7 +53,9 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
     private OnFragmentInteractionListener mListener;
 
     RadioGroup mMotivation, mCommunity, mMentality, mSelling, mHealth, mInvestment;
-    RadioGroup mInterpersonal, mCommitment, mConditionsPreventing, mSelected;
+    RadioGroup mInterpersonal, mCommitment, mConditionsPreventing, mReadAndInterpret;
+    RadioGroup mMotivationAssessment, mAgeAssessment, mResidencyAssessment,
+            mBracAssessment, mQualifyAssessment;
 
     EditText mComment;
     Button buttonSave, buttonList;
@@ -106,22 +108,35 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_new_interview, container, false);
-        MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_INTERVIEW;
-        MainActivity.backFragment = new InterviewsFragment();
+        View v;
         session = new SessionManagement(getContext());
         user = session.getUserDetails();
+        if (user.get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+            v =  inflater.inflate(R.layout.fragment_new_interview, container, false);
+            mReadAndInterpret = (RadioGroup) v.findViewById(R.id.editReadEnglish);
+        }else{
+            v =  inflater.inflate(R.layout.fragment_new_ug_interview, container, false);
+            mHealth = (RadioGroup) v.findViewById(R.id.editHealth);
+        }
+        MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_INTERVIEW;
+        MainActivity.backFragment = new InterviewsFragment();
+
                 //Initialize the UI Components
         mMotivation = (RadioGroup) v.findViewById(R.id.editMotivation);
         mCommunity = (RadioGroup) v.findViewById(R.id.editCommunity);
         mMentality = (RadioGroup) v.findViewById(R.id.editMentality);
         mSelling = (RadioGroup) v.findViewById(R.id.editSelling);
-        mHealth = (RadioGroup) v.findViewById(R.id.editHealth);
         mInvestment = (RadioGroup) v.findViewById(R.id.editInvestment);
         mInterpersonal = (RadioGroup) v.findViewById(R.id.editInterpersonal);
         mCommitment = (RadioGroup) v.findViewById(R.id.editCommitment);
         mConditionsPreventing = (RadioGroup) v.findViewById(R.id.conditionsPreventing);
-        //mSelected = (RadioGroup) v.findViewById(R.id.editSelected);
+
+        mMotivationAssessment = (RadioGroup) v.findViewById(R.id.conditionsPreventing);
+        mAgeAssessment = (RadioGroup) v.findViewById(R.id.conditionsPreventing);
+        mResidencyAssessment = (RadioGroup) v.findViewById(R.id.conditionsPreventing);
+        mBracAssessment = (RadioGroup) v.findViewById(R.id.conditionsPreventing);
+        mQualifyAssessment = (RadioGroup) v.findViewById(R.id.conditionsPreventing);
+
         mComment = (EditText) v.findViewById(R.id.editComment);
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
@@ -170,7 +185,11 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
                 Integer applicantCommunity = Integer.parseInt(getSelectedRadioItemValue(mCommunity));
                 Integer applicantMentality = Integer.parseInt(getSelectedRadioItemValue(mMentality));
                 Integer applicantSelling = Integer.parseInt(getSelectedRadioItemValue(mSelling));
-                Integer applicantHealth = Integer.parseInt(getSelectedRadioItemValue(mHealth));
+
+                Integer applicantHealth;
+                if (user.get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("KE")){
+                    applicantHealth = Integer.parseInt(getSelectedRadioItemValue(mHealth));
+                }
                 Integer applicantInvestment = Integer.parseInt(getSelectedRadioItemValue(mInvestment));
                 boolean conditionsPreventingJoining = getSelectedRadioItemValue(mConditionsPreventing).equalsIgnoreCase("No");
                 Integer applicantSelected = 0;//= getSelectedRadioItemValue(mSelected) == "Yes";
@@ -181,11 +200,38 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
                 Long applicantDateAdded = currentDate;
                 Integer applicantSync = 0;
                 // save the details
-                Interview interview = new Interview(uuid, applicantId, recruitment, applicantMotivation,
-                            applicantCommunity, applicantMentality, applicantSelling, applicantHealth,
-                            applicantInvestment, applicantInterpersonal, applicantCommitment,
-                            applicantSelected, applicantAddedBy, applicantDateAdded, 0,
-                            applicantComment, conditionsPreventingJoining, country);
+                Interview interview = new Interview();
+                interview.setId(uuid);
+                interview.setApplicant(applicantId);
+                interview.setRecruitment(recruitment);
+                interview.setMotivation(applicantMotivation);
+                interview.setCommunity(applicantCommunity);
+                interview.setMentality(applicantMentality);
+                interview.setSelling(applicantSelling);
+                if (user.get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("KE")){
+                    interview.setHealth(Integer.parseInt(getSelectedRadioItemValue(mHealth)));
+                }else{
+                    Integer readAndInterpret = Integer.parseInt(getSelectedRadioItemValue(mReadAndInterpret));
+                    interview.setReadAndInterpret(readAndInterpret);
+                    interview.setInterviewerMotivationAssessment(Integer.parseInt(getSelectedRadioItemValue(mMotivationAssessment)));
+                    interview.setInterviewerAgeAssessment(Integer.parseInt(getSelectedRadioItemValue(mAgeAssessment)));
+                    interview.setInterviewerResidenyAssessment(Integer.parseInt(getSelectedRadioItemValue(mResidencyAssessment)));
+                    interview.setInterviewerBracAssessment(Integer.parseInt(getSelectedRadioItemValue(mBracAssessment)));
+                    interview.setInterviewerQualifyAssessment(Integer.parseInt(getSelectedRadioItemValue(mQualifyAssessment)));
+                }
+                interview.setInvestment(applicantInvestment);
+                interview.setInterpersonal(applicantInterpersonal);
+                interview.setCommitment(applicantCommitment);
+                interview.setSelected(applicantSelected);
+                interview.setAddedBy(applicantAddedBy);
+                interview.setDateAdded(applicantDateAdded);
+                interview.setComment(applicantComment);
+                interview.setCanJoin(conditionsPreventingJoining);
+                interview.setCountry(country);
+                interview.setSynced(0);
+
+
+
                     InterviewTable interviewTable = new InterviewTable(getContext());
                 long id = interviewTable.addData(interview);
 
@@ -318,25 +364,6 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
                     mSelling.check(R.id.selling5);
                     break;
             }
-            int health = editingInterview.getHealth();
-            mHealth.clearCheck();
-            switch (health){
-                case 1:
-                    mHealth.check(R.id.health1);
-                    break;
-                case 2:
-                    mHealth.check(R.id.health2);
-                    break;
-                case 3:
-                    mHealth.check(R.id.health3);
-                    break;
-                case 4:
-                    mHealth.check(R.id.health4);
-                    break;
-                case 5:
-                    mHealth.check(R.id.health5);
-                    break;
-            }
             int investment = editingInterview.getInvestment();
             mInvestment.clearCheck();
             switch (investment){
@@ -394,6 +421,48 @@ public class NewInterviewFragment extends Fragment implements OnClickListener {
                     mCommitment.check(R.id.commitment5);
                     break;
             }
+            if(editingInterview.getCountry().equalsIgnoreCase("UG")){
+                int readAndInterpret = editingInterview.getReadAndInterpret();
+                mReadAndInterpret.clearCheck();
+                switch (readAndInterpret){
+                    case 1:
+                        mReadAndInterpret.check(R.id.read1);
+                        break;
+                    case 2:
+                        mReadAndInterpret.check(R.id.read2);
+                        break;
+                    case 3:
+                        mReadAndInterpret.check(R.id.read3);
+                        break;
+                    case 4:
+                        mReadAndInterpret.check(R.id.read4);
+                        break;
+                    case 5:
+                        mReadAndInterpret.check(R.id.read5);
+                        break;
+                }
+            }else{
+                int health = editingInterview.getHealth();
+                mHealth.clearCheck();
+                switch (health){
+                    case 1:
+                        mHealth.check(R.id.health1);
+                        break;
+                    case 2:
+                        mHealth.check(R.id.health2);
+                        break;
+                    case 3:
+                        mHealth.check(R.id.health3);
+                        break;
+                    case 4:
+                        mHealth.check(R.id.health4);
+                        break;
+                    case 5:
+                        mHealth.check(R.id.health5);
+                        break;
+                }
+            }
+
             mConditionsPreventing.clearCheck();
             mConditionsPreventing.check(editingInterview.isCanJoin() ? R.id.coditions1 : R.id.conditions2);
 

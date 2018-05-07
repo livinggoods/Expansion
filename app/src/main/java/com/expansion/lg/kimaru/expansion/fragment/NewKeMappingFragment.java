@@ -207,7 +207,7 @@ public class NewKeMappingFragment extends Fragment implements OnClickListener {
                 }
                 // Save Exam Details
                 Mapping mapping = new Mapping(id, mappingName, country, mappingCounty, currentDate,
-                        applicantAddedBy, contactPerson,contactPersonPhone, sync, comment, "", "");
+                        applicantAddedBy, contactPerson,contactPersonPhone, sync, comment, "", "", "");
 
                 MappingTable mappingTable = new MappingTable(getContext());
                 String createdMap = mappingTable.addData(mapping);

@@ -12,7 +12,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="HTTP Server running" />
+        android:text="Network Operations including Data Sharing" />
 
     <Button
         android:layout_width="match_parent"
@@ -62,8 +62,8 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/buttonExportData"
-        android:text="Export Data to SD card"
+        android:id="@+id/recreateLocationTable"
+        android:text="Recreate UG Location"
         android:layout_below="@+id/iccmComponents"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />

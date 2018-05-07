@@ -412,9 +412,6 @@ public class TrainingsFragment extends Fragment  {
             default:
                 break;
         }
-
-
-
         return true;
     }
 }

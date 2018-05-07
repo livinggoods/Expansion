@@ -72,6 +72,26 @@ public class EducationTable extends SQLiteOpenHelper {
         }
     }
 
+    public void createEducationFromJson(JSONObject jsonObject){
+        Education education = new Education();
+        try {
+            education.setId(jsonObject.getInt(ID));
+            if (!jsonObject.isNull(LEVEL_NAME)){
+                education.setLevelName(jsonObject.getString(LEVEL_NAME));
+            }
+            if (!jsonObject.isNull(COUNTRY)){
+                education.setCountry(jsonObject.getString(COUNTRY));
+            }
+            if (!jsonObject.isNull(TYPE)){
+                education.setLevelType(jsonObject.getString(TYPE));
+            }
+            if (!jsonObject.isNull(HIERACHY)){
+                education.setHierachy(jsonObject.getInt(HIERACHY));
+            }
+            this.addEducation(education);
+        }catch (Exception e){}
+    }
+
     public long addEducation(Education education) {
 
         SQLiteDatabase db=getWritableDatabase();
@@ -195,19 +215,17 @@ public class EducationTable extends SQLiteOpenHelper {
             education.setId(y);
             education.setCountry("UG");
             education.setHierachy(y);
-            if (y > 7 ){
-                education.setLevelName("Tertiary");
-                education.setLevelType("tertiary");
-            }else if(y > 2) {
-                education.setLevelName("S" + (y - 1));
-                education.setLevelType("secondary");
-            }else if (y == 2){
-                education.setLevelName("P7");
-                education.setLevelType("primary");
-            }else {
+            if (y == 1  ){
                 education.setLevelName("Less than P7");
                 education.setLevelType("primary");
+            }else if(y >= 2 && y <= 7) {
+                education.setLevelName("S" + (y - 1));
+                education.setLevelType("secondary");
+            }else{
+                education.setLevelName("Tertiary");
+                education.setLevelType("tertiary");
             }
+
             this.addEducation(education);
         }
         for (int x = 9; x <= 15; x++){

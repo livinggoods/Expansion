@@ -96,7 +96,7 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
     public TextView subject, message, iconText, timestamp;
     public ImageView iconImp, imgProfile;
     public LinearLayout registrationContainser;
-    public RelativeLayout iconContainer, iconBack, iconFront;
+    public RelativeLayout iconContainer, iconBack, iconFront, relativePitch;
 
 
     AppCompatActivity a = new AppCompatActivity();
@@ -170,7 +170,19 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
         txtRegistrations.setText(registrations.size()+" Registrations");
         txtRegistrations.setOnClickListener(onRecruitmentRegistrationSummaryClickListener);
 
-
+        relativePitch = (RelativeLayout) v.findViewById(R.id.relativePitch);
+        relativePitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction;
+                Fragment fragment = new FragmentPitch();
+                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                        android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, "");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        });
 
         int passed =0, failed = 0, waiting = 0;
         for (Registration registration:registrations){
@@ -600,5 +612,12 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
     public void deleteChewReferral(ChewReferral chewReferral){
         new ChewReferralTable(getContext()).deleteChewReferral(chewReferral);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(session.getSavedRecruitment().getName() +" Recruitment");
     }
 }

@@ -58,7 +58,7 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
     private OnFragmentInteractionListener mListener;
 
     EditText mMappingName, mMappingContactPerson, mMappingContactPersonPhone, mComment;
-    Spinner mCounty, mSubCounty;
+    Spinner mRegion, mDistrict, mCounty, mSubCounty;
 
 
     Button buttonSave, buttonList;
@@ -70,10 +70,16 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
     SessionManagement session;
     HashMap<String, String> user;
 
-    List<CountyLocation> counties;
+    List<CountyLocation> regions = new ArrayList<>();
+    List<String> listRegions = new ArrayList<String>();
+
+    List<CountyLocation> districts = new ArrayList<>();
+    List<String> listDistricts = new ArrayList<String>();
+
+    List<CountyLocation> counties = new ArrayList<>();
     List<String> listCounties = new ArrayList<String>();
 
-    List<CountyLocation> subCounties;
+    List<CountyLocation> subCounties = new ArrayList<>();
     List<String> listSubCounties = new ArrayList<String>();
     ArrayAdapter<String> subCountyAdapter;
 
@@ -124,18 +130,38 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
         user = session.getUserDetails();
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_MAPPING;
         MainActivity.backFragment = new MappingFragment();
+        CountyLocationTable countyLocationTable = new CountyLocationTable(getContext());
+        mRegion = (Spinner) v.findViewById(R.id.editRegion);
+        regions = countyLocationTable.getRegions();
+        for (CountyLocation r: regions){
+            listRegions.add(r.getName());
+        }
+        ArrayAdapter<String> regionAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, listRegions);
+        regionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mRegion.setAdapter(regionAdapter);
+        mRegion.setOnItemSelectedListener(onRegionSelectedListener);
+
+
+        mDistrict = (Spinner) v.findViewById(R.id.editDistrict);
+        try{
+            districts.clear();
+            listDistricts.clear();
+            districts = countyLocationTable.getChildrenLocations(regions.get(mRegion.getSelectedItemPosition()));
+        }catch (Exception e){}
+        for (CountyLocation district: districts){
+            listDistricts.add(district.getName());
+        }
+        mDistrict.setOnItemSelectedListener(onDistrictSelectedListener);
+
+
 
         mCounty = (Spinner) v.findViewById(R.id.editCounty);
         //populate the Counties
-        CountyLocationTable countyLocationTable = new CountyLocationTable(getContext());
         counties = countyLocationTable.getCountiesAndDistricts();
-
-
         for (CountyLocation location: counties){
             listCounties.add(location.getName());
         }
-
-
         ArrayAdapter<String> adapter0 = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_spinner_item, listCounties);
         adapter0.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -197,6 +223,56 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
         return v;
     }
 
+    AdapterView.OnItemSelectedListener onRegionSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            // with the ID selected, we will populate the district
+            CountyLocationTable countyLocationTable = new CountyLocationTable(getContext());
+            listDistricts.clear();
+            districts.clear();
+            districts = countyLocationTable.getChildrenLocations(regions.get(position));
+            for (CountyLocation district: districts){
+                listDistricts.add(district.getName());
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                    android.R.layout.simple_spinner_item, listDistricts);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mDistrict.setAdapter(adapter);
+            mDistrict.setOnItemSelectedListener(onDistrictSelectedListener);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
+
+    AdapterView.OnItemSelectedListener onDistrictSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            // with the ID selected, we will populate the district
+            CountyLocationTable countyLocationTable = new CountyLocationTable(getContext());
+            listCounties.clear();
+            counties.clear();
+            counties = countyLocationTable.getChildrenLocations(districts.get(position));
+            for (CountyLocation district: counties){
+                listCounties.add(district.getName());
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                    android.R.layout.simple_spinner_item, listCounties);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mCounty.setAdapter(adapter);
+            mCounty.setOnItemSelectedListener(onCountySelectedListener);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
+
     AdapterView.OnItemSelectedListener onCountySelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -250,6 +326,8 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
                     id = editingMapping.getId();
                 }
                 String mappingName = mMappingName.getText().toString();
+                String mappingRegion = String.valueOf(regions.get(mRegion.getSelectedItemPosition()).getId());
+                String mappingDistrict = String.valueOf(counties.get(mDistrict.getSelectedItemPosition()).getId());
                 String mappingCounty = String.valueOf(counties.get(mCounty.getSelectedItemPosition()).getId());
                 String subCounty = String.valueOf(subCounties.get(mSubCounty.getSelectedItemPosition()).getId());
                 String contactPerson = mMappingContactPerson.getText().toString();
@@ -269,8 +347,9 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
                     Toast.makeText(getContext(), "Enter the county or the area", Toast.LENGTH_SHORT).show();
                 } else{
                     // Save Exam Details
-                    Mapping mapping = new Mapping(id, mappingName, "UG", mappingCounty, currentDate,
-                            applicantAddedBy, contactPerson,contactPersonPhone, sync, comment, "", subCounty);
+                    Mapping mapping = new Mapping(id, mappingName, "UG", mappingCounty,
+                            currentDate, applicantAddedBy, contactPerson,contactPersonPhone, sync,
+                            comment, mappingDistrict, subCounty, mappingRegion);
 
                     MappingTable mappingTable = new MappingTable(getContext());
                     String createdMap = mappingTable.addData(mapping);

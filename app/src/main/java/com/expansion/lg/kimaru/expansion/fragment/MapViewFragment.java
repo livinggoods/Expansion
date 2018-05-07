@@ -321,7 +321,7 @@ public class MapViewFragment extends Fragment implements View.OnClickListener {
         parishes.clear();
         try{
             List<Parish> parishList = new ParishTable(getContext())
-                    .getParishByMapping(sessionManagement.getSavedMapping().getId());
+                    .getParishByParent(sessionManagement.getSavedMapping().getSubCounty());
             for (Parish p : parishList){
                 p.setColor(getRandomMaterialColor("400"));
                 parishes.add(p);

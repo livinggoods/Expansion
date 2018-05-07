@@ -111,6 +111,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     boolean isGPSEnabled = false;
     boolean hasLocation = false;
 
+    LinkFacility editingLinkFacility = null;
+
     //flag for net status
     boolean isNetworkEnabled = false;
 
@@ -193,6 +195,10 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
             editActLevels.setVisibility(View.GONE);
             editMrdtLevels.setVisibility(View.GONE);
         }
+        if(editingLinkFacility!=null){
+            setUpEditing();
+        }
+
 
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
@@ -471,8 +477,13 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 Long currentDate =  new Date().getTime();
                 Mapping mapping = session.getSavedMapping();
                 String subCountyId;
+                String uuid;
+                if(editingLinkFacility!=null){
+                    uuid = editingLinkFacility.getId();
+                }else{
+                    uuid = UUID.randomUUID().toString();
+                }
 
-                String uuid = UUID.randomUUID().toString();
                 String county = mapping.getCounty();
                 String subCounty;
                 if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
@@ -595,5 +606,16 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
 
+    }
+
+    public void setUpEditing(){
+        if (editingLinkFacility!=null) {
+            editFacilityName.setText(editingLinkFacility.getFacilityName());
+            editMrdtLevels.setText(String.valueOf(editingLinkFacility.getMrdtLevels()));
+            editActLevels.setText(String.valueOf(editingLinkFacility.getActLevels()));
+            editMflCode.setText(editingLinkFacility.getMflCode());
+            textLat.setText(String.valueOf(editingLinkFacility.getLat()));
+            textLon.setText(String.valueOf(editingLinkFacility.getLon()));
+        }
     }
 }

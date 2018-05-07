@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.telephony.PhoneNumberUtils;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,13 +31,19 @@ import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
+import com.expansion.lg.kimaru.expansion.mzigos.CountyLocation;
+import com.expansion.lg.kimaru.expansion.mzigos.Parish;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.mzigos.Village;
 import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.other.SpinnersCursorAdapter;
 import com.expansion.lg.kimaru.expansion.tables.ChewReferralTable;
+import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
 import com.expansion.lg.kimaru.expansion.tables.EducationTable;
+import com.expansion.lg.kimaru.expansion.tables.ParishTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
+import com.expansion.lg.kimaru.expansion.tables.VillageTable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -76,12 +83,12 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     //EditText editReferralNumber;
     //EditText editReferralTitle;
     RadioGroup editVht;
-    EditText editSubCounty;
-    EditText editParish;
+    //EditText editSubCounty;
+    //EditText editParish;
 
     EditText mDistrict;
     EditText mDivision;
-    EditText mVillage;
+    //EditText mVillage;
     EditText mMark;
     EditText mLangs;
     EditText mOccupation;
@@ -97,7 +104,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     EditText mProceed;
     EditText mDateAdded;
     EditText mSync;
-    Spinner educationLevel, selectChew;
+    Spinner educationLevel, selectChew, selectSubCounty, selectParish, selectVillage;
 
     Button buttonSave, buttonList;
 
@@ -116,6 +123,15 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
 
     List<ChewReferral> chewReferralList = new ArrayList<ChewReferral>();
     List<String> chewReferrals = new ArrayList<String>();
+
+    List<CountyLocation> countyLocationList = new ArrayList<CountyLocation>();
+    List<String> locations = new ArrayList<String>();
+
+    List<Parish> parishList = new ArrayList<Parish>();
+    List<String> parishes = new ArrayList<String>();
+
+    List<Village> villageList = new ArrayList<Village>();
+    List<String> villages = new ArrayList<String>();
 
     private String referralTitle = "";
     private String referralName = "";
@@ -179,13 +195,14 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         mName = (EditText) v.findViewById(R.id.editName);
         mPhone = (EditText) v.findViewById(R.id.editPhone);
         mGender = (RadioGroup) v.findViewById(R.id.editGender);
-        mVillage = (EditText) v.findViewById(R.id.editVillage);
+        //mVillage = (EditText) v.findViewById(R.id.editVillage);
         mMark = (EditText) v.findViewById(R.id.editLandmark);
         mLangs = (EditText) v.findViewById(R.id.editOtherlanguages);
         mOccupation = (EditText) v.findViewById(R.id.editOccupation);
         mDob = (EditText) v.findViewById(R.id.editDob);
         mAge = (EditText) v.findViewById(R.id.editAge);
         selectChew = (Spinner) v.findViewById(R.id.selectChewReferral);
+        selectSubCounty = (Spinner) v.findViewById(R.id.selectSubCounty);
         mComment = (EditText) v.findViewById(R.id.editComment);
         mReadEnglish = (RadioGroup) v.findViewById(R.id.editReadEnglish);
         mDateMoved = (EditText) v.findViewById(R.id.editRelocated);
@@ -197,10 +214,10 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         //editReferralName = (EditText) v.findViewById(R.id.editReferralName);
         //editReferralNumber = (EditText) v.findViewById(R.id.editReferralNumber);
         //editReferralTitle = (EditText) v.findViewById(R.id.editReferralTitle);
-        editSubCounty = (EditText) v.findViewById(R.id.editSubCounty);
-        editParish = (EditText) v.findViewById(R.id.editParish);
+        // editSubCounty = (EditText) v.findViewById(R.id.editSubCounty);
+        //editParish = (EditText) v.findViewById(R.id.editParish);
         editVht = (RadioGroup) v.findViewById(R.id.editVht);
-        mAge.setVisibility(View.GONE);
+        // mAge.setVisibility(View.GONE);
         mDob.setVisibility(View.GONE);
         chooseAgeFormat = (RadioGroup) v.findViewById(R.id.chooseAgeFormat);
         chooseAgeFormat.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -221,12 +238,23 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
 
 
         addChewReferrals();
+        addSubCounties();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_spinner_item, chewReferrals);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         selectChew.setAdapter(adapter);
         selectChew.setOnItemSelectedListener(onSelectedChewListener);
+
+        bindSubCountyAdapter();
+        selectSubCounty.setOnItemSelectedListener(onSelectedSubCounty);
+
+        //Parish must come after the SubCounty
+        selectParish =   (Spinner) v.findViewById(R.id.selectParish);
+        bindParishAdapter();
+        selectParish.setOnItemSelectedListener(onParishSelected);
+
+        selectVillage =   (Spinner) v.findViewById(R.id.selectVillage);
 
         addEducationSelectList();
         setUpEditingMode();
@@ -240,6 +268,39 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         mDob.setOnClickListener(this);
         return v;
     }
+
+    AdapterView.OnItemSelectedListener onParishSelected = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            //populate the villages
+            villageList.clear();
+            villages.clear();
+            villageList = new VillageTable(getContext()).getVillageDataByParishId(parishList.get(selectParish.getSelectedItemPosition()).getId());
+            for (Village v:villageList){
+                villages.add(v.getVillageName());
+            }
+            bindVillageAdapter();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
+    AdapterView.OnItemSelectedListener onSelectedSubCounty = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            //here we populate the Parishes.
+            //rebind the adapter
+            bindParishAdapter();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
 
     AdapterView.OnItemSelectedListener onSelectedChewListener = new AdapterView.OnItemSelectedListener() {
         @Override
@@ -455,13 +516,13 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 String referralName = ""; //editReferralName.getText().toString();
                 String referralNumber = ""; //editReferralNumber.getText().toString();
                 String referralTitle = ""; //editReferralTitle.getText().toString();
-                String applicantParish = editParish.getText().toString();
+                // String applicantParish = editParish.getText().toString();
 
 
                 String applicantDistrict = "";
-                String applicantSubcounty = editSubCounty.getText().toString();
+                // String applicantSubcounty = editSubCounty.getText().toString();
                 String applicantDivision = "";
-                String applicantVillage = mVillage.getText().toString();
+                // String applicantVillage = mVillage.getText().toString();
                 String applicantMark = mMark.getText().toString();
                 String applicantLangs = mLangs.getText().toString();
                 String applicantEducation = String.valueOf(educationLevel.getSelectedItemId());
@@ -541,11 +602,11 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                     Toast.makeText(getContext(), "Name cannot be blank", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (applicantVillage.trim().equals("")){
-                    mVillage.requestFocus();
-                    Toast.makeText(getContext(), "Village is required", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                //if (applicantVillage.trim().equals("")){
+                //    mVillage.requestFocus();
+                //    Toast.makeText(getContext(), "Village is required", Toast.LENGTH_SHORT).show();
+                //    return;
+                //}
                 if (!applicantPhone.trim().equals("")){
                     if (applicantPhone.trim().startsWith("+")){
                         if (applicantPhone.length() != 13){
@@ -571,18 +632,23 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                     return;
                 }
                 String chewUuid = chewReferralList.get(selectChew.getSelectedItemPosition()).getId();
-
-                // Save Registration
+                String parishId = parishList.get(selectParish.getSelectedItemPosition()).getId();
+                String villageId = villageList.get(selectVillage.getSelectedItemPosition()).getId();
+                String subCountyId = countyLocationList.get(selectSubCounty.getSelectedItemPosition()).getId().toString();
+                // Save Registration //String subCountyId, String parishId, String villageId
 //                    Registration registration = new Registration(mName, mNumber, mEmail);
                 Registration registration;
                 registration = new Registration(registrationId, applicantName, applicantPhone, applicantGender,
-                        applicantDistrict, applicantSubcounty, applicantDivision, applicantVillage,
+                        applicantDistrict, "", applicantDivision, "",
                         applicantMark, applicantLangs, applicantEducation, applicantOccupation,
                         applicantComment, applicantDob, applicantReadEnglish, applicantRecruitment,
                         country, applicantDateMoved, applicantBrac, applicantBracChp, applicantCommunity,
                         applicantAddedBy, applicantProceed, applicantDateAdded, applicantSync, "",
-                        "", "", "", "", 0L, false, false, "", referralName, referralTitle,
-                        referralNumber, isVht, false, applicantParish, 0L, 0L, chewUuid, "");
+                        "", "", "", "", 0L,
+                        false, false, "", referralName, referralTitle,
+                        referralNumber, isVht, false, "",
+                        0L, 0L, chewUuid, "",
+                        subCountyId, parishId, villageId);
 
                 // Before saving, do some validations
                 // Years in location should always be less than age
@@ -602,7 +668,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                     // Clear boxes
                     mName.setText("");
                     mPhone.setText("");
-                    mVillage.setText("");
+                    //mVillage.setText("");
                     mMark.setText("");
                     mLangs.setText("");
                     mOccupation.setText("");
@@ -613,7 +679,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                     // editReferralName.setText("");
                     // editReferralTitle.setText("");
                     // editReferralNumber.setText("");
-                    editParish.setText("");
+                    //editParish.setText("");
                     editVht.clearCheck();
                 }
                 break;
@@ -666,7 +732,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         if (editingRegistration != null){
             mName.setText(editingRegistration.getName());
             mPhone.setText(editingRegistration.getPhone());
-            mVillage.setText(editingRegistration.getVillage());
+            //mVillage.setText(editingRegistration.getVillage());
             mMark.setText(editingRegistration.getMark());
             mLangs.setText(editingRegistration.getLangs());
             mOccupation.setText(editingRegistration.getOccupation());
@@ -675,8 +741,8 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
             //editReferralName.setText(editingRegistration.getReferralName());
             //editReferralTitle.setText(editingRegistration.getReferralTitle());
             //editReferralNumber.setText(editingRegistration.getReferralPhone());
-            editParish.setText(editingRegistration.getParish());
-            editSubCounty.setText(editingRegistration.getSubcounty());
+            //editParish.setText(editingRegistration.getParish());
+            //editSubCounty.setText(editingRegistration.getSubcounty());
             mComment.setText(editingRegistration.getComment());
             editVht.clearCheck();
             editVht.check(editingRegistration.isVht() ? R.id.editVhtYes : R.id.editVhtNo);
@@ -711,6 +777,33 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 }
                 x++;
             }
+            //SubCounty
+            x=0;
+            for (CountyLocation cv: countyLocationList){
+                if (cv.getId().equals(editingRegistration.getSubCountyId())){
+                    selectSubCounty.setSelection(x, true);
+                    break;
+                }
+            }
+            //Parish
+            x=0;
+            for (Parish p: parishList){
+                if (p.getId().equalsIgnoreCase(editingRegistration.getParishId())){
+                    selectParish.setSelection(x, true);
+                    break;
+                }
+            }
+
+            //village
+            x=0;
+            for (Village v: villageList){
+                if (v.getId().equalsIgnoreCase(editingRegistration.getVillageId())){
+                    selectVillage.setSelection(x, true);
+                    break;
+                }
+            }
+
+
         }
     }
     public void addChewReferrals() {
@@ -720,5 +813,47 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
             chewReferrals.add(chewReferral.getName());
         }
         chewReferrals.add("Add New");
+    }
+
+    public void addSubCounties() {
+        CountyLocationTable countyLocationTable = new CountyLocationTable(getContext());
+        countyLocationList = countyLocationTable.getChildrenLocations(session.getSavedRecruitment().getCountyId().toString());
+        for (CountyLocation loc: countyLocationList){
+            locations.add(loc.getName());
+        }
+    }
+
+    public void bindVillageAdapter(){
+        villages.clear();
+        villageList.clear();
+        villageList = new VillageTable(getContext()).getVillageDataByParishId(parishList.get(
+                selectParish.getSelectedItemPosition()).getId());
+        for (Village v : villageList){
+            villages.add(v.getVillageName());
+        }
+        ArrayAdapter<String> villageAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, villages);
+        villageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        selectVillage.setAdapter(villageAdapter);
+
+    }
+
+    public void bindSubCountyAdapter(){
+        ArrayAdapter<String> countyLocationAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, locations);
+        countyLocationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        selectSubCounty.setAdapter(countyLocationAdapter);
+    }
+
+    public void bindParishAdapter(){
+        parishes.clear();
+        parishList.clear();
+        parishList = new ParishTable(getContext()).getParishByParent(countyLocationList.get(selectSubCounty.getSelectedItemPosition()).getId().toString());
+        for (Parish p : parishList){
+            parishes.add(p.getName());
+        }
+        ArrayAdapter<String> parishAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, parishes);
+        parishAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        selectParish.setAdapter(parishAdapter);
     }
 }

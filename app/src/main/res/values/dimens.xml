@@ -18,6 +18,8 @@
     <dimen name="icon_text">22dp</dimen>
     <dimen name="timestamp">12sp</dimen>
 
+    <dimen name="text_size_marking">12dp</dimen>
+    <dimen name="text_size">18dp</dimen>
     <dimen name="msg_text_list">14sp</dimen>
     <dimen name="padding_list_2_row">10dp</dimen>
     <dimen name="msg_text_list_secondary">14sp</dimen>

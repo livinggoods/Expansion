@@ -186,6 +186,16 @@ public class LinkFacilitiesFragment extends Fragment  {
 
             @Override
             public void onRowLongClicked(int position) {
+                LinkFacility linkFacility = linkFacilities.get(position);
+                NewLinkFacilityFragment linkFacilityFragment = new NewLinkFacilityFragment();
+                linkFacilityFragment.editingLinkFacility = linkFacility;
+                Fragment fragment = linkFacilityFragment;
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left,
+                        android.R.anim.slide_out_right);
+                fragmentTransaction.replace(R.id.frame, fragment,"");
+                fragmentTransaction.commitAllowingStateLoss();
 
             }
 

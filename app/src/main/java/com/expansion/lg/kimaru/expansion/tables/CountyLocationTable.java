@@ -67,7 +67,7 @@ public class CountyLocationTable extends SQLiteOpenHelper {
             + POLYGON + text_field + ", "
             + ARCHIVED + integer_field + "); ";
 
-    public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
+    public static final String DATABASE_DROP="DROP TABLE IF EXISTS " + TABLE_NAME;
 
     public CountyLocationTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);
@@ -79,6 +79,7 @@ public class CountyLocationTable extends SQLiteOpenHelper {
         db.execSQL(CREATE_DATABASE);
     }
 
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
@@ -86,6 +87,12 @@ public class CountyLocationTable extends SQLiteOpenHelper {
         if (oldVersion < 2){
             upgradeVersion2(db);
         }
+    }
+
+    public void reCreateDb(){
+        SQLiteDatabase db=getWritableDatabase();
+        db.execSQL(DATABASE_DROP);
+        db.execSQL(CREATE_DATABASE);
     }
 
     public long addData(CountyLocation countyLocation) {
@@ -296,6 +303,38 @@ public class CountyLocationTable extends SQLiteOpenHelper {
 
     }
 
+    public List<CountyLocation> getChildrenLocations(String parentId){
+        SQLiteDatabase db=getReadableDatabase();
+        String orderBy = NAME + " asc";
+        String whereClause = PARENT+" = ?";
+        String[] whereArgs = new String[] {
+                String.valueOf(parentId)
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
+
+        List<CountyLocation> countyLocationList =new ArrayList<>();
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            CountyLocation countyLocation = new CountyLocation();
+
+            countyLocation.setId(cursor.getInt(0));
+            countyLocation.setName(cursor.getString(1));
+            countyLocation.setAdminName(cursor.getString(2));
+            countyLocation.setCode(cursor.getString(3));
+            countyLocation.setCountry(cursor.getString(4));
+            countyLocation.setLat(cursor.getString(5));
+            countyLocation.setLon(cursor.getString(6));
+            countyLocation.setMeta(cursor.getString(7));
+            countyLocation.setParent(cursor.getInt(8));
+            countyLocation.setPolygon(cursor.getString(9));
+            countyLocation.setArchived(cursor.getInt(10));
+
+            countyLocationList.add(countyLocation);
+        }
+        db.close();
+
+        return countyLocationList;
+    }
+
     public List<CountyLocation> getChildrenLocations(CountyLocation parentCountyLocation){
         SQLiteDatabase db=getReadableDatabase();
         String orderBy = NAME + " asc";
@@ -357,6 +396,24 @@ public class CountyLocationTable extends SQLiteOpenHelper {
         }
         db.close();
 
+        return countyLocationList;
+    }
+
+
+    public List<CountyLocation> getRegions(){
+        SQLiteDatabase db=getReadableDatabase();
+        String orderBy = NAME + " asc";
+        String whereClause = ADMIN_NAME+" = ?";
+        String[] whereArgs = new String[] {
+                "Region"
+        };
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
+
+        List<CountyLocation> countyLocationList =new ArrayList<>();
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            countyLocationList.add(cursorToLocation(cursor));
+        }
+        db.close();
         return countyLocationList;
     }
 
@@ -432,33 +489,27 @@ public class CountyLocationTable extends SQLiteOpenHelper {
     }
     public void createLocations(){
         if (getProfilesCount() < 1){
-            new syncLocations().execute(new Constants(context).getCloudAddress()+"/api/v1/sync/locations");
+
         }
 
     }
-    private class syncLocations extends AsyncTask<String, Void, String> {
-        protected String doInBackground(String... strings){
-            String stream = null;
-            String urlString = strings[0];
-            ApiClient hh = new ApiClient();
-            stream = hh.GetHTTPData(urlString);
-            if(stream !=null){
-                try{
-                    JSONObject reader= new JSONObject(stream);
-                    JSONArray recs = reader.getJSONArray("locations");
-                    CountyLocationTable countyLocationTable = new CountyLocationTable(context);
-                    for (int x = 0; x < recs.length(); x++){
-                        countyLocationTable.fromJson(recs.getJSONObject(x));
-                    }
-                }catch(JSONException e){
-                }
 
-            }
-            return stream;
-        }
-        protected void onPostExecute(String stream){
+    private CountyLocation cursorToLocation(Cursor cursor){
+        CountyLocation countyLocation = new CountyLocation();
 
-        } // onPostExecute() end
+        countyLocation.setId(cursor.getInt(cursor.getColumnIndex(ID)));
+        countyLocation.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+        countyLocation.setAdminName(cursor.getString(cursor.getColumnIndex(ADMIN_NAME)));
+        countyLocation.setCode(cursor.getString(cursor.getColumnIndex(CODE)));
+        countyLocation.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+        countyLocation.setLat(cursor.getString(cursor.getColumnIndex(LAT)));
+        countyLocation.setLon(cursor.getString(cursor.getColumnIndex(LON)));
+        countyLocation.setMeta(cursor.getString(cursor.getColumnIndex(META)));
+        countyLocation.setParent(cursor.getInt(cursor.getColumnIndex(PARENT)));
+        countyLocation.setPolygon(cursor.getString(cursor.getColumnIndex(POLYGON)));
+        countyLocation.setArchived(cursor.getInt(cursor.getColumnIndex(ARCHIVED)));
+        return countyLocation;
     }
+
 }
 

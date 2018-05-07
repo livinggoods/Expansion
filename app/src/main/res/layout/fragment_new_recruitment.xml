@@ -28,26 +28,36 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Recruitment Name"
-                    android:imeActionId="@+id/login"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textCapWords"
                     android:maxLines="1" />
 
             </android.support.design.widget.TextInputLayout>
 
-            <!-- <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/editRecruitmentDistrict"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Recruitment District"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="textCapWords"
-                    android:maxLines="1" />
 
-            </android.support.design.widget.TextInputLayout> -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Region"/>
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <Spinner
+                        android:id="@+id/selectRegion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/population_density_types"
+                        android:prompt="@string/select_prompt" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
 
             <LinearLayout
                 android:orientation="vertical"
@@ -61,39 +71,79 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <Spinner
-                        android:id="@+id/selectCounty"
+                        android:id="@+id/selectDistrict"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:entries="@array/population_density_types"
                         android:prompt="@string/select_prompt" />
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
 
-            <!-- <android.support.design.widget.TextInputLayout
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select County"/>
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <Spinner
+                        android:id="@+id/selectCounty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/population_density_types"
+                        android:prompt="@string/select_prompt" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Sub County"/>
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <Spinner
+                        android:id="@+id/selectSubCounty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/population_density_types"
+                        android:prompt="@string/select_prompt" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
-                    android:id="@+id/editRecruitmentSubCounty"
+                    android:id="@+id/editComment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Sub County"
+                    android:hint="Comments"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="textCapWords"
-                    android:maxLines="1" />
-
-            </android.support.design.widget.TextInputLayout> -->
-
-            <!-- <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/editRecruitmentDivision"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Division"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="textCapWords"
-                    android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout> -->
+                    android:inputType="textMultiLine"
+                    android:minLines="@integer/comment_box_size" />
+            </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
                 android:orientation="horizontal"

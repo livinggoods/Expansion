@@ -237,7 +237,7 @@ public class VillageTable extends SQLiteOpenHelper {
             Log.d("Tremap DB Op", "Village updated");
         }else{
             id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
-            Log.d("Tremap DB Op", "Village created");
+            Log.d("Tremap DB Op", "Village created with id "+ village.getId());
         }
         db.close();
         return id;
@@ -362,6 +362,169 @@ public class VillageTable extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return results;
+    }
+
+    public void fromJson(JSONObject jsonObject){
+        Village village = new Village();
+        try {
+            village.setId(jsonObject.getString(ID));
+            if (!jsonObject.isNull(VILLAGENAME)){
+                village.setVillageName(jsonObject.getString(VILLAGENAME));
+            }
+            if (!jsonObject.isNull(MAPPINGID)){
+                village.setMappingId(jsonObject.getString(MAPPINGID));
+            }
+            if (!jsonObject.isNull(LAT)){
+                village.setLat(jsonObject.getDouble(LAT));
+            }
+            if (!jsonObject.isNull(LON)){
+                village.setLon(jsonObject.getDouble(LON));
+            }
+            if(!jsonObject.isNull(COUNTRY)){
+                village.setCountry(jsonObject.getString(COUNTRY));
+            }
+            if(!jsonObject.isNull(DISTRICT)){
+                village.setDistrict(jsonObject.getString(DISTRICT));
+            }
+            if(!jsonObject.isNull(COUNTY)){
+                village.setCounty(jsonObject.getString(COUNTY));
+            }
+            if(!jsonObject.isNull(SUBCOUNTYID)){
+                village.setSubCountyId(jsonObject.getString(SUBCOUNTYID));
+            }
+            if(!jsonObject.isNull(PARISH)){
+                village.setParish(jsonObject.getString(PARISH));
+            }
+            if(!jsonObject.isNull(COMMUNITY_UNIT)){
+                village.setCommunityUnit(jsonObject.getString(COMMUNITY_UNIT));
+            }
+            if(!jsonObject.isNull(WARD)){
+                village.setWard(jsonObject.getString(WARD));
+            }
+            if(!jsonObject.isNull(LINKFACILITYID)){
+                village.setLinkFacilityId(jsonObject.getString(LINKFACILITYID));
+            }
+            if(!jsonObject.isNull(AREACHIEFNAME)){
+                village.setAreaChiefName(jsonObject.getString(AREACHIEFNAME));
+            }
+            if(!jsonObject.isNull(AREACHIEFPHONE)){
+                village.setAreaChiefPhone(jsonObject.getString(AREACHIEFPHONE));
+            }
+            if(!jsonObject.isNull(DISTANCETOBRANCH)){
+                village.setDistanceToBranch(jsonObject.getLong(DISTANCETOBRANCH));
+            }
+            if(!jsonObject.isNull(TRANSPORTCOST)){
+                village.setTransportCost(jsonObject.getLong(TRANSPORTCOST));
+            }
+            if(!jsonObject.isNull(DISTANCETOMAINROAD)){
+                village.setDistanceToMainRoad(jsonObject.getLong(DISTANCETOMAINROAD));
+            }
+            if(!jsonObject.isNull(NOOFHOUSEHOLDS)){
+                village.setNoOfHouseholds(jsonObject.getLong(NOOFHOUSEHOLDS));
+            }
+            if(!jsonObject.isNull(MOHPOPLATIONDENSITY)){
+                village.setMohPoplationDensity(jsonObject.getLong(MOHPOPLATIONDENSITY));
+            }
+            if(!jsonObject.isNull(ESTIMATEDPOPULATIONDENSITY)){
+                village.setEstimatedPopulationDensity(jsonObject.getLong(ESTIMATEDPOPULATIONDENSITY));
+            }
+            if(!jsonObject.isNull(ECONOMICSTATUS)){
+                village.setEconomicStatus(jsonObject.getString(ECONOMICSTATUS));
+            }
+            if(!jsonObject.isNull(DISTANCETONEARESTHEALTHFACILITY)){
+                village.setDistanceToNearestHealthFacility(jsonObject.getLong(DISTANCETONEARESTHEALTHFACILITY));
+            }
+            if(!jsonObject.isNull(ACTLEVELS)){
+                village.setActLevels(jsonObject.getLong(ACTLEVELS));
+            }
+            if(!jsonObject.isNull(ACTPRICE)){
+                village.setActPrice(jsonObject.getLong(ACTPRICE));
+            }
+            if(!jsonObject.isNull(MRDTLEVELS)){
+                village.setMrdtLevels(jsonObject.getLong(MRDTLEVELS));
+            }
+            if(!jsonObject.isNull(MRDTPRICE)){
+                village.setMrdtPrice(jsonObject.getLong(MRDTPRICE));
+            }
+            if(!jsonObject.isNull(PRESENCEOFHOSTELS)){
+                village.setPresenceOfHostels(jsonObject.getInt(PRESENCEOFHOSTELS)==1);
+            }
+            if(!jsonObject.isNull(PRESENCEOFESTATES)){
+                village.setPresenceOfEstates(jsonObject.getInt(PRESENCEOFESTATES)==1);
+            }
+            if(!jsonObject.isNull(NUMBEROFFACTORIES)){
+                village.setNumberOfFactories(jsonObject.getInt(NUMBEROFFACTORIES));
+            }
+            if(!jsonObject.isNull(PRESENCEOFDISTRIBUTORS)){
+                village.setPresenceOfDistributors(jsonObject.getInt(PRESENCEOFDISTRIBUTORS)==1);
+            }
+            if(!jsonObject.isNull(DISTRIBUTORSINTHEAREA)){
+                village.setDistributorsInTheArea(jsonObject.getString(DISTRIBUTORSINTHEAREA));
+            }
+            if(!jsonObject.isNull(TRADERMARKET)){
+                village.setTraderMarket(jsonObject.getInt(TRADERMARKET)==1);
+            }
+            if(!jsonObject.isNull(LARGESUPERMARKET)){
+                village.setLargeSupermarket(jsonObject.getInt(LARGESUPERMARKET)==1);
+            }
+            if(!jsonObject.isNull(NGOSGIVINGFREEDRUGS)){
+                village.setNgosGivingFreeDrugs(jsonObject.getInt(NGOSGIVINGFREEDRUGS)==1);
+            }
+            if(!jsonObject.isNull(NGODOINGICCM)){
+                village.setNgoDoingIccm(jsonObject.getInt(NGODOINGICCM)==1);
+            }
+            if(!jsonObject.isNull(NGODOINGMHEALTH)){
+                village.setNgoDoingMhealth(jsonObject.getInt(NGODOINGMHEALTH)==1);
+            }
+            if(!jsonObject.isNull(NAMEOFNGODOINGICCM)){
+                village.setNameOfNgoDoingIccm(jsonObject.getString(NAMEOFNGODOINGICCM));
+            }
+            if(!jsonObject.isNull(NAMEOFNGODOINGMHEALTH)){
+                village.setNameOfNgoDoingMhealth(jsonObject.getString(NAMEOFNGODOINGMHEALTH));
+            }
+            if(!jsonObject.isNull(PRIVATEFACILITYFORACT)){
+                village.setPrivateFacilityForAct(jsonObject.getString(PRIVATEFACILITYFORACT));
+            }
+            if(!jsonObject.isNull(PRIVATEFACILITYFORMRDT)){
+                village.setPrivateFacilityForMrdt(jsonObject.getString(PRIVATEFACILITYFORMRDT));
+            }
+            if(!jsonObject.isNull(DATEADDED)){
+                village.setDateAdded(jsonObject.getLong(DATEADDED));
+            }
+            if(!jsonObject.isNull(ADDEDBY)){
+                village.setAddedBy(jsonObject.getInt(ADDEDBY));
+            }
+            if(!jsonObject.isNull(COMMENT)){
+                village.setComment(jsonObject.getString(COMMENT));
+            }
+            if(!jsonObject.isNull(SYNCED)){
+                village.setSynced(jsonObject.getInt(SYNCED)==1);
+            }
+            if(!jsonObject.isNull(CHVS_TRAINED)){
+                village.setChvsTrained(jsonObject.getInt(CHVS_TRAINED)==1);
+            }
+            if(!jsonObject.isNull(BRAC_OPERATING)){
+                village.setBracOperating(jsonObject.getInt(BRAC_OPERATING)==1);
+            }
+            if(!jsonObject.isNull(SAFARICOM)){
+                village.setSafaricomSignalStrength(jsonObject.getInt(SAFARICOM));
+            }
+            if(!jsonObject.isNull(MTN)){
+                village.setMtnSignalStrength(jsonObject.getInt(MTN));
+            }
+            if(!jsonObject.isNull(AIRTEL)){
+                village.setAirtelSignalStrength(jsonObject.getInt(AIRTEL));
+            }
+            if(!jsonObject.isNull(ORANGE)){
+                village.setOrangeSignalStrength(jsonObject.getInt(ORANGE));
+            }
+            if(!jsonObject.isNull(ACTSTOCK)){
+                village.setActStock(jsonObject.getInt(ACTSTOCK)==1);
+            }
+            this.addData(village);
+        }catch (Exception e){
+            Log.d("Tremap", e.getMessage());
+        }
     }
 
     private Village cursorToVillage(Cursor cursor){

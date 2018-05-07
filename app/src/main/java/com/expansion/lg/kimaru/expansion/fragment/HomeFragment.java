@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,8 +54,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     Recruitment recruitment;
 
 
-    Button mapping, recruitments, registrations, exams, interviews, sharing, graduation,
-            training, cloud;
+    Button mapping, recruitments, sharing, graduation,
+            cloud, settings;
     SessionManagement sessionManagement;
     HashMap <String, String> user;
     String country;
@@ -109,23 +110,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         mapping = (Button) v.findViewById(R.id.btnMapping);
         recruitments = (Button) v.findViewById(R.id.btnRecruitments);
-        registrations = (Button) v.findViewById(R.id.btnRegistrations);
-        exams = (Button) v.findViewById(R.id.btnExams);
-        interviews = (Button) v.findViewById(R.id.btnInterviews);
         sharing = (Button) v.findViewById(R.id.btnSharing);
         graduation = (Button) v.findViewById(R.id.btnGraduation);
-        training = (Button) v.findViewById(R.id.btnTraining);
+        settings = (Button) v.findViewById(R.id.btnSettings);
         cloud = (Button) v.findViewById(R.id.btnCloud);
 
 
         mapping.setOnClickListener(this);
         recruitments.setOnClickListener(this);
-        registrations.setOnClickListener(this);
-        exams.setOnClickListener(this);
-        interviews.setOnClickListener(this);
         sharing.setOnClickListener(this);
         graduation.setOnClickListener(this);
-        training.setOnClickListener(this);
+        settings.setOnClickListener(this);
         cloud.setOnClickListener(this);
 
 
@@ -178,104 +173,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 fragmentTransaction.commitAllowingStateLoss();
                 break;
 
-            case R.id.btnRegistrations:
-                if (sessionManagement.isRecruitmentSet()){
-                    MainActivity.navItemIndex = 2;
-                    fragment = new RegistrationsFragment();
-                }else{
-                    MainActivity.navItemIndex = 1;
-                    MainActivity.CURRENT_TAG = MainActivity.TAG_RECRUITMENTS;
-                    fragment = new RecruitmentsFragment();
-                }
+            case R.id.btnSettings:
+                MainActivity.navItemIndex = 1;
+                MainActivity.CURRENT_TAG = MainActivity.TAG_HOME;
+                fragment = new SettingsFragment();
                 fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                         android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
+                fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_HOME);
                 fragmentTransaction.commitAllowingStateLoss();
-                break;
-
-            case R.id.btnExams:
-                if (sessionManagement.isRecruitmentSet()){
-                    MainActivity.navItemIndex = 3;
-                    fragment = new ExamsFragment();
-                }else{
-                    MainActivity.navItemIndex = 1;
-                    MainActivity.CURRENT_TAG = MainActivity.TAG_RECRUITMENTS;
-                    fragment = new RecruitmentsFragment();
-                }
-                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
-                fragmentTransaction.commitAllowingStateLoss();
-                break;
-
-            case R.id.btnTraining:
-                try {
-                    if (new InternetCheck(getContext()).isConnected()){
-                        Toast.makeText(getContext(), "Internet is connnected", Toast.LENGTH_SHORT).show();
-                        // try to update the content
-                        final ProgressDialog progressDialog = new ProgressDialog(getContext());
-                        progressDialog.setTitle("Syncing Trainings");
-                        progressDialog.setMessage("Please wait ...");
-                        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                        progressDialog.setCancelable(false);
-                        progressDialog.show();
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    //TimeUnit.MINUTES.sleep(1);
-                                    TimeUnit.SECONDS.sleep(5);
-                                    Log.d("Tremap", "~~~~~~~~~~~~~~~~~~STARTING~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-                                    TrainingDataSync trainingDataSync = new TrainingDataSync(getContext());
-                                    trainingDataSync.pollNewTrainings();
-
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }finally {
-                                    progressDialog.dismiss();
-                                }
-                            }
-                        }).start();
-                    }
-                }catch (Exception e){}
-                fragment = new TrainingsFragment();
-                fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, MainActivity.TAG_NEW_RECRUITMENT);
-                fragmentTransaction.commitAllowingStateLoss();
-
-                break;
-
-            case R.id.btnInterviews:
-                //
-                if (sessionManagement.isRecruitmentSet()){
-                    MainActivity.navItemIndex =4;
-                    mPendingRunnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            // update the main content by replacing fragments
-                            Fragment fragment;
-                            InterviewsFragment interviewsFragment = new InterviewsFragment();
-                            fragment = interviewsFragment;
-                            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                                    android.R.anim.fade_out);
-                            fragmentTransaction.replace(R.id.frame, fragment, MainActivity.CURRENT_TAG);
-
-                            fragmentTransaction.commitAllowingStateLoss();
-                        }
-                    };
-                    if (mPendingRunnable != null) {
-                        mHandler.post(mPendingRunnable);
-                    }
-                }else{
-                    MainActivity.navItemIndex = 1;
-                    MainActivity.CURRENT_TAG = MainActivity.TAG_RECRUITMENTS;
-                    fragment = new RecruitmentsFragment();
-                }
                 break;
 
             case R.id.btnSharing:
@@ -301,6 +207,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Tremap Home");
     }
 
     @Override

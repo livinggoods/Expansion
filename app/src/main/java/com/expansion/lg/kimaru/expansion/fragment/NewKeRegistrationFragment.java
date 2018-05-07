@@ -912,7 +912,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                         applicantChewNumber, applicantWard, applicantCuName, applicantLinkFacility,
                         applicantNoOfHouseholds, applicantIsChv, isGokTrained, applicantOtherTrainings,
                         "", "","",false, applicantAccounts, "", recruitmentTransportCost,
-                        transportCostToBranch, chewUuid, maritalStatus);
+                        transportCostToBranch, chewUuid, maritalStatus,"","","");
 
                 // Before saving, do some validations
                 // Years in location should always be less than age

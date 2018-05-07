@@ -10,7 +10,8 @@ public class Registration {
 
     String recruitment, name, phone, gender, district, subcounty, division, village, mark, langs, education;
     String id, occupation, comment, picture, country, chewName, chewNumber, ward, cuName, linkFacility;
-    String otherTrainings, referralName, referralTitle, referralPhone, parish, chewUuid, maritalStatus;
+    String otherTrainings, referralName, referralTitle, referralPhone, parish, chewUuid, maritalStatus,
+    subCountyId, parishId, villageId;
     Integer readEnglish, brac, bracChp, community, addedBy, proceed, synced;
     Long dob, dateMoved, dateAdded, noOfHouseholds, recruitmentTransportCost, transportCostToBranch;
     boolean chv, gokTrained, vht, accounts;
@@ -32,13 +33,14 @@ public class Registration {
                         String otherTrainings, String referralName, String referralTitle,
                         String referralPhone, boolean vht, boolean accounts, String parish,
                         Long recruitmentTransportCost, Long transportCostToBranch, String chewUuid,
-                        String maritalStatus) {
+                        String maritalStatus, String subCountyId, String parishId, String villageId) {
         this.name = mName;
         this.phone = mPhone;
         this.recruitment = mRecruitment;
         this.gender = mGender;
         this.district = mDistrict;
         this.subcounty = mSubcounty;
+        this.subCountyId = subCountyId;
         this.division = mDivision;
         this.village = mVillage;
         this.country = country;
@@ -77,6 +79,9 @@ public class Registration {
         this.transportCostToBranch = transportCostToBranch;
         this.chewUuid = chewUuid;
         this.maritalStatus = maritalStatus;
+        this.subCountyId = subCountyId;
+        this.villageId = villageId;
+        this.parishId = parishId;
     }
 
 
@@ -441,7 +446,31 @@ public class Registration {
         this.transportCostToBranch = transportCostToBranch;
     }
 
-//    public boolean hasPassed(){
+    public String getSubCountyId() {
+        return subCountyId;
+    }
+
+    public void setSubCountyId(String subCountyId) {
+        this.subCountyId = subCountyId;
+    }
+
+    public String getParishId() {
+        return parishId;
+    }
+
+    public void setParishId(String parishId) {
+        this.parishId = parishId;
+    }
+
+    public String getVillageId() {
+        return villageId;
+    }
+
+    public void setVillageId(String villageId) {
+        this.villageId = villageId;
+    }
+
+    //    public boolean hasPassed(){
 //        Integer age = getAge().intValue();
 //        if ( age < 30 || age > 55){
 //            return false;

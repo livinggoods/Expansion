@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,17 +57,26 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
 
     private OnFragmentInteractionListener mListener;
 
-    EditText mName;
-    EditText mDivision;
-    EditText mSubCounty;
-    Spinner mDistrict;
+    EditText mName, mComment;
+    Spinner mRegion, mDistrict, mCounty, mSubCounty;
 
 
     Button buttonSave, buttonList;
     public Recruitment editingRecruitment = null;
 
-    List<CountyLocation> countyLocationList = new ArrayList<>();
-    List<String> countyLocations = new ArrayList<>();
+
+    List<CountyLocation> regions = new ArrayList<>();
+    List<String> listRegions = new ArrayList<String>();
+
+    List<CountyLocation> districts = new ArrayList<>();
+    List<String> listDistricts = new ArrayList<String>();
+
+    List<CountyLocation> counties = new ArrayList<>();
+    List<String> listCounties = new ArrayList<String>();
+
+    List<CountyLocation> subCounties = new ArrayList<>();
+    List<String> listSubCounties = new ArrayList<String>();
+    ArrayAdapter<String> subCountyAdapter;
 
     private int mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 100;
@@ -115,24 +125,64 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
         View v =  inflater.inflate(R.layout.fragment_new_recruitment, container, false);
         MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_RECRUITMENT;
         MainActivity.backFragment = new RecruitmentsFragment();
+        CountyLocationTable countyLocationTable = new CountyLocationTable(getContext());
         session = new SessionManagement(getContext());
         user = session.getUserDetails();
                 //Initialize the UI Components
         mName = (EditText) v.findViewById(R.id.editRecruitmentName);
-        mDistrict = (Spinner) v.findViewById(R.id.selectCounty);
-
-        //mDivision = (EditText) v.findViewById(R.id.editRecruitmentDivision);
-        //mSubCounty = (EditText) v.findViewById(R.id.editRecruitmentSubCounty);
-
-        countyLocationList = new CountyLocationTable(getContext()).getCounties();
-        for (CountyLocation county : countyLocationList){
-            countyLocations.add(county.getName());
+        mComment = (EditText) v.findViewById(R.id.editComment);
+        //region
+        mRegion = (Spinner) v.findViewById(R.id.selectRegion);
+        regions = countyLocationTable.getRegions();
+        for (CountyLocation r: regions){
+            listRegions.add(r.getName());
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
-                android.R.layout.simple_spinner_item, countyLocations);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mDistrict.setAdapter(adapter);
-        // mDistrict.setOnItemSelectedListener(onSelectedChewListener);
+        ArrayAdapter<String> regionAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, listRegions);
+        regionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mRegion.setAdapter(regionAdapter);
+        mRegion.setOnItemSelectedListener(onRegionSelectedListener);
+
+
+        mDistrict = (Spinner) v.findViewById(R.id.selectDistrict);
+        try{
+            districts.clear();
+            listDistricts.clear();
+            districts = countyLocationTable.getChildrenLocations(regions.get(mRegion.getSelectedItemPosition()));
+        }catch (Exception e){}
+        for (CountyLocation district: districts){
+            listDistricts.add(district.getName());
+        }
+        mDistrict.setOnItemSelectedListener(onDistrictSelectedListener);
+
+
+
+        mCounty = (Spinner) v.findViewById(R.id.selectCounty);
+        //populate the Counties
+        counties = countyLocationTable.getCountiesAndDistricts();
+        for (CountyLocation location: counties){
+            listCounties.add(location.getName());
+        }
+        ArrayAdapter<String> adapter0 = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, listCounties);
+        adapter0.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mCounty.setAdapter(adapter0);
+        mCounty.setOnItemSelectedListener(onCountySelectedListener);
+        //counties.get(position).getName();; get postion, then extract item at pos
+        try{
+            subCounties = countyLocationTable.getChildrenLocations(counties.get(mCounty.getSelectedItemPosition()));
+        }catch(Exception e){}
+
+        for (CountyLocation subCounty: subCounties){
+            listSubCounties.add(subCounty.getName());
+        }
+        mSubCounty = (Spinner) v.findViewById(R.id.selectSubCounty);
+        subCountyAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item, listSubCounties);
+        subCountyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSubCounty.setAdapter(subCountyAdapter);
+
+
 
         //in case we are editing
         setUpEditingMode();
@@ -145,6 +195,79 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
 
         return v;
     }
+
+    AdapterView.OnItemSelectedListener onRegionSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            // with the ID selected, we will populate the district
+            CountyLocationTable countyLocationTable = new CountyLocationTable(getContext());
+            listDistricts.clear();
+            districts.clear();
+            districts = countyLocationTable.getChildrenLocations(regions.get(position));
+            for (CountyLocation district: districts){
+                listDistricts.add(district.getName());
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                    android.R.layout.simple_spinner_item, listDistricts);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mDistrict.setAdapter(adapter);
+            mDistrict.setOnItemSelectedListener(onDistrictSelectedListener);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
+
+    AdapterView.OnItemSelectedListener onDistrictSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            // with the ID selected, we will populate the district
+            CountyLocationTable countyLocationTable = new CountyLocationTable(getContext());
+            listCounties.clear();
+            counties.clear();
+            counties = countyLocationTable.getChildrenLocations(districts.get(position));
+            for (CountyLocation district: counties){
+                listCounties.add(district.getName());
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                    android.R.layout.simple_spinner_item, listCounties);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mCounty.setAdapter(adapter);
+            mCounty.setOnItemSelectedListener(onCountySelectedListener);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
+
+    AdapterView.OnItemSelectedListener onCountySelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            // with the ID selected, we will populate the subcounty
+            CountyLocationTable countyLocationTable = new CountyLocationTable(getContext());
+            listSubCounties.clear();
+            subCounties.clear();
+            subCounties = countyLocationTable.getChildrenLocations(counties.get(position));
+            for (CountyLocation subCounty: subCounties){
+                listSubCounties.add(subCounty.getName());
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                    android.R.layout.simple_spinner_item, listSubCounties);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mSubCounty.setAdapter(adapter);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -178,11 +301,12 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                     id = UUID.randomUUID().toString();
                 }
                 String recruitmentName = mName.getText().toString();
-                String recruitmentDistrict = String.valueOf(countyLocationList.get(mDistrict
+                String recruitmentRegion = String.valueOf(regions.get(mRegion.getSelectedItemPosition()).getId());
+                String recruitmentDistrict = String.valueOf(districts.get(mDistrict
                         .getSelectedItemPosition()).getId());
-                String recruitmentDivision = "";
-                String recruitmentSubCounty = "";
-                String recruitmentComment = "";
+                String recruitmentCounty = String.valueOf(counties.get(mCounty.getSelectedItemPosition()).getId());
+                String recruitmentSubCounty = String.valueOf(subCounties.get(mSubCounty.getSelectedItemPosition()).getId());
+                String recruitmentComment = mComment.getText().toString();
                 String recruitmentLat = "";
                 String recruitmentLon = "";
                 String country = user.get(SessionManagement.KEY_USER_COUNTRY);
@@ -193,13 +317,13 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
 
 
                 // Do some validations
-                if (recruitmentName.toString().trim().equals("")){
+                if (recruitmentName.trim().equals("")){
                     Toast.makeText(getContext(), "Name cannot be blank", Toast.LENGTH_SHORT).show();
                     mName.requestFocus();
                     return;
                 }
 
-                if (recruitmentDistrict.toString().trim().equals("")){
+                if (recruitmentDistrict.trim().equals("")){
                     Toast.makeText(getContext(), "District is required", Toast.LENGTH_SHORT).show();
                     mDistrict.requestFocus();
                     return;
@@ -208,9 +332,13 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                 Recruitment recruitment = new Recruitment();
                 recruitment.setId(id);
                 recruitment.setName(recruitmentName);
+                recruitment.setRegionId(recruitmentRegion);
                 recruitment.setDistrict(recruitmentDistrict);
+                recruitment.setCounty(recruitmentCounty);
+                try {
+                    recruitment.setCountyId(Integer.parseInt(recruitmentCounty));
+                }catch (Exception e){}
                 recruitment.setSubcounty(recruitmentSubCounty);
-                recruitment.setDivision(recruitmentDivision);
                 recruitment.setLat(recruitmentLat);
                 recruitment.setLon(recruitmentLon);
                 recruitment.setComment(recruitmentComment);
@@ -218,7 +346,9 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                 recruitment.setDateAdded(recruitmentDateAdded);
                 recruitment.setSynced(recruitmentSync);
                 recruitment.setCountry(country);
-                recruitment.setLocationId(countyLocationList.get(mDistrict.getSelectedItemPosition()).getId());
+                try{
+                    recruitment.setLocationId(Integer.parseInt(recruitmentRegion));
+                }catch (Exception e){}
                 recruitment.setSubCountyId(recruitmentSubCounty);
 
 
@@ -279,16 +409,47 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
     public void setUpEditingMode(){
         if (editingRecruitment != null){
             mName.setText(editingRecruitment.getName());
+            mComment.setText(editingRecruitment.getComment());
             int x = 0;
-            for (CountyLocation c : countyLocationList){
+            for (CountyLocation c : regions){
+                if (!editingRecruitment.getRegionId().equalsIgnoreCase("")) {
+                    if (c.getId().equals(Integer.valueOf(editingRecruitment.getRegionId()))) {
+                        mRegion.setSelection(x, true);
+                        break;
+                    }
+                }
+                x++;
+            }
+
+            x = 0;
+            for (CountyLocation d : districts){
                 if (!editingRecruitment.getDistrict().equalsIgnoreCase("")) {
-                    if (c.getId().equals(Integer.valueOf(editingRecruitment.getDistrict()))) {
+                    if (d.getId().equals(Integer.valueOf(editingRecruitment.getDistrict()))) {
                         mDistrict.setSelection(x, true);
                         break;
                     }
                 }
                 x++;
             }
+
+            x = 0;
+            for (CountyLocation c : counties){
+                if (c.getId().equals(Integer.valueOf(editingRecruitment.getCountyId()))) {
+                    mCounty.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
+
+            x = 0;
+            for (CountyLocation c : subCounties){
+                if (c.getId().equals(Integer.valueOf(editingRecruitment.getSubCountyId()))) {
+                    mSubCounty.setSelection(x, true);
+                    break;
+                }
+                x++;
+            }
+
             mName.requestFocus();
         }
     }

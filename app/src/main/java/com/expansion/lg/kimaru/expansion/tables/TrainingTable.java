@@ -342,7 +342,7 @@ public class TrainingTable extends SQLiteOpenHelper {
             }
             addTraining(training);
         }catch (Exception e){
-            Log.d("Tremap ChewReferral ERR", "From Json : "+e.getMessage());
+            Log.d("Tremap Training ERR", "From Json : "+e.getMessage());
         }
     }
 

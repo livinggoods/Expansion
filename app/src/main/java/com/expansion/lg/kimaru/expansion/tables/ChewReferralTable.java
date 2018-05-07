@@ -419,22 +419,54 @@ public class ChewReferralTable extends SQLiteOpenHelper {
         ChewReferral chewReferral = new ChewReferral();
         try {
 
-            chewReferral.setId(jsonObject.getString(ID));
-            chewReferral.setName(jsonObject.getString(NAME));
-            chewReferral.setPhone(jsonObject.getString(PHONE));
-            chewReferral.setTitle(jsonObject.getString(TITLE));
-            chewReferral.setCountry(jsonObject.getString(COUNTRY));
-            chewReferral.setRecruitmentId(jsonObject.getString(RECRUITMENT));
-            chewReferral.setSynced(jsonObject.getInt(SYNCED));
-            chewReferral.setCounty(jsonObject.getString(COUNTY));
-            chewReferral.setDistrict(jsonObject.getString(DISTRICT));
-            chewReferral.setSubCounty(jsonObject.getString(SUBCOUNTY));
-            chewReferral.setCommunityUnit(jsonObject.getString(COMMUNITY_UNIT));
-            chewReferral.setVillage(jsonObject.getString(VILLAGE));
-            chewReferral.setMapping(jsonObject.getString(MAPPING));
-            chewReferral.setMobilization(jsonObject.getString(MOBILIZATION));
-            chewReferral.setLat(jsonObject.getString(LAT));
-            chewReferral.setLon(jsonObject.getString(LON));
+            if (!jsonObject.isNull(MAPPING)){
+                chewReferral.setId(jsonObject.getString(ID));
+            }
+            if (!jsonObject.isNull(MAPPING)){
+                chewReferral.setName(jsonObject.getString(NAME));
+            }
+            if (!jsonObject.isNull(MAPPING)){
+                chewReferral.setPhone(jsonObject.getString(PHONE));
+            }
+            if (!jsonObject.isNull(TITLE)){
+                chewReferral.setTitle(jsonObject.getString(TITLE));
+            }
+            if (!jsonObject.isNull(COUNTRY)){
+                chewReferral.setCountry(jsonObject.getString(COUNTRY));
+            }
+            if (!jsonObject.isNull(RECRUITMENT)){
+                chewReferral.setRecruitmentId(jsonObject.getString(RECRUITMENT));
+            }
+            if (!jsonObject.isNull(SYNCED)){
+                chewReferral.setSynced(jsonObject.getInt(SYNCED));
+            }
+            if (!jsonObject.isNull(COUNTY)){
+                chewReferral.setCounty(jsonObject.getString(COUNTY));
+            }
+            if (!jsonObject.isNull(DISTRICT)){
+                chewReferral.setDistrict(jsonObject.getString(DISTRICT));
+            }
+            if (!jsonObject.isNull(SUBCOUNTY)){
+                chewReferral.setSubCounty(jsonObject.getString(SUBCOUNTY));
+            }
+            if (!jsonObject.isNull(COMMUNITY_UNIT)){
+                chewReferral.setCommunityUnit(jsonObject.getString(COMMUNITY_UNIT));
+            }
+            if (!jsonObject.isNull(VILLAGE)){
+                chewReferral.setVillage(jsonObject.getString(VILLAGE));
+            }
+            if (!jsonObject.isNull(MAPPING)){
+                chewReferral.setMapping(jsonObject.getString(MAPPING));
+            }
+            if (!jsonObject.isNull(MOBILIZATION)){
+                chewReferral.setMobilization(jsonObject.getString(MOBILIZATION));
+            }
+            if (!jsonObject.isNull(LAT)){
+                chewReferral.setLat(jsonObject.getString(LAT));
+            }
+            if (!jsonObject.isNull(LON)){
+                chewReferral.setLon(jsonObject.getString(LON));
+            }
 
             addChewReferral(chewReferral);
         }catch (Exception e){

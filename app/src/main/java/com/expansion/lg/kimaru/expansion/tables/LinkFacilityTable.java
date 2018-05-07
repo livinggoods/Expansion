@@ -283,33 +283,64 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
         LinkFacility linkFacility = new LinkFacility();
         try {
 
-            linkFacility.setId(jsonObject.getString(ID));
-            linkFacility.setFacilityName(jsonObject.getString(NAME));
-            if (jsonObject.getString(LAT).equalsIgnoreCase("")){
-                linkFacility.setLat(0D);
-            }else{
+            if (!jsonObject.isNull(ID)){
+                linkFacility.setId(jsonObject.getString(ID));
+            }
+            if (!jsonObject.isNull(NAME)){
+                linkFacility.setFacilityName(jsonObject.getString(NAME));
+            }
+
+            if (!jsonObject.isNull(LAT)){
                 linkFacility.setLat(jsonObject.getDouble(LAT));
             }
 
-            if (jsonObject.getString(LON).equalsIgnoreCase("")){
-                linkFacility.setLat(0D);
-            }else{
+            if (!jsonObject.isNull(LON)){
                 linkFacility.setLon(jsonObject.getDouble(LON));
             }
 
-            //////////////////////
-            linkFacility.setId(jsonObject.getString(ID));
-            linkFacility.setFacilityName(jsonObject.getString(NAME));
-            linkFacility.setMappingId(jsonObject.getString(MAPPING));
-            linkFacility.setMflCode(jsonObject.getString(MFLCODE));
-            linkFacility.setSubCountyId(jsonObject.getString(SUBCOUNTY));
-            linkFacility.setDateAdded(jsonObject.getLong(ADDED));
-            linkFacility.setCounty(jsonObject.getString(COUNTY));
-            linkFacility.setAddedBy(jsonObject.getInt(ADDEDBY));
-            linkFacility.setMrdtLevels(jsonObject.getInt(MRDTLEVELS));
-            linkFacility.setActLevels(jsonObject.getInt(ACTLEVELS));
-            linkFacility.setCountry(jsonObject.getString(COUNTRY));
-            linkFacility.setParish(jsonObject.getString(PARISH));
+            if (!jsonObject.isNull(MAPPING)){
+                linkFacility.setMappingId(jsonObject.getString(MAPPING));
+            }
+
+            if (!jsonObject.isNull(MAPPING)){
+                linkFacility.setMappingId(jsonObject.getString(MAPPING));
+            }
+
+            if (!jsonObject.isNull(MFLCODE)){
+                linkFacility.setMflCode(jsonObject.getString(MFLCODE));
+            }
+
+            if (!jsonObject.isNull(SUBCOUNTY)){
+                linkFacility.setSubCountyId(jsonObject.getString(SUBCOUNTY));
+            }
+
+            if (!jsonObject.isNull(ADDED)){
+                linkFacility.setDateAdded(jsonObject.getLong(ADDED));
+            }else{
+                linkFacility.setDateAdded(1L);
+            }
+
+            if (!jsonObject.isNull(COUNTY)){
+                linkFacility.setCounty(jsonObject.getString(COUNTY));
+            }
+
+            if (!jsonObject.isNull(ADDEDBY)){
+                linkFacility.setAddedBy(jsonObject.getInt(ADDEDBY));
+            }
+
+            if (!jsonObject.isNull(MRDTLEVELS)){
+                linkFacility.setMrdtLevels(jsonObject.getInt(MRDTLEVELS));
+            }
+
+            if (!jsonObject.isNull(ACTLEVELS)){
+                linkFacility.setActLevels(jsonObject.getInt(ACTLEVELS));
+            }
+            if (!jsonObject.isNull(COUNTRY)){
+                linkFacility.setCountry(jsonObject.getString(COUNTRY));
+            }
+            if (!jsonObject.isNull(PARISH)){
+                linkFacility.setParish(jsonObject.getString(PARISH));
+            }
             ///////
             addData(linkFacility);
         }catch (Exception e){

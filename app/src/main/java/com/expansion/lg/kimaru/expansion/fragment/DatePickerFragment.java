@@ -53,7 +53,7 @@ public class DatePickerFragment extends DialogFragment
         // Do something with the date chosen by the user
         TextView tv1= (TextView) getActivity().findViewById(DateEditText);
         // override the default set date to Jan 01, We are only interested in the year
-        tv1.setText(year+"/1/1");
+        tv1.setText(year+"/"+month+"/"+day);
     }
     public void populateSetDate(int year, int month, int day) {
         TextView tv1= (TextView) getActivity().findViewById(DateEditText);

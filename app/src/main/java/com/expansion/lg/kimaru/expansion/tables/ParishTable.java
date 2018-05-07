@@ -15,7 +15,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -106,12 +108,25 @@ public class ParishTable extends SQLiteOpenHelper {
         cv.put(COMMENT, parish.getComment());
         cv.put(SYNCED, parish.getSynced());
         cv.put(DATE_ADDED, parish.getDateAdded());
-
-        long Is = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
-
+        long id;
+        if (isExist(parish)){
+            id = db.update(TABLE_NAME, cv, ID+" = '"+parish.getId()+"'", null);
+            Log.e("expansion parish table ", "Updated ID : " + String.valueOf(parish.getId()));
+        }else{
+            id = db.insert(TABLE_NAME, null, cv);
+            Log.e("expansion parish ", "New record - ID is " + String.valueOf(id));
+        }
         db.close();
-        return String.valueOf(Is);
+        return String.valueOf(id);
 
+    }
+
+    public boolean isExist(Parish parish) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cur = db.rawQuery("SELECT "+ID+" FROM " + TABLE_NAME + " WHERE "+ID+" = '" + parish.getId() + "'", null);
+        boolean exist = (cur.getCount() > 0);
+        cur.close();
+        return exist;
     }
     public List<Parish> getParishData() {
 
@@ -291,17 +306,44 @@ public class ParishTable extends SQLiteOpenHelper {
         Parish parish = new Parish();
         try {
 
-            parish.setId(jsonObject.getString(ID));
-            parish.setName(jsonObject.getString(PARISHNAME));
-            parish.setContactPerson(jsonObject.getString(CONTACTPERSON));
-            parish.setContactPersonPhone(jsonObject.getString(CONTACTPERSONPHONE));
-            parish.setParent(jsonObject.getString(PARENT_LOCATION));
-            parish.setMapping(jsonObject.getString(MAPPINGID));
-            parish.setDateAdded(jsonObject.getLong(DATE_ADDED));
-            parish.setAddedBy(jsonObject.getInt(ADDED_BY));
-            parish.setSynced(jsonObject.getInt(SYNCED));
-            parish.setCountry(jsonObject.getString(COUNTRY));
-            parish.setComment(jsonObject.getString(COMMENT));
+            if (!jsonObject.isNull(ID)){
+                parish.setId(jsonObject.getString(ID));
+            }
+            if (!jsonObject.isNull(PARISHNAME)){
+                parish.setName(jsonObject.getString(PARISHNAME));
+            }
+            if (!jsonObject.isNull(CONTACTPERSON)){
+                parish.setContactPerson(jsonObject.getString(CONTACTPERSON));
+            }
+            if (!jsonObject.isNull(CONTACTPERSONPHONE)){
+                parish.setContactPersonPhone(jsonObject.getString(CONTACTPERSONPHONE));
+            }
+            if (!jsonObject.isNull(PARENT_LOCATION)){
+                parish.setParent(jsonObject.getString(PARENT_LOCATION));
+            }
+            if (!jsonObject.isNull(MAPPINGID)){
+                parish.setMapping(jsonObject.getString(MAPPINGID));
+            }
+            if (!jsonObject.isNull(DATE_ADDED)){
+                //Wed, 31 Jan 2018 16:23:07
+                SimpleDateFormat df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z");
+                Date date = df.parse(jsonObject.getString(DATE_ADDED));
+                long epoch = date.getTime();
+                parish.setDateAdded(epoch);
+            }
+            //parish.setDateAdded(jsonObject.getLong(DATE_ADDED));
+            if (!jsonObject.isNull(ADDED_BY)){
+                parish.setAddedBy(jsonObject.getInt(ADDED_BY));
+            }
+            if (!jsonObject.isNull(SYNCED)){
+                parish.setSynced(jsonObject.getInt(SYNCED));
+            }
+            if (!jsonObject.isNull(COUNTRY)){
+                parish.setCountry(jsonObject.getString(COUNTRY));
+            }
+            if (!jsonObject.isNull(COMMENT)){
+                parish.setComment(jsonObject.getString(COMMENT));
+            }
             addData(parish);
         }catch (Exception e){
             Log.d("Tremap ERR", "Parish from JSON "+e.getMessage());

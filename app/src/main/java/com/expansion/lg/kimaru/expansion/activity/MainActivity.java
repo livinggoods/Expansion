@@ -3,13 +3,16 @@ package com.expansion.lg.kimaru.expansion.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
@@ -26,6 +29,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,7 +68,11 @@ import com.expansion.lg.kimaru.expansion.sync.ApiClient;
 import com.expansion.lg.kimaru.expansion.sync.IccmDataSync;
 import com.expansion.lg.kimaru.expansion.sync.LocationDataSync;
 import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
+import com.expansion.lg.kimaru.expansion.tables.EducationTable;
 import com.expansion.lg.kimaru.expansion.tables.MappingTable;
+import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
+import com.expansion.lg.kimaru.expansion.tables.WardTable;
+import com.ontbee.legacyforks.cn.pedant.SweetAlert.SweetAlertDialog;
 
 
 import org.json.JSONArray;
@@ -144,6 +152,8 @@ public class MainActivity extends AppCompatActivity {
     SessionManagement session;
     String name, email;
     String country;
+    Context context;
+    SweetAlertDialog pDialog;
 
     private static final int PERMISSION_CALLBACK_CONSTANT = 101;
     private static final int REQUEST_PERMISSION_SETTING = 102;
@@ -151,7 +161,8 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE};
     private SharedPreferences permissionStatus;
     private boolean sentToSettings = false;
-
+    private int i =-1;
+    private LocationDataSync locationDataSync;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,39 +170,51 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        // Start the Sync Service
-
-
         //since we want login to be the first thing
         session = new SessionManagement(getBaseContext());
         //we cannow check login
+        context = this;
 
-        if (session.isInitialRun()){
-            SetUpApp setUpApp = new SetUpApp();
-            setUpApp.setUpEducation(getBaseContext());
+        new EducationTable(getBaseContext()).createEducationLevels();
+        try {
+            SetUpApp setUpApp = new SetUpApp(getBaseContext());
+            setUpApp.setUpEducation();
+        }catch (Exception e){
+            new EducationTable(getBaseContext()).createEducationLevels();
         }
+
+        locationDataSync = new LocationDataSync(getBaseContext());
 
         session.checkLogin();
         if (session.isLoggedIn()){
             RecruitmentsSyncServiceAdapter.initializeSyncAdapter(getApplicationContext());
             MappingsSyncServiceAdapter.initializeSyncAdapter(getApplicationContext());
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
-                            new syncLocations().execute(new Constants(getApplicationContext()).getCloudAddress()+"/api/v1/sync/locations");
-                        }else{
-                            IccmDataSync iccmDataSync = new IccmDataSync(getBaseContext());
-                            iccmDataSync.pollNewComponents();
-                            LocationDataSync locationDataSync = new LocationDataSync(getBaseContext());
-                            locationDataSync.getKeSubcounties();
-                        }
-                    } catch (Exception e) {
-
-                    }
+            if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+                //Force the app to sync all the location details on initial Load
+                if(!session.isInitialDataSynced()){
+                    new syncLocations().execute(new Constants(getApplicationContext()).getCloudAddress()+"/api/v1/sync/locations");
                 }
-            }).start();
+                /**
+                 * sync Counties, subcounties, parish, villages
+                 * the county, subcounty and villages are in the same DB (one class is enough to pull the data)
+                 */
+            }else{
+                IccmDataSync iccmDataSync = new IccmDataSync(getBaseContext());
+                iccmDataSync.pollNewComponents();
+                if(!session.isInitialDataSynced()){
+                    new syncKeWards().execute(new Constants(context).getCloudAddress()+"/api/v1/sync/ke-counties");
+                }
+            }
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//
+//                    } catch (Exception e) {
+//
+//                    }
+//                }
+//            }).start();
         }
 
 
@@ -711,6 +734,13 @@ public class MainActivity extends AppCompatActivity {
                         drawer.closeDrawers();
                         return true;
 
+                    case R.id.nav_logout:
+                        //logout User
+                        session.logoutUser();
+                        drawer.closeDrawers();
+                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                        return true;
+
                     default:
                         navItemIndex = 0;
                 }
@@ -1018,9 +1048,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class syncLocations extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+            pDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE)
+                    .setTitleText("Loading. Please wait");
+            pDialog.show();
+            pDialog.setCancelable(false);
+        }
+
         protected String doInBackground(String... strings){
             String stream = null;
             String urlString = strings[0];
+            // Start Village
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        locationDataSync.getVillageDatafromCloud();
+                        Log.d("Tremap", "GETTING Village Data in a thread");
+                    } catch (Exception e) {
+                        Log.d("Tremap", "ERROR GETTING Village Data");
+                        Log.d("Tremap", e.getMessage());
+                    }
+                }
+            }).start();
+
+            // Start Parish
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        locationDataSync.getParishDatafromCloud();
+                        Log.d("Tremap", "GETTING Parish Data in a thread");
+                    } catch (Exception e) {
+                        Log.d("Tremap", "ERROR GETTING Parish Data");
+                        Log.d("Tremap", e.getMessage());
+                    }
+                }
+            }).start();
             ApiClient hh = new ApiClient();
             stream = hh.GetHTTPData(urlString);
             if(stream !=null){
@@ -1038,7 +1105,59 @@ public class MainActivity extends AppCompatActivity {
             return stream;
         }
         protected void onPostExecute(String stream){
+            session.flagSynced(true);
+            pDialog.dismiss();
+        } // onPostExecute() end
+    }
 
+
+    private class syncKeWards extends AsyncTask<String, Void, String> {
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+            pDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE)
+                    .setTitleText("Loading Wards. Please wait");
+            pDialog.show();
+            pDialog.setCancelable(false);
+        }
+
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+            if(stream !=null){
+                try{
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray("counties");
+                    SubCountyTable subCountyTable = new SubCountyTable(context);
+                    for (int x = 0; x < recs.length(); x++){
+                        // I have the county Details, lets extract all subcounties
+                        JSONObject county = recs.getJSONObject(x);
+                        JSONArray subCounties = county.getJSONArray("subcounties");
+                        for (int a = 0; a<subCounties.length(); a++){
+                            // I have the subcounty, create the subcounty
+                            JSONObject subCounty = subCounties.getJSONObject(a);
+                            subCountyTable.fromJson(subCounty);
+                            //also get the wards
+                            JSONArray wards = subCounty.getJSONArray("wards");
+                            for (int b=0; b<wards.length(); b++){
+                                JSONObject ward = wards.getJSONObject(b);
+                                //create a ward
+                                new WardTable(context).fromJson(ward);
+                            }
+                        }
+                    }
+                }catch(JSONException e){
+                    Log.d("TREMAP", "KE County Sync ERROR "+e.getMessage());
+                }
+
+            }
+            return stream;
+        }
+        protected void onPostExecute(String stream){
+            session.flagSynced(true);
+            pDialog.dismiss();
         } // onPostExecute() end
     }
 }

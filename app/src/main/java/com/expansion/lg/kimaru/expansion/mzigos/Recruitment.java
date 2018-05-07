@@ -8,7 +8,7 @@ public class Recruitment {
 
 
     String id, name, district, subcounty, division, comment, lat, lon, country,
-            county, subCountyId;
+            county, subCountyId, regionId;
     Integer addedBy, synced, countyId, locationId;
     Long dateAdded;
 
@@ -26,9 +26,9 @@ public class Recruitment {
     }
 
     public Recruitment(String id, String name, String district, String subcounty,
-                       String division, String lat, String lon, String comment,
-                       Integer addedBy, Long dateAdded, Integer synced, String country,
-                       String county, String subCountyId, Integer countyId, Integer locationId) {
+                       String division, String lat, String lon, String comment, Integer addedBy,
+                       Long dateAdded, Integer synced, String country, String county,
+                       String subCountyId, Integer countyId, Integer locationId, String regionId) {
         this.name = name;
         this.district = district;
         this.subcounty = subcounty;
@@ -45,6 +45,7 @@ public class Recruitment {
         this.subCountyId = subCountyId;
         this.countyId = countyId;
         this.locationId = locationId;
+        this.regionId = regionId;
     }
 
 
@@ -125,6 +126,10 @@ public class Recruitment {
         return isImportant;
     }
     public Integer getColor(){ return color;}
+
+    public String getRegionId() {
+        return regionId;
+    }
 
     //Set Methods
     public void setName(String name) {
@@ -214,5 +219,9 @@ public class Recruitment {
 
     public void setRead(boolean read) {
         isRead = read;
+    }
+
+    public void setRegionId(String regionId) {
+        this.regionId = regionId;
     }
 }

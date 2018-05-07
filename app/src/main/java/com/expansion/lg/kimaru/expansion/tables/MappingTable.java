@@ -44,6 +44,7 @@ public class MappingTable extends SQLiteOpenHelper {
     public static final String COUNTY = "county";
     public static final String SUBCOUNTY = "subcounty";
     public static final String DISTRICT = "district";
+    public static final String REGION = "region";
     public static final String ADDED_BY = "added_by";
     public static final String CONTACTPERSON = "contact_person";
     public static final String CONTACTPERSONPHONE = "phone";
@@ -62,20 +63,28 @@ public class MappingTable extends SQLiteOpenHelper {
             + ADDED_BY + integer_field + ", "
             + CONTACTPERSON + varchar_field + ", "
             + CONTACTPERSONPHONE + varchar_field + ", "
+            + REGION + varchar_field + ", "
             + COMMENT + text_field + ", "
             + SYNCED + integer_field + ", "
             + DATE_ADDED + real_field + "); ";
 
     public String [] columns=new String[]{ID, MAPPINGNAME, COUNTRY, COUNTY, ADDED_BY, CONTACTPERSON,
-            CONTACTPERSONPHONE, COMMENT, DATE_ADDED, SYNCED, DISTRICT, SUBCOUNTY};
+            CONTACTPERSONPHONE, COMMENT, DATE_ADDED, SYNCED, DISTRICT, SUBCOUNTY, REGION};
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
     public static final String DB_UPDATE_V2 = "ALTER TABLE " + TABLE_NAME +
             "  ADD "+ SUBCOUNTY + varchar_field +";";
 
+    public static final String ADD_REGION_FIELD_SQL = "ALTER TABLE " + TABLE_NAME +
+            "  ADD "+ REGION + varchar_field +";";
+
     public MappingTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);
         this.context = context;
+
+        if (!isFieldExist(REGION)){
+            this.addRegionField();
+        }
     }
 
     @Override
@@ -90,6 +99,11 @@ public class MappingTable extends SQLiteOpenHelper {
         if (oldVersion < 2){
             upgradeVersion2(db);
         }
+    }
+
+    public void addRegionField(){
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL(ADD_REGION_FIELD_SQL);
     }
 
     public String addData(Mapping mapping) {
@@ -108,6 +122,7 @@ public class MappingTable extends SQLiteOpenHelper {
         cv.put(SUBCOUNTY, mapping.getSubCounty());
         cv.put(SYNCED, mapping.isSynced() ? 1 : 0);
         cv.put(DATE_ADDED, mapping.getDateAdded());
+        cv.put(REGION, mapping.getMappingRegion());
 
         long id;
         if (isExist(mapping)){
@@ -130,59 +145,23 @@ public class MappingTable extends SQLiteOpenHelper {
     }
 
     public List<Mapping> getMappingData() {
-
         SQLiteDatabase db=getReadableDatabase();
-
         Cursor cursor = db.query(TABLE_NAME,columns,null,null,null,null,null,null);
-
         List<Mapping> mappingList=new ArrayList<>();
-
-
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-
-
-            Mapping mapping=new Mapping();
-
-            mapping.setId(cursor.getString(0));
-            mapping.setMappingName(cursor.getString(1));
-            mapping.setCountry(cursor.getString(2));
-            mapping.setCounty(cursor.getString(3));
-            mapping.setAddedBy(cursor.getInt(4));
-            mapping.setContactPerson(cursor.getString(5));
-            mapping.setContactPersonPhone(cursor.getString(6));
-            mapping.setComment(cursor.getString(7));
-            mapping.setDateAdded(cursor.getLong(8));
-            mapping.setSynced(cursor.getInt(9) == 1);
-            mapping.setDistrict(cursor.getString(10));
-            mapping.setSubCounty(cursor.getString(11));
-
-            mappingList.add(mapping);
+            mappingList.add(cursorToMapping(cursor));
         }
         db.close();
-
         return mappingList;
     }
 
     public Mapping getMappingByUuid(String uuid){
-        Mapping mapping = new Mapping();
         String whereClause = ID +" = ?";
         Log.d("======", "TREMAP "+ uuid);
         String[] whereArgs = new String[] {uuid};
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor=db.query(TABLE_NAME, columns, whereClause,whereArgs,null,null,null,null);
-        mapping.setId(cursor.getString(cursor.getColumnIndex(ID)));
-        mapping.setMappingName(cursor.getString(cursor.getColumnIndex(MAPPINGNAME)));
-        mapping.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
-        mapping.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
-        mapping.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
-        mapping.setContactPerson(cursor.getString(cursor.getColumnIndex(CONTACTPERSON)));
-        mapping.setContactPersonPhone(cursor.getString(cursor.getColumnIndex(CONTACTPERSONPHONE)));
-        mapping.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
-        mapping.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATE_ADDED)));
-        mapping.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED)) == 1);
-        mapping.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
-        mapping.setSubCounty(cursor.getString(cursor.getColumnIndex(SUBCOUNTY)));
-        return mapping;
+        return cursorToMapping(cursor);
     }
 
     public Mapping getMappingById(String uuid) {
@@ -195,22 +174,8 @@ public class MappingTable extends SQLiteOpenHelper {
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
             return null;
         }else {
-            Mapping mapping = new Mapping();
-            mapping.setId(cursor.getString(cursor.getColumnIndex(ID)));
-            mapping.setMappingName(cursor.getString(cursor.getColumnIndex(MAPPINGNAME)));
-            mapping.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
-            mapping.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
-            mapping.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
-            mapping.setContactPerson(cursor.getString(cursor.getColumnIndex(CONTACTPERSON)));
-            mapping.setContactPersonPhone(cursor.getString(cursor.getColumnIndex(CONTACTPERSONPHONE)));
-            mapping.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
-            mapping.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATE_ADDED)));
-            mapping.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED)) == 1);
-            mapping.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
-            mapping.setSubCounty(cursor.getString(cursor.getColumnIndex(SUBCOUNTY)));
-
+            Mapping mapping = cursorToMapping(cursor);
             db.close();
-
             return mapping;
         }
     }
@@ -227,21 +192,7 @@ public class MappingTable extends SQLiteOpenHelper {
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
         List<Mapping> mappingList=new ArrayList<>();
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-            Mapping mapping=new Mapping();
-            mapping.setId(cursor.getString(0));
-            mapping.setMappingName(cursor.getString(1));
-            mapping.setCountry(cursor.getString(2));
-            mapping.setCounty(cursor.getString(3));
-            mapping.setAddedBy(cursor.getInt(4));
-            mapping.setContactPerson(cursor.getString(5));
-            mapping.setContactPersonPhone(cursor.getString(6));
-            mapping.setComment(cursor.getString(7));
-            mapping.setDateAdded(cursor.getLong(8));
-            mapping.setSynced(cursor.getInt(9) == 1);
-            mapping.setDistrict(cursor.getString(10));
-            mapping.setSubCounty(cursor.getString(11));
-
-            mappingList.add(mapping);
+            mappingList.add(cursorToMapping(cursor));
         }
         db.close();
 
@@ -252,18 +203,8 @@ public class MappingTable extends SQLiteOpenHelper {
         String [] selection = new String[]{uuid};
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME, columns,ID, selection, null,null,null,null);
-        mapping.setId(cursor.getString(0));
-        mapping.setMappingName(cursor.getString(1));
-        mapping.setCountry(cursor.getString(2));
-        mapping.setCounty(cursor.getString(3));
-        mapping.setAddedBy(cursor.getInt(4));
-        mapping.setContactPerson(cursor.getString(5));
-        mapping.setContactPersonPhone(cursor.getString(6));
-        mapping.setComment(cursor.getString(7));
-        mapping.setDateAdded(cursor.getLong(8));
-        mapping.setSynced(cursor.getInt(9) == 1);
-        mapping.setDistrict(cursor.getString(10));
-        mapping.setSubCounty(cursor.getString(11));
+        mapping = cursorToMapping(cursor);
+        cursor.close();
         return mapping;
     }
     public Mapping getMappingByDistrict(String uuid){
@@ -271,18 +212,8 @@ public class MappingTable extends SQLiteOpenHelper {
         String [] selection = new String[]{uuid};
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME, columns,ID, selection, null,null,null,null);
-        mapping.setId(cursor.getString(0));
-        mapping.setMappingName(cursor.getString(1));
-        mapping.setCountry(cursor.getString(2));
-        mapping.setCounty(cursor.getString(3));
-        mapping.setAddedBy(cursor.getInt(4));
-        mapping.setContactPerson(cursor.getString(5));
-        mapping.setContactPersonPhone(cursor.getString(6));
-        mapping.setComment(cursor.getString(7));
-        mapping.setDateAdded(cursor.getLong(8));
-        mapping.setSynced(cursor.getInt(9) == 1);
-        mapping.setDistrict(cursor.getString(10));
-        mapping.setSubCounty(cursor.getString(11));
+        mapping = cursorToMapping(cursor);
+        cursor.close();
         return mapping;
     }
 
@@ -316,33 +247,53 @@ public class MappingTable extends SQLiteOpenHelper {
         }
         cursor.close();
         db.close();
-        Log.d("TREMAP", "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
-        Log.d("TREMAP", results.toString());
-        Log.d("TREMAP", "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[");
         return results;
     }
 
     public void fromJson (JSONObject jsonObject){
-        Log.d("Tremap", "Creating Mapping from JSON");
         Mapping mapping = new Mapping();
         try {
 
 
             mapping.setId(jsonObject.getString(ID));
-            mapping.setMappingName(jsonObject.getString(MAPPINGNAME));
-            mapping.setCountry(jsonObject.getString(COUNTRY));
-            mapping.setCounty(jsonObject.getString(COUNTY));
-            mapping.setAddedBy(jsonObject.getInt(ADDED_BY));
-            mapping.setContactPerson(jsonObject.getString(CONTACTPERSON));
-            mapping.setContactPersonPhone(jsonObject.getString(CONTACTPERSONPHONE));
-            mapping.setComment(jsonObject.getString(COMMENT));
-            mapping.setDateAdded(jsonObject.getLong(DATE_ADDED));
-            mapping.setSynced(jsonObject.getInt(SYNCED) == 1);
-            mapping.setDistrict(jsonObject.getString(DISTRICT));
-            mapping.setSubCounty(jsonObject.getString(SUBCOUNTY));
+            if (!jsonObject.isNull(MAPPINGNAME)){
+                mapping.setMappingName(jsonObject.getString(MAPPINGNAME));
+            }else{
+                mapping.setMappingName("");
+            }
+
+            if (!jsonObject.isNull(COUNTRY)){
+                mapping.setCountry(jsonObject.getString(COUNTRY));
+            }
+            if (!jsonObject.isNull(COUNTY)){
+                mapping.setCounty(jsonObject.getString(COUNTY));
+            }
+            if (!jsonObject.isNull(ADDED_BY)){
+                mapping.setAddedBy(jsonObject.getInt(ADDED_BY));
+            }
+            if (!jsonObject.isNull(CONTACTPERSON)){
+                mapping.setContactPerson(jsonObject.getString(CONTACTPERSON));
+            }
+            if (!jsonObject.isNull(CONTACTPERSONPHONE)){
+                mapping.setContactPersonPhone(jsonObject.getString(CONTACTPERSONPHONE));
+            }
+            if (!jsonObject.isNull(COMMENT)){
+                mapping.setComment(jsonObject.getString(COMMENT));
+            }
+            if (!jsonObject.isNull(DATE_ADDED)){
+                mapping.setDateAdded(jsonObject.getLong(DATE_ADDED));
+            }
+            if (!jsonObject.isNull(SYNCED)){
+                mapping.setSynced(jsonObject.getInt(SYNCED) == 1);
+            }
+            if (!jsonObject.isNull(DISTRICT)){
+                mapping.setDistrict(jsonObject.getString(DISTRICT));
+            }
+            if (!jsonObject.isNull(SUBCOUNTY)){
+                mapping.setSubCounty(jsonObject.getString(SUBCOUNTY));
+            }
             addData(mapping);
         }catch (Exception e){
-            Log.d("Tremap", "+++++++++++++++++++++++++++++++++++++++");
             Log.d("Tremap", "ERROR CREATING MAPPING FROM JSON");
             Log.d("Tremap", "CE ERROR "+e.getMessage());
         }
@@ -353,5 +304,46 @@ public class MappingTable extends SQLiteOpenHelper {
         db.execSQL(DB_UPDATE_V2);
         LocationDataSync locationDataSync = new LocationDataSync(context);
         locationDataSync.pollLocations();
+    }
+
+    private Mapping cursorToMapping(Cursor cursor){
+        Mapping mapping=new Mapping();
+        mapping.setId(cursor.getString(cursor.getColumnIndex(ID)));
+        mapping.setMappingName(cursor.getString(cursor.getColumnIndex(MAPPINGNAME)));
+        mapping.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+        mapping.setCounty(cursor.getString(cursor.getColumnIndex(COUNTY)));
+        mapping.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
+        mapping.setContactPerson(cursor.getString(cursor.getColumnIndex(CONTACTPERSON)));
+        mapping.setContactPersonPhone(cursor.getString(cursor.getColumnIndex(CONTACTPERSONPHONE)));
+        mapping.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+        mapping.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATE_ADDED)));
+        mapping.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED)) == 1);
+        mapping.setDistrict(cursor.getString(cursor.getColumnIndex(DISTRICT)));
+        mapping.setSubCounty(cursor.getString(cursor.getColumnIndex(SUBCOUNTY)));
+        mapping.setMappingRegion(cursor.getString(cursor.getColumnIndex(REGION)));
+        return mapping;
+    }
+
+    public boolean isFieldExist(String fieldName)
+    {
+        SQLiteDatabase db = getReadableDatabase();
+        boolean isExist = false;
+        Cursor res = null;
+        try {
+            res = db.rawQuery("Select * from "+ TABLE_NAME +" limit 1", null);
+            int colIndex = res.getColumnIndex(fieldName);
+            if (colIndex!=-1){
+                isExist = true;
+            }else{
+                Log.d("Tremap", "The col "+fieldName+" is NOT found");
+            }
+        } catch (Exception e) {
+            Log.d("Tremap", "Error getting  "+fieldName);
+        } finally {
+            try {
+                if (res !=null){ res.close();}
+            } catch (Exception e1) {}
+        }
+        return isExist;
     }
 }

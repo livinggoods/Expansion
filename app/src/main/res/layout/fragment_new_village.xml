@@ -402,7 +402,7 @@
                     android:id="@+id/editDistributors"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Major Distributors in the area"
+                    android:hint="Name of distributors in the area"
                     android:imeOptions="actionUnspecified"
                     android:inputType="text"
                     android:maxLines="1" />

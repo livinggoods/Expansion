@@ -409,6 +409,13 @@ public class RecruitmentsFragment extends Fragment  {
         swipeRefreshLayout.setRefreshing(false);
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(" Recruitments ");
+    }
+
     //====================================== End Gmail Methods======================================
 
 }

@@ -551,4 +551,12 @@ public class SessionManagement {
         return  pref.getString(API_TRAINING_ENDPOINT, "trainings");
     }
 
+    public void flagSynced(boolean synced){
+        editor.putBoolean("initialDataLoaded", synced);
+        editor.commit();
+    }
+
+    public boolean isInitialDataSynced(){
+        return pref.getBoolean("initialDataLoaded", false);
+    }
 }

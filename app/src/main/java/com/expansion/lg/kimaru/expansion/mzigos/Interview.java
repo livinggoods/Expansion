@@ -10,7 +10,9 @@ import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 public class Interview {
 
     Integer motivation, community, mentality, selling, health, investment;
-    Integer interpersonal, commitment, total, addedBy, synced, selected;
+    Integer interpersonal, commitment, total, addedBy, synced, selected, readAndInterpret,
+            interviewerMotivationAssessment, interviewerAgeAssessment, interviewerResidenyAssessment,
+            interviewerBracAssessment, interviewerAbilityToReadAssessment, interviewerQualifyAssessment;
     String comment, id, applicant, recruitment, country;
     Long dateAdded;
     boolean isRead, isImportant, canJoin;
@@ -24,7 +26,9 @@ public class Interview {
     public Interview(String id, String applicant, String recruitment, Integer motivation, Integer community,
                      Integer mentality, Integer selling, Integer health, Integer investment,
                      Integer interpersonal, Integer commitment, Integer selected, Integer addedBy,
-                     Long dateAdded, Integer synced, String comment, boolean canJoin, String country) {
+                     Long dateAdded, Integer synced, String comment, boolean canJoin, String country,
+                     Integer readAndInterpret, Integer interviewerMotivationAssessment, Integer interviewerAgeAssessment, Integer interviewerResidenyAssessment,
+                     Integer interviewerBracAssessment, Integer interviewerAbilityToReadAssessment, Integer interviewerQualifyAssessment) {
         this.applicant = applicant;
         this.recruitment = recruitment;
         this.motivation = motivation;
@@ -43,11 +47,43 @@ public class Interview {
         this.country = country;
         this.id = id;
         this.canJoin = canJoin;
+        this.interviewerMotivationAssessment=interviewerMotivationAssessment;
+        this.interviewerAgeAssessment=interviewerAgeAssessment;
+        this.interviewerResidenyAssessment=interviewerResidenyAssessment;
+        this.interviewerBracAssessment=interviewerBracAssessment;
+        this.interviewerAbilityToReadAssessment=interviewerAbilityToReadAssessment;
+        this.interviewerQualifyAssessment=interviewerQualifyAssessment;
+        this.readAndInterpret = readAndInterpret;
         this.total = (motivation + community + mentality + selling + health + investment + interpersonal + commitment);
     }
 
 
     // Get Methods
+
+
+    public Integer getInterviewerMotivationAssessment() {
+        return interviewerMotivationAssessment;
+    }
+
+    public Integer getInterviewerAgeAssessment() {
+        return interviewerAgeAssessment;
+    }
+
+    public Integer getInterviewerResidenyAssessment() {
+        return interviewerResidenyAssessment;
+    }
+
+    public Integer getInterviewerBracAssessment() {
+        return interviewerBracAssessment;
+    }
+
+    public Integer getInterviewerAbilityToReadAssessment() {
+        return interviewerAbilityToReadAssessment;
+    }
+
+    public Integer getInterviewerQualifyAssessment() {
+        return interviewerQualifyAssessment;
+    }
 
     public String getApplicant() {
         return applicant;
@@ -168,6 +204,9 @@ public class Interview {
         return interviewTotal;
     }
 
+    public Integer getReadAndInterpret() {
+        return readAndInterpret;
+    }
 
     //Set Methods
 
@@ -259,5 +298,33 @@ public class Interview {
         }else{
             return false;
         }
+    }
+
+    public void setReadAndInterpret(Integer readAndInterpret) {
+        this.readAndInterpret = readAndInterpret;
+    }
+
+    public void setInterviewerMotivationAssessment(Integer interviewerMotivationAssessment) {
+        this.interviewerMotivationAssessment = interviewerMotivationAssessment;
+    }
+
+    public void setInterviewerAgeAssessment(Integer interviewerAgeAssessment) {
+        this.interviewerAgeAssessment = interviewerAgeAssessment;
+    }
+
+    public void setInterviewerResidenyAssessment(Integer interviewerResidenyAssessment) {
+        this.interviewerResidenyAssessment = interviewerResidenyAssessment;
+    }
+
+    public void setInterviewerBracAssessment(Integer interviewerBracAssessment) {
+        this.interviewerBracAssessment = interviewerBracAssessment;
+    }
+
+    public void setInterviewerAbilityToReadAssessment(Integer interviewerAbilityToReadAssessment) {
+        this.interviewerAbilityToReadAssessment = interviewerAbilityToReadAssessment;
+    }
+
+    public void setInterviewerQualifyAssessment(Integer interviewerQualifyAssessment) {
+        this.interviewerQualifyAssessment = interviewerQualifyAssessment;
     }
 }

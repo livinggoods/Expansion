@@ -89,6 +89,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public static final String REFERRAL_TITLE = "referral_title";
     public static final String VHT = "vht";
     public static final String PARISH = "parish";
+    //public static final String PARISH_ID = "parish_id";
     public static final String ACCOUNTS = "financial_accounts";
     public static final String REC_TRANSPORT = "recruitment_transport";
     public static final String BRANCH_TRANPORT = "branch_transport";

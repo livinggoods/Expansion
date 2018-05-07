@@ -40,6 +40,8 @@
     <string name="nav_cloud">Cloud</string>
     <string name="nav_app_setting">Settings</string>
     <string name="nav_sub_county_screening">Sub County Screening</string>
+    <string name="nav_logout">Logout</string>
+
 
     <!-- Toolbar titles when navigation menu item is selected -->
     <string-array name="nav_item_activity_titles">
@@ -115,4 +117,130 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- Marking Criteria -->
+    <string name="motivation_marking">
+        Responsibilities: Serve community (educate and treat), time commitment, attend trainings, represent LG
+        \n\nFree time to spend (2hrs p/day). Empathetic. Wants to serve community
+    </string>
+    <string name="community_marking">
+        Never worked in the community, no expectations about the work/or worked in the community
+        but disliked it (1).
+        \n\nNever worked in the community,
+        but looking forward to clearly articulated aspects/worked in the community but didn’t
+        like certain aspects (2-3).
+        \n\nExperience working in the community, enjoyed work (4-5)
+    </string>
+    <string name="mentality_marking">
+        Cant/won’t attend unless paid for (1)
+        \n\nWill attend if reimbursed (3)
+        \n\nWill attend, no problem (5)
+    </string>
+    <string name="selling_marking">
+        Never sold anything (1)
+        \n\nSells small amounts less than 10,000 UGX p/mon e.g. charcoal (2-3)
+        \n\nCurrently successfully selling branded products e.g. solar/stoves etc. X UGX p/mon (4-5)
+    </string>
+    <string name="health_interest_marking">
+
+    </string>
+    <string name="investment_marking">
+        No ability to invest capital – uses it to cover personal costs (1-2)
+        \n\nInvest 50% capital (3)\n
+        \n\nInvest all capital (4-5)
+    </string>
+    <string name="interpersonal_marking">
+        Has no interpersonal skills e.g. no eye contact, speaks too softly, nervous (1-2)
+        \n\nEngages the interviewee but provides wrong information, good eye conduct, speaks well etc. (3)
+        \n\nEngages interviewee, provides correct information (4-5)
+    </string>
+    <string name="commitment_marking">
+        Plans to leave area (1)
+        \n\nPlans to leave, or upcoming significant commitment e.g. currently pregnant,
+        chaotic home life, no child care options etc. (2)
+        \n\nCan commit required time amount but vague responses (3)
+        \n\nCan commit, specific examples of how she will manage her affairs and time(4-5)
+    </string>
+
+    <string name="reading_marking">
+        Cannot read or interpret (1)
+        \n\nReads and interprets at very basic level (2)
+        \n\nReads and interprets at minimum level (3)
+        \n\nReads and interprets with few mistakes (4)
+        \n\nReads and interprets with no mistakes (5)
+    </string>
+
+
+    <!-- text size -->
+    <string name="text_bold">bold</string>
+    <!-- Interview Questions -->
+    <string name="motivation_question">
+        What do you think the responsibilities of a Community Health Promoter are? What makes you
+        think that you can  carry out these responsibilities?
+    </string>
+    <string name="community_question">
+        Have you worked in the community in your area? With which organizations?
+        What did you like about this work?  What did you dislike?
+    </string>
+    <string name="mentality_question">
+        An Organization invites you for a 3-day training offering you free meals, health education
+        and tools to use but doesn’t provide daily transport of 10,000/=.
+        Will you be able to attend the training?
+    </string>
+    <string name="selling_question">
+        What do you do for a living now? Have you ever sold goods or services
+         (give an example of goods and of services, i.e. charcoal and tailoring, etc.)?
+        What did you do  to improve sales?
+    </string>
+    <string name="health_interest_question">
+        Are you interested in health?
+    </string>
+    <string name="investment_question">
+        You have made profits of 50,000/= in 3 days from capital of 200,000/=
+        and you realize you need to invest more capital to earn more profits.
+        How much do you think you can invest?
+    </string>
+    <string name="interpersonal_question">
+        Role Play: As a CHP, you will be encouraging your friends and neighbors to adopt healthy
+        living behaviors, such as sleeping under an bed net, washing their hands and going to the
+        local Health Centre for ante-natal check-ups. Engage the interviewee in a role-play,
+        where she is a CHP and is trying to convince the interviewer,
+        playing the role of a neighbor, to sleep under a bed net.
+    </string>
+    <string name="commitment_question">
+        How do you usually spend your day? What’s your plan in the coming 3 months?
+        If you were to be taken by Living Goods, how much time would you dedicate to Living Goods:
+        how many days a week? How many hours a day? We cannot allow children to training –
+        do you have someone to care for them? Can you commit to training weeks?
+    </string>
+    <string name="conditions_question">
+        DO NOT READ THIS QUESTION ALOUD: Does this candidate have any conditions that
+        would prevent them from being a successful CHP (e.g. pregnancy, advanced disabilities)?
+    </string>
+    <string name="read_and_interpret_question">
+        Read and Interpret Passage
+    </string>
+    <string name="comments_question">
+        General Comment (be objective, state any unique feature observed, if any);
+    </string>
+    <string name="good_motivation_comment">
+        Good Motivation and Attitude
+    </string>
+    <string name="age_comment">
+        Age (30-55yrs)
+    </string>
+    <string name="residency_comment">
+        Residency (2yrs or more, not moving)
+    </string>
+    <string name="brac_comment">
+        Not a BRAC CHP
+    </string>
+    <string name="read_interpret_comment">
+        Ability to read and interpret English
+    </string>
+    <string name="qualifies_comment">
+        Qualifies
+    </string>
+
 </resources>

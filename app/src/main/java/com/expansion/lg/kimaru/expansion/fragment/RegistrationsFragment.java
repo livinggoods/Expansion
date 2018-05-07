@@ -770,7 +770,7 @@ public class RegistrationsFragment extends Fragment  {
                                 totalI.toString()+","+
                                 canJoin.toString()+","+
                                 recruitmentTransport.toString() +","+
-                                comments.replaceAll(",",";")+","+
+                                comments.trim().replaceAll(",",";").replaceAll("\n",":").replaceAll("\r",":")+","+
                                 qualify.toString()+","+
                                 userNames.toString()+","+
                                 invite.toString();
@@ -859,10 +859,12 @@ public class RegistrationsFragment extends Fragment  {
                             invite = interview.getSelected().equals(1) ? "Y" : interview.getSelected().equals(0) ? "N" : "Waiting";
                             userNames = new UserTable(getContext()).getUserById(interview.getAddedBy()).getName();
                         }
-
-                        String record = registration.getReferralName() +","+
-                                registration.getReferralTitle() +","+
-                                registration.getReferralPhone()+","+
+                        //chewReferral.getName() +","+
+                        //chewReferral.getPhone()+","+
+                        ChewReferral chewReferral = new ChewReferralTable(getContext()).getChewReferralById(registration.getChewUuid());
+                        String record = chewReferral.getName() +","+
+                                chewReferral.getTitle() +","+
+                                chewReferral.getPhone()+","+
                                 (registration.isVht() ? "Y" : "N") +","+
                                 registration.getName() +","+
                                 registration.getPhone() +","+

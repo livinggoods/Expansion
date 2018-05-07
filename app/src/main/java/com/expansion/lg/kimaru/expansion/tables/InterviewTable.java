@@ -58,9 +58,18 @@ public class InterviewTable extends SQLiteOpenHelper {
     public static final String ADDED_BY = "added_by";
     public static final String COMMENT = "comment";
     public static final String DATE_ADDED = "client_time";
+    public static final String INTERVIEWER_ASSESSMENT_GOOD_MOTIVATION = "interviewer_motivation";
+    public static final String INTERVIEWER_ASSESSMENT_AGE = "interviewer_age";
+    public static final String INTERVIEWER_ASSESSMENT_RESIDENCY = "interviewer_residency";
+    public static final String INTERVIEWER_ASSESSMENT_BRAC_CHP = "interviewer_brac";
+    public static final String INTERVIEWER_ASSESSMENT_QUALIFIES = "interviewer_qualifies";
+    public static final String INTERVIEWER_ASSESSMENT_ABILITY_TO_READ = "interviewer_read";
+    public static final String READ_AND_INTERPRET_PASSAGE = "read_and_interpret";
     String [] columns=new String[]{ID, APPLICANT, RECRUITMENT, MOTIVATION, COMMUNITY,MENTALITY,
             SELLING, HEALTH, INVESTMENT, INTERPERSONAL, TOTAL, SELECTED, ADDED_BY, COMMENT,
-            COMMITMENT, DATE_ADDED, SYNCED, CANJOIN, COUNTRY};
+            COMMITMENT, DATE_ADDED, SYNCED, CANJOIN, COUNTRY, READ_AND_INTERPRET_PASSAGE,
+            INTERVIEWER_ASSESSMENT_GOOD_MOTIVATION, INTERVIEWER_ASSESSMENT_AGE, INTERVIEWER_ASSESSMENT_RESIDENCY,
+            INTERVIEWER_ASSESSMENT_BRAC_CHP, INTERVIEWER_ASSESSMENT_ABILITY_TO_READ, INTERVIEWER_ASSESSMENT_QUALIFIES};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ", "
@@ -80,20 +89,93 @@ public class InterviewTable extends SQLiteOpenHelper {
             + SELECTED + integer_field + ", "
             + ADDED_BY + integer_field + ", "
             + COMMENT + text_field + ", "
+            + READ_AND_INTERPRET_PASSAGE + integer_field + ", "
+            + INTERVIEWER_ASSESSMENT_GOOD_MOTIVATION + integer_field + ", "
+            + INTERVIEWER_ASSESSMENT_AGE + integer_field + ", "
+            + INTERVIEWER_ASSESSMENT_RESIDENCY + integer_field + ", "
+            + INTERVIEWER_ASSESSMENT_BRAC_CHP + integer_field + ", "
+            + INTERVIEWER_ASSESSMENT_ABILITY_TO_READ + integer_field + ", "
+            + INTERVIEWER_ASSESSMENT_QUALIFIES + integer_field + ", "
             + DATE_ADDED + integer_field + ", "
             + SYNCED + integer_field + ") ";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
+    public static final String ADD_READ_FIELD = "ALTER TABLE " + TABLE_NAME +
+            "  ADD "+ READ_AND_INTERPRET_PASSAGE + integer_field +";";
+
+    public static final String ADD_INTERVIEWER_MOTIVATION = "ALTER TABLE " + TABLE_NAME +
+            "  ADD "+ INTERVIEWER_ASSESSMENT_GOOD_MOTIVATION + integer_field +";";
+
+    public static final String ADD_INTERVIEWER_AGE_FIELD = "ALTER TABLE " + TABLE_NAME +
+            "  ADD "+ INTERVIEWER_ASSESSMENT_AGE + integer_field +";";
+    public static final String ADD_INTERVIEWER_RESIDENCY_FIELD = "ALTER TABLE " + TABLE_NAME +
+            "  ADD "+ INTERVIEWER_ASSESSMENT_RESIDENCY + integer_field +";";
+    public static final String ADD_INTERVIEWER_BRAC_CHP_FIELD = "ALTER TABLE " + TABLE_NAME +
+            "  ADD "+ INTERVIEWER_ASSESSMENT_BRAC_CHP + integer_field +";";
+    public static final String ADD_INTERVIEWER_ABILITY_TO_READ = "ALTER TABLE " + TABLE_NAME +
+            "  ADD "+ INTERVIEWER_ASSESSMENT_ABILITY_TO_READ + integer_field +";";
+    public static final String ADD_INTERVIEWER_QUALIFIES = "ALTER TABLE " + TABLE_NAME +
+            "  ADD "+ INTERVIEWER_ASSESSMENT_QUALIFIES + integer_field +";";
 
     public InterviewTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);
+        if (!isFieldExist(READ_AND_INTERPRET_PASSAGE)){
+            this.addReadAndinterpretField();
+        }
+        if (!isFieldExist(INTERVIEWER_ASSESSMENT_GOOD_MOTIVATION)){
+            this.addInterviewerGoodMotivation();
+        }
+
+        if (!isFieldExist(INTERVIEWER_ASSESSMENT_AGE)){
+            this.addInterviewerAge();
+        }
+        if (!isFieldExist(INTERVIEWER_ASSESSMENT_RESIDENCY)){
+            this.addInterviewerResidency();
+        }
+        if (!isFieldExist(INTERVIEWER_ASSESSMENT_BRAC_CHP)){
+            this.addInterviewerBracChp();
+        }
+        if (!isFieldExist(INTERVIEWER_ASSESSMENT_ABILITY_TO_READ)){
+            this.addInterviewerAbilityToRead();
+        }
+        if (!isFieldExist(INTERVIEWER_ASSESSMENT_QUALIFIES)){
+            this.addInterviewerQualifies();
+        }
+    }
+    public void addReadAndinterpretField(){
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL(ADD_READ_FIELD);
+    }
+    public void addInterviewerGoodMotivation(){
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL(ADD_INTERVIEWER_MOTIVATION);
+    }
+    public void addInterviewerAge(){
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL(ADD_INTERVIEWER_AGE_FIELD);
+    }
+    public void addInterviewerResidency(){
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL(ADD_INTERVIEWER_RESIDENCY_FIELD);
+    }
+    public void addInterviewerBracChp(){
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL(ADD_INTERVIEWER_BRAC_CHP_FIELD);
+    }
+    public void addInterviewerAbilityToRead(){
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL(ADD_INTERVIEWER_ABILITY_TO_READ);
+    }
+
+    public void addInterviewerQualifies(){
+        SQLiteDatabase db = getReadableDatabase();
+        db.execSQL(ADD_INTERVIEWER_QUALIFIES);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
 
         db.execSQL(CREATE_DATABASE);
-
     }
 
     @Override
@@ -129,6 +211,13 @@ public class InterviewTable extends SQLiteOpenHelper {
         cv.put(COMMITMENT, interview.getCommitment());
         cv.put(DATE_ADDED, interview.getDateAdded());
         cv.put(SYNCED, interview.getSynced());
+        cv.put(READ_AND_INTERPRET_PASSAGE, interview.getReadAndInterpret());
+        cv.put(INTERVIEWER_ASSESSMENT_GOOD_MOTIVATION, interview.getInterviewerMotivationAssessment());
+        cv.put(INTERVIEWER_ASSESSMENT_AGE, interview.getInterviewerAgeAssessment());
+        cv.put(INTERVIEWER_ASSESSMENT_RESIDENCY, interview.getInterviewerResidenyAssessment());
+        cv.put(INTERVIEWER_ASSESSMENT_BRAC_CHP, interview.getInterviewerBracAssessment());
+        cv.put(INTERVIEWER_ASSESSMENT_ABILITY_TO_READ, interview.getInterviewerAbilityToReadAssessment());
+        cv.put(INTERVIEWER_ASSESSMENT_QUALIFIES, interview.getInterviewerQualifyAssessment());
 
         long id;
         if (isExist(interview)){
@@ -152,52 +241,23 @@ public class InterviewTable extends SQLiteOpenHelper {
     }
 
     public List<Interview> getInterviewData() {
-
         SQLiteDatabase db=getReadableDatabase();
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
-
         List<Interview> interviewList=new ArrayList<>();
-
-
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-
-
-            Interview interview = new Interview();
-
-            interview.setId(cursor.getString(0));
-            interview.setApplicant(cursor.getString(1));
-            interview.setRecruitment(cursor.getString(2));
-            interview.setMotivation(cursor.getInt(3));
-            interview.setCommunity(cursor.getInt(4));
-            interview.setMentality(cursor.getInt(5));
-            interview.setSelling(cursor.getInt(6));
-            interview.setHealth(cursor.getInt(7));
-            interview.setInvestment(cursor.getInt(8));
-            interview.setInterpersonal(cursor.getInt(9));
-            interview.setSelected(cursor.getInt(11));
-            interview.setAddedBy(cursor.getInt(12));
-            interview.setComment(cursor.getString(13));
-            interview.setCommitment(cursor.getInt(14));
-            interview.setDateAdded(cursor.getLong(15));
-            interview.setSynced(cursor.getInt(16));
-            interview.setCanJoin(cursor.getInt(17) == 1);
-            interview.setCountry(cursor.getString(18));
-
+            Interview interview = cursorToInterview(cursor);
             interviewList.add(interview);
         }
-
-        db.close();
-
+        cursor.close();
         return interviewList;
     }
     public Cursor getInterviewDataCursor() {
-
         SQLiteDatabase db=getReadableDatabase();
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
         db.close();
         return cursor;
     }
+
     public Interview getInterviewByRegistrationId (String registrationUuid){
         SQLiteDatabase db = getReadableDatabase();
         String whereClause = APPLICANT+" = ?";
@@ -210,28 +270,8 @@ public class InterviewTable extends SQLiteOpenHelper {
             return null;
         }else{
 
-            Interview interview = new Interview();
-
-            interview.setId(cursor.getString(0));
-            interview.setApplicant(cursor.getString(1));
-            interview.setRecruitment(cursor.getString(2));
-            interview.setMotivation(cursor.getInt(3));
-            interview.setCommunity(cursor.getInt(4));
-            interview.setMentality(cursor.getInt(5));
-            interview.setSelling(cursor.getInt(6));
-            interview.setHealth(cursor.getInt(7));
-            interview.setInvestment(cursor.getInt(8));
-            interview.setInterpersonal(cursor.getInt(9));
-            // interview.setTotal(cursor.getInt(10));
-            interview.setSelected(cursor.getInt(11));
-            interview.setAddedBy(cursor.getInt(12));
-            interview.setComment(cursor.getString(13));
-            interview.setCommitment(cursor.getInt(14));
-            interview.setDateAdded(cursor.getLong(15));
-            interview.setSynced(cursor.getInt(16));
-            interview.setCanJoin(cursor.getInt(17) == 1);
-            interview.setCountry(cursor.getString(18));
-            db.close();
+            Interview interview = cursorToInterview(cursor);
+            cursor.close();
             return interview;
         }
     }
@@ -243,33 +283,11 @@ public class InterviewTable extends SQLiteOpenHelper {
                 id,
         };
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
-
         if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
             return null;
         }else{
-
-            Interview interview = new Interview();
-
-            interview.setId(cursor.getString(0));
-            interview.setApplicant(cursor.getString(1));
-            interview.setRecruitment(cursor.getString(2));
-            interview.setMotivation(cursor.getInt(3));
-            interview.setCommunity(cursor.getInt(4));
-            interview.setMentality(cursor.getInt(5));
-            interview.setSelling(cursor.getInt(6));
-            interview.setHealth(cursor.getInt(7));
-            interview.setInvestment(cursor.getInt(8));
-            interview.setInterpersonal(cursor.getInt(9));
-            // interview.setTotal(cursor.getInt(10));
-            interview.setSelected(cursor.getInt(11));
-            interview.setAddedBy(cursor.getInt(12));
-            interview.setComment(cursor.getString(13));
-            interview.setCommitment(cursor.getInt(14));
-            interview.setDateAdded(cursor.getLong(15));
-            interview.setSynced(cursor.getInt(16));
-            interview.setCanJoin(cursor.getInt(17) == 1);
-            interview.setCountry(cursor.getString(18));
-            db.close();
+            Interview interview = cursorToInterview(cursor);
+            cursor.close();
             return interview;
         }
     }
@@ -285,40 +303,12 @@ public class InterviewTable extends SQLiteOpenHelper {
                 recruitment.getId(),
         };
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
-
-
         List<Interview> interviewList=new ArrayList<>();
-
-
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-
-
-            Interview interview = new Interview();
-
-            interview.setId(cursor.getString(0));
-            interview.setApplicant(cursor.getString(1));
-            interview.setRecruitment(cursor.getString(2));
-            interview.setMotivation(cursor.getInt(3));
-            interview.setCommunity(cursor.getInt(4));
-            interview.setMentality(cursor.getInt(5));
-            interview.setSelling(cursor.getInt(6));
-            interview.setHealth(cursor.getInt(7));
-            interview.setInvestment(cursor.getInt(8));
-            interview.setInterpersonal(cursor.getInt(9));
-            interview.setSelected(cursor.getInt(11));
-            interview.setAddedBy(cursor.getInt(12));
-            interview.setComment(cursor.getString(13));
-            interview.setCommitment(cursor.getInt(14));
-            interview.setDateAdded(cursor.getLong(15));
-            interview.setSynced(cursor.getInt(16));
-            interview.setCanJoin(cursor.getInt(17) == 1);
-            interview.setCountry(cursor.getString(18));
-
+            Interview interview = cursorToInterview(cursor);
             interviewList.add(interview);
         }
-
         db.close();
-
         return interviewList;
     }
 
@@ -343,25 +333,26 @@ public class InterviewTable extends SQLiteOpenHelper {
             interview.setDateAdded(jsonObject.getLong(InterviewTable.DATE_ADDED));
             interview.setSynced(jsonObject.getInt(InterviewTable.SYNCED));
             interview.setCanJoin(jsonObject.getInt(InterviewTable.CANJOIN) == 1);
-
+            interview.setReadAndInterpret(jsonObject.getInt(READ_AND_INTERPRET_PASSAGE));
+            interview.setInterviewerMotivationAssessment(jsonObject.getInt(INTERVIEWER_ASSESSMENT_GOOD_MOTIVATION));
+            interview.setInterviewerAgeAssessment(jsonObject.getInt(INTERVIEWER_ASSESSMENT_AGE));
+            interview.setInterviewerResidenyAssessment(jsonObject.getInt(INTERVIEWER_ASSESSMENT_RESIDENCY));
+            interview.setInterviewerBracAssessment(jsonObject.getInt(INTERVIEWER_ASSESSMENT_BRAC_CHP));
+            interview.setInterviewerAbilityToReadAssessment(jsonObject.getInt(INTERVIEWER_ASSESSMENT_ABILITY_TO_READ));
+            interview.setInterviewerQualifyAssessment(jsonObject.getInt(INTERVIEWER_ASSESSMENT_QUALIFIES));
+            // add six fields
             this.addData(interview);
         }catch (Exception e){}
     }
 
     public JSONObject getInterviewJson() {
-
         SQLiteDatabase db=getReadableDatabase();
-
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
-
         JSONObject results = new JSONObject();
-
         JSONArray resultSet = new JSONArray();
-
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
             int totalColumns = cursor.getColumnCount();
             JSONObject rowObject = new JSONObject();
-
             for (int i =0; i < totalColumns; i++){
                 if (cursor.getColumnName(i) != null){
                     try {
@@ -377,9 +368,7 @@ public class InterviewTable extends SQLiteOpenHelper {
             resultSet.put(rowObject);
             try {
                 results.put(JSON_ROOT, resultSet);
-            } catch (JSONException e) {
-
-            }
+            } catch (JSONException e) {}
         }
         cursor.close();
         db.close();
@@ -387,23 +376,17 @@ public class InterviewTable extends SQLiteOpenHelper {
     }
 
     public JSONObject getInterviewsToSyncAsJson() {
-
         SQLiteDatabase db=getReadableDatabase();
         String whereClause = SYNCED+" = ?";
         String[] whereArgs = new String[] {
                 "0",
         };
-
         Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
-
         JSONObject results = new JSONObject();
-
         JSONArray resultSet = new JSONArray();
-
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
             int totalColumns = cursor.getColumnCount();
             JSONObject rowObject = new JSONObject();
-
             for (int i =0; i < totalColumns; i++){
                 if (cursor.getColumnName(i) != null){
                     try {
@@ -419,13 +402,64 @@ public class InterviewTable extends SQLiteOpenHelper {
             resultSet.put(rowObject);
             try {
                 results.put(JSON_ROOT, resultSet);
-            } catch (JSONException e) {
-
-            }
+            } catch (JSONException e) {}
         }
         cursor.close();
         db.close();
         return results;
+    }
+    private Interview cursorToInterview(Cursor cursor){
+        Interview interview = new Interview();
+        interview.setId(cursor.getString(cursor.getColumnIndex(ID)));
+        interview.setApplicant(cursor.getString(cursor.getColumnIndex(APPLICANT)));
+        interview.setRecruitment(cursor.getString(cursor.getColumnIndex(RECRUITMENT)));
+        interview.setMotivation(cursor.getInt(cursor.getColumnIndex(MOTIVATION)));
+        interview.setCommunity(cursor.getInt(cursor.getColumnIndex(COMMUNITY)));
+        interview.setMentality(cursor.getInt(cursor.getColumnIndex(MENTALITY)));
+        interview.setSelling(cursor.getInt(cursor.getColumnIndex(SELLING)));
+        interview.setHealth(cursor.getInt(cursor.getColumnIndex(HEALTH)));
+        interview.setInvestment(cursor.getInt(cursor.getColumnIndex(INVESTMENT)));
+        interview.setInterpersonal(cursor.getInt(cursor.getColumnIndex(INTERPERSONAL)));
+        interview.setSelected(cursor.getInt(cursor.getColumnIndex(SELECTED)));
+        interview.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDED_BY)));
+        interview.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+        interview.setCommitment(cursor.getInt(cursor.getColumnIndex(COMMITMENT)));
+        interview.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATE_ADDED)));
+        interview.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED)));
+        interview.setCanJoin(cursor.getInt(cursor.getColumnIndex(CANJOIN)) == 1);
+        interview.setReadAndInterpret(cursor.getInt(cursor.getColumnIndex(READ_AND_INTERPRET_PASSAGE)));
+        interview.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+        interview.setReadAndInterpret(cursor.getInt(cursor.getColumnIndex(READ_AND_INTERPRET_PASSAGE)));
+        interview.setInterviewerMotivationAssessment(cursor.getInt(cursor.getColumnIndex(INTERVIEWER_ASSESSMENT_GOOD_MOTIVATION)));
+        interview.setInterviewerAgeAssessment(cursor.getInt(cursor.getColumnIndex(INTERVIEWER_ASSESSMENT_AGE)));
+        interview.setInterviewerResidenyAssessment(cursor.getInt(cursor.getColumnIndex(INTERVIEWER_ASSESSMENT_RESIDENCY)));
+        interview.setInterviewerBracAssessment(cursor.getInt(cursor.getColumnIndex(INTERVIEWER_ASSESSMENT_BRAC_CHP)));
+        interview.setInterviewerAbilityToReadAssessment(cursor.getInt(cursor.getColumnIndex(INTERVIEWER_ASSESSMENT_ABILITY_TO_READ)));
+        interview.setInterviewerQualifyAssessment(cursor.getInt(cursor.getColumnIndex(INTERVIEWER_ASSESSMENT_QUALIFIES)));
+        return interview;
+    }
+
+    public boolean isFieldExist(String fieldName)
+    {
+        SQLiteDatabase db = getReadableDatabase();
+        boolean isExist = false;
+        Cursor res = null;
+        try {
+            res = db.rawQuery("Select * from "+ TABLE_NAME +" limit 1", null);
+            int colIndex = res.getColumnIndex(fieldName);
+            if (colIndex!=-1){
+                isExist = true;
+            }else{
+                Log.d("Tremap", "The col "+fieldName+" is NOT found");
+            }
+        } catch (Exception e) {
+            Log.d("Tremap", "Error getting  "+fieldName);
+        } finally {
+            try {
+                if (res !=null){ res.close();}
+            } catch (Exception e1) {}
+        }
+        return isExist;
     }
     private void upgradeVersion2(SQLiteDatabase db) {}
 }
