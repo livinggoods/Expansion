@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.telephony.PhoneNumberUtils;
@@ -19,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -77,7 +79,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
 
     TextView textshow;
     EditText mName;
-    EditText mPhone;
+    //EditText mPhone;
     RadioGroup mGender;
     //EditText editReferralName;
     //EditText editReferralNumber;
@@ -105,6 +107,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     EditText mDateAdded;
     EditText mSync;
     Spinner educationLevel, selectChew, selectSubCounty, selectParish, selectVillage;
+    Button addAnotherPhone;
 
     Button buttonSave, buttonList;
 
@@ -136,6 +139,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     private String referralTitle = "";
     private String referralName = "";
     private String referralPhone = "";
+    LinearLayout linearLayout;
 
 
     public NewRegistrationFragment() {
@@ -190,10 +194,32 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         userId = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
         Recruitment recruitment = session.getSavedRecruitment();
         recruitmentId = recruitment.getId();
+        addAnotherPhone = (Button) v.findViewById(R.id.addAnotherPhone);
+        addAnotherPhone.setOnClickListener(this);
+        linearLayout = (LinearLayout) v.findViewById(R.id.linearPhoneLayout);
+
+        //phone number editText
+        EditText phoneNumber = new EditText(getContext());
+        phoneNumber.setId(View.generateViewId());
+        phoneNumber.setHint(R.string.add_phone_number);
+        LinearLayout.LayoutParams phoneNumberParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        //android:inputType="phone"
+        phoneNumber.setInputType(InputType.TYPE_CLASS_PHONE);
+        phoneNumber.setLayoutParams(phoneNumberParams);
+
+        //Since the editText exists in TextInpoutLayout, we create one and put in it the editText
+        TextInputLayout textInputLayout = new TextInputLayout(getContext());
+        textInputLayout.setId(View.generateViewId());
+        LinearLayout.LayoutParams phoneLayoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        textInputLayout.setLayoutParams(phoneLayoutParams);
+        textInputLayout.addView(phoneNumber, phoneNumberParams);
+        linearLayout.addView(textInputLayout, phoneLayoutParams);
+
 
         //Initialize the UI Components
         mName = (EditText) v.findViewById(R.id.editName);
-        mPhone = (EditText) v.findViewById(R.id.editPhone);
         mGender = (RadioGroup) v.findViewById(R.id.editGender);
         //mVillage = (EditText) v.findViewById(R.id.editVillage);
         mMark = (EditText) v.findViewById(R.id.editLandmark);
@@ -488,6 +514,29 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 if (selectChew.getSelectedItemPosition() > chewReferralList.size() -1){
                     showDialog();
                 }
+                break;
+
+            case R.id.addAnotherPhone:
+                //phone number editText
+                EditText phoneNumber = new EditText(getContext());
+                phoneNumber.setId(View.generateViewId());
+                phoneNumber.setHint(R.string.add_phone_number);
+                LinearLayout.LayoutParams phoneNumberParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                //android:inputType="phone"
+                phoneNumber.setInputType(InputType.TYPE_CLASS_PHONE);
+                phoneNumber.setLayoutParams(phoneNumberParams);
+
+                //Since the editText exists in TextInpoutLayout, we create one and put in it the editText
+                TextInputLayout textInputLayout = new TextInputLayout(getContext());
+                textInputLayout.setId(View.generateViewId());
+                LinearLayout.LayoutParams phoneLayoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                textInputLayout.setLayoutParams(phoneLayoutParams);
+                textInputLayout.addView(phoneNumber, phoneNumberParams);
+                linearLayout.addView(textInputLayout, phoneLayoutParams);
+
+                break;
 
 
             case R.id.buttonSaveRegistration:
@@ -501,7 +550,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                     registrationId = UUID.randomUUID().toString();
                 }
                 String applicantName = mName.getText().toString();
-                String applicantPhone = mPhone.getText().toString();
+                String applicantPhone = "";
 
                 Integer selectedGender = mGender.getCheckedRadioButtonId();
                 RadioButton genderRadioButton =(RadioButton) mGender.findViewById(selectedGender);
@@ -602,39 +651,76 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                     Toast.makeText(getContext(), "Name cannot be blank", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                //if (applicantVillage.trim().equals("")){
-                //    mVillage.requestFocus();
-                //    Toast.makeText(getContext(), "Village is required", Toast.LENGTH_SHORT).show();
-                //    return;
-                //}
-                if (!applicantPhone.trim().equals("")){
-                    if (applicantPhone.trim().startsWith("+")){
-                        if (applicantPhone.length() != 13){
+                // also validate other added phone numbers, and push them to a list
+                ArrayList<String> phoneNumbers = new ArrayList<>();
+
+                if (linearLayout.getChildCount() ==0){
+                    Toast.makeText(getContext(), "At least one phone number is required",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                for (int i=0; i < linearLayout.getChildCount(); i++){
+                    if (linearLayout.getChildAt(i) instanceof TextInputLayout){
+                        TextInputLayout t = (TextInputLayout) linearLayout.getChildAt(i);
+                        EditText p = (EditText) t.getEditText();
+                        String phone = p.getText().toString();
+                        if (isValidPhone(phone)){
+                            //add this to arrayList
+                            phoneNumbers.add(phone);
+                        }else{
                             Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
-                            mPhone.requestFocus();
-                            return;
-                        } else if (!PhoneNumberUtils.isGlobalPhoneNumber(applicantPhone)) {
-                            mPhone.requestFocus();
-                            Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+                            p.requestFocus();
                             return;
                         }
-                    }else if (applicantPhone.length() != 10){
-                        mPhone.requestFocus();
-                        Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
-                        return;
-                    }else if(!PhoneNumberUtils.isGlobalPhoneNumber(applicantPhone)){
-                        Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
-                        return;
                     }
                 }
+                // at this point, we create the phones and we separate them with ';'
+                StringBuilder sb = new StringBuilder();
+                for (String x : phoneNumbers){
+                    sb.append(x).append(";");
+                }
+                applicantPhone = sb.toString();
+
+//                if (!applicantPhone.trim().equals("")){
+//                    if (applicantPhone.trim().startsWith("+")){
+//                        if (applicantPhone.length() != 13){
+//                            Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+//                            mPhone.requestFocus();
+//                            return;
+//                        } else if (!PhoneNumberUtils.isGlobalPhoneNumber(applicantPhone)) {
+//                            mPhone.requestFocus();
+//                            Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+//                            return;
+//                        }
+//                    }else if (applicantPhone.length() != 10){
+//                        mPhone.requestFocus();
+//                        Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }else if(!PhoneNumberUtils.isGlobalPhoneNumber(applicantPhone)){
+//                        Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }
+//                }
                 if(applicantEducation.trim().equals("")){
                     Toast.makeText(getContext(), "Education is required", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 String chewUuid = chewReferralList.get(selectChew.getSelectedItemPosition()).getId();
                 String parishId = parishList.get(selectParish.getSelectedItemPosition()).getId();
-                String villageId = villageList.get(selectVillage.getSelectedItemPosition()).getId();
-                String subCountyId = countyLocationList.get(selectSubCounty.getSelectedItemPosition()).getId().toString();
+                String villageId="";
+                if (villageList.size()>0){
+                    villageId = villageList.get(selectVillage.getSelectedItemPosition()).getId();
+                }else{
+                    Toast.makeText(getContext(), "No Village selected", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String subCountyId="";
+                if (villageList.size()>0){
+                    subCountyId = countyLocationList.get(selectSubCounty.getSelectedItemPosition()).getId().toString();
+                }else{
+                    Toast.makeText(getContext(), "No County selected", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 // Save Registration //String subCountyId, String parishId, String villageId
 //                    Registration registration = new Registration(mName, mNumber, mEmail);
                 Registration registration;
@@ -667,7 +753,6 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
 
                     // Clear boxes
                     mName.setText("");
-                    mPhone.setText("");
                     //mVillage.setText("");
                     mMark.setText("");
                     mLangs.setText("");
@@ -731,7 +816,6 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     public void setUpEditingMode(){
         if (editingRegistration != null){
             mName.setText(editingRegistration.getName());
-            mPhone.setText(editingRegistration.getPhone());
             //mVillage.setText(editingRegistration.getVillage());
             mMark.setText(editingRegistration.getMark());
             mLangs.setText(editingRegistration.getLangs());
@@ -743,6 +827,39 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
             //editReferralNumber.setText(editingRegistration.getReferralPhone());
             //editParish.setText(editingRegistration.getParish());
             //editSubCounty.setText(editingRegistration.getSubcounty());
+
+
+            // Phone number
+            String[] phones = editingRegistration.getPhone().split(";");
+            //clear the unused view
+            //parentLinearLayout.removeView((View) v.getParent());
+            linearLayout.removeAllViews();
+
+            for (String phone : phones){
+                EditText phoneNumber = new EditText(getContext());
+                phoneNumber.setId(View.generateViewId());
+                phoneNumber.setHint(R.string.add_phone_number);
+                LinearLayout.LayoutParams phoneNumberParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                phoneNumber.setInputType(InputType.TYPE_CLASS_PHONE);
+                phoneNumber.setLayoutParams(phoneNumberParams);
+                phoneNumber.setText(phone);
+
+                //Since the editText exists in TextInpoutLayout, we create one and put in it the editText
+                TextInputLayout textInputLayout = new TextInputLayout(getContext());
+                textInputLayout.setId(View.generateViewId());
+                LinearLayout.LayoutParams phoneLayoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                textInputLayout.setLayoutParams(phoneLayoutParams);
+                textInputLayout.addView(phoneNumber, phoneNumberParams);
+
+                linearLayout.addView(textInputLayout, phoneLayoutParams);
+            }
+
+
+
+
+
             mComment.setText(editingRegistration.getComment());
             editVht.clearCheck();
             editVht.check(editingRegistration.isVht() ? R.id.editVhtYes : R.id.editVhtNo);
@@ -855,5 +972,25 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 android.R.layout.simple_spinner_item, parishes);
         parishAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         selectParish.setAdapter(parishAdapter);
+    }
+
+    private boolean isValidPhone(String phoneNumber){
+        phoneNumber = phoneNumber.trim();
+        if (phoneNumber.trim().equals("")){
+            return false;
+        }
+        if (phoneNumber.trim().startsWith("+")){
+            if (phoneNumber.length() == 13){
+               return true;
+            }else{
+                return false;
+            }
+        }
+
+        if (phoneNumber.length() != 10){
+            return false;
+        }else{
+            return true;
+        }
     }
 }
