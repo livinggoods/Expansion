@@ -90,6 +90,8 @@
     <string name="value5">5</string>
 
 
+    <string name="add_phone_number">Add Phone Number</string>
+
     <string name="activity_title_about_us">About Us</string>
     <string name="activity_title_privacy_policy">Privacy Policy</string>
     <string name="action_clear_all">Clear All</string>

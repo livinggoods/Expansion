@@ -42,4 +42,15 @@
         <item name="android:background">#dedede</item>
     </style>
 
+    <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/colorPrimary</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="AppTheme.Button.Tremap" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:background">@color/timestamp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
 </resources>
