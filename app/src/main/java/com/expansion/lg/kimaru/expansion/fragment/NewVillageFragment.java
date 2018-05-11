@@ -850,12 +850,14 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
                     break;
             }
             int x =0;
-            for (String economic : economicStatusList){
-                if (editingVillage.getEconomicStatus().equalsIgnoreCase(economic)){
-                    editEconomicStatus.setSelection(x);
-                    break;
+            if (editingVillage.getEconomicStatus() != null){
+                for (String economic : economicStatusList){
+                    if (editingVillage.getEconomicStatus().equalsIgnoreCase(economic)){
+                        editEconomicStatus.setSelection(x);
+                        break;
+                    }
+                    x++;
                 }
-                x++;
             }
 
             //Health Facility
