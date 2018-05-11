@@ -1,5 +1,7 @@
 package com.expansion.lg.kimaru.expansion.fragment;
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,6 +23,8 @@ import com.expansion.lg.kimaru.expansion.mzigos.CountyLocation;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.mzigos.Parish;
 import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
+import com.expansion.lg.kimaru.expansion.other.Constants;
+import com.expansion.lg.kimaru.expansion.sync.ApiClient;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
 import com.expansion.lg.kimaru.expansion.tables.KeCountyTable;
@@ -29,6 +33,12 @@ import com.expansion.lg.kimaru.expansion.tables.MappingTable;
 import com.expansion.lg.kimaru.expansion.tables.PartnerActivityTable;
 import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
 import com.expansion.lg.kimaru.expansion.tables.VillageTable;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 
 /**
  * Created by kimaru on 3/30/17.
@@ -43,8 +53,9 @@ public class ParishViewFragment extends Fragment implements  View.OnClickListene
     SessionManagement sessionManagement;
 
     TextView parishComment, contactPhone, contactPerson, parishName, parishSubCountyName, subCountyCounty;
-    TextView linkFacilitySummary, villagesSummary, partnersSummary;
+    TextView linkFacilitySummary, villagesSummary, partnersSummary, syncVillages;
     RelativeLayout relativeViewVillages, relativeLinkFacilities;
+    ProgressDialog progressDialog;
 
 
 
@@ -58,6 +69,8 @@ public class ParishViewFragment extends Fragment implements  View.OnClickListene
         mapping = sessionManagement.getSavedMapping();
         parish = sessionManagement.getSavedParish();
 
+        progressDialog = new ProgressDialog(getContext());
+
         parishName = (TextView) v.findViewById(R.id.parishName);
         parishComment = (TextView) v.findViewById(R.id.parishComment);
         contactPhone = (TextView) v.findViewById(R.id.contactPhone);
@@ -67,7 +80,8 @@ public class ParishViewFragment extends Fragment implements  View.OnClickListene
         linkFacilitySummary = (TextView) v.findViewById(R.id.linkFacilitySummary);
         villagesSummary = (TextView) v.findViewById(R.id.villagesSummary);
         partnersSummary = (TextView) v.findViewById(R.id.partnersSummart);
-
+        syncVillages = (TextView) v.findViewById(R.id.syncVillages);
+        syncVillages.setOnClickListener(this);
         parishName.setText(parish.getName());
         Log.d("Tremap", "Mapping Subcounty is "+mapping.getSubCounty());
         subCounty = new CountyLocationTable(getContext()).getLocationById(mapping.getSubCounty());
@@ -140,8 +154,66 @@ public class ParishViewFragment extends Fragment implements  View.OnClickListene
                 fragmentTransaction.replace(R.id.frame, fragment, "subcounties");
                 fragmentTransaction.commitAllowingStateLoss();
                 break;
+            case R.id.syncVillages:
+                progressDialog.setTitle("Syncing Villages");
+                progressDialog.setMessage("Getting villages for "+parish.getName()+" ...");
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+                new syncVillages().execute();
+                break;
         }
 
+    }
+
+    private class syncVillages extends AsyncTask<Void, HashMap, String> {
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+        }
+
+        protected String doInBackground(Void... voids){
+            String stream = null;
+            Integer totalRecords = 0, processedRecords = 0;
+            HashMap<String, String> progress = new HashMap<String, String>();
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(new Constants(getContext()).getCloudAddress() + "/api/v1/sync/villages?parish="+parish.getId());
+            if(stream !=null){
+                try{
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray("villages");
+                    VillageTable villageTable = new VillageTable(getContext());
+                    totalRecords = recs.length();
+                    for (int y = 0; y < recs.length(); y++){
+                        processedRecords = y+1;
+                        JSONObject villageObj = recs.getJSONObject(y);
+                        villageTable.fromJson(villageObj);
+                        progress = new HashMap<String, String>();
+                        progress.put("total", totalRecords.toString());
+                        progress.put("processed", processedRecords.toString());
+                        progress.put("message", "Creating village "+villageObj.get("village_name") +"\n Please wait ... ");
+                        publishProgress(progress);
+                    }
+                }catch(JSONException e){
+                    Log.d("TREMAP", "ERROR Creating parish:\n "+e.getMessage());
+                }
+            }
+            return null;
+
+        }
+        protected void onPostExecute(String stream){
+            super.onPostExecute(null);
+            progressDialog.dismiss();
+        } // onPostExecute() end
+
+        @Override
+        protected void onProgressUpdate(HashMap... updates){
+            super.onProgressUpdate(updates);
+            HashMap<String, String> progress = updates[0];
+            progressDialog.setProgress(Integer.valueOf(progress.get("processed")));
+            progressDialog.setMax(Integer.valueOf(progress.get("total")));
+            progressDialog.setMessage(progress.get("message"));
+        }
     }
 
 }
