@@ -111,9 +111,12 @@ public class VillageListAdapter extends RecyclerView.Adapter<VillageListAdapter.
             holder.subject.setText(village.getSubCountyId());
         }
         try{
-            //holder.message.setText(new MappingTable(mContext)
-                //.getMappingById(village.getMappingId()).getMappingName());
-            holder.message.setText(mappingTable.getMappingById(village.getMappingId()).getMappingName());
+            if (village.getMappingId() == null) {
+                holder.message.setText("Mapping not found");
+            }
+            else{
+                holder.message.setText(mappingTable.getMappingById(village.getMappingId()).getMappingName());
+            }
 
             //holder.message.setText(village.getMappingId());
         }catch (Exception e){
