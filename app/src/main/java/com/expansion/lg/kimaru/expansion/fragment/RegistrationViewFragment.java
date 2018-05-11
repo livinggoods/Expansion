@@ -78,9 +78,20 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
         profileName.setText(registration.getName() + "( " + registration.getGender() + ")");
         //user_profile_short_bio
         TextView bio = (TextView) v.findViewById(R.id.user_profile_short_bio);
-        bio.setText("Aged "+ registration.getAge()
-                + " years.  Phone " + registration.getPhone()
-            );
+//        bio.setText("Age: \t "+ registration.getAge()
+//                + " years.\n" +
+//                "Phone " + registration.getPhone()
+//            );
+
+        StringBuilder bioInfo = new StringBuilder();
+        bioInfo.append("Aged ").append(registration.getAge()).append(" years\n");
+        bioInfo.append("Phones:\n");
+        String[] phones = registration.getPhone().split(";");
+        for (String phone : phones){
+            bioInfo.append("\t").append(phone).append("\n");
+        }
+        bio.setText(bioInfo.toString());
+
         //location
         TextView viewlocation = (TextView) v.findViewById(R.id.viewlocation);
         viewlocation.setText("Lived at " + registration.getVillage() +
