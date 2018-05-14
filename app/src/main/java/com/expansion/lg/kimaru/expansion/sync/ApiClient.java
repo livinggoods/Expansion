@@ -27,6 +27,11 @@ public class ApiClient {
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
+            // TODO: Get cookie
+            // TODO: Open URL without calling method openConnection();
+            //urlConnection.setRequestProperty("Cookie", "CookieVlaue");
+
+
             Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             Log.d("Tremap", "CLIENT URL -- : "+urlString);
             Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -58,10 +63,12 @@ public class ApiClient {
                 Log.d("Tremap", "==============================");
             }
         }catch (MalformedURLException e){
+            e.printStackTrace();
             Log.d("Tremap", "==============================");
             Log.d("Tremap", "MALFORMED -- : "+e.getMessage());
             Log.d("Tremap", "==============================");
         }catch(IOException e){
+            e.printStackTrace();
             Log.d("Tremap", "==============================");
             Log.d("Tremap", "IO ERROR -- : "+ e.getMessage());
             Log.d("Tremap", "==============================");

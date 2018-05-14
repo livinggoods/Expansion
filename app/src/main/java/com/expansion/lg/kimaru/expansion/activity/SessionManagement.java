@@ -37,6 +37,7 @@ public class SessionManagement {
     public static final String KEY_NAME = "name";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_USERID = "userid";
+    public static final String KEY_TOKEN = "token";
     public static final String KEY_USER_COUNTRY = "country";
     public static final String COMMUNITY_UNIT = "community_unit";
     public static final String MOBILIZATION = "mobilization";
@@ -306,7 +307,7 @@ public class SessionManagement {
     }
 
 
-    public void createLoginSesstion (String name, String email, Integer userId, String country){
+    public void createLoginSesstion (String name, String email, Integer userId, String country, String cookie){
         //storing login values as TRUE
         editor.putBoolean(IS_LOGIN, true);
 
@@ -321,6 +322,8 @@ public class SessionManagement {
 
         //put user country
         editor.putString(KEY_USER_COUNTRY, country);
+
+        editor.putString(KEY_TOKEN, cookie);
 
         //commit / Save the values
 
@@ -339,10 +342,8 @@ public class SessionManagement {
         if(!this.isLoggedIn()){
             Intent i = new Intent(_context, LoginActivity.class);
             //Close all other Activities
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            // Add new Flag to start new Activity
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             //start login
             _context.startActivity(i);
         }
@@ -394,7 +395,7 @@ public class SessionManagement {
             // Add new Flag to start new Activity
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-            //start login
+            //start loginadmin
             _context.startActivity(i);
         }
     }

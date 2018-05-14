@@ -167,11 +167,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        session = new SessionManagement(getBaseContext());
+        session.checkLogin();
+
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        //since we want login to be the first thing
-        session = new SessionManagement(getBaseContext());
         //we cannow check login
         context = this;
 
@@ -185,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
 
         locationDataSync = new LocationDataSync(getBaseContext());
 
-        session.checkLogin();
         if (session.isLoggedIn()){
             RecruitmentsSyncServiceAdapter.initializeSyncAdapter(getApplicationContext());
             MappingsSyncServiceAdapter.initializeSyncAdapter(getApplicationContext());
