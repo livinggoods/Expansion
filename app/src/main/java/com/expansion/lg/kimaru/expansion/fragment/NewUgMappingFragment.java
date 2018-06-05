@@ -327,7 +327,7 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
                 }
                 String mappingName = mMappingName.getText().toString();
                 String mappingRegion = String.valueOf(regions.get(mRegion.getSelectedItemPosition()).getId());
-                String mappingDistrict = String.valueOf(counties.get(mDistrict.getSelectedItemPosition()).getId());
+                String mappingDistrict = String.valueOf(districts.get(mDistrict.getSelectedItemPosition()).getId());
                 String mappingCounty = String.valueOf(counties.get(mCounty.getSelectedItemPosition()).getId());
                 String subCounty = String.valueOf(subCounties.get(mSubCounty.getSelectedItemPosition()).getId());
                 String contactPerson = mMappingContactPerson.getText().toString();
