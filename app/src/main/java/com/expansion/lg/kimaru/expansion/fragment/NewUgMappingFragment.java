@@ -25,6 +25,7 @@ import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.CountyLocation;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
+import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
 import com.expansion.lg.kimaru.expansion.tables.MappingTable;
 
@@ -325,13 +326,19 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
                 }else{
                     id = editingMapping.getId();
                 }
+                String contactPersonPhone = mMappingContactPersonPhone.getText().toString();
+                if (!isValidPhone(contactPersonPhone)){
+                    Toast.makeText(getContext(), "Invalid Phone Number", Toast.LENGTH_SHORT).show();
+                    mMappingContactPersonPhone.requestFocus();
+                    return;
+                }
                 String mappingName = mMappingName.getText().toString();
                 String mappingRegion = String.valueOf(regions.get(mRegion.getSelectedItemPosition()).getId());
                 String mappingDistrict = String.valueOf(districts.get(mDistrict.getSelectedItemPosition()).getId());
                 String mappingCounty = String.valueOf(counties.get(mCounty.getSelectedItemPosition()).getId());
                 String subCounty = String.valueOf(subCounties.get(mSubCounty.getSelectedItemPosition()).getId());
                 String contactPerson = mMappingContactPerson.getText().toString();
-                String contactPersonPhone = mMappingContactPersonPhone.getText().toString();
+
                 String comment = mComment.getText().toString();
                 Integer applicantAddedBy = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
                 boolean sync = false;
@@ -411,5 +418,9 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private boolean isValidPhone(String phoneNumber){
+        return new Constants(getContext()).isValidPhone(phoneNumber);
     }
 }

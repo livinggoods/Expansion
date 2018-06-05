@@ -38,6 +38,7 @@ import com.expansion.lg.kimaru.expansion.mzigos.Parish;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.mzigos.Village;
+import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.other.DisplayDate;
 import com.expansion.lg.kimaru.expansion.other.SpinnersCursorAdapter;
 import com.expansion.lg.kimaru.expansion.tables.ChewReferralTable;
@@ -975,22 +976,6 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     }
 
     private boolean isValidPhone(String phoneNumber){
-        phoneNumber = phoneNumber.trim();
-        if (phoneNumber.trim().equals("")){
-            return false;
-        }
-        if (phoneNumber.trim().startsWith("+")){
-            if (phoneNumber.length() == 13){
-               return true;
-            }else{
-                return false;
-            }
-        }
-
-        if (phoneNumber.length() != 10){
-            return false;
-        }else{
-            return true;
-        }
+        return new Constants(getContext()).isValidPhone(phoneNumber);
     }
 }

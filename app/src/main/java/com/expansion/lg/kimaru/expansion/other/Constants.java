@@ -55,4 +55,24 @@ public class Constants {
     public String getApiTrainingEndpoint(){
         return session.getApiTrainingEndpoint();
     }
+
+    public boolean isValidPhone(String phoneNumber){
+        phoneNumber = phoneNumber.trim();
+        if (phoneNumber.trim().equals("")){
+            return false;
+        }
+        if (phoneNumber.trim().startsWith("+")){
+            if (phoneNumber.length() == 13){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        if (phoneNumber.length() != 10){
+            return false;
+        }else{
+            return true;
+        }
+    }
 }
