@@ -175,7 +175,7 @@ public class LoginActivity extends Activity {
         JSONObject json = new JSONObject(body);
 
         JSONObject user = json.getJSONObject("user");
-        JSONObject tokenObj = json.getJSONObject("token");
+        JSONObject tokenObj = json.getJSONObject("auth_token");
 
         String name = user.getString("name");
         String email = user.getString("email");

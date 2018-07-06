@@ -65,4 +65,7 @@ dependencies {
     // for progressBars
     compile 'com.github.thomper:sweet-alert-dialog:v1.4.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.9.1'
+
+    //permissions
+    implementation 'com.karumi:dexter:4.2.0'
 }

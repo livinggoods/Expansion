@@ -1,9 +1,13 @@
 package com.expansion.lg.kimaru.expansion.activity;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.expansion.lg.kimaru.expansion.BuildConfig;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
@@ -30,17 +35,31 @@ import com.expansion.lg.kimaru.expansion.sync.UserDataSync;
 import com.expansion.lg.kimaru.expansion.tables.CountyLocationTable;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
+import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
+import com.expansion.lg.kimaru.expansion.tables.MappingTable;
+import com.expansion.lg.kimaru.expansion.tables.MobilizationTable;
 import com.expansion.lg.kimaru.expansion.tables.ParishTable;
 import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
+import com.expansion.lg.kimaru.expansion.tables.VillageTable;
 import com.expansion.lg.kimaru.expansion.tables.WardTable;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.ontbee.legacyforks.cn.pedant.SweetAlert.SweetAlertDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +73,7 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
 
 
     Button enableServer, buttonGetSubCounty, recreateLocationTable;
-    Button resyncLocations, shareRecords, syncIccmComponents;
+    Button resyncLocations, shareRecords, syncIccmComponents, buttonExtractJson;
     SweetAlertDialog pDialog;
 
     Context context;
@@ -79,6 +98,7 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
         buttonGetSubCounty = (Button) findViewById(R.id.buttonGetSubCounty);
         syncIccmComponents = (Button) findViewById(R.id.iccmComponents);
         recreateLocationTable = (Button) findViewById(R.id.recreateLocationTable);
+        buttonExtractJson = (Button) findViewById(R.id.buttonExtractJson);
         progressDialog = new ProgressDialog(context);
 
         enableServer.setOnClickListener(this);
@@ -87,6 +107,7 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
         buttonGetSubCounty.setOnClickListener(this);
         syncIccmComponents.setOnClickListener(this);
         recreateLocationTable.setOnClickListener(this);
+        buttonExtractJson.setOnClickListener(this);
 
     }
 
@@ -151,6 +172,39 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
                 CountyLocationTable countyLocationTable = new CountyLocationTable(getBaseContext());
                 countyLocationTable.reCreateDb();
                 syncLocationsInForeGround();
+                break;
+
+            case R.id.buttonExtractJson:
+                Dexter.withActivity(this)
+                        .withPermissions(
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .withListener(new MultiplePermissionsListener() {
+                            @Override
+                            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                if (report.areAllPermissionsGranted()){
+                                    exportJsonData();
+                                }
+                                if (report.isAnyPermissionPermanentlyDenied()){
+                                    Intent i = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + BuildConfig.APPLICATION_ID));
+                                    startActivity(i);
+                                }
+                            }
+
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                                token.continuePermissionRequest();
+                            }
+                        })
+                        .withErrorListener(new PermissionRequestErrorListener() {
+                            @Override
+                            public void onError(DexterError error) {
+                                Toast.makeText(getApplicationContext(), "Error Occured: "+
+                                error.toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .onSameThread()
+                        .check();
                 break;
         }
     }
@@ -319,6 +373,67 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
             }
 
         }
+    }
+
+
+    private void exportJsonData(){
+        // only export the scoring tool for the current recruitment
+        // 1. Check if the Externa Storage is available
+        String state = Environment.getExternalStorageState();
+        if(!Environment.MEDIA_MOUNTED.equals(state)){
+            return;
+        }else{
+            //We used Download Dir
+            //File exportDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File exportDir = new File(Environment.getExternalStorageDirectory() + "/Download/tremap/mapping/");
+            if(!exportDir.exists()){
+                exportDir.mkdirs();
+            }
+            File file;
+            PrintWriter printWriter = null;
+            file = new File(exportDir, "mapping_data.json");
+            try {
+                file.createNewFile();
+                printWriter = new PrintWriter(new FileWriter(file));
+
+                //we get villages
+                VillageTable villageTable = new VillageTable(getApplicationContext());
+                JSONObject villageJson = villageTable.getJson();
+                printWriter.println(villageJson.toString());
+
+
+                //we get mapping
+                MappingTable mappingTable = new MappingTable(getApplicationContext());
+                JSONObject mappingTableJson = mappingTable.getJson();
+                printWriter.println(mappingTableJson.toString());
+
+
+                //we get parishes
+                ParishTable parishTable = new ParishTable(getApplicationContext());
+                JSONObject parishJson = parishTable.getJson();
+                printWriter.println(parishJson.toString());
+
+
+                //we get mobilization
+                MobilizationTable mobilizationTable = new MobilizationTable(getApplicationContext());
+                JSONObject mobilizationJson = mobilizationTable.getMobilizationJson();
+                printWriter.println(mobilizationJson.toString());
+
+                //we get link Facilities
+                LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getApplicationContext());
+                JSONObject linkFacilityJson =  linkFacilityTable.getJson();
+                printWriter.println(linkFacilityJson.toString());
+
+
+
+
+            } catch (Exception e){}
+            finally {
+                if(printWriter != null) printWriter.close();
+            }
+            Toast.makeText(getApplicationContext(), "Data exported to "+ file.getAbsolutePath() +" Folder", Toast.LENGTH_LONG).show();
+        }
+
     }
 
 }

@@ -584,6 +584,7 @@ public class HttpClient{
         //  get the server URL
         Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         Log.d("Tremap", "URL: "+ new Constants(context).getApiServer()+"/"+apiEndpoint);
+        Log.d("Tremap", "URL: "+ json.toString());
         Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
         AsyncHttpPost p = new AsyncHttpPost(new Constants(context).getApiServer()+"/"+apiEndpoint);
@@ -847,7 +848,8 @@ public class HttpClient{
             syncResults = this.syncClient(villageTable.getJson(),
                     HttpServer.VILLAGE_URL);
         } catch (Exception e){
-            syncResults = null;
+            Log.d("Tremap", "================ERROR PUSHING VILLAGES =================");
+            Log.d("Tremap", e.getMessage());
         }
     }
 

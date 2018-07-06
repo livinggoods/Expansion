@@ -8,7 +8,9 @@ import retrofit2.http.POST;
 
 public interface TremapApi {
 
-    @POST("/api/v1/users/login")
+    String apiVersion = "v2";
+
+    @POST("/api/"+apiVersion+"/users/login")
     @FormUrlEncoded
     Call<ResponseBody> loginUser(@Field("email") String email, @Field("password") String password);
 }
