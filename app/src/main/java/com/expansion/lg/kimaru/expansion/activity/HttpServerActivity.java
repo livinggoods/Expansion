@@ -411,6 +411,9 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
                 //we get parishes
                 ParishTable parishTable = new ParishTable(getApplicationContext());
                 JSONObject parishJson = parishTable.getJson();
+                Log.d("Tremap","}{{}{}{{}{}{}{}{}{}{}{}{}{}{}{}{}{}}{}{}{}{}{}{}{{}{{}");
+                Log.d("Tremap",parishJson.toString());
+                Log.d("Tremap","}{{}{}{{}{}{}{}{}{}{}{}{}{}{}{}{}{}}{}{}{}{}{}{}{{}{{}");
                 printWriter.println(parishJson.toString());
 
 

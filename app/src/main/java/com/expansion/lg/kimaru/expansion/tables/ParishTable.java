@@ -45,6 +45,7 @@ public class ParishTable extends SQLiteOpenHelper {
     public static final String PARISHNAME= "name";
     public static final String PARENT_LOCATION = "parent";
     public static final String MAPPINGID = "mapping";
+    public static final String MAPPING_ID = "mapping_id";
     public static final String ADDED_BY = "added_by";
     public static final String CONTACTPERSON = "contact_person";
     public static final String CONTACTPERSONPHONE = "phone";
@@ -321,8 +322,8 @@ public class ParishTable extends SQLiteOpenHelper {
             if (!jsonObject.isNull(PARENT_LOCATION)){
                 parish.setParent(jsonObject.getString(PARENT_LOCATION));
             }
-            if (!jsonObject.isNull(MAPPINGID)){
-                parish.setMapping(jsonObject.getString(MAPPINGID));
+            if (!jsonObject.isNull(MAPPING_ID)){
+                parish.setMapping(jsonObject.getString(MAPPING_ID));
             }
             if (!jsonObject.isNull(DATE_ADDED)){
                 //Wed, 31 Jan 2018 16:23:07
