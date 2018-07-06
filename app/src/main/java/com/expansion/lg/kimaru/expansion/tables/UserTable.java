@@ -34,6 +34,7 @@ public class UserTable extends SQLiteOpenHelper {
     public static String primary_field = " id INTEGER PRIMARY KEY AUTOINCREMENT ";
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
+    public static final String JSON_ROOT = "users";
 
     public static final String ID = "_id";
     public static final String EMAIL= "email";
@@ -185,7 +186,7 @@ public class UserTable extends SQLiteOpenHelper {
             }
             resultSet.put(rowObject);
             try {
-                results.put("users", resultSet);
+                results.put(JSON_ROOT, resultSet);
             } catch (JSONException e) {
 
             }

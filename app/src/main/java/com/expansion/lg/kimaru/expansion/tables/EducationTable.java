@@ -40,6 +40,7 @@ public class EducationTable extends SQLiteOpenHelper {
     public static final String TYPE = "level_type";
     public static final String HIERACHY = "hierachy";
     public static final String COUNTRY = "country";
+    public static final String JSON_ROOT = "education";
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -183,7 +184,7 @@ public class EducationTable extends SQLiteOpenHelper {
             }
             resultSet.put(rowObject);
             try {
-                results.put("education", resultSet);
+                results.put(JSON_ROOT, resultSet);
             } catch (JSONException e) {
 
             }

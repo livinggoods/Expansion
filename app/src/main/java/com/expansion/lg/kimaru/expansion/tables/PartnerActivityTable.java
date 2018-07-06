@@ -33,7 +33,7 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
-    public static String CU_JSON_ROOT = "partner_activity";
+    public static String JSON_ROOT = "partner_activity";
 
     public static final String ID = "id";
     public static final String PARTNERID = "partner_id";
@@ -238,7 +238,7 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
             }
             resultSet.put(rowObject);
             try {
-                results.put(CU_JSON_ROOT, resultSet);
+                results.put(JSON_ROOT, resultSet);
             } catch (JSONException e) {
 
             }
@@ -250,7 +250,7 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
 
 
 
-    public void partnerActivityFromJson (JSONObject jsonObject){
+    public void fromJson (JSONObject jsonObject){
         PartnerActivity partners = new PartnerActivity();
         try {
             partners.setId(jsonObject.getString(ID));
