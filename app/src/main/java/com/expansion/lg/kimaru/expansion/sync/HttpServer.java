@@ -70,6 +70,8 @@ public class HttpServer {
 
 
     public int serverPort;
+
+    // Endpoints
     public static final String RECRUIRMENT_URL = "recruitments";
     public static final String REGISTRATION_URL = "registrations";
     public static final String EXAM_URL = "exams";
@@ -83,814 +85,912 @@ public class HttpServer {
     public static final String PARTNERS_URL = "partners";
     public static final String PARTNERS_ACTIVITY_URL = "partners/activity";
     public static final String VILLAGE_URL = "villages";
+    public static final String USERS_URL = "users";
+    public static final String EDUCATION_URL = "education";
+    public static final String ICCM_COMPONENTS_URL = "iccm/components";
+    public static final String MOBILIZATION_URL = "mobilizations";
+    public static final String TRAININGS_URL = "trainings";
+    public static final String TRAINING_CLASSES_URL = "training/classes";
+    public static final String TRAINING_ROLES_URL = "training/roles";
+    public static final String TRAINING_TRAINEES_URL = "training/trainees";
+    public static final String TRAINING_TRAINERS_URL = "training/trainers";
+    public static final String WARDS_URL = "wards";
 
     public static String url;
 
 
-    public HttpServer(Context context){
+    public HttpServer(Context context) {
         this.context = context;
         this.constants = new Constants(context);
         this.serverPort = Integer.valueOf(constants.getPeerServerPort());
     }
 
-    public void startServer(){
+    public void startServer() {
         Log.d("Tremap Sync", "Starting server");
 
-        server.get("/"+RECRUIRMENT_URL, (request, response) -> {
-            RecruitmentTable recruitmentData = new RecruitmentTable(context);
-            response.send(recruitmentData.getRecruitmentJson());
+        server.get("/" + RECRUIRMENT_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                RecruitmentTable recruitmentData = new RecruitmentTable(context);
+                response.send(recruitmentData.getRecruitmentJson());
+
+            }
         });
 
-        server.get("/"+REGISTRATION_URL, (request, response) -> {
-            RegistrationTable registrationTable = new RegistrationTable(context);
-            response.send(registrationTable.getRegistrationJson());
+        server.get("/" + REGISTRATION_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                RegistrationTable registrationTable = new RegistrationTable(context);
+                response.send(registrationTable.getRegistrationJson());
+            }
         });
 
-        server.get("/"+EXAM_URL, (request, response) -> {
-            ExamTable examTable = new ExamTable(context);
-            response.send(examTable.getExamJson());
+        server.get("/" + EXAM_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                ExamTable examTable = new ExamTable(context);
+                response.send(examTable.getExamJson());
+            }
         });
 
-        server.get("/"+INTERVIEW_URL, (request, response) -> {
-            InterviewTable interviewTable = new InterviewTable(context);
-            response.send(interviewTable.getInterviewJson());
+        server.get("/" + INTERVIEW_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                InterviewTable interviewTable = new InterviewTable(context);
+                response.send(interviewTable.getInterviewJson());
+            }
         });
 
         //// postCommunityUnit postChewReferral postLinkFacilities postSubCounties
-        server.get("/"+SUBCOUNTY_URL, (request, response) -> {
-            SubCountyTable subCountyTable = new SubCountyTable(context);
-            response.send(subCountyTable.getJson());
+        server.get("/" + SUBCOUNTY_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                SubCountyTable subCountyTable = new SubCountyTable(context);
+                response.send(subCountyTable.getJson());
+            }
         });
 
-        server.get("/"+CU_URL, (request, response) -> {
-            CommunityUnitTable communityUnitTable = new CommunityUnitTable(context);
-            response.send(communityUnitTable.getJson());
+        server.get("/" + CU_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                CommunityUnitTable communityUnitTable = new CommunityUnitTable(context);
+                response.send(communityUnitTable.getJson());
+            }
         });
 
-        server.get("/"+CHEW_REFERRAL_URL, (request, response) -> {
-            ChewReferralTable chewReferralTable = new ChewReferralTable(context);
-            response.send(chewReferralTable.getChewReferralJson());
+        server.get("/" + CHEW_REFERRAL_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                ChewReferralTable chewReferralTable = new ChewReferralTable(context);
+                response.send(chewReferralTable.getChewReferralJson());
+            }
         });
 
-        server.get("/"+LINKFACILITY_URL, (request, response) -> {
-            LinkFacilityTable linkFacilityTable = new LinkFacilityTable(context);
-            response.send(linkFacilityTable.getJson());
+        server.get("/" + LINKFACILITY_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                LinkFacilityTable linkFacilityTable = new LinkFacilityTable(context);
+                response.send(linkFacilityTable.getJson());
+            }
         });
         //
 
-        server.get("/users", (request, response) -> {
-            UserTable userTable = new UserTable(context);
-            response.send(userTable.getUsersJson());
+        server.get("/" + USERS_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                UserTable userTable = new UserTable(context);
+                response.send(userTable.getUsersJson());
+            }
         });
 
-        server.get("/education", (request, response) -> {
-            EducationTable educationTable = new EducationTable(context);
-            response.send(educationTable.getEducationJson());
+        server.get("/" + EDUCATION_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                EducationTable educationTable = new EducationTable(context);
+                response.send(educationTable.getEducationJson());
+            }
         });
 
-        server.get("/iccm/components", (request, response) -> {
-            IccmComponentTable data = new IccmComponentTable(context);
-            response.send(data.getIccmJson());
+        server.get("/" + ICCM_COMPONENTS_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                IccmComponentTable data = new IccmComponentTable(context);
+                response.send(data.getIccmJson());
+            }
         });
 
-        server.get("/mappings", (request, response) -> {
-            MappingTable data = new MappingTable(context);
-            response.send(data.getJson());
+        server.get("/" + MAPPING_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                MappingTable data = new MappingTable(context);
+                response.send(data.getJson());
+            }
         });
 
-        server.get("/mobilizations", (request, response) -> {
-            MobilizationTable data = new MobilizationTable(context);
-            response.send(data.getMobilizationJson());
+        server.get("/" + MOBILIZATION_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                MobilizationTable data = new MobilizationTable(context);
+                response.send(data.getMobilizationJson());
+            }
         });
 
-        server.get("/partner/activities", (request, response) -> {
-            PartnerActivityTable data = new PartnerActivityTable(context);
-            response.send(data.getJson());
+        server.get("/" + PARTNERS_ACTIVITY_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                PartnerActivityTable data = new PartnerActivityTable(context);
+                response.send(data.getJson());
+            }
         });
 
-        server.get("/partners", (request, response) -> {
-            PartnersTable data = new PartnersTable(context);
-            response.send(data.getJson());
+        server.get("/" + PARTNERS_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                PartnersTable data = new PartnersTable(context);
+                response.send(data.getJson());
+            }
         });
 
-        server.get("/trainings", (request, response) -> {
-            TrainingTable data = new TrainingTable(context);
-            response.send(data.getJson());
+        server.get("/" + TRAININGS_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                TrainingTable data = new TrainingTable(context);
+                response.send(data.getJson());
+            }
         });
 
-        server.get("/training/classes", (request, response) -> {
-            TrainingClassTable data = new TrainingClassTable(context);
-            response.send(data.getJson());
+        server.get("/" + TRAINING_CLASSES_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                TrainingClassTable data = new TrainingClassTable(context);
+                response.send(data.getJson());
+            }
         });
 
-        server.get("/training/roles", (request, response) -> {
-            TrainingRolesTable data = new TrainingRolesTable(context);
-            response.send(data.getTrainingRoleJson());
+        server.get("/" + TRAINING_ROLES_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                TrainingRolesTable data = new TrainingRolesTable(context);
+                response.send(data.getTrainingRoleJson());
+            }
         });
 
-        server.get("/training/trainees", (request, response) -> {
-            TrainingTraineeTable data = new TrainingTraineeTable(context);
-            response.send(data.getJson());
+        server.get("/" + TRAINING_TRAINEES_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                TrainingTraineeTable data = new TrainingTraineeTable(context);
+                response.send(data.getJson());
+            }
         });
 
-        server.get("/training/trainers", (request, response) -> {
-            TrainingTrainersTable data = new TrainingTrainersTable(context);
-            response.send(data.getTrainingTrainerJson());
+        server.get("/" + TRAINING_TRAINERS_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                TrainingTrainersTable data = new TrainingTrainersTable(context);
+                response.send(data.getTrainingTrainerJson());
+            }
         });
 
-        server.get("/villages", (request, response) -> {
-            VillageTable data = new VillageTable(context);
-            response.send(data.getJson());
+        server.get("/" + VILLAGE_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                VillageTable data = new VillageTable(context);
+                response.send(data.getJson());
+            }
         });
 
-        server.get("/wards", (request, response) -> {
-            WardTable data = new WardTable(context);
-            response.send(data.getJson());
+        server.get("/" + WARDS_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                WardTable data = new WardTable(context);
+                response.send(data.getJson());
+            }
         });
-
 
 
         //POST METHODS
 
-        server.post("/"+RECRUIRMENT_URL, (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processRecruitments(json);
+        server.post("/" + RECRUIRMENT_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processRecruitments(json);
+                    }
+                    response.send(json);
+                    // response.send(typeReceived);
+                } catch (Exception e) {
+                    response.send(e.getMessage());
                 }
-                response.send(json);
-                // response.send(typeReceived);
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
             }
         });
-        server.post("/"+REGISTRATION_URL, (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processRegistrations(json);
+        server.post("/" + REGISTRATION_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processRegistrations(json);
+                    }
+                    response.send(json);
+                    // response.send(typeReceived);
+                } catch (Exception e) {
+                    response.send(e.getMessage());
                 }
-                response.send(json);
-                // response.send(typeReceived);
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
             }
         });
-        server.post("/"+INTERVIEW_URL, (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processInterviews(json);
+        server.post("/" + INTERVIEW_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processInterviews(json);
+                    }
+                    response.send(json);
+                    // response.send(typeReceived);
+                } catch (Exception e) {
+                    response.send(e.getMessage());
                 }
-                response.send(json);
-                // response.send(typeReceived);
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
             }
         });
 
-        server.post("/"+EXAM_URL, (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processExams(json);
+        server.post("/" + EXAM_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processExams(json);
+                    }
+                    response.send(json);
+                    // response.send(typeReceived);
+                } catch (Exception e) {
+                    response.send(e.getMessage());
                 }
-                response.send(json);
-                // response.send(typeReceived);
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
             }
         });
 
         //postCommunityUnit postChewReferral postLinkFacilities postSubCounties
-        server.post("/"+CU_URL, (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processCus(json);
+        server.post("/" + CU_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processCus(json);
+                    }
+                    response.send(json);
+                    // response.send(typeReceived);
+                } catch (Exception e) {
+                    response.send(e.getMessage());
                 }
-                response.send(json);
-                // response.send(typeReceived);
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
             }
         });
 
-        server.post("/"+CHEW_REFERRAL_URL, (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processChewReferral(json);
+        server.post("/" + CHEW_REFERRAL_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processChewReferral(json);
+                    }
+                    response.send(json);
+                    // response.send(typeReceived);
+                } catch (Exception e) {
+                    response.send(e.getMessage());
                 }
-                response.send(json);
-                // response.send(typeReceived);
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
             }
         });
 
-        server.post("/"+LINKFACILITY_URL, (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processLinkFacility(json);
+        server.post("/" + LINKFACILITY_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processLinkFacility(json);
+                    }
+                    response.send(json);
+                    // response.send(typeReceived);
+                } catch (Exception e) {
+                    response.send(e.getMessage());
                 }
-                response.send(json);
-                // response.send(typeReceived);
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
             }
         });
 
-        server.post("/"+SUBCOUNTY_URL, (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processSubCounty(json);
-                    response.send("Body not instalce of JSON Object Body");
-                }else{
-                    processSubCounty(json);
-                    response.send("processed");
-                }
+        server.post("/" + SUBCOUNTY_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processSubCounty(json);
+                        response.send("Body not instalce of JSON Object Body");
+                    } else {
+                        processSubCounty(json);
+                        response.send("processed");
+                    }
 
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
+                } catch (Exception e) {
+                    response.send(e.getMessage());
+                }
             }
         });
 
-        server.post("/education", (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processEducation(json);
-                    response.send("Body not instalce of JSON Object Body");
-                }else{
-                    processSubCounty(json);
-                    response.send("processed");
-                }
+        server.post("/" + EDUCATION_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processEducation(json);
+                    }
 
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
+                    response.send(json);
+
+                } catch (Exception e) {
+                    response.send(e.getMessage());
+                }
             }
         });
 
-        server.post("/iccm/components", (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processIccmComponent(json);
-                    response.send("Body not instalce of JSON Object Body");
-                }else{
-                    processSubCounty(json);
-                    response.send("processed");
-                }
+        server.post("/" + ICCM_COMPONENTS_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processIccmComponent(json);
 
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
+                    }
+                    response.send(json);
+
+                } catch (Exception e) {
+                    response.send(e.getMessage());
+                }
             }
         });
 
-        server.post("/mapping", (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processMapping(json);
-                    response.send("Body not instalce of JSON Object Body");
-                }else{
-                    processSubCounty(json);
-                    response.send("processed");
-                }
+        server.post("/" + MAPPING_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processMapping(json);
+                    }
 
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
+                    response.send(json);
+
+                } catch (Exception e) {
+                    response.send(e.getMessage());
+                }
             }
         });
 
-        server.post("/mobilization", (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processMobilization(json);
-                    response.send("Body not instalce of JSON Object Body");
-                }else{
-                    processSubCounty(json);
-                    response.send("processed");
-                }
+        server.post("/" + MOBILIZATION_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processMobilization(json);
+                    }
 
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
+                    response.send(json);
+
+                } catch (Exception e) {
+                    response.send(e.getMessage());
+                }
             }
         });
 
-        server.post("/partner/activity", (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processPartnerActivity(json);
-                    response.send("Body not instalce of JSON Object Body");
-                }else{
-                    processSubCounty(json);
-                    response.send("processed");
-                }
+        server.post("/" + PARTNERS_ACTIVITY_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processPartnerActivity(json);
+                    }
 
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
+                    response.send(json);
+
+                } catch (Exception e) {
+                    response.send(e.getMessage());
+                }
             }
         });
 
-        server.post("/partners", (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processPartners(json);
-                    response.send("Body not instalce of JSON Object Body");
-                }else{
-                    processSubCounty(json);
-                    response.send("processed");
-                }
+        server.post("/" + PARTNERS_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processPartners(json);
+                    }
 
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
+                    response.send(json);
+
+                } catch (Exception e) {
+                    response.send(e.getMessage());
+                }
             }
         });
 
-        server.post("/trainings", (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processTrainings(json);
-                    response.send("Body not instalce of JSON Object Body");
-                }else{
-                    processSubCounty(json);
-                    response.send("processed");
-                }
+        server.post("/" + TRAININGS_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processTrainings(json);
+                    }
 
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
+                    response.send(json);
+
+                } catch (Exception e) {
+                    response.send(e.getMessage());
+                }
             }
         });
 
-        server.post("/training/classes", (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processTrainingClasses(json);
-                    response.send("Body not instalce of JSON Object Body");
-                }else{
-                    processSubCounty(json);
-                    response.send("processed");
-                }
+        server.post("/" + TRAINING_CLASSES_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processTrainingClasses(json);
 
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
+                    }
+
+                    response.send(json);
+
+                } catch (Exception e) {
+                    response.send(e.getMessage());
+                }
             }
         });
 
-        server.post("/training/roles", (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processTrainingRoles(json);
-                    response.send("Body not instalce of JSON Object Body");
-                }else{
-                    processSubCounty(json);
-                    response.send("processed");
-                }
+        server.post("/" + TRAINING_ROLES_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processTrainingRoles(json);
+                    }
 
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
+                    response.send(json);
+
+                } catch (Exception e) {
+                    response.send(e.getMessage());
+                }
             }
         });
 
-        server.post("/training/trainees", (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processTrainingTrainees(json);
-                    response.send("Body not instalce of JSON Object Body");
-                }else{
-                    processSubCounty(json);
-                    response.send("processed");
-                }
+        server.post("/" + TRAINING_TRAINEES_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processTrainingTrainees(json);
+                    }
 
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
+                    response.send(json);
+
+                } catch (Exception e) {
+                    response.send(e.getMessage());
+                }
             }
         });
 
-        server.post("/training/trainers", (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processTrainingTrainers(json);
-                    response.send("Body not instalce of JSON Object Body");
-                }else{
-                    processSubCounty(json);
-                    response.send("processed");
-                }
+        server.post("/" + TRAINING_TRAINERS_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processTrainingTrainers(json);
+                    }
 
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
+                    response.send(json);
+
+                } catch (Exception e) {
+                    response.send(e.getMessage());
+                }
             }
         });
 
-        server.post("/villages", (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processVillages(json);
-                    response.send("Body not instalce of JSON Object Body");
-                }else{
-                    processSubCounty(json);
-                    response.send("processed");
-                }
+        server.post("/" + VILLAGE_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processVillages(json);
+                    }
 
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
+                    response.send(json);
+
+                } catch (Exception e) {
+                    response.send(e.getMessage());
+                }
             }
         });
 
-        server.post("/wards", (request, response) -> {
-            try {
-                assertNotNull(request.getHeaders().get("Host"));
-                JSONObject json = new JSONObject();
-                if (request.getBody() instanceof JSONObjectBody) {
-                    json = ((JSONObjectBody)request.getBody()).get();
-                    processWards(json);
-                    response.send("Body not instalce of JSON Object Body");
-                }else{
-                    processSubCounty(json);
-                    response.send("processed");
-                }
+        server.post("/" + WARDS_URL, new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
+                try {
+                    assertNotNull(request.getHeaders().get("Host"));
+                    JSONObject json = new JSONObject();
+                    if (request.getBody() instanceof JSONObjectBody) {
+                        json = ((JSONObjectBody) request.getBody()).get();
+                        processWards(json);
+                        response.send("Body not instalce of JSON Object Body");
+                    } else {
+                        processSubCounty(json);
+                        response.send("processed");
+                    }
 
-            }
-            catch (Exception e) {
-                response.send(e.getMessage());
+                } catch (Exception e) {
+                    response.send(e.getMessage());
+                }
             }
         });
 
         server.listen(asyncServer, serverPort);
     }
 
-    private void processCus(JSONObject json){
+    private void processCus(JSONObject json) {
         Log.d("Tremap Sync", "Processing CUs");
-        try{
+        try {
             JSONArray recs = json.getJSONArray(CommunityUnitTable.CU_JSON_ROOT);
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new CommunityUnitTable(context).CuFromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
-            Log.d("Tremap Server", "ERR CUs "+e.getMessage());
+        } catch (JSONException e) {
+            Log.d("Tremap Server", "ERR CUs " + e.getMessage());
         }
     }
 
-    private void processSubCounty(JSONObject json){
+    private void processSubCounty(JSONObject json) {
         Log.d("Tremap Sync", "Processing subcounties");
-        try{
+        try {
             JSONArray recs = json.getJSONArray(SubCountyTable.JSON_ROOT);
-            for (int x = 0; x < recs.length(); x++){
-                Log.d("Tremap ", "Received subcounty data "+recs.getJSONObject(x));
+            for (int x = 0; x < recs.length(); x++) {
+                Log.d("Tremap ", "Received subcounty data " + recs.getJSONObject(x));
                 new SubCountyTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
-            Log.d("Tremap Server", "ERR SUBCOUNTY "+e.getMessage());
+        } catch (JSONException e) {
+            Log.d("Tremap Server", "ERR SUBCOUNTY " + e.getMessage());
         }
     }
 
-    private void processLinkFacility(JSONObject json){
+    private void processLinkFacility(JSONObject json) {
         Log.d("Tremap Sync", "Processing Link Facilities");
-        try{
+        try {
             JSONArray recs = json.getJSONArray(LinkFacilityTable.JSON_ROOT);
             // Get the array first JSONObject
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new LinkFacilityTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
-            Log.d("Tremap Server", "ERR Link Facility "+e.getMessage());
+        } catch (JSONException e) {
+            Log.d("Tremap Server", "ERR Link Facility " + e.getMessage());
         }
     }
-    private void processChewReferral(JSONObject json){
+
+    private void processChewReferral(JSONObject json) {
         Log.d("Tremap Server CHEW", "Processing Received Chews");
-        Log.d("Tremap Server CHEW", "Received data "+ json);
-        try{
+        Log.d("Tremap Server CHEW", "Received data " + json);
+        try {
             JSONArray recs = json.getJSONArray(ChewReferralTable.JSON_ROOT);
             Log.d("Tremap Server CHEW", "Processing Received Chews");
             // Get the array first JSONObject
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new ChewReferralTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
-            Log.d("Tremap Server CHEW", "ERROR "+ e.getMessage());
+        } catch (JSONException e) {
+            Log.d("Tremap Server CHEW", "ERROR " + e.getMessage());
         }
     }
 
-    private void processRecruitments(JSONObject json){
-        try{
+    private void processRecruitments(JSONObject json) {
+        try {
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(RecruitmentTable.JSON_ROOT);
             // Get the array first JSONObject
             List<Recruitment> recruitmentList = new ArrayList<Recruitment>();
 
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new RecruitmentTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
-    private void processRegistrations(JSONObject json){
-        try{
+
+    private void processRegistrations(JSONObject json) {
+        try {
             JSONArray recs = json.getJSONArray(RegistrationTable.JSON_ROOT);
             // Get the array first JSONObject
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new RegistrationTable(context).fromJsonObject(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void processInterviews(JSONObject json){
-        try{
+    private void processInterviews(JSONObject json) {
+        try {
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(InterviewTable.JSON_ROOT);
             // Get the array first JSONObject
             List<Recruitment> recruitmentList = new ArrayList<Recruitment>();
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new InterviewTable(context).fromJson(recs.getJSONObject(x));
 
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
-    private void processExams(JSONObject json){
-        try{
+
+    private void processExams(JSONObject json) {
+        try {
 
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(ExamTable.JSON_ROOT);
 
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new ExamTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
 
-    private void processEducation(JSONObject json){
-        try{
+    private void processEducation(JSONObject json) {
+        try {
 
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(EducationTable.JSON_ROOT);
 
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new EducationTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
 
-    private void processIccmComponent(JSONObject json){
-        try{
+    private void processIccmComponent(JSONObject json) {
+        try {
 
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(IccmComponentTable.JSON_ROOT);
 
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new IccmComponentTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
 
-    private void processMapping(JSONObject json){
-        try{
+    private void processMapping(JSONObject json) {
+        try {
 
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(MappingTable.JSON_ROOT);
 
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new MappingTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
 
-    private void processMobilization(JSONObject json){
-        try{
+    private void processMobilization(JSONObject json) {
+        try {
 
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(MobilizationTable.JSON_ROOT);
 
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new MobilizationTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
 
-    private void processPartnerActivity(JSONObject json){
-        try{
+    private void processPartnerActivity(JSONObject json) {
+        try {
 
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(PartnerActivityTable.JSON_ROOT);
 
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new PartnerActivityTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
 
-    private void processPartners(JSONObject json){
-        try{
+    private void processPartners(JSONObject json) {
+        try {
 
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(PartnersTable.JSON_ROOT);
 
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new PartnersTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
 
-    private void processTrainings(JSONObject json){
-        try{
+    private void processTrainings(JSONObject json) {
+        try {
 
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(TrainingTable.JSON_ROOT);
 
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new TrainingTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
 
-    private void processTrainingClasses(JSONObject json){
-        try{
+    private void processTrainingClasses(JSONObject json) {
+        try {
 
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(TrainingClassTable.JSON_ROOT);
 
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new TrainingClassTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
 
-    private void processTrainingRoles(JSONObject json){
-        try{
+    private void processTrainingRoles(JSONObject json) {
+        try {
 
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(TrainingRolesTable.JSON_ROOT);
 
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new TrainingRolesTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
 
-    private void processTrainingTrainees(JSONObject json){
-        try{
+    private void processTrainingTrainees(JSONObject json) {
+        try {
 
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(TrainingTraineeTable.JSON_ROOT);
 
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new TrainingTraineeTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
 
-    private void processTrainingTrainers(JSONObject json){
-        try{
+    private void processTrainingTrainers(JSONObject json) {
+        try {
 
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(TrainingTrainersTable.JSON_ROOT);
 
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new TrainingTraineeTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
 
-    private void processVillages(JSONObject json){
-        try{
+    private void processVillages(JSONObject json) {
+        try {
 
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(VillageTable.JSON_ROOT);
 
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new VillageTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
 
-    private void processWards(JSONObject json){
-        try{
+    private void processWards(JSONObject json) {
+        try {
 
             // Get the JSONArray recruitments
             JSONArray recs = json.getJSONArray(WardTable.JSON_ROOT);
 
-            for (int x = 0; x < recs.length(); x++){
+            for (int x = 0; x < recs.length(); x++) {
                 new WardTable(context).fromJson(recs.getJSONObject(x));
             }
-        }catch(JSONException e){
+        } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }

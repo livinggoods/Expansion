@@ -14,21 +14,32 @@ import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.mzigos.TrainingClass;
+import com.expansion.lg.kimaru.expansion.mzigos.TrainingTrainee;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.other.WifiState;
 import com.expansion.lg.kimaru.expansion.tables.ChewReferralTable;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
+import com.expansion.lg.kimaru.expansion.tables.EducationTable;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
+import com.expansion.lg.kimaru.expansion.tables.IccmComponentTable;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
 import com.expansion.lg.kimaru.expansion.tables.MappingTable;
+import com.expansion.lg.kimaru.expansion.tables.MobilizationTable;
 import com.expansion.lg.kimaru.expansion.tables.ParishTable;
 import com.expansion.lg.kimaru.expansion.tables.PartnerActivityTable;
 import com.expansion.lg.kimaru.expansion.tables.PartnersTable;
 import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
+import com.expansion.lg.kimaru.expansion.tables.TrainingClassTable;
+import com.expansion.lg.kimaru.expansion.tables.TrainingRolesTable;
+import com.expansion.lg.kimaru.expansion.tables.TrainingTable;
+import com.expansion.lg.kimaru.expansion.tables.TrainingTraineeTable;
+import com.expansion.lg.kimaru.expansion.tables.TrainingTrainersTable;
 import com.expansion.lg.kimaru.expansion.tables.VillageTable;
+import com.expansion.lg.kimaru.expansion.tables.WardTable;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.AsyncHttpPost;
 import com.koushikdutta.async.http.body.JSONObjectBody;
@@ -444,6 +455,99 @@ public class HttpClient{
                 Log.d("Tremap Sync ERR", "Error in posting Link Facilities "+e.getMessage());
             }
 
+            try {
+                String status = postEducation();
+                Log.d("Tremap Sync LOG", "Education "+status);
+            } catch (Exception e) {
+                Log.d("Tremap Sync ERR", "Error in posting Link Facilities "+e.getMessage());
+            }
+
+            try {
+                String status = postIccmComponents();
+                Log.d("Tremap Sync LOG", "Education "+status);
+            } catch (Exception e) {
+                Log.d("Tremap Sync ERR", "Error in posting Link Facilities "+e.getMessage());
+            }
+
+            try {
+                String status = postMapping();
+                Log.d("Tremap Sync LOG", "Education "+status);
+            } catch (Exception e) {
+                Log.d("Tremap Sync ERR", "Error in posting Link Facilities "+e.getMessage());
+            }
+
+            try {
+                String status = postMobilization();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postParsh();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postPartnerActivity();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postPartners();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postSubCounty();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postTrainingClasses();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postTrainingRoles();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postTrainings();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postTrainingTrainees();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postTrainingTrainers();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postVillages();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postWards();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             return "";
         }
     }
@@ -575,6 +679,216 @@ public class HttpClient{
         return postResults;
     }
 
+    public String postEducation() throws Exception {
+        Log.d("Tremap POST", "Posting Education to peer server");
+        String postResults;
+        EducationTable table = new EducationTable(context);
+        try {
+            postResults = this.peerClientServer(table.getEducationJson(),
+                    EducationTable.JSON_ROOT, HttpServer.EDUCATION_URL);
+            Log.d("Tremap Sync", "Education records posted");
+        } catch (Exception e){
+            Log.d("ERR: Sync Educationss", e.getMessage());
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postIccmComponents() throws Exception {
+        String postResults;
+        IccmComponentTable table = new IccmComponentTable(context);
+        try {
+            postResults = this.peerClientServer(table.getIccmJson(),
+                    IccmComponentTable.JSON_ROOT, HttpServer.ICCM_COMPONENTS_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postMapping() throws Exception {
+        String postResults;
+        MappingTable table = new MappingTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    MappingTable.JSON_ROOT, HttpServer.MAPPING_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postMobilization() throws Exception {
+        String postResults;
+        MobilizationTable table = new MobilizationTable(context);
+        try {
+            postResults = this.peerClientServer(table.getMobilizationJson(),
+                    MobilizationTable.JSON_ROOT, HttpServer.MOBILIZATION_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postParsh() throws Exception {
+        String postResults;
+        ParishTable table = new ParishTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    ParishTable.JSON_ROOT, HttpServer.PARISH_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postPartnerActivity() throws Exception {
+        String postResults;
+        PartnerActivityTable table = new PartnerActivityTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    PartnerActivityTable.JSON_ROOT, HttpServer.PARTNERS_ACTIVITY_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postPartners() throws Exception {
+        String postResults;
+        PartnersTable table = new PartnersTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    PartnersTable.JSON_ROOT, HttpServer.PARTNERS_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postSubCounty() throws Exception {
+        String postResults;
+        SubCountyTable table = new SubCountyTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    SubCountyTable.JSON_ROOT, HttpServer.SUBCOUNTY_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postTrainingClasses() throws Exception {
+        String postResults;
+        TrainingClassTable table = new TrainingClassTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    TrainingClassTable.JSON_ROOT, HttpServer.TRAINING_CLASSES_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postTrainingRoles() throws Exception {
+        String postResults;
+        TrainingRolesTable table = new TrainingRolesTable(context);
+        try {
+            postResults = this.peerClientServer(table.getTrainingRoleJson(),
+                    TrainingRolesTable.JSON_ROOT, HttpServer.TRAINING_ROLES_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postTrainings() throws Exception {
+        String postResults;
+        TrainingTable table = new TrainingTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    TrainingTable.JSON_ROOT, HttpServer.TRAININGS_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postTrainingTrainees() throws Exception {
+        String postResults;
+        TrainingTraineeTable table = new TrainingTraineeTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    TrainingTraineeTable.JSON_ROOT, HttpServer.TRAINING_TRAINEES_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postTrainingTrainers() throws Exception {
+        String postResults;
+        TrainingTrainersTable table = new TrainingTrainersTable(context);
+        try {
+            postResults = this.peerClientServer(table.getTrainingTrainerJson(),
+                    TrainingTrainersTable.JSON_ROOT, HttpServer.TRAINING_TRAINERS_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postVillages() throws Exception {
+        String postResults;
+        VillageTable table = new VillageTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    VillageTable.JSON_ROOT, HttpServer.VILLAGE_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postWards() throws Exception {
+        String postResults;
+        WardTable table = new WardTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    WardTable.JSON_ROOT, HttpServer.WARDS_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
 
 
     //THE FOLLOWING SYNC METHODS HELPS US TO UPLOAD DATA TO THE CLOUD (https://expansion.lg-apps.com)
