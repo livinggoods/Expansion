@@ -16,6 +16,7 @@ import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.mzigos.TrainingClass;
 import com.expansion.lg.kimaru.expansion.mzigos.TrainingTrainee;
+import com.expansion.lg.kimaru.expansion.mzigos.Village;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.other.WifiState;
 import com.expansion.lg.kimaru.expansion.tables.ChewReferralTable;
@@ -83,7 +84,7 @@ public class HttpClient{
                     @Override
                     public void run() {
                         String registrationUrl, recruitmentUrl, examUrl, interviewUrl,
-                                linkFacilityUrl, chewReferralUrl, communityUnitUrl, subCountyUrl;
+                                linkFacilityUrl, chewReferralUrl, communityUnitUrl;
                         WifiState wifiState = new WifiState(context);
                         Log.d("Tremap Sync", "Checking Wifi connection");
                         if (wifiState.canReachPeerServer()) {
@@ -123,6 +124,51 @@ public class HttpClient{
                             examUrl = url + "/" + HttpServer.EXAM_URL;
                             Log.d("Tremap Sync", "Exams Process");
                             new ProcessExams().execute(examUrl);
+
+                            String educationUrl = url + "/" + HttpServer.EDUCATION_URL;
+                            new ProcessEducation().execute(educationUrl);
+
+                            String iccmUrl = url + "/" + HttpServer.ICCM_COMPONENTS_URL;
+                            new ProcessIccmComponents().execute(iccmUrl);
+
+                            String mappingUrl = url + "/" + HttpServer.MAPPING_URL;
+                            new ProcessMapping().execute(mappingUrl);
+
+                            String mobilizationUrl = url + "/" + HttpServer.MOBILIZATION_URL;
+                            new ProcessMobilization().execute(mobilizationUrl);
+
+                            String parishUrl = url + "/" + HttpServer.PARTNERS_URL;
+                            new ProcessParish().execute(parishUrl);
+
+                            String partnerActivityUrl = url + "/" + HttpServer.PARTNERS_ACTIVITY_URL;
+                            new ProcessPartnerActivity().execute(partnerActivityUrl);
+
+                            String partnerUrl = url + "/" + HttpServer.PARTNERS_URL;
+                            new ProcessPartners().execute(partnerUrl);
+
+                            String subCountyUrl = url + "/" + HttpServer.SUBCOUNTY_URL;
+                            new ProcessSubCounty().execute(subCountyUrl);
+
+                            String trainingClassUrl = url + "/" + HttpServer.TRAINING_CLASSES_URL;
+                            new ProcessTrainingClasses().execute(trainingClassUrl);
+
+                            String trainingRolesUrl = url + "/" + HttpServer.TRAINING_ROLES_URL;
+                            new ProcessTrainingRoles().execute(trainingRolesUrl);
+
+                            String trainingUrl = url + "/" + HttpServer.TRAININGS_URL;
+                            new ProcessTrainings().execute(trainingUrl);
+
+                            String trainingTraineeUrl = url + "/" + HttpServer.TRAINING_TRAINERS_URL;
+                            new ProcessTrainingTrainees().execute(trainingTraineeUrl);
+
+                            String trainingTrainersUrl = url + "/" + HttpServer.TRAINING_TRAINERS_URL;
+                            new ProcessTrainingTrainers().execute(trainingTrainersUrl);
+
+                            String villageUrl = url + "/" + HttpServer.VILLAGE_URL;
+                            new ProcessVillages().execute(villageUrl);
+
+                            String wardUrl = url + "/" + HttpServer.WARDS_URL;
+                            new ProcessWards().execute(wardUrl);
 
                         }else{
                             Log.d("Tremap Sync Err", "WiFi not Connected");
@@ -178,6 +224,441 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     Log.d("Tremap Sync ERR", "Community Unit "+ e.getMessage());
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessEducation extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(EducationTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new EducationTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessIccmComponents extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(IccmComponentTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new IccmComponentTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessMapping extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(MappingTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new MappingTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessMobilization extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(MobilizationTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new MobilizationTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessParish extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(ParishTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new ParishTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessPartnerActivity extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(PartnerActivityTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new PartnerActivityTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessPartners extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(PartnersTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new PartnersTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessSubCounty extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(SubCountyTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new SubCountyTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessTrainingClasses extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(TrainingClassTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new TrainingClassTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessTrainingRoles extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(TrainingRolesTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new TrainingRolesTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessTrainings extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(TrainingTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new TrainingTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessTrainingTrainees extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(TrainingTraineeTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new TrainingTraineeTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessTrainingTrainers extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(TrainingTrainersTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new TrainingTrainersTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessVillages extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(VillageTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new VillageTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessWards extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(WardTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new WardTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
                 }
             }
             // Return the data from specified url
