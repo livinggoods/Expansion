@@ -14,21 +14,33 @@ import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
+import com.expansion.lg.kimaru.expansion.mzigos.TrainingClass;
+import com.expansion.lg.kimaru.expansion.mzigos.TrainingTrainee;
+import com.expansion.lg.kimaru.expansion.mzigos.Village;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.other.WifiState;
 import com.expansion.lg.kimaru.expansion.tables.ChewReferralTable;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
+import com.expansion.lg.kimaru.expansion.tables.EducationTable;
 import com.expansion.lg.kimaru.expansion.tables.ExamTable;
+import com.expansion.lg.kimaru.expansion.tables.IccmComponentTable;
 import com.expansion.lg.kimaru.expansion.tables.InterviewTable;
 import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
 import com.expansion.lg.kimaru.expansion.tables.MappingTable;
+import com.expansion.lg.kimaru.expansion.tables.MobilizationTable;
 import com.expansion.lg.kimaru.expansion.tables.ParishTable;
 import com.expansion.lg.kimaru.expansion.tables.PartnerActivityTable;
 import com.expansion.lg.kimaru.expansion.tables.PartnersTable;
 import com.expansion.lg.kimaru.expansion.tables.RecruitmentTable;
 import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
+import com.expansion.lg.kimaru.expansion.tables.TrainingClassTable;
+import com.expansion.lg.kimaru.expansion.tables.TrainingRolesTable;
+import com.expansion.lg.kimaru.expansion.tables.TrainingTable;
+import com.expansion.lg.kimaru.expansion.tables.TrainingTraineeTable;
+import com.expansion.lg.kimaru.expansion.tables.TrainingTrainersTable;
 import com.expansion.lg.kimaru.expansion.tables.VillageTable;
+import com.expansion.lg.kimaru.expansion.tables.WardTable;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.AsyncHttpPost;
 import com.koushikdutta.async.http.body.JSONObjectBody;
@@ -72,7 +84,7 @@ public class HttpClient{
                     @Override
                     public void run() {
                         String registrationUrl, recruitmentUrl, examUrl, interviewUrl,
-                                linkFacilityUrl, chewReferralUrl, communityUnitUrl, subCountyUrl;
+                                linkFacilityUrl, chewReferralUrl, communityUnitUrl;
                         WifiState wifiState = new WifiState(context);
                         Log.d("Tremap Sync", "Checking Wifi connection");
                         if (wifiState.canReachPeerServer()) {
@@ -112,6 +124,51 @@ public class HttpClient{
                             examUrl = url + "/" + HttpServer.EXAM_URL;
                             Log.d("Tremap Sync", "Exams Process");
                             new ProcessExams().execute(examUrl);
+
+                            String educationUrl = url + "/" + HttpServer.EDUCATION_URL;
+                            new ProcessEducation().execute(educationUrl);
+
+                            String iccmUrl = url + "/" + HttpServer.ICCM_COMPONENTS_URL;
+                            new ProcessIccmComponents().execute(iccmUrl);
+
+                            String mappingUrl = url + "/" + HttpServer.MAPPING_URL;
+                            new ProcessMapping().execute(mappingUrl);
+
+                            String mobilizationUrl = url + "/" + HttpServer.MOBILIZATION_URL;
+                            new ProcessMobilization().execute(mobilizationUrl);
+
+                            String parishUrl = url + "/" + HttpServer.PARTNERS_URL;
+                            new ProcessParish().execute(parishUrl);
+
+                            String partnerActivityUrl = url + "/" + HttpServer.PARTNERS_ACTIVITY_URL;
+                            new ProcessPartnerActivity().execute(partnerActivityUrl);
+
+                            String partnerUrl = url + "/" + HttpServer.PARTNERS_URL;
+                            new ProcessPartners().execute(partnerUrl);
+
+                            String subCountyUrl = url + "/" + HttpServer.SUBCOUNTY_URL;
+                            new ProcessSubCounty().execute(subCountyUrl);
+
+                            String trainingClassUrl = url + "/" + HttpServer.TRAINING_CLASSES_URL;
+                            new ProcessTrainingClasses().execute(trainingClassUrl);
+
+                            String trainingRolesUrl = url + "/" + HttpServer.TRAINING_ROLES_URL;
+                            new ProcessTrainingRoles().execute(trainingRolesUrl);
+
+                            String trainingUrl = url + "/" + HttpServer.TRAININGS_URL;
+                            new ProcessTrainings().execute(trainingUrl);
+
+                            String trainingTraineeUrl = url + "/" + HttpServer.TRAINING_TRAINERS_URL;
+                            new ProcessTrainingTrainees().execute(trainingTraineeUrl);
+
+                            String trainingTrainersUrl = url + "/" + HttpServer.TRAINING_TRAINERS_URL;
+                            new ProcessTrainingTrainers().execute(trainingTrainersUrl);
+
+                            String villageUrl = url + "/" + HttpServer.VILLAGE_URL;
+                            new ProcessVillages().execute(villageUrl);
+
+                            String wardUrl = url + "/" + HttpServer.WARDS_URL;
+                            new ProcessWards().execute(wardUrl);
 
                         }else{
                             Log.d("Tremap Sync Err", "WiFi not Connected");
@@ -167,6 +224,441 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     Log.d("Tremap Sync ERR", "Community Unit "+ e.getMessage());
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessEducation extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(EducationTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new EducationTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessIccmComponents extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(IccmComponentTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new IccmComponentTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessMapping extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(MappingTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new MappingTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessMobilization extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(MobilizationTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new MobilizationTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessParish extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(ParishTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new ParishTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessPartnerActivity extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(PartnerActivityTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new PartnerActivityTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessPartners extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(PartnersTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new PartnersTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessSubCounty extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(SubCountyTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new SubCountyTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessTrainingClasses extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(TrainingClassTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new TrainingClassTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessTrainingRoles extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(TrainingRolesTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new TrainingRolesTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessTrainings extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(TrainingTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new TrainingTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessTrainingTrainees extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(TrainingTraineeTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new TrainingTraineeTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessTrainingTrainers extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(TrainingTrainersTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new TrainingTrainersTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessVillages extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(VillageTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new VillageTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            // Return the data from specified url
+            return stream;
+        }
+
+        protected void onPostExecute(String stream){
+            // if statement end
+        }
+    }
+
+    private class ProcessWards extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings){
+            String stream = null;
+            String urlString = strings[0];
+            ApiClient hh = new ApiClient();
+            stream = hh.GetHTTPData(urlString);
+
+            if(stream !=null){
+                try{
+                    // Get the full HTTP Data as JSONObject
+                    JSONObject reader= new JSONObject(stream);
+                    JSONArray recs = reader.getJSONArray(WardTable.JSON_ROOT);
+
+                    for (int x = 0; x < recs.length(); x++){
+                        new WardTable(context).fromJson(recs.getJSONObject(x));
+                    }
+                }catch(JSONException e){
+                    e.printStackTrace();
                 }
             }
             // Return the data from specified url
@@ -444,6 +936,99 @@ public class HttpClient{
                 Log.d("Tremap Sync ERR", "Error in posting Link Facilities "+e.getMessage());
             }
 
+            try {
+                String status = postEducation();
+                Log.d("Tremap Sync LOG", "Education "+status);
+            } catch (Exception e) {
+                Log.d("Tremap Sync ERR", "Error in posting Link Facilities "+e.getMessage());
+            }
+
+            try {
+                String status = postIccmComponents();
+                Log.d("Tremap Sync LOG", "Education "+status);
+            } catch (Exception e) {
+                Log.d("Tremap Sync ERR", "Error in posting Link Facilities "+e.getMessage());
+            }
+
+            try {
+                String status = postMapping();
+                Log.d("Tremap Sync LOG", "Education "+status);
+            } catch (Exception e) {
+                Log.d("Tremap Sync ERR", "Error in posting Link Facilities "+e.getMessage());
+            }
+
+            try {
+                String status = postMobilization();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postParsh();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postPartnerActivity();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postPartners();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postSubCounty();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postTrainingClasses();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postTrainingRoles();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postTrainings();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postTrainingTrainees();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postTrainingTrainers();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postVillages();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String status = postWards();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             return "";
         }
     }
@@ -575,6 +1160,216 @@ public class HttpClient{
         return postResults;
     }
 
+    public String postEducation() throws Exception {
+        Log.d("Tremap POST", "Posting Education to peer server");
+        String postResults;
+        EducationTable table = new EducationTable(context);
+        try {
+            postResults = this.peerClientServer(table.getEducationJson(),
+                    EducationTable.JSON_ROOT, HttpServer.EDUCATION_URL);
+            Log.d("Tremap Sync", "Education records posted");
+        } catch (Exception e){
+            Log.d("ERR: Sync Educationss", e.getMessage());
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postIccmComponents() throws Exception {
+        String postResults;
+        IccmComponentTable table = new IccmComponentTable(context);
+        try {
+            postResults = this.peerClientServer(table.getIccmJson(),
+                    IccmComponentTable.JSON_ROOT, HttpServer.ICCM_COMPONENTS_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postMapping() throws Exception {
+        String postResults;
+        MappingTable table = new MappingTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    MappingTable.JSON_ROOT, HttpServer.MAPPING_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postMobilization() throws Exception {
+        String postResults;
+        MobilizationTable table = new MobilizationTable(context);
+        try {
+            postResults = this.peerClientServer(table.getMobilizationJson(),
+                    MobilizationTable.JSON_ROOT, HttpServer.MOBILIZATION_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postParsh() throws Exception {
+        String postResults;
+        ParishTable table = new ParishTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    ParishTable.JSON_ROOT, HttpServer.PARISH_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postPartnerActivity() throws Exception {
+        String postResults;
+        PartnerActivityTable table = new PartnerActivityTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    PartnerActivityTable.JSON_ROOT, HttpServer.PARTNERS_ACTIVITY_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postPartners() throws Exception {
+        String postResults;
+        PartnersTable table = new PartnersTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    PartnersTable.JSON_ROOT, HttpServer.PARTNERS_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postSubCounty() throws Exception {
+        String postResults;
+        SubCountyTable table = new SubCountyTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    SubCountyTable.JSON_ROOT, HttpServer.SUBCOUNTY_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postTrainingClasses() throws Exception {
+        String postResults;
+        TrainingClassTable table = new TrainingClassTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    TrainingClassTable.JSON_ROOT, HttpServer.TRAINING_CLASSES_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postTrainingRoles() throws Exception {
+        String postResults;
+        TrainingRolesTable table = new TrainingRolesTable(context);
+        try {
+            postResults = this.peerClientServer(table.getTrainingRoleJson(),
+                    TrainingRolesTable.JSON_ROOT, HttpServer.TRAINING_ROLES_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postTrainings() throws Exception {
+        String postResults;
+        TrainingTable table = new TrainingTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    TrainingTable.JSON_ROOT, HttpServer.TRAININGS_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postTrainingTrainees() throws Exception {
+        String postResults;
+        TrainingTraineeTable table = new TrainingTraineeTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    TrainingTraineeTable.JSON_ROOT, HttpServer.TRAINING_TRAINEES_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postTrainingTrainers() throws Exception {
+        String postResults;
+        TrainingTrainersTable table = new TrainingTrainersTable(context);
+        try {
+            postResults = this.peerClientServer(table.getTrainingTrainerJson(),
+                    TrainingTrainersTable.JSON_ROOT, HttpServer.TRAINING_TRAINERS_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postVillages() throws Exception {
+        String postResults;
+        VillageTable table = new VillageTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    VillageTable.JSON_ROOT, HttpServer.VILLAGE_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
+
+    public String postWards() throws Exception {
+        String postResults;
+        WardTable table = new WardTable(context);
+        try {
+            postResults = this.peerClientServer(table.getJson(),
+                    WardTable.JSON_ROOT, HttpServer.WARDS_URL);
+        } catch (Exception e){
+            Log.d("SYNC ERROR", e.getMessage());
+            e.printStackTrace();
+            postResults = null;
+        }
+        return postResults;
+    }
 
 
     //THE FOLLOWING SYNC METHODS HELPS US TO UPLOAD DATA TO THE CLOUD (https://expansion.lg-apps.com)
