@@ -1535,17 +1535,6 @@ public class HttpClient{
         } catch (Exception e){
             syncResults = null;
         }
-
-        if (syncResults != null){
-            try {
-
-                JSONObject reader = new JSONObject(syncResults);
-                JSONArray recs = reader.getJSONArray("status");
-                for (int x = 0; x < recs.length(); x++) {
-                    communityUnitTable.CuFromJson(recs.getJSONObject(x));
-                }
-            }catch (Exception e){}
-        }
     }
 
     public void syncReferrals () {
@@ -1557,17 +1546,6 @@ public class HttpClient{
         } catch (Exception e){
             syncResults = null;
         }
-        if (syncResults != null){
-            try {
-
-                JSONObject reader = new JSONObject(syncResults);
-                JSONArray recs = reader.getJSONArray("status");
-
-                for (int x = 0; x < recs.length(); x++) {
-                    chewReferralTable.fromJson(recs.getJSONObject(x));
-                }
-            }catch (Exception e){}
-        }
     }
     public void syncParishes () {
         String syncResults;
@@ -1577,17 +1555,6 @@ public class HttpClient{
                     HttpServer.PARISH_URL);
         } catch (Exception e){
             syncResults = null;
-        }
-        if (syncResults != null){
-            try {
-
-                JSONObject reader = new JSONObject(syncResults);
-                JSONArray recs = reader.getJSONArray("status");
-
-                for (int x = 0; x < recs.length(); x++) {
-                    parishTable.fromJson(recs.getJSONObject(x));
-                }
-            }catch (Exception e){}
         }
     }
 
@@ -1624,16 +1591,6 @@ public class HttpClient{
         } catch (Exception e){
             syncResults = null;
         }
-        if (syncResults != null){
-            try {
-
-                JSONObject reader = new JSONObject(syncResults);
-                JSONArray recs = reader.getJSONArray("status");
-                for (int x = 0; x < recs.length(); x++) {
-                    mappingTable.fromJson(recs.getJSONObject(x));
-                }
-            }catch (Exception e){}
-        }
     }
 
     public void syncVillages () {
@@ -1656,16 +1613,6 @@ public class HttpClient{
                     HttpServer.LINKFACILITY_URL);
         } catch (Exception e){
             syncResults = null;
-        }
-        if (syncResults != null){
-            try {
-
-                JSONObject reader = new JSONObject(syncResults);
-                JSONArray recs = reader.getJSONArray("status");
-                for (int x = 0; x < recs.length(); x++) {
-                    linkFacilityTable.fromJson(recs.getJSONObject(x));
-                }
-            }catch (Exception e){}
         }
     }
 }
