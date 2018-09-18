@@ -338,7 +338,7 @@ public class LinkFacilitiesFragment extends Fragment  {
         if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
             parishName = session.getSavedParish().getName();
         }else{
-            parishName = session.getSavedParish().getName();
+            parishName = session.getSavedSubCounty().getSubCountyName();
         }
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(parishName + " Health Facilities");
     }

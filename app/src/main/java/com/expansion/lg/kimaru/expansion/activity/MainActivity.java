@@ -1041,10 +1041,10 @@ public class MainActivity extends AppCompatActivity {
             destination.transferFrom(source, 0, source.size());
             source.close();
             destination.close();
-            Toast.makeText(this, "DB Exported!", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "DB Exported!", Toast.LENGTH_LONG).show();
         } catch(IOException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Error in backing up the db!\n"+e.getMessage(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Error in backing up the db!\n"+e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 

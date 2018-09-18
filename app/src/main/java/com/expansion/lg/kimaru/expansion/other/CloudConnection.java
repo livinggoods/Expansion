@@ -17,7 +17,6 @@ public class CloudConnection {
 
     public String ServerUrl(){
         SessionManagement sessionManagement = new SessionManagement(context);
-        String serverUrl = sessionManagement.getCloudUrl();
-        return serverUrl;
+        return sessionManagement.getCloudUrl();
     }
 }

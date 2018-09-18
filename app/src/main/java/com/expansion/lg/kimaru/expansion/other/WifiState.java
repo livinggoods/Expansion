@@ -23,7 +23,8 @@ public class WifiState {
         this.context = context;
         this.connectivityManager = (ConnectivityManager)
                 context.getSystemService(context.CONNECTIVITY_SERVICE);
-        this.wifiCheck = connectivityManager.getActiveNetworkInfo();
+        if (connectivityManager != null)
+            this.wifiCheck = connectivityManager.getActiveNetworkInfo();
     }
 
     public boolean isWifiConnected(){

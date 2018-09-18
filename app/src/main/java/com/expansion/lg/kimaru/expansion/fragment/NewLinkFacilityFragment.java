@@ -520,7 +520,11 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                             "The location has not been captured",
                             Toast.LENGTH_SHORT).show();
                 }
-                String parishId = session.getSavedParish().getId();
+                String parishId = null;
+                if (user.get(SessionManagement.KEY_USER_COUNTRY).equals("UG"))
+                    parishId = session.getSavedParish().getId();
+                else
+                    parishId = null;
                 LinkFacility linkFacility = new LinkFacility(uuid, facilityName, country, mappingId,
                         latitude, longitude, subCounty, currentDate, addedBy, actLevels, mrdtLevels, mflCode, county, parishId);
 
