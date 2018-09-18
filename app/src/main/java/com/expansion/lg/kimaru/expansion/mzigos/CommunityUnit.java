@@ -46,7 +46,7 @@ public class CommunityUnit {
     int color = -1;
     String picture =  "";
 
-
+    int noChvGokBasicTrained = 0;
 
     public CommunityUnit(){
 
@@ -65,7 +65,7 @@ public class CommunityUnit {
                          boolean presenceOfEstates, Long presenceOfFactories,
                          boolean presenceOfHostels, boolean traderMarket, boolean largeSupermarket,
                          boolean ngosGivingFreeDrugs, boolean ngoDoingIccm, boolean ngoDoingMhealth,
-                         Long populationAsPerChief, Long chvsHouseholdsAsPerChief, String comment) {
+                         Long populationAsPerChief, Long chvsHouseholdsAsPerChief, String comment, int noChvGokBasicTrained) {
         this.id = id;
         this.communityUnitName = communityUnitName;
         this.mappingId = mappingId;
@@ -111,11 +111,20 @@ public class CommunityUnit {
         this.populationAsPerChief = populationAsPerChief;
         this.chvsHouseholdsAsPerChief = chvsHouseholdsAsPerChief;
         this.comment = comment;
+        this.noChvGokBasicTrained = noChvGokBasicTrained;
 
     }
 
     // Get Methods
 
+
+    public int getNoChvGokBasicTrained() {
+        return noChvGokBasicTrained;
+    }
+
+    public void setNoChvGokBasicTrained(int noChvGokBasicTrained) {
+        this.noChvGokBasicTrained = noChvGokBasicTrained;
+    }
 
     public String getComment() {
         return comment;

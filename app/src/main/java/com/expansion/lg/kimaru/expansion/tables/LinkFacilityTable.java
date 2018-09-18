@@ -50,8 +50,9 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
     public static final String ACTLEVELS = "act_levels";
     public static final String COUNTRY = "country";
     public static final String PARISH = "parish";
+    public static final String OTHER = "other";
     String [] columns=new String[]{ID, NAME, COUNTY, LAT, LON, SUBCOUNTY, ADDED, ADDEDBY,
-            MRDTLEVELS, ACTLEVELS, COUNTRY, MFLCODE, MAPPING, PARISH};
+            MRDTLEVELS, ACTLEVELS, COUNTRY, MFLCODE, MAPPING, PARISH, OTHER};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field +", "
@@ -67,6 +68,7 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
             + MRDTLEVELS + integer_field + ", "
             + ACTLEVELS + integer_field + ", "
             + PARISH + varchar_field + ", "
+            + OTHER + text_field + ", "
             + COUNTRY + varchar_field + "); ";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
@@ -118,6 +120,7 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
         cv.put(ACTLEVELS, linkFacility.getActLevels());
         cv.put(COUNTRY, linkFacility.getCountry());
         cv.put(PARISH, linkFacility.getParish());
+        cv.put(OTHER, linkFacility.getOther());
 
         long id;
         if (isExist(linkFacility)){
@@ -341,6 +344,8 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
             if (!jsonObject.isNull(PARISH)){
                 linkFacility.setParish(jsonObject.getString(PARISH));
             }
+
+            linkFacility.setOther(jsonObject.getString("other"));
             ///////
             addData(linkFacility);
         }catch (Exception e){
@@ -363,6 +368,7 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
         linkFacility.setActLevels(cursor.getInt(cursor.getColumnIndex(ACTLEVELS)));
         linkFacility.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
         linkFacility.setParish(cursor.getString(cursor.getColumnIndex(PARISH)));
+        linkFacility.setOther(cursor.getString(cursor.getColumnIndex(OTHER)));
 
         return linkFacility;
     }

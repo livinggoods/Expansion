@@ -379,6 +379,26 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/layout_chv_gov_basic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="How many CHVs have been trained on GOK basic module?"/>
+
+                <EditText
+                    android:id="@+id/ed_chv_gov_basic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="No. of CHVs who tranied on GOK basic module"
+                    android:inputType="number"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
