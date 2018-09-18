@@ -53,10 +53,11 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
     public static final String ADDEDBY = "added_by";
     public static final String ACTIVITIES = "activities";
     public static final String SYNCED = "synced";
+    public static final String OTHER = "other";
 
     String [] columns=new String[]{ID, PARTNERID, COUNTRY, COUNTY, SUBCOUNTY, PARISH,
             VILLAGE, COMMUNITYUNIT, MAPPINGID, COMMENT, DOINGMHEALTH, DOINGICCM, GIVINGFREEDRUGS,
-            GIVINGSTIPEND, DATEADDED, ADDEDBY, ACTIVITIES, SYNCED};
+            GIVINGSTIPEND, DATEADDED, ADDEDBY, ACTIVITIES, SYNCED, OTHER};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ","
@@ -76,6 +77,7 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
             + DATEADDED + integer_field + ","
             + ADDEDBY + integer_field + ","
             + ACTIVITIES + text_field + ","
+            + OTHER + text_field + ","
             + SYNCED + integer_field + ");";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
@@ -121,6 +123,7 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
         cv.put(ADDEDBY, partnerActivity.getAddedBy());
         cv.put(ACTIVITIES, partnerActivity.getActivities());
         cv.put(SYNCED, partnerActivity.isSynced() ? 1:0);
+        cv.put(OTHER, partnerActivity.getOther());
 
 
         long id;
@@ -211,6 +214,7 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
         partners.setAddedBy(c.getLong(c.getColumnIndex(ADDEDBY)));
         partners.setActivities(c.getString(c.getColumnIndex(ACTIVITIES)));
         partners.setSynced(c.getInt(c.getColumnIndex(SYNCED))==1);
+        partners.setOther(c.getString(c.getColumnIndex(OTHER)));
         return partners;
     }
 
@@ -271,6 +275,7 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
             partners.setAddedBy(jsonObject.getLong(ADDEDBY));
             partners.setActivities(jsonObject.getString(ACTIVITIES));
             partners.setSynced(jsonObject.getInt(SYNCED)==1);
+            partners.setOther(jsonObject.getString(OTHER));
 
             addData(partners);
         }catch (Exception e){

@@ -526,7 +526,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 else
                     parishId = null;
                 LinkFacility linkFacility = new LinkFacility(uuid, facilityName, country, mappingId,
-                        latitude, longitude, subCounty, currentDate, addedBy, actLevels, mrdtLevels, mflCode, county, parishId);
+                        latitude, longitude, subCounty, currentDate, addedBy, actLevels, mrdtLevels, mflCode, county, parishId, "{}");
 
                 LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
                 long id  = linkFacilityTable.addData(linkFacility);

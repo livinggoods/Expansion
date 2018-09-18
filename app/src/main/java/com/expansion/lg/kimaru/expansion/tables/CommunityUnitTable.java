@@ -85,6 +85,7 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
     public static final String COMMENT = "comment";
     public static final String PARTNERID = "partner_id";
     public static final String CUID = "cu_id";
+    public static final String NO_CHV_GOK_TRAINED = "no_chv_gok_trained";
     public static final String CHVS_HOUSEHOLDS_AS_PER_CHIEF = "chief_households_per_chv";
     public static final String POPULATION_AS_PER_CHIEF = "population_as_per_chief";
     public String [] columns=new String[]{ID, NAME, MAPPINGID, LAT, LON, COUNTRY,
@@ -96,7 +97,7 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
             DISTANCETONEARESTHEALTHFACILITY, ACTLEVELS, ACTPRICE, MRDTLEVELS,
             MRDTPRICE, NOOFDISTIBUTORS, CHVSTRAINED, PRESENCEOFESTATES, PRESENCEOFFACTORIES,
             PRESENCEOFHOSTELS, TRADERMARKET, LARGESUPERMARKET, NGOSGIVINGFREEDRUGS,
-            NGODOINGICCM, NGODOINGMHEALTH,CHVS_HOUSEHOLDS_AS_PER_CHIEF, POPULATION_AS_PER_CHIEF, COMMENT};
+            NGODOINGICCM, NGODOINGMHEALTH,CHVS_HOUSEHOLDS_AS_PER_CHIEF, POPULATION_AS_PER_CHIEF, COMMENT, NO_CHV_GOK_TRAINED};
 
     public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ","
@@ -142,6 +143,7 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
             + NGODOINGICCM + integer_field + ","
             + CHVS_HOUSEHOLDS_AS_PER_CHIEF + integer_field + ","
             + POPULATION_AS_PER_CHIEF + integer_field + ","
+            + NO_CHV_GOK_TRAINED + integer_field + ","
             + NGODOINGMHEALTH + integer_field + ");";
 
     String [] partnerColumns = {ID, NAME, ICCM, ICCMCOMPONENT, MHEALTH, COMMENT, DATEADDED, ADDEDBY};
@@ -263,6 +265,7 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
         cv.put(CHVS_HOUSEHOLDS_AS_PER_CHIEF, communityUnit.getPopulationAsPerChief());
         cv.put(POPULATION_AS_PER_CHIEF, communityUnit.getChvsHouseholdsAsPerChief());
         cv.put(COMMENT, communityUnit.getComment());
+        cv.put(NO_CHV_GOK_TRAINED, communityUnit.getNoChvGokBasicTrained());
 
         long id;
         if (isCommunityUnitExisting(communityUnit)){
@@ -502,6 +505,7 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
             communityUnit.setPopulationAsPerChief(jsonObject.getLong(POPULATION_AS_PER_CHIEF));
             communityUnit.setChvsHouseholdsAsPerChief(jsonObject.getLong(CHVS_HOUSEHOLDS_AS_PER_CHIEF));
             communityUnit.setComment(jsonObject.getString(COMMENT));
+            communityUnit.setNoChvGokBasicTrained(jsonObject.getInt(NO_CHV_GOK_TRAINED));
 
             addCommunityUnitData(communityUnit);
         }catch (Exception e){
@@ -559,6 +563,7 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
         communityUnit.setPopulationAsPerChief(cursor.getLong(cursor.getColumnIndex(POPULATION_AS_PER_CHIEF)));
         communityUnit.setChvsHouseholdsAsPerChief(cursor.getLong(cursor.getColumnIndex(CHVS_HOUSEHOLDS_AS_PER_CHIEF)));
         communityUnit.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+        communityUnit.setNoChvGokBasicTrained(cursor.getInt(cursor.getColumnIndex(NO_CHV_GOK_TRAINED)));
         return communityUnit;
     }
 }

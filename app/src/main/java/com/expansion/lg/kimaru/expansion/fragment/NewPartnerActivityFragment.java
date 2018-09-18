@@ -92,7 +92,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
     public SubCounty subCounty = null;
     public CommunityUnit communityUnit = null;
 
-
+    EditText txtIccmComments, txtMedicineComments, txtStipendComments, txtMhealthComments;
 
    static final int DATE_DIALOG_ID = 100;
 
@@ -155,6 +155,59 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
         editIsGivingStipend = (RadioGroup) v.findViewById(R.id.editIsGivingStipend);
         editIsDoingMhealth = (RadioGroup) v.findViewById(R.id.editIsDoingMhealth);
         parentLayout = (LinearLayout) v.findViewById(R.id.check_add_layout);
+
+        txtIccmComments = (EditText) v.findViewById(R.id.txt_iccm_comments);
+        txtMedicineComments = (EditText) v.findViewById(R.id.txt_medicine_comments);
+        txtMhealthComments = (EditText) v.findViewById(R.id.txt_mhealth_comments);
+        txtStipendComments = (EditText) v.findViewById(R.id.txt_stipend_comments);
+
+        editIsDoingIccm.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.editIsDoingIccmYes) {
+                    txtIccmComments.setVisibility(View.VISIBLE);
+                } else {
+                    txtIccmComments.setVisibility(View.GONE);
+                    txtIccmComments.setText("");
+                }
+            }
+        });
+
+        editIsGivingFreeMedicine.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.editIsGivingFreeMedicineYes) {
+                    txtMedicineComments.setVisibility(View.VISIBLE);
+                } else {
+                    txtMedicineComments.setVisibility(View.GONE);
+                    txtMedicineComments.setText("");
+                }
+            }
+        });
+
+        editIsGivingStipend.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.editIsGivingStipendYes) {
+                    txtStipendComments.setVisibility(View.VISIBLE);
+                } else {
+                    txtStipendComments.setVisibility(View.GONE);
+                    txtStipendComments.setText("");
+                }
+            }
+        });
+
+        editIsDoingMhealth.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.editIsDoingMhealthYes) {
+                    txtMhealthComments.setVisibility(View.VISIBLE);
+                } else {
+                    txtMhealthComments.setVisibility(View.GONE);
+                    txtMhealthComments.setText("");
+                }
+            }
+        });
 
         addPartners();
 
@@ -369,12 +422,26 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                 partnerActivity.setDateAdded(new Date().getTime());
                 partnerActivity.setAddedBy(Long.valueOf(session.getUserDetails().get(SessionManagement.KEY_USERID)));
 
+                String iccmComment = txtIccmComments.getText().toString();
+                String medicineComment = txtMedicineComments.getText().toString();
+                String stipendComment = txtStipendComments.getText().toString();
+                String mHealthComment = txtMhealthComments.getText().toString();
 
+                JSONObject other = new JSONObject();
+                try {
+                    other.put("iccm_comment", iccmComment);
+                    other.put("medicine_comment", medicineComment);
+                    other.put("stipend_comment", stipendComment);
+                    other.put("mhealth_comment", mHealthComment);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
 
                 JSONObject activities = new JSONObject();
                 String partnerActivities="";
 
                 partnerActivity.setSynced(false);
+                partnerActivity.setOther(other.toString());
 
                 ArrayList<Integer> listOfSelectedCheckBoxId = new ArrayList<>();
                 for (int i = 0; i < parentLayout.getChildCount(); i++) {

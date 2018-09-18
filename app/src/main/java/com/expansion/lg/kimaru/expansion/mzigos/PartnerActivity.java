@@ -13,6 +13,7 @@ public class PartnerActivity {
             comment, activities;
     boolean doingMhealth, doingIccm, givingFreeDrugs, givingStipend, synced;
     Long dateAdded, addedBy;
+    String other;
 
     int color = -1;
 
@@ -23,7 +24,7 @@ public class PartnerActivity {
                            String parish, String village, String communityUnit, String mappingId,
                            String comment, boolean doingMhealth, boolean doingIccm,
                            boolean givingFreeDrugs, boolean givingStipend,
-                           Long dateAdded, Long addedBy, String activities, boolean synced) {
+                           Long dateAdded, Long addedBy, String activities, boolean synced, String other) {
         this.id = id;
         this.partnerId = partnerId;
         this.country = country;
@@ -42,6 +43,7 @@ public class PartnerActivity {
         this.addedBy = addedBy;
         this.activities = activities;
         this.synced = synced;
+        this.other = other;
     }
 
     public String getId() {
@@ -194,5 +196,13 @@ public class PartnerActivity {
 
     public void setColor(int color) {
         this.color = color;
+    }
+
+    public String getOther() {
+        return other;
+    }
+
+    public void setOther(String other) {
+        this.other = other;
     }
 }

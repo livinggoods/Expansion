@@ -14,6 +14,7 @@ public class LinkFacility {
     String picture="";
     int color = -1;
     Boolean read = false;
+    String other;
 
 
     public LinkFacility(){
@@ -22,7 +23,7 @@ public class LinkFacility {
 
     public LinkFacility(String id, String facilityName, String country, String mappingId, Double lat,
                         Double lon, String subCountyId, Long dateAdded, Integer addedBy,
-                        long actLevels, long mrdtLevels, String mflCode, String county, String parish) {
+                        long actLevels, long mrdtLevels, String mflCode, String county, String parish, String other) {
         this.id = id;
         this.facilityName = facilityName;
         this.mappingId = mappingId;
@@ -37,6 +38,7 @@ public class LinkFacility {
         this.mflCode = mflCode;
         this.county = county;
         this.parish = parish;
+        this.other = other;
 
     }
 
@@ -185,5 +187,13 @@ public class LinkFacility {
 
     public void setMrdtLevels(Long mrdtLevels) {
         this.mrdtLevels = mrdtLevels;
+    }
+
+    public String getOther() {
+        return other;
+    }
+
+    public void setOther(String other) {
+        this.other = other;
     }
 }

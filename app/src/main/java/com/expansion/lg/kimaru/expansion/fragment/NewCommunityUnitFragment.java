@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -80,6 +81,8 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
 
     Button buttonSave, buttonList;
 
+    LinearLayout layoutChvGovBasic;
+    EditText txtChvGovBasic;
 
     private int mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 100;
@@ -187,6 +190,21 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
         editPresenceOfTraderMarket = (RadioGroup) v.findViewById(R.id.editPresenceOfTraderMarket);
         editPresenceOfSuperMarket = (RadioGroup) v.findViewById(R.id.editPresenceOfSuperMarket);
         editNgosGivingFreeDrugs = (RadioGroup) v.findViewById(R.id.editNgosGivingFreeDrugs);
+
+        layoutChvGovBasic = (LinearLayout) v.findViewById(R.id.layout_chv_gov_basic);
+        txtChvGovBasic = (EditText) v.findViewById(R.id.ed_chv_gov_basic);
+
+        editCHVsTrainedGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.trainedYes) {
+                    layoutChvGovBasic.setVisibility(View.VISIBLE);
+                } else {
+                    layoutChvGovBasic.setVisibility(View.GONE);
+                    txtChvGovBasic.setText(String.valueOf(0));
+                }
+            }
+        });
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
         buttonList.setOnClickListener(this);
@@ -464,6 +482,10 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                     communityUnit.setChvsHouseholdsAsPerChief(chiefChvsHousehold);
                     communityUnit.setComment(comments);
 
+                    String noChvGokTrained = txtChvGovBasic.getText().toString();
+
+                    communityUnit.setNoChvGokBasicTrained(noChvGokTrained.equals("") ? 0: Integer.parseInt(noChvGokTrained));
+
 
                     long cid = communityUnitTable.addCommunityUnitData(communityUnit);
                     if (cid != -1){
@@ -541,7 +563,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
             editChiefChvHouseHold.setText(String.valueOf(editingCommunityUnit.getChvsHouseholdsAsPerChief()));
             editComment.setText(editingCommunityUnit.getComment());
 
-
+            txtChvGovBasic.setText(String.valueOf(editingCommunityUnit.getNoChvGokBasicTrained()));
             // set radio Buttons
             //mReadEnglish.check(editingRegistration.getReadEnglish().equals(1) ? R.id.radioCanReadEnglish : R.id.radioCannotReadEnglish);
             editCHVsTrainedGroup.clearCheck();

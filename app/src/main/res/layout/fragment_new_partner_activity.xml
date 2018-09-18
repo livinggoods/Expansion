@@ -39,7 +39,7 @@
                 android:background="@android:color/darker_gray"/>
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="wrap_content"
@@ -67,6 +67,17 @@
                         android:text="@string/no"
                         />
                 </RadioGroup>
+                <EditText
+                    android:id="@+id/txt_iccm_comments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:gravity="top|left"
+                    android:lines="10"
+                    android:minLines="3"
+                    android:hint="Comments"
+                    android:visibility="gone"
+                    />
             </LinearLayout>
 
             <View
@@ -108,6 +119,16 @@
                         android:text="@string/no"
                         />
                 </RadioGroup>
+                <EditText
+                    android:id="@+id/txt_medicine_comments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:gravity="top|left"
+                    android:lines="10"
+                    android:minLines="3"
+                    android:hint="Comments"
+                    android:visibility="gone"/>
             </LinearLayout>
 
             <View
@@ -149,6 +170,16 @@
                         android:text="@string/no"
                         />
                 </RadioGroup>
+                <EditText
+                    android:id="@+id/txt_stipend_comments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:gravity="top|left"
+                    android:lines="10"
+                    android:minLines="3"
+                    android:hint="Comments"
+                    android:visibility="gone"/>
             </LinearLayout>
 
             <View
@@ -186,6 +217,16 @@
                         android:text="@string/no"
                         />
                 </RadioGroup>
+                <EditText
+                    android:id="@+id/txt_mhealth_comments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:gravity="top|left"
+                    android:lines="10"
+                    android:minLines="3"
+                    android:hint="Comments"
+                    android:visibility="gone"/>
             </LinearLayout>
 
             <View
