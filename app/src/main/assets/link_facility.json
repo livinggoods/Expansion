@@ -1,0 +1,138 @@
+[
+  {
+    "type": "label",
+    "value": "",
+    "title": "Additional questions",
+    "name": "additional_requirements_label"
+  },
+  {
+    "name": "general_status",
+    "type": "radio",
+    "value": "",
+    "title": "What is the general status/condition of the link facility?",
+    "options": [
+      {
+        "option": "Poor",
+        "value": "Poor"
+      },
+      {
+        "option": "Fair",
+        "value": "Fair"
+      },
+      {
+        "option": "Good",
+        "value": "Good"
+      },
+      {
+        "option": "Excellent",
+        "value": "Excellent"
+      }
+    ]
+  },
+  {
+    "name": "structure_type",
+    "type": "radio",
+    "value": "",
+    "title": "What is the type of structure of the Facility?",
+    "options": [
+      {
+        "option": "Permanent",
+        "value": "Permanent"
+      },
+      {
+        "option": "Semi-Permanent",
+        "value": "semi-permanent"
+      }
+    ]
+  },
+  {
+    "name": "source_of_power",
+    "type": "radio",
+    "value": "",
+    "title": "What is the source (s) of Power for the Health Facility?",
+    "options": [
+      {
+        "option": "Solar",
+        "value": "Solar"
+      },
+      {
+        "option": "Electricity",
+        "value": "Electricity"
+      }, 
+      {
+        "option": "Generator",
+        "value": "Generator"
+      },
+      {
+        "option": "Other",
+        "value": "Other"
+      }
+    ]
+  },
+  {
+    "name": "power_source_working",
+    "type": "radio",
+    "value": "",
+    "title": "Is the power source working efficiently?",
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "open_closing_hour_facility",
+    "type": "input",
+    "title": "What is the opening and Closing hours of the facility?",
+    "value": "",
+    "constraint": "text"
+  },
+  {
+    "name": "facility_staffing_section",
+    "value": "",
+    "type": "label",
+    "title": "Health Facility Staffing"
+  },
+  {
+    "name": "total_staff",
+    "value": "",
+    "type": "input",
+    "constraint": "number",
+    "title": "How many staff work in the facility?"
+  },
+  {
+    "name": "is_permanent_staff",
+    "value": "",
+    "type": "radio",
+    "title": "Is there a permanent staff working in the facility?",
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "link_facility_in_charge_name_number",
+    "value": "",
+    "type": "input",
+    "constraint": "text",
+    "title": "Link Facility in Charge name and Contact?"
+  },
+  {
+    "name": "oversees_drug_issuing",
+    "value": "",
+    "type": "input",
+    "constraint": "text",
+    "title": "Who oversees issuing of drugs in the facility?"
+  }
+]

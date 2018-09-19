@@ -91,6 +91,12 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/layout_additional_questions"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
@@ -107,10 +113,6 @@
                     android:id="@+id/buttonList" />
             </LinearLayout>
         </LinearLayout>
-        <LinearLayout
-            android:id="@+id/layout_additional_questions"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+
     </ScrollView>
 </FrameLayout>
