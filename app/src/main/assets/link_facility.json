@@ -134,5 +134,433 @@
     "type": "input",
     "constraint": "text",
     "title": "Who oversees issuing of drugs in the facility?"
+  },
+  {
+    "type": "label",
+    "name": "label_stock_level_essential_drugs",
+    "title": "Stock levels of essential medicine",
+    "value": ""
+  },
+  {
+    "name": "stock_level_act",
+    "value": "",
+    "type": "radio",
+    "title": "What are the stock levels for ACT?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_amoxil",
+    "value": "",
+    "type": "radio",
+    "title": "What are the stock levels for Amoxil?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_zinc_ors",
+    "value": "",
+    "type": "radio",
+    "title": "What are the stock levels for Zinc and ORS?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_paracetamol_syrup",
+    "value": "",
+    "type": "radio",
+    "title": "What are the Stock Levels for Paracetamol Syrup?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_paracetamol_tablets",
+    "value": "",
+    "type": "radio",
+    "title": "What are the stock level for Paracetamol Tablets?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_cough_syrup",
+    "value": "",
+    "type": "radio",
+    "title": "What are the stock levels for Cough syrup?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_deworming_tablets",
+    "value": "",
+    "type": "radio",
+    "title": "What are the stock levels of deworming tablets?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_sulphur",
+    "value": "",
+    "type": "radio",
+    "title": "What are the stock levels of Sulphur?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_whitefield",
+    "value": "",
+    "type": "radio",
+    "title": "What are the stock levels of Whitefield?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_brufen",
+    "value": "",
+    "type": "radio",
+    "title": "What are the stock levels of Brufen?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "type": "label",
+    "name": "label_storage_medicine",
+    "title": "Storage of Medicine",
+    "value": ""
+  },
+  {
+    "name": "is_lockable_medicine_storage",
+    "value": "",
+    "type": "radio",
+    "title": "Is there a lockable Medicine storage room in the facility?",
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "is_medicine_storage_room_accessible",
+    "value": "",
+    "type": "radio",
+    "title": "Is the Medical storage room easily accessible?",
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "is_medicine_storage_room_ventilated",
+    "value": "",
+    "type": "radio",
+    "title": "Is Medicine storage room adequately ventilated?",
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "is_evidence_of_pests",
+    "value": "",
+    "type": "radio",
+    "title": "Is there evidence of pests eg Rodents or bats on the medicine storage room?",
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "is_evidence_of_leakage",
+    "value": "",
+    "type": "radio",
+    "title": "Is there evidence of leakage or humidity in the medicine storage room?",
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "shrink_damage_process",
+    "value": "",
+    "type": "input",
+    "constraint": "text",
+    "title": "What is the shrink and damage management process?"
+  },
+  {
+    "name": "label_drugs_supply_chain",
+    "value": "",
+    "type": "label",
+    "title": "Drugs supply Chain (Ordering, transport and distribution)"
+  },
+  {
+    "name": "drug_order_process",
+    "value": "",
+    "type": "input",
+    "constraint": "text",
+    "title": "Describe how drugs are ordered?"
+  },
+  {
+    "name": "drug_supply_source",
+    "value": "",
+    "type": "input",
+    "constraint": "text",
+    "title": "What is the source of drug supply?"
+  },
+  {
+    "name": "how_often_drug_delivery",
+    "value": "",
+    "type": "options",
+    "title": "How often are drug deliveries made?",
+    "options": [
+      {
+        "option": "Monthly",
+        "value": "Monthly"
+      },
+      {
+        "option": "Quarterly",
+        "value": "Quarterly"
+      },
+      {
+        "option": "Bi-weekly",
+        "value": "Bi-weekly"
+      },
+      {
+        "option": "Other",
+        "value": "Other"
+      }
+    ]
+  },
+  {
+    "name": "drug_stock_out_process",
+    "value": "",
+    "type": "input",
+    "constraint": "text",
+    "title": "What happens in case of stock outs?"
+  },
+  {
+    "name": "drug_transportation_mode",
+    "value": "",
+    "type": "options",
+    "title": "What mode of transportation of drugs?",
+    "options": [
+      {
+        "option": "Vehicle",
+        "value": "Vehicle"
+      },
+      {
+        "option": "Motorbike",
+        "value": "Motorbike"
+      },
+      {
+        "option": "Track",
+        "value": "Track"
+      },
+      {
+        "option": "Other",
+        "value": "Other"
+      }
+    ]
+  },
+  {
+    "name": "drug_received_from",
+    "value": "",
+    "type": "input",
+    "constraint": "text",
+    "title": "Where are drugs received from?"
+  },
+  {
+    "name": "condition_road_facility",
+    "value": "",
+    "type": "input",
+    "constraint": "text",
+    "title": "What is the condition of the road to the Facility?"
+  },
+  {
+    "type": "label",
+    "name": "label_phone_internet_connectivity",
+    "title": "Phone and internet connectivity",
+    "value": ""
+  },
+  {
+    "name": "connectivity_like",
+    "value": "",
+    "type": "input",
+    "constraint": "text",
+    "title": "What is the network connectivity Like?"
+  },
+  {
+    "name": "preferred_network",
+    "value": "",
+    "type": "radio",
+    "title": "What is the preferred network?",
+    "options": [
+      {
+        "option": "Safaricom",
+        "value": "Safaricom"
+      },
+      {
+        "option": "Airtel",
+        "value": "Airtel"
+      },
+      {
+        "option": "Telkom",
+        "value": "Telkom"
+      }
+    ]
+  },
+  {
+    "name": "most_common_smartphone_type",
+    "value": "",
+    "type": "input",
+    "constraint": "text",
+    "title": "What is the most common smart phone type?"
   }
 ]

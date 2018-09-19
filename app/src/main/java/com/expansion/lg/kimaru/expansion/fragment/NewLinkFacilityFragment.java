@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -273,6 +274,16 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         LinearLayout container = new LinearLayout(getContext());
         container.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         container.setOrientation(LinearLayout.VERTICAL);
+
+        float scale = getResources().getDisplayMetrics().density;
+
+        int paddingLeft = (int) (scale * 10 + 0.5f);
+        int paddingRight = (int) (scale * 0 + 0.5f);
+        int paddingTop = (int) (scale * 0 + 0.5f);
+        int paddingBottom = (int) (scale * 0 + 0.5f);
+
+        container.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+
         return container;
     }
 
@@ -281,7 +292,15 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         label.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         label.setText(title);
 
-        label.setPadding(0, 3, 0, 2);
+        float scale = getResources().getDisplayMetrics().density;
+
+        int paddingLeft = (int) (scale * 0 + 0.5f);
+        int paddingRight = (int) (scale * 0 + 0.5f);
+        int paddingTop = (int) (scale * 16 + 0.5f);
+        int paddingBottom = (int) (scale * 2 + 0.5f);
+
+        label.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        label.setTextColor(getResources().getColor(android.R.color.primary_text_light));
 
         return label;
     }
@@ -328,6 +347,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         EditText input = new EditText(getContext());
         input.setTag(name);
         input.setHint(title);
+        input.setText(value);
 
         switch (constraint) {
             case "number":
@@ -347,10 +367,18 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     }
 
     private View createLabelField(JSONObject json) throws JSONException {
+        float scale = getResources().getDisplayMetrics().density;
+
+        int paddingLeft = (int) (scale * 0 + 0.5f);
+        int paddingRight = (int) (scale * 0 + 0.5f);
+        int paddingTop = (int) (scale * 32 + 0.5f);
+        int paddingBottom = (int) (scale * 0 + 0.5f);
+
         TextView label = new TextView(getContext());
         label.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         label.setText(json.getString("title").toUpperCase());
-        label.setPadding(0, 10, 0, 5);
+        label.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        label.setTypeface(label.getTypeface(), Typeface.BOLD);
         return label;
     }
 
