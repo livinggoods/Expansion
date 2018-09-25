@@ -59,6 +59,7 @@ import com.expansion.lg.kimaru.expansion.other.UtilFunctions;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
 import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
+import com.koushikdutta.async.http.body.JSONObjectBody;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -104,6 +105,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     Button buttonSave, buttonList;
 
     JSONArray jsonArray;
+    JSONObject jsonResults;
 
     EditText editFacilityName, editActLevels, editMrdtLevels, editMflCode;
     TextView textLat, textLon;
@@ -235,6 +237,9 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         return v;
     }
 
+    /**
+     * Adds additional questions
+     */
     private void setupAdditionalQuestions() {
 
         try {
@@ -693,6 +698,19 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                     return;
                 }
 
+                // TODO Validate additional fields
+                // TODO Get other field
+                try {
+                    if (!validateExtraFields()) {
+                        Log.e("JSON", jsonResults.toString());
+                        throw new Exception("Please check your input");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 if (location == null) {
                     Toast.makeText(getContext(),
                             "The location has not been captured",
@@ -704,7 +722,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 else
                     parishId = null;
                 LinkFacility linkFacility = new LinkFacility(uuid, facilityName, country, mappingId,
-                        latitude, longitude, subCounty, currentDate, addedBy, actLevels, mrdtLevels, mflCode, county, parishId, "{}");
+                        latitude, longitude, subCounty, currentDate, addedBy, actLevels, mrdtLevels, mflCode, county, parishId, jsonResults.toString());
 
                 LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
                 long id = linkFacilityTable.addData(linkFacility);
@@ -719,8 +737,59 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                     editMrdtLevels.setText("");
                     editActLevels.setText("");
                 }
+        }
+    }
 
+    private boolean validateExtraFields() throws JSONException {
+        boolean isValid = true;
 
+        if (jsonResults == null) {
+            jsonResults = new JSONObject();
+        }
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+
+            JSONObject json = jsonArray.getJSONObject(i);
+            String name = json.getString("name");
+            String type = json.getString("type");
+            boolean required = json.getBoolean("required");
+            if (type.equals("label"))
+                continue;
+
+            String value = getValue(name, type);
+
+            if (required && value.equals("")) {
+                Log.e("Is Valid", "FALSe");
+                Log.e("name", name +": " + value);
+                isValid = false;
+            }
+
+            jsonResults.put(name, value);
+
+        }
+
+        return isValid;
+    }
+
+    private String getValue(String name, String type) {
+
+        switch (type) {
+
+            case "input":
+                EditText editText = (EditText) layoutQuestions.findViewWithTag(name);
+                return editText.getText().toString();
+
+            case "radio":
+                RadioGroup radioGroup = (RadioGroup) layoutQuestions.findViewWithTag(name);
+                int selected = radioGroup.getCheckedRadioButtonId();
+                if (selected != -1) {
+                    RadioButton radioButton = (RadioButton) layoutQuestions.findViewById(selected);
+                    return radioButton.getText().toString();
+                }
+                return "";
+
+            default:
+                return "";
         }
     }
 
