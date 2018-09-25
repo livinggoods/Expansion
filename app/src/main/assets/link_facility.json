@@ -1,0 +1,607 @@
+[
+  {
+    "type": "label",
+    "value": "",
+    "required": true,
+    "title": "Additional questions",
+    "name": "additional_requirements_label"
+  },
+  {
+    "name": "general_status",
+    "type": "radio",
+    "value": "",
+    "title": "What is the general status/condition of the link facility?",
+    "required": true,
+    "options": [
+      {
+        "option": "Poor",
+        "value": "Poor"
+      },
+      {
+        "option": "Fair",
+        "value": "Fair"
+      },
+      {
+        "option": "Good",
+        "value": "Good"
+      },
+      {
+        "option": "Excellent",
+        "value": "Excellent"
+      }
+    ]
+  },
+  {
+    "name": "structure_type",
+    "type": "radio",
+    "value": "",
+    "required": true,
+    "title": "What is the type of structure of the Facility?",
+    "options": [
+      {
+        "option": "Permanent",
+        "value": "Permanent"
+      },
+      {
+        "option": "Semi-Permanent",
+        "value": "semi-permanent"
+      }
+    ]
+  },
+  {
+    "name": "source_of_power",
+    "type": "radio",
+    "value": "",
+    "required": true,
+    "title": "What is the source (s) of Power for the Health Facility?",
+    "options": [
+      {
+        "option": "Solar",
+        "value": "Solar"
+      },
+      {
+        "option": "Electricity",
+        "value": "Electricity"
+      }, 
+      {
+        "option": "Generator",
+        "value": "Generator"
+      },
+      {
+        "option": "Other",
+        "value": "Other"
+      }
+    ]
+  },
+  {
+    "name": "power_source_working",
+    "type": "radio",
+    "value": "",
+    "required": true,
+    "title": "Is the power source working efficiently?",
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "open_closing_hour_facility",
+    "type": "input",
+    "title": "What is the opening and Closing hours of the facility?",
+    "value": "",
+    "required": true,
+    "constraint": "text"
+  },
+  {
+    "name": "facility_staffing_section",
+    "value": "",
+    "type": "label",
+    "required": true,
+    "title": "Health Facility Staffing"
+  },
+  {
+    "name": "total_staff",
+    "value": "",
+    "type": "input",
+    "required": true,
+    "constraint": "number",
+    "title": "How many staff work in the facility?"
+  },
+  {
+    "name": "is_permanent_staff",
+    "value": "",
+    "type": "radio",
+    "required": true,
+    "title": "Is there a permanent staff working in the facility?",
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "link_facility_in_charge_name_number",
+    "value": "",
+    "type": "input",
+    "constraint": "text",
+    "required": true,
+    "title": "Link Facility in Charge name and Contact?"
+  },
+  {
+    "name": "oversees_drug_issuing",
+    "value": "",
+    "type": "input",
+    "constraint": "text",
+    "required": true,
+    "title": "Who oversees issuing of drugs in the facility?"
+  },
+  {
+    "type": "label",
+    "name": "label_stock_level_essential_drugs",
+    "title": "Stock levels of essential medicine",
+    "required": true,
+    "value": ""
+  },
+  {
+    "name": "stock_level_act",
+    "value": "",
+    "type": "radio",
+    "required": true,
+    "title": "What are the stock levels for ACT?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_amoxil",
+    "value": "",
+    "type": "radio",
+    "required": true,
+    "title": "What are the stock levels for Amoxil?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_zinc_ors",
+    "value": "",
+    "type": "radio",
+    "required": true,
+    "title": "What are the stock levels for Zinc and ORS?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_paracetamol_syrup",
+    "value": "",
+    "type": "radio",
+    "required": true,
+    "title": "What are the Stock Levels for Paracetamol Syrup?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_paracetamol_tablets",
+    "value": "",
+    "type": "radio",
+    "required": true,
+    "title": "What are the stock level for Paracetamol Tablets?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_cough_syrup",
+    "value": "",
+    "type": "radio",
+    "required": true,
+    "title": "What are the stock levels for Cough syrup?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_deworming_tablets",
+    "value": "",
+    "type": "radio",
+    "required": true,
+    "title": "What are the stock levels of deworming tablets?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_sulphur",
+    "value": "",
+    "required": true,
+    "type": "radio",
+    "title": "What are the stock levels of Sulphur?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_whitefield",
+    "value": "",
+    "type": "radio",
+    "required": true,
+    "title": "What are the stock levels of Whitefield?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "name": "stock_level_brufen",
+    "value": "",
+    "type": "radio",
+    "required": true,
+    "title": "What are the stock levels of Brufen?",
+    "options": [
+      {
+        "option": "In stock",
+        "value": "In stock"
+      },
+      {
+        "option": "> 1 month",
+        "value": "> 1 month"
+      },
+      {
+        "option": "< 1 month",
+        "value": "< 1 month"
+      }
+    ]
+  },
+  {
+    "type": "label",
+    "name": "label_storage_medicine",
+    "title": "Storage of Medicine",
+    "required": true,
+    "value": ""
+  },
+  {
+    "name": "is_lockable_medicine_storage",
+    "value": "",
+    "required": true,
+    "type": "radio",
+    "title": "Is there a lockable Medicine storage room in the facility?",
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "is_medicine_storage_room_accessible",
+    "value": "",
+    "required": true,
+    "type": "radio",
+    "title": "Is the Medical storage room easily accessible?",
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "is_medicine_storage_room_ventilated",
+    "value": "",
+    "required": true,
+    "type": "radio",
+    "title": "Is Medicine storage room adequately ventilated?",
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "is_evidence_of_pests",
+    "value": "",
+    "required": true,
+    "type": "radio",
+    "title": "Is there evidence of pests eg Rodents or bats on the medicine storage room?",
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "is_evidence_of_leakage",
+    "value": "",
+    "required": true,
+    "type": "radio",
+    "title": "Is there evidence of leakage or humidity in the medicine storage room?",
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "shrink_damage_process",
+    "value": "",
+    "required": true,
+    "type": "input",
+    "constraint": "text",
+    "title": "What is the shrink and damage management process?"
+  },
+  {
+    "name": "label_drugs_supply_chain",
+    "value": "",
+    "required": true,
+    "type": "label",
+    "title": "Drugs supply Chain (Ordering, transport and distribution)"
+  },
+  {
+    "name": "drug_order_process",
+    "value": "",
+    "required": true,
+    "type": "input",
+    "constraint": "text",
+    "title": "Describe how drugs are ordered?"
+  },
+  {
+    "name": "drug_supply_source",
+    "value": "",
+    "required": true,
+    "type": "input",
+    "constraint": "text",
+    "title": "What is the source of drug supply?"
+  },
+  {
+    "name": "how_often_drug_delivery",
+    "value": "",
+    "required": true,
+    "type": "radio",
+    "title": "How often are drug deliveries made?",
+    "options": [
+      {
+        "option": "Monthly",
+        "value": "Monthly"
+      },
+      {
+        "option": "Quarterly",
+        "value": "Quarterly"
+      },
+      {
+        "option": "Bi-weekly",
+        "value": "Bi-weekly"
+      },
+      {
+        "option": "Other",
+        "value": "Other"
+      }
+    ]
+  },
+  {
+    "name": "drug_stock_out_process",
+    "value": "",
+    "required": true,
+    "type": "input",
+    "constraint": "text",
+    "title": "What happens in case of stock outs?"
+  },
+  {
+    "name": "drug_transportation_mode",
+    "value": "",
+    "required": true,
+    "type": "radio",
+    "title": "What mode of transportation of drugs?",
+    "options": [
+      {
+        "option": "Vehicle",
+        "value": "Vehicle"
+      },
+      {
+        "option": "Motorbike",
+        "value": "Motorbike"
+      },
+      {
+        "option": "Track",
+        "value": "Track"
+      },
+      {
+        "option": "Other",
+        "value": "Other"
+      }
+    ]
+  },
+  {
+    "name": "drug_received_from",
+    "value": "",
+    "required": true,
+    "type": "input",
+    "constraint": "text",
+    "title": "Where are drugs received from?"
+  },
+  {
+    "name": "condition_road_facility",
+    "value": "",
+    "required": true,
+    "type": "input",
+    "constraint": "text",
+    "title": "What is the condition of the road to the Facility?"
+  },
+  {
+    "type": "label",
+    "required": true,
+    "name": "label_phone_internet_connectivity",
+    "title": "Phone and internet connectivity",
+    "value": ""
+  },
+  {
+    "name": "connectivity_like",
+    "value": "",
+    "required": true,
+    "type": "input",
+    "constraint": "text",
+    "title": "What is the network connectivity Like?"
+  },
+  {
+    "name": "preferred_network",
+    "value": "",
+    "required": true,
+    "type": "radio",
+    "title": "What is the preferred network?",
+    "options": [
+      {
+        "option": "Safaricom",
+        "value": "Safaricom"
+      },
+      {
+        "option": "Airtel",
+        "value": "Airtel"
+      },
+      {
+        "option": "Telkom",
+        "value": "Telkom"
+      }
+    ]
+  },
+  {
+    "name": "most_common_smartphone_type",
+    "required": true,
+    "value": "",
+    "type": "input",
+    "constraint": "text",
+    "title": "What is the most common smart phone type?"
+  }
+]

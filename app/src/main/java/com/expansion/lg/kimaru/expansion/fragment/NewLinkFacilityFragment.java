@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -54,9 +55,16 @@ import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.GpsTracker;
+import com.expansion.lg.kimaru.expansion.other.UtilFunctions;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
 import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
+import com.koushikdutta.async.http.body.JSONObjectBody;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -96,8 +104,13 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
     Button buttonSave, buttonList;
 
-    EditText editFacilityName, editActLevels, editMrdtLevels,editMflCode;
+    JSONArray jsonArray;
+    JSONObject jsonResults;
+
+    EditText editFacilityName, editActLevels, editMrdtLevels, editMflCode;
     TextView textLat, textLon;
+
+    LinearLayout layoutQuestions;
 
     private int mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 100;
@@ -163,7 +176,13 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+        }
 
+        String jsonStr = UtilFunctions.loadFromAsset(getContext(), "link_facility.json");
+        try {
+            jsonArray = new JSONArray(jsonStr);
+        } catch (JSONException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -171,11 +190,11 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_new_link_facility, container, false);
-        MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_LINK_FACILITY;
+        View v = inflater.inflate(R.layout.fragment_new_link_facility, container, false);
+        MainActivity.CURRENT_TAG = MainActivity.TAG_NEW_LINK_FACILITY;
         MainActivity.backFragment = new LinkFacilitiesFragment();
 
-                //get the current user
+        //get the current user
         session = new SessionManagement(getContext());
         user = session.getUserDetails();
         // check Permissions
@@ -188,17 +207,23 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         textLat = (TextView) v.findViewById(R.id.textLat);
         textLon = (TextView) v.findViewById(R.id.textLon);
 
+        layoutQuestions = (LinearLayout) v.findViewById(R.id.layout_additional_questions);
+
         textLat.setText("Capturing LAT");
         textLon.setText("Capturing LON");
 
-        if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+        if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")) {
             editActLevels.setVisibility(View.GONE);
             editMrdtLevels.setVisibility(View.GONE);
         }
-        if(editingLinkFacility!=null){
+        if (editingLinkFacility != null) {
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                // TODO implement some logic over here
+            }
+
             setUpEditing();
         }
-
 
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
@@ -207,10 +232,162 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         buttonSave = (Button) v.findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(this);
 
+        setupAdditionalQuestions();
+
         return v;
     }
 
-    public void getLocation(){
+    /**
+     * Adds additional questions
+     */
+    private void setupAdditionalQuestions() {
+
+        try {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject json = jsonArray.getJSONObject(i);
+
+                View questionView = getQuestionView(json);
+
+                if (questionView != null)
+                    layoutQuestions.addView(questionView);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private View getQuestionView(JSONObject json) throws JSONException {
+
+        String type = json.getString("type");
+
+        switch (type) {
+            case "label":
+                return createLabelField(json);
+            case "input":
+                return createInputField(json);
+            case "radio":
+                return createRadioButtons(json);
+            default:
+                return null;
+        }
+    }
+
+    private LinearLayout getContainer() {
+
+        LinearLayout container = new LinearLayout(getContext());
+        container.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        container.setOrientation(LinearLayout.VERTICAL);
+
+        float scale = getResources().getDisplayMetrics().density;
+
+        int paddingLeft = (int) (scale * 10 + 0.5f);
+        int paddingRight = (int) (scale * 0 + 0.5f);
+        int paddingTop = (int) (scale * 0 + 0.5f);
+        int paddingBottom = (int) (scale * 0 + 0.5f);
+
+        container.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+
+        return container;
+    }
+
+    private TextView getQuestionLabel(String title) {
+        TextView label = new TextView(getContext());
+        label.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        label.setText(title);
+
+        float scale = getResources().getDisplayMetrics().density;
+
+        int paddingLeft = (int) (scale * 0 + 0.5f);
+        int paddingRight = (int) (scale * 0 + 0.5f);
+        int paddingTop = (int) (scale * 16 + 0.5f);
+        int paddingBottom = (int) (scale * 2 + 0.5f);
+
+        label.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        label.setTextColor(getResources().getColor(android.R.color.primary_text_light));
+
+        return label;
+    }
+
+    private View createRadioButtons(JSONObject json) throws JSONException {
+        String title = json.getString("title");
+        String value = json.getString("value");
+        String name = json.getString("name");
+        JSONArray options = json.getJSONArray("options");
+
+        RadioGroup input = new RadioGroup(getContext());
+        input.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        input.setOrientation(RadioGroup.HORIZONTAL);
+        input.setTag(name);
+
+        for (int i = 0; i < options.length(); i++) {
+            JSONObject optionObj = options.getJSONObject(i);
+            String option = optionObj.getString("option");
+            String optionValue = optionObj.getString("value");
+
+            RadioButton radioButton = new RadioButton(getContext());
+            radioButton.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            radioButton.setChecked(optionValue.equals(value));
+            radioButton.setText(option);
+            radioButton.setTag(value);
+
+            input.addView(radioButton);
+        }
+
+
+        LinearLayout container = getContainer();
+        container.addView(getQuestionLabel(title));
+        container.addView(input);
+
+        return container;
+    }
+
+    private LinearLayout createInputField(JSONObject json) throws JSONException {
+        String title = json.getString("title");
+        String value = json.getString("value");
+        String name = json.getString("name");
+        String constraint = json.getString("constraint");
+
+        EditText input = new EditText(getContext());
+        input.setTag(name);
+        input.setHint(title);
+        input.setText(value);
+
+        switch (constraint) {
+            case "number":
+                input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                break;
+            case "tel":
+                input.setInputType(InputType.TYPE_CLASS_PHONE);
+                break;
+            default:
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+        }
+
+        LinearLayout container = getContainer();
+        container.addView(getQuestionLabel(title));
+        container.addView(input);
+        return container;
+    }
+
+    private View createLabelField(JSONObject json) throws JSONException {
+        float scale = getResources().getDisplayMetrics().density;
+
+        int paddingLeft = (int) (scale * 0 + 0.5f);
+        int paddingRight = (int) (scale * 0 + 0.5f);
+        int paddingTop = (int) (scale * 32 + 0.5f);
+        int paddingBottom = (int) (scale * 0 + 0.5f);
+
+        TextView label = new TextView(getContext());
+        label.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        label.setText(json.getString("title").toUpperCase());
+        label.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        label.setTypeface(label.getTypeface(), Typeface.BOLD);
+        return label;
+    }
+
+    public void getLocation() {
         //get the location
         try {
             locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
@@ -219,7 +396,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
             // Is network enabled
             isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             //if both are off, we cannot get the GPS
-            if (!isGPSEnabled && !isNetworkEnabled){
+            if (!isGPSEnabled && !isNetworkEnabled) {
                 //ask user to enable location
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
                 // Setting Dialog Title
@@ -246,10 +423,10 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 // Showing Alert Message
                 alertDialog.show();
 
-            }else{
+            } else {
                 this.canGetLocation = true;
                 // check for permissions
-                if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     //show explanation for permissions
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setTitle("Needs GPS Permission");
@@ -271,7 +448,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                         }
                     });
                     builder.show();
-                } else{
+                } else {
                     ActivityCompat.requestPermissions(getActivity(), new String[]{
                             Manifest.permission.ACCESS_COARSE_LOCATION,
                             Manifest.permission.ACCESS_FINE_LOCATION
@@ -280,46 +457,48 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
                 //we have the permissions now
                 // Get location from Network provider
-                if (isNetworkEnabled){
+                if (isNetworkEnabled) {
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                             MIN_TIME_BETWEEN_UPDATE,
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                    if(locationManager != null){
+                    if (locationManager != null) {
                         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        if (location != null){
+                        if (location != null) {
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
-                            textLat.setText("LAT: "+String.valueOf(latitude));
-                            textLon.setText("LON: "+String.valueOf(longitude));
+                            textLat.setText("LAT: " + String.valueOf(latitude));
+                            textLon.setText("LON: " + String.valueOf(longitude));
                         }
                     }
                 }
                 // we try getting the location form GPS
-                if (isGPSEnabled){
+                if (isGPSEnabled) {
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                             MIN_TIME_BETWEEN_UPDATE,
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                    if(locationManager != null){
+                    if (locationManager != null) {
                         location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                        if (location != null){
+                        if (location != null) {
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
-                            textLat.setText("LAT: "+String.valueOf(latitude));
-                            textLon.setText("LON: "+String.valueOf(longitude));
+                            textLat.setText("LAT: " + String.valueOf(latitude));
+                            textLon.setText("LON: " + String.valueOf(longitude));
                         }
                     }
                 }
 
             }
 
-        } catch (Exception e){}
+        } catch (Exception e) {
+        }
     }
-    public void checkPermissions(){
-        try{
-            if(ActivityCompat.checkSelfPermission(getActivity(), permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED
-                    || ActivityCompat.checkSelfPermission(getActivity(), permissionsRequired[1]) != PackageManager.PERMISSION_GRANTED){
-                if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),permissionsRequired[0])
-                        || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),permissionsRequired[1])){
+
+    public void checkPermissions() {
+        try {
+            if (ActivityCompat.checkSelfPermission(getActivity(), permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(getActivity(), permissionsRequired[1]) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permissionsRequired[0])
+                        || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permissionsRequired[1])) {
                     //Show Information about why you need the permission
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setTitle("Multiple Permissions Request");
@@ -328,7 +507,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
-                            ActivityCompat.requestPermissions(getActivity(),permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
+                            ActivityCompat.requestPermissions(getActivity(), permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -338,7 +517,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                         }
                     });
                     builder.show();
-                }else if (permissionStatus.getBoolean(permissionsRequired[0], false)){
+                } else if (permissionStatus.getBoolean(permissionsRequired[0], false)) {
                     //Previously Permission Request was cancelled with 'Dont Ask Again',
                     // Redirect to Settings after showing Information about why you need the permission
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -364,26 +543,27 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                         }
                     });
                     builder.show();
-                }else {
+                } else {
                     ActivityCompat.requestPermissions(getActivity(), permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
                 }
                 SharedPreferences.Editor editor = permissionStatus.edit();
-                editor.putBoolean(permissionsRequired[0],true);
+                editor.putBoolean(permissionsRequired[0], true);
                 editor.commit();
-            }else{
+            } else {
                 proceedAfterPermission();
             }
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == PERMISSION_CALLBACK_CONSTANT){
+        if (requestCode == PERMISSION_CALLBACK_CONSTANT) {
             //check if all permissions are granted
             boolean allgranted = false;
-            for(int i=0;i<grantResults.length;i++){
-                if(grantResults[i]==PackageManager.PERMISSION_GRANTED){
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                     allgranted = true;
                 } else {
                     allgranted = false;
@@ -391,10 +571,10 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 }
             }
 
-            if(allgranted){
+            if (allgranted) {
                 proceedAfterPermission();
-            } else if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),permissionsRequired[0])
-                    || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),permissionsRequired[1])){
+            } else if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permissionsRequired[0])
+                    || ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permissionsRequired[1])) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Need Multiple Permissions");
                 builder.setMessage("This app needs Location permissions.");
@@ -402,7 +582,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
-                        ActivityCompat.requestPermissions(getActivity(),permissionsRequired,PERMISSION_CALLBACK_CONSTANT);
+                        ActivityCompat.requestPermissions(getActivity(), permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -413,10 +593,11 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 });
                 builder.show();
             } else {
-                Toast.makeText(getContext(),"Unable to get Permission",Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Unable to get Permission", Toast.LENGTH_LONG).show();
             }
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -427,6 +608,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
             }
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -437,10 +619,10 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
             }
         }
     }
+
     private void proceedAfterPermission() {
         getLocation();
     }
-
 
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -449,9 +631,10 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
             mListener.onFragmentInteraction(uri);
         }
     }
+
     @Override
-    public void onClick(View view){
-        switch (view.getId()){
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.editDob:
                 DialogFragment newFragment = new DatePickerFragment().newInstance(R.id.editDob);
                 newFragment.show(getFragmentManager(), "DatePicker");
@@ -461,7 +644,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
             case R.id.buttonList:
                 //when user clicks this button, we will show the list
 
-                LinkFacilitiesFragment linkFacilitiesFragment  = new LinkFacilitiesFragment();
+                LinkFacilitiesFragment linkFacilitiesFragment = new LinkFacilitiesFragment();
                 Fragment fragment = linkFacilitiesFragment;
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -474,22 +657,22 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 // set date as integers
 
                 Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
-                Long currentDate =  new Date().getTime();
+                Long currentDate = new Date().getTime();
                 Mapping mapping = session.getSavedMapping();
                 String subCountyId;
                 String uuid;
-                if(editingLinkFacility!=null){
+                if (editingLinkFacility != null) {
                     uuid = editingLinkFacility.getId();
-                }else{
+                } else {
                     uuid = UUID.randomUUID().toString();
                 }
 
                 String county = mapping.getCounty();
                 String subCounty;
-                if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+                if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")) {
                     subCounty = mapping.getSubCounty();
                     subCountyId = mapping.getSubCounty();
-                }else {
+                } else {
                     subCounty = session.getSavedSubCounty().getId();
                     subCountyId = session.getSavedSubCounty().getId();
                 }
@@ -500,22 +683,35 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 String facilityName = editFacilityName.getText().toString();
                 String mflCode = editMflCode.getText().toString();
                 Long mrdtLevels = 0L;
-                if (!editMrdtLevels.getText().toString().trim().equals("")){
+                if (!editMrdtLevels.getText().toString().trim().equals("")) {
                     mrdtLevels = Long.valueOf(editMrdtLevels.getText().toString());
                 }
 
                 Long actLevels = 0L;
-                if (!editActLevels.getText().toString().trim().equals("")){
+                if (!editActLevels.getText().toString().trim().equals("")) {
                     actLevels = Long.valueOf(editActLevels.getText().toString());
                 }
 
                 // Do some validations
-                if (facilityName.toString().trim().equals("")){
+                if (facilityName.toString().trim().equals("")) {
                     Toast.makeText(getContext(), "Enter the name of the facility", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if (location == null){
+                // TODO Validate additional fields
+                // TODO Get other field
+                try {
+                    if (!validateExtraFields()) {
+                        Log.e("JSON", jsonResults.toString());
+                        throw new Exception("Please check your input");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                if (location == null) {
                     Toast.makeText(getContext(),
                             "The location has not been captured",
                             Toast.LENGTH_SHORT).show();
@@ -526,15 +722,14 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 else
                     parishId = null;
                 LinkFacility linkFacility = new LinkFacility(uuid, facilityName, country, mappingId,
-                        latitude, longitude, subCounty, currentDate, addedBy, actLevels, mrdtLevels, mflCode, county, parishId, "{}");
+                        latitude, longitude, subCounty, currentDate, addedBy, actLevels, mrdtLevels, mflCode, county, parishId, jsonResults.toString());
 
                 LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
-                long id  = linkFacilityTable.addData(linkFacility);
+                long id = linkFacilityTable.addData(linkFacility);
 
-                if (id ==-1){
+                if (id == -1) {
                     Toast.makeText(getContext(), "Could not save the link Facility", Toast.LENGTH_SHORT).show();
-                }
-                else{
+                } else {
                     Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
 
                     editFacilityName.setText("");
@@ -542,9 +737,59 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                     editMrdtLevels.setText("");
                     editActLevels.setText("");
                 }
+        }
+    }
 
+    private boolean validateExtraFields() throws JSONException {
+        boolean isValid = true;
 
+        if (jsonResults == null) {
+            jsonResults = new JSONObject();
+        }
 
+        for (int i = 0; i < jsonArray.length(); i++) {
+
+            JSONObject json = jsonArray.getJSONObject(i);
+            String name = json.getString("name");
+            String type = json.getString("type");
+            boolean required = json.getBoolean("required");
+            if (type.equals("label"))
+                continue;
+
+            String value = getValue(name, type);
+
+            if (required && value.equals("")) {
+                Log.e("Is Valid", "FALSe");
+                Log.e("name", name +": " + value);
+                isValid = false;
+            }
+
+            jsonResults.put(name, value);
+
+        }
+
+        return isValid;
+    }
+
+    private String getValue(String name, String type) {
+
+        switch (type) {
+
+            case "input":
+                EditText editText = (EditText) layoutQuestions.findViewWithTag(name);
+                return editText.getText().toString();
+
+            case "radio":
+                RadioGroup radioGroup = (RadioGroup) layoutQuestions.findViewWithTag(name);
+                int selected = radioGroup.getCheckedRadioButtonId();
+                if (selected != -1) {
+                    RadioButton radioButton = (RadioButton) layoutQuestions.findViewById(selected);
+                    return radioButton.getText().toString();
+                }
+                return "";
+
+            default:
+                return "";
         }
     }
 
@@ -566,10 +811,11 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         mListener = null;
 
         //When we detach, lets stop GPS
-        if(locationManager != null){
+        if (locationManager != null) {
             try {
                 locationManager.removeUpdates(this);
-            }catch (SecurityException se){}
+            } catch (SecurityException se) {
+            }
         }
     }
 
@@ -590,21 +836,21 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
     //CountyLocation Methods
     @Override
-    public void onLocationChanged(Location location){
+    public void onLocationChanged(Location location) {
         longitude = location.getLongitude();
         latitude = location.getLatitude();
-        textLat.setText("LAT: "+String.valueOf(latitude));
-        textLon.setText("LON: "+String.valueOf(longitude));
+        textLat.setText("LAT: " + String.valueOf(latitude));
+        textLon.setText("LON: " + String.valueOf(longitude));
 
     }
 
     @Override
-    public void onProviderEnabled(String provider){
+    public void onProviderEnabled(String provider) {
 
     }
 
     @Override
-    public void onProviderDisabled(String provider){
+    public void onProviderDisabled(String provider) {
     }
 
     @Override
@@ -612,8 +858,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
     }
 
-    public void setUpEditing(){
-        if (editingLinkFacility!=null) {
+    public void setUpEditing() {
+        if (editingLinkFacility != null) {
             editFacilityName.setText(editingLinkFacility.getFacilityName());
             editMrdtLevels.setText(String.valueOf(editingLinkFacility.getMrdtLevels()));
             editActLevels.setText(String.valueOf(editingLinkFacility.getActLevels()));

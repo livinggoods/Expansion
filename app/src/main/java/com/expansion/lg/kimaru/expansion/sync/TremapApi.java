@@ -10,7 +10,7 @@ public interface TremapApi {
 
     String apiVersion = "v2";
 
-    @POST("/api/"+apiVersion+"/users/login")
+    @POST("/api/" + apiVersion + "/users/login")
     @FormUrlEncoded
     Call<ResponseBody> loginUser(@Field("email") String email, @Field("password") String password);
 }
