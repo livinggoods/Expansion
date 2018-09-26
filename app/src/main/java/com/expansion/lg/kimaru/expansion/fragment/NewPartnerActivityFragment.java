@@ -105,12 +105,11 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
 
     LinearLayout layoutQuestions;
 
-   static final int DATE_DIALOG_ID = 100;
+    static final int DATE_DIALOG_ID = 100;
 
     SessionManagement session;
     HashMap<String, String> user;
     String country;
-
 
 
     public NewPartnerActivityFragment() {
@@ -155,11 +154,11 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_new_partner_activity, container, false);
-        MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_RECRUITMENT;
-        if (backFragment == null){
+        View v = inflater.inflate(R.layout.fragment_new_partner_activity, container, false);
+        MainActivity.CURRENT_TAG = MainActivity.TAG_NEW_RECRUITMENT;
+        if (backFragment == null) {
             MainActivity.backFragment = new PartnerActivityFragment();
-        }else{
+        } else {
             MainActivity.backFragment = backFragment;
         }
         session = new SessionManagement(getContext());
@@ -239,7 +238,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
 
         IccmComponentTable iccmComponentTable = new IccmComponentTable(getContext());
         iccmComponentList = iccmComponentTable.getIccmComponentData();
-        for (IccmComponent component: iccmComponentList){
+        for (IccmComponent component : iccmComponentList) {
             CheckBox checkBox = new CheckBox(getContext());
             checkBox.setId(component.getId());
             checkBox.setText(component.getComponentName());
@@ -267,11 +266,12 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
 
         return v;
     }
+
     AdapterView.OnItemSelectedListener onSelectedPartnerListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, final long id) {
             String selectedItem = partnerNames.get(position);
-            if (selectedItem.equalsIgnoreCase("Add New")){
+            if (selectedItem.equalsIgnoreCase("Add New")) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Add a New Partner");
                 LinearLayout layout = new LinearLayout(getContext());
@@ -303,7 +303,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String partnerName = editTextPartnerName.getText().toString();
-                        if (partnerName.equalsIgnoreCase("")){
+                        if (partnerName.equalsIgnoreCase("")) {
                             Toast.makeText(getContext(), "Facility Name is required", Toast.LENGTH_LONG).show();
                             return;
                         }
@@ -337,7 +337,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                         //lets set the selected
                         int x = 0;
                         for (Partners e : partnersList) {
-                            if (e.getPartnerID().equalsIgnoreCase(uuid)){
+                            if (e.getPartnerID().equalsIgnoreCase(uuid)) {
                                 selectPartner.setSelection(x, true);
                                 break;
                             }
@@ -361,13 +361,13 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
         }
     };
 
-    public void addPartners(){
+    public void addPartners() {
         PartnersTable partnersTable = new PartnersTable(getContext());
         partnersList = partnersTable.getPartnersData();
-        for (Partners partner: partnersList){
+        for (Partners partner : partnersList) {
             partnerNames.add(partner.getPartnerName());
         }
-        if (partnerNames.size() == 0){
+        if (partnerNames.size() == 0) {
             partnerNames.add("  ");
         }
         partnerNames.add("Add New");
@@ -382,8 +382,8 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
 
 
     @Override
-    public void onClick(View view){
-        switch (view.getId()){
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.buttonList:
                 Fragment fragment = new PartnerActivityFragment();
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -394,13 +394,13 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                 break;
             case R.id.buttonSave:
                 // set date as integers
-                Long currentDate =  new Date().getTime();
+                Long currentDate = new Date().getTime();
 
                 // Generate the uuid
                 String id;
-                if (editingPartnerActivity != null){
+                if (editingPartnerActivity != null) {
                     id = editingPartnerActivity.getId();
-                }else {
+                } else {
                     id = UUID.randomUUID().toString();
                 }
 
@@ -408,26 +408,26 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
 
                 partnerActivity.setId(id);
 
-                if (partnersList.size() !=0){
+                if (partnersList.size() != 0) {
                     partnerActivity.setPartnerId(partnersList.get(selectPartner.getSelectedItemPosition()).getPartnerID());
                 }
 
                 partnerActivity.setCountry(session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY));
                 partnerActivity.setCounty(session.getSavedMapping().getCounty());
 
-                if (subCounty != null){
+                if (subCounty != null) {
                     partnerActivity.setSubcounty(subCounty.getId());
                     partnerActivity.setCounty(subCounty.getCountyID());
                 }
 
-                if (parish != null){
+                if (parish != null) {
                     partnerActivity.setParish(parish.getId());
                 }
-                if (village != null){
+                if (village != null) {
                     partnerActivity.setVillage(village.getId());
                 }
 
-                if (communityUnit != null){
+                if (communityUnit != null) {
                     partnerActivity.setCommunityUnit(communityUnit.getId());
                     partnerActivity.setSubcounty(communityUnit.getSubCountyId());
                 }
@@ -449,7 +449,6 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                 String mHealthComment = txtMhealthComments.getText().toString();
 
                 JSONObject other = new JSONObject();
-
 
 
                 try {
@@ -476,7 +475,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                 }
 
                 JSONObject activities = new JSONObject();
-                String partnerActivities="";
+                String partnerActivities = "";
 
                 partnerActivity.setSynced(false);
                 partnerActivity.setOther(other.toString());
@@ -484,11 +483,11 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                 ArrayList<Integer> listOfSelectedCheckBoxId = new ArrayList<>();
                 for (int i = 0; i < parentLayout.getChildCount(); i++) {
                     CheckBox checkbox = (CheckBox) parentLayout.getChildAt(i);
-                    try{
+                    try {
                         activities.put(String.valueOf(checkbox.getId()), checkbox.isChecked());
-                        }catch (Exception e){}
-                    if (checkbox.isChecked())
-                    {
+                    } catch (Exception e) {
+                    }
+                    if (checkbox.isChecked()) {
                         listOfSelectedCheckBoxId.add(checkbox.getId());
                     }
                 }
@@ -497,10 +496,9 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
 
                 PartnerActivityTable partnerActivityTable = new PartnerActivityTable(getContext());
                 long statusId = partnerActivityTable.addData(partnerActivity);
-                if (statusId ==-1){
+                if (statusId == -1) {
                     Toast.makeText(getContext(), "Could not save the partner", Toast.LENGTH_SHORT).show();
-                }
-                else{
+                } else {
                     Toast.makeText(getContext(), "Saved successfully", Toast.LENGTH_SHORT).show();
 
                     // Clear boxes
@@ -510,9 +508,9 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
         }
     }
 
-    public String getSelectedRadioItemValue(RadioGroup radioGroup){
+    public String getSelectedRadioItemValue(RadioGroup radioGroup) {
         Integer selectedButton = radioGroup.getCheckedRadioButtonId();
-        RadioButton selectedRadioButton =(RadioButton) radioGroup.findViewById(selectedButton);
+        RadioButton selectedRadioButton = (RadioButton) radioGroup.findViewById(selectedButton);
         String selectedValue = selectedRadioButton.getText().toString();
         return selectedValue;
     }
@@ -543,11 +541,11 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
         void onFragmentInteraction(Uri uri);
     }
 
-    public void setUpEditingMode(){
-        if (editingPartnerActivity != null){
+    public void setUpEditingMode() {
+        if (editingPartnerActivity != null) {
             int x = 0;
             for (Partners e : partnersList) {
-                if (e.getPartnerID().equalsIgnoreCase(editingPartnerActivity.getPartnerId())){
+                if (e.getPartnerID().equalsIgnoreCase(editingPartnerActivity.getPartnerId())) {
                     selectPartner.setSelection(x, true);
                     break;
                 }
@@ -570,18 +568,43 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
             editIsDoingMhealth.check(editingPartnerActivity.isDoingMhealth() ?
                     R.id.editIsDoingMhealthYes : R.id.editIsDoingMhealthNo);
 
-            try{
+            try {
                 JSONObject activities = new JSONObject(editingPartnerActivity.getActivities());
                 Iterator<?> keys = activities.keys();
-                while(keys.hasNext()){
+                while (keys.hasNext()) {
                     String key = (String) keys.next();
                     Integer iccm = Integer.valueOf(key);
 
-                    Log.d("Tremap", iccm +" -- "+ activities.getString(key));
+                    Log.d("Tremap", iccm + " -- " + activities.getString(key));
                     CheckBox checkbox = (CheckBox) parentLayout.findViewById(iccm);
                     checkbox.setChecked(activities.getBoolean(String.valueOf(key)));
                 }
-            } catch (JSONException je){}
+            } catch (JSONException je) {
+            }
+
+            String other = editingPartnerActivity.getOther();
+            Log.e("OTHER", other);
+            try {
+                jsonResults = new JSONObject(other);
+
+                txtIccmComments.setText(jsonResults.getString("iccm_comment"));
+                txtMedicineComments.setText(jsonResults.getString("medicine_comment"));
+                txtStipendComments.setText(jsonResults.getString("stipend_comment"));
+                txtMhealthComments.setText(jsonResults.getString("mhealth_comment"));
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    if (obj.getString("type").equals("label")) {
+                        continue;
+                    }
+
+                    obj.put("value", jsonResults.get(obj.getString("name")));
+                    jsonArray.put(i, obj);
+                }
+
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -672,15 +695,17 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
         for (int i = 0; i < options.length(); i++) {
             JSONObject optionObj = options.getJSONObject(i);
             String option = optionObj.getString("option");
-            String optionValue = optionObj.getString("value");
 
             RadioButton radioButton = new RadioButton(getContext());
             radioButton.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            radioButton.setChecked(optionValue.equals(value));
             radioButton.setText(option);
             radioButton.setTag(value);
 
             input.addView(radioButton);
+
+            if (option.equals(value)) {
+                input.check(radioButton.getId());
+            }
         }
 
 
@@ -738,9 +763,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
     private boolean validateExtraFields() throws JSONException {
         boolean isValid = true;
 
-        if (jsonResults == null) {
-            jsonResults = new JSONObject();
-        }
+        jsonResults = new JSONObject();
 
         for (int i = 0; i < jsonArray.length(); i++) {
 
@@ -755,7 +778,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
 
             if (required && value.equals("")) {
                 Log.e("Is Valid", "FALSe");
-                Log.e("name", name +": " + value);
+                Log.e("name", name + ": " + value);
                 isValid = false;
             }
 

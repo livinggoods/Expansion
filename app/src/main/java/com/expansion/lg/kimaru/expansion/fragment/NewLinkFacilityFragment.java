@@ -324,15 +324,17 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         for (int i = 0; i < options.length(); i++) {
             JSONObject optionObj = options.getJSONObject(i);
             String option = optionObj.getString("option");
-            String optionValue = optionObj.getString("value");
 
             RadioButton radioButton = new RadioButton(getContext());
             radioButton.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            radioButton.setChecked(optionValue.equals(value));
             radioButton.setText(option);
             radioButton.setTag(value);
 
             input.addView(radioButton);
+
+            if (option.equals(value)) {
+                input.check(radioButton.getId());
+            }
         }
 
 
@@ -742,10 +744,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
     private boolean validateExtraFields() throws JSONException {
         boolean isValid = true;
+        jsonResults = new JSONObject();
 
-        if (jsonResults == null) {
-            jsonResults = new JSONObject();
-        }
 
         for (int i = 0; i < jsonArray.length(); i++) {
 
@@ -866,6 +866,25 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
             editMflCode.setText(editingLinkFacility.getMflCode());
             textLat.setText(String.valueOf(editingLinkFacility.getLat()));
             textLon.setText(String.valueOf(editingLinkFacility.getLon()));
+
+            String other = editingLinkFacility.getOther();
+            Log.e("OTHER", other);
+            try {
+                jsonResults = new JSONObject(other);
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    if (obj.getString("type").equals("label")) {
+                        continue;
+                    }
+
+                    obj.put("value", jsonResults.get(obj.getString("name")));
+                    jsonArray.put(i, obj);
+                }
+
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }

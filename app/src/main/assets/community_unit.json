@@ -1,0 +1,42 @@
+[
+  {
+    "type": "label",
+    "value": "",
+    "required": true,
+    "title": "Additional questions",
+    "name": "additional_requirements_label"
+  },
+  {
+    "name": "active_chvs",
+    "type": "input",
+    "value": "",
+    "title": "How many active CHVs?",
+    "required": false,
+    "constraint": "number"
+  },
+  {
+    "name": "is_area_not_covered_by_chv",
+    "type": "radio",
+    "value": "",
+    "title": "Are there area/villages not covered by a CHV?",
+    "required": false,
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "area_not_covered_by_chv",
+    "type": "input",
+    "value": "",
+    "title": "If Yes Specify",
+    "required": false,
+    "constraint": "text"
+  }
+]

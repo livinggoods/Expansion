@@ -608,7 +608,11 @@
                     android:minLines="@integer/comment_box_size" />
             </android.support.design.widget.TextInputLayout>
 
-
+            <LinearLayout
+                android:id="@+id/layout_additional_questions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
 
             <View
                 android:layout_width="match_parent"
@@ -631,6 +635,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/buttonList" />
             </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

@@ -4,6 +4,7 @@ package com.expansion.lg.kimaru.expansion.fragment;
  */
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -11,6 +12,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
@@ -32,8 +35,13 @@ import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
 import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
+import com.expansion.lg.kimaru.expansion.other.UtilFunctions;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -65,6 +73,9 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
     Fragment backFragment = null;
     CommunityUnit editingCommunityUnit = null;
 
+    JSONArray jsonArray;
+    JSONObject jsonResults;
+
     private OnFragmentInteractionListener mListener;
 
     EditText editName, editAreaChiefName, editAreaChiefPhone, editWard, editComment;
@@ -83,6 +94,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
 
     LinearLayout layoutChvGovBasic;
     EditText txtChvGovBasic;
+    LinearLayout layoutQuestions;
 
     private int mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 100;
@@ -130,17 +142,24 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
             mParam2 = getArguments().getString(ARG_PARAM2);
 
         }
+
+        String jsonStr = UtilFunctions.loadFromAsset(getContext(), "community_unit.json");
+        try {
+            jsonArray = new JSONArray(jsonStr);
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_new_community_unit, container, false);
-        MainActivity.CURRENT_TAG =MainActivity.TAG_NEW_COMMUNITY_UNIT;
-        if (backFragment == null){
+        View v = inflater.inflate(R.layout.fragment_new_community_unit, container, false);
+        MainActivity.CURRENT_TAG = MainActivity.TAG_NEW_COMMUNITY_UNIT;
+        if (backFragment == null) {
             MainActivity.backFragment = new CommunityUnitsFragment();
-        }else{
+        } else {
             MainActivity.backFragment = backFragment;
         }
 
@@ -191,6 +210,8 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
         editPresenceOfSuperMarket = (RadioGroup) v.findViewById(R.id.editPresenceOfSuperMarket);
         editNgosGivingFreeDrugs = (RadioGroup) v.findViewById(R.id.editNgosGivingFreeDrugs);
 
+        layoutQuestions = (LinearLayout) v.findViewById(R.id.layout_additional_questions);
+
         layoutChvGovBasic = (LinearLayout) v.findViewById(R.id.layout_chv_gov_basic);
         txtChvGovBasic = (EditText) v.findViewById(R.id.ed_chv_gov_basic);
 
@@ -221,10 +242,10 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
         linkFacilityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLinkFacility.setAdapter(linkFacilityAdapter);
         //lets set the selected
-        if (linkFacility != null){
+        if (linkFacility != null) {
             int x = 0;
             for (LinkFacility e : linkFacilityList) {
-                if (e.getId().equalsIgnoreCase(linkFacility.getId())){
+                if (e.getId().equalsIgnoreCase(linkFacility.getId())) {
                     spinnerLinkFacility.setSelection(x, true);
                     break;
                 }
@@ -237,13 +258,16 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
         }
         setUpEditingMode();
 
+        setupAdditionalQuestions();
+
         return v;
     }
+
     public void addLinkFacilities() {
         LinkFacilityTable linkFacilityTable = new LinkFacilityTable(getContext());
 
         linkFacilityList = linkFacilityTable.getLinkFacilityBySubCounty(subCounty.getId());
-        for (LinkFacility lFacility: linkFacilityList){
+        for (LinkFacility lFacility : linkFacilityList) {
             linkFacilities.add(lFacility.getFacilityName());
         }
     }
@@ -254,9 +278,10 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
             mListener.onFragmentInteraction(uri);
         }
     }
+
     @Override
-    public void onClick(View view){
-        switch (view.getId()){
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.editDob:
                 DialogFragment newFragment = new DatePickerFragment().newInstance(R.id.editDob);
                 newFragment.show(getFragmentManager(), "DatePicker");
@@ -279,16 +304,15 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                 dateMovedFragment.show(getFragmentManager(), "Datepicker");
                 break;
             case R.id.buttonSave:
-                Long currentDate =  new Date().getTime();
+                Long currentDate = new Date().getTime();
                 CommunityUnitTable communityUnitTable = new CommunityUnitTable(getContext());
                 // check if the field for Chiefs population exists or not.
-                if (!communityUnitTable.isFieldExist(CommunityUnitTable.CHVS_HOUSEHOLDS_AS_PER_CHIEF)){
+                if (!communityUnitTable.isFieldExist(CommunityUnitTable.CHVS_HOUSEHOLDS_AS_PER_CHIEF)) {
                     communityUnitTable.addChiefsFields();
                 }
-                if (!communityUnitTable.isFieldExist(CommunityUnitTable.COMMENT)){
+                if (!communityUnitTable.isFieldExist(CommunityUnitTable.COMMENT)) {
                     communityUnitTable.addChiefsFields();
                 }
-
 
 
 //                "Private facility \n" +
@@ -349,13 +373,13 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                 Long distanceToHealthFacility = Long.valueOf(editDistanceToHealthFacility.getText().toString()
                         .equalsIgnoreCase("") ? "0" : editDistanceToHealthFacility.getText().toString());
                 String linkFacilityId;
-                if (linkFacility != null){
+                if (linkFacility != null) {
                     linkFacilityId = linkFacility.getId();
-                }else{
+                } else {
                     Integer lFacility = spinnerLinkFacility.getSelectedItemPosition();
                     if (linkFacilityList.size() != 0 && lFacility != -1) {
                         linkFacilityId = linkFacilityList.get(spinnerLinkFacility.getSelectedItemPosition()).getId();
-                    }else{
+                    } else {
                         linkFacilityId = "";
                     }
                 }
@@ -372,65 +396,61 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                 // boolean cHVsTrained = (editCHVsTrained.getText().toString() == "Yes");
 
                 Integer chvsTrainedInICCm = editCHVsTrainedGroup.getCheckedRadioButtonId();
-                RadioButton selectedIccmOption =(RadioButton) editCHVsTrainedGroup.findViewById(chvsTrainedInICCm);
+                RadioButton selectedIccmOption = (RadioButton) editCHVsTrainedGroup.findViewById(chvsTrainedInICCm);
                 boolean cHVsTrained = (selectedIccmOption.getText().toString().equalsIgnoreCase("Yes"));
 
 
                 Integer factoriesPresent = editPresenceOfFactories.getCheckedRadioButtonId();
-                RadioButton selectedFactoryOption =(RadioButton) editPresenceOfFactories.findViewById(factoriesPresent);
+                RadioButton selectedFactoryOption = (RadioButton) editPresenceOfFactories.findViewById(factoriesPresent);
                 Long presenceOfFactories = 0L;
-                if (selectedFactoryOption.getText().toString().equalsIgnoreCase("More than 2")){
+                if (selectedFactoryOption.getText().toString().equalsIgnoreCase("More than 2")) {
                     presenceOfFactories = 3L;
-                }else if (selectedFactoryOption.getText().toString().equalsIgnoreCase("More than 2")){
+                } else if (selectedFactoryOption.getText().toString().equalsIgnoreCase("More than 2")) {
                     presenceOfFactories = 2L;
-                }else{
+                } else {
                     presenceOfFactories = 0L;
                 }
                 //boolean presenceOfFactories = (selectedFactoryOption.getText().toString().equalsIgnoreCase("Yes"));
 
                 Integer estatesPresent = editPresenceEstates.getCheckedRadioButtonId();
-                RadioButton selectedEstateOption =(RadioButton) editPresenceEstates.findViewById(estatesPresent);
+                RadioButton selectedEstateOption = (RadioButton) editPresenceEstates.findViewById(estatesPresent);
                 boolean presenceEstates = (selectedEstateOption.getText().toString().equalsIgnoreCase("Yes"));
 
                 Integer tradeMarketsPresent = editPresenceOfTraderMarket.getCheckedRadioButtonId();
-                RadioButton selectedTradeMarketOption =(RadioButton) editPresenceOfTraderMarket.findViewById(tradeMarketsPresent);
+                RadioButton selectedTradeMarketOption = (RadioButton) editPresenceOfTraderMarket.findViewById(tradeMarketsPresent);
                 boolean presenceOfTraderMarket = (selectedTradeMarketOption.getText().toString().equalsIgnoreCase("Yes"));
 
 
                 Integer superMarketPresent = editPresenceOfSuperMarket.getCheckedRadioButtonId();
-                RadioButton selectedSuperMarketOption =(RadioButton) editPresenceOfSuperMarket.findViewById(superMarketPresent);
+                RadioButton selectedSuperMarketOption = (RadioButton) editPresenceOfSuperMarket.findViewById(superMarketPresent);
                 boolean presenceOfSuperMarket = (selectedSuperMarketOption.getText().toString().equalsIgnoreCase("Yes"));
 
 
                 Integer ngosDrugs = editNgosGivingFreeDrugs.getCheckedRadioButtonId();
-                RadioButton ngosGivingFreeDrugsSelected =(RadioButton) editNgosGivingFreeDrugs.findViewById(ngosDrugs);
+                RadioButton ngosGivingFreeDrugsSelected = (RadioButton) editNgosGivingFreeDrugs.findViewById(ngosDrugs);
                 boolean ngosGivingFreeDrugs = (ngosGivingFreeDrugsSelected.getText().toString().equalsIgnoreCase("Yes"));
 
                 // Do some validations
 
-                if (name.toString().trim().equals("")){
+                if (name.toString().trim().equals("")) {
                     Toast.makeText(getContext(), "Enter name of the Community Unit", Toast.LENGTH_SHORT).show();
                     editName.requestFocus();
-                }
-
-                else if (areaChiefName.toString().trim().equals("") && mapping != null && backFragment == null){
+                } else if (areaChiefName.toString().trim().equals("") && mapping != null && backFragment == null) {
                     Toast.makeText(getContext(), "Enter the name of the Chief", Toast.LENGTH_SHORT).show();
                     editAreaChiefName.requestFocus();
-                }
-
-                else if(areaChiefPhone.toString().trim().equals("") && mapping != null && backFragment == null){
+                } /*else if (areaChiefPhone.toString().trim().equals("") && mapping != null && backFragment == null) {
                     Toast.makeText(getContext(), "Enter the phone contact details of the chief", Toast.LENGTH_SHORT).show();
                     editAreaChiefPhone.requestFocus();
-                } else{
+                }*/ else {
                     Toast.makeText(getContext(), "Validating and saving", Toast.LENGTH_SHORT).show();
                     String id = UUID.randomUUID().toString();
-                    if (editingCommunityUnit != null){
+                    if (editingCommunityUnit != null) {
                         id = editingCommunityUnit.getId();
                     }
                     long userId = Long.valueOf(user.get(SessionManagement.KEY_USERID));
                     String country = user.get(SessionManagement.KEY_USER_COUNTRY);
                     String mappingId = "";
-                    if (mapping != null){
+                    if (mapping != null) {
                         mappingId = mapping.getId();
                     }
 
@@ -484,11 +504,25 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
 
                     String noChvGokTrained = txtChvGovBasic.getText().toString();
 
-                    communityUnit.setNoChvGokBasicTrained(noChvGokTrained.equals("") ? 0: Integer.parseInt(noChvGokTrained));
+                    int gokTrainedCount = noChvGokTrained.equals("") ? 0 : Integer.parseInt(noChvGokTrained);
 
+                    try {
+                        Log.e("JSON", jsonResults.toString());
+                        if (!validateExtraFields()) {
+                            throw new Exception("Please check your input");
+                        }
+
+                        jsonResults.put("gok_trained_count", gokTrainedCount);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    communityUnit.setOther(jsonResults.toString());
 
                     long cid = communityUnitTable.addCommunityUnitData(communityUnit);
-                    if (cid != -1){
+                    if (cid != -1) {
                         Toast.makeText(getContext(), "Community Unit saved successfully", Toast.LENGTH_SHORT).show();
                         editName.setText("");
                         editName.requestFocus();
@@ -520,7 +554,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                         editComment.setText("");
 
                     }
-                    if (backFragment != null){
+                    if (backFragment != null) {
                         RecruitmentViewFragment recruitmentViewFragment = new RecruitmentViewFragment();
                         fragment = recruitmentViewFragment;
                         fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -534,8 +568,8 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
         }
     }
 
-    public void setUpEditingMode(){
-        if (editingCommunityUnit != null){
+    public void setUpEditingMode() {
+        if (editingCommunityUnit != null) {
             editName.setText(editingCommunityUnit.getCommunityUnitName());
             editName.requestFocus();
             editAreaChiefName.setText(editingCommunityUnit.getAreaChiefName());
@@ -563,23 +597,22 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
             editChiefChvHouseHold.setText(String.valueOf(editingCommunityUnit.getChvsHouseholdsAsPerChief()));
             editComment.setText(editingCommunityUnit.getComment());
 
-            txtChvGovBasic.setText(String.valueOf(editingCommunityUnit.getNoChvGokBasicTrained()));
             // set radio Buttons
             //mReadEnglish.check(editingRegistration.getReadEnglish().equals(1) ? R.id.radioCanReadEnglish : R.id.radioCannotReadEnglish);
             editCHVsTrainedGroup.clearCheck();
             editCHVsTrainedGroup.check(editingCommunityUnit.isChvsTrained() ? R.id.trainedYes : R.id.trainedNo);
 
             editPresenceOfFactories.clearCheck();
-            if (editingCommunityUnit.presenceOfFactories().equals(0L)){
+            if (editingCommunityUnit.presenceOfFactories().equals(0L)) {
                 editPresenceOfFactories.check(R.id.cFactory1);
-            }else if (editingCommunityUnit.presenceOfFactories().equals(2L)){
+            } else if (editingCommunityUnit.presenceOfFactories().equals(2L)) {
                 editPresenceOfFactories.check(R.id.cFactory2);
-            }else {
+            } else {
                 editPresenceOfFactories.check(R.id.cFactory3);
             }
 
             editPresenceEstates.clearCheck();
-            editPresenceEstates.check(editingCommunityUnit.isPresenceOfEstates()? R.id.estate1 : R.id.estate2);
+            editPresenceEstates.check(editingCommunityUnit.isPresenceOfEstates() ? R.id.estate1 : R.id.estate2);
 
             editPresenceOfTraderMarket.clearCheck();
             editPresenceOfTraderMarket.check(editingCommunityUnit.isTraderMarket() ? R.id.marketYes : R.id.marketNo);
@@ -590,10 +623,32 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
 
             editNgosGivingFreeDrugs.clearCheck();
             editNgosGivingFreeDrugs.check(editingCommunityUnit.isNgosGivingFreeDrugs() ? R.id.drugsYes : R.id.drugsNo);
-            try{
+            try {
                 editEconomicStatus.setSelection(Integer.valueOf(editingCommunityUnit.getEconomicStatus()));
-            }catch (Exception e){}
+            } catch (Exception e) {
+            }
 
+
+            String other = editingCommunityUnit.getOther();
+            Log.e("OTHER", other);
+            try {
+                jsonResults = new JSONObject(other);
+
+                txtChvGovBasic.setText(jsonResults.getString("gok_trained_count"));
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    if (obj.getString("type").equals("label")) {
+                        continue;
+                    }
+
+                    obj.put("value", jsonResults.get(obj.getString("name")));
+                    jsonArray.put(i, obj);
+                }
+
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -628,5 +683,209 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    /**
+     * Adds additional questions
+     */
+    private void setupAdditionalQuestions() {
+
+        try {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject json = jsonArray.getJSONObject(i);
+
+                View questionView = getQuestionView(json);
+
+                if (questionView != null)
+                    layoutQuestions.addView(questionView);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private View getQuestionView(JSONObject json) throws JSONException {
+
+        String type = json.getString("type");
+
+        switch (type) {
+            case "label":
+                return createLabelField(json);
+            case "input":
+                return createInputField(json);
+            case "radio":
+                return createRadioButtons(json);
+            default:
+                return null;
+        }
+    }
+
+    private LinearLayout getContainer() {
+
+        LinearLayout container = new LinearLayout(getContext());
+        container.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        container.setOrientation(LinearLayout.VERTICAL);
+
+        float scale = getResources().getDisplayMetrics().density;
+
+        int paddingLeft = (int) (scale * 10 + 0.5f);
+        int paddingRight = (int) (scale * 0 + 0.5f);
+        int paddingTop = (int) (scale * 0 + 0.5f);
+        int paddingBottom = (int) (scale * 0 + 0.5f);
+
+        container.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+
+        return container;
+    }
+
+    private TextView getQuestionLabel(String title) {
+        TextView label = new TextView(getContext());
+        label.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        label.setText(title);
+
+        float scale = getResources().getDisplayMetrics().density;
+
+        int paddingLeft = (int) (scale * 0 + 0.5f);
+        int paddingRight = (int) (scale * 0 + 0.5f);
+        int paddingTop = (int) (scale * 16 + 0.5f);
+        int paddingBottom = (int) (scale * 2 + 0.5f);
+
+        label.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        label.setTextColor(getResources().getColor(android.R.color.primary_text_light));
+
+        return label;
+    }
+
+    private View createRadioButtons(JSONObject json) throws JSONException {
+        String title = json.getString("title");
+        String value = json.getString("value");
+        String name = json.getString("name");
+        JSONArray options = json.getJSONArray("options");
+
+        RadioGroup input = new RadioGroup(getContext());
+        input.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        input.setOrientation(RadioGroup.HORIZONTAL);
+        input.setTag(name);
+
+        for (int i = 0; i < options.length(); i++) {
+            JSONObject optionObj = options.getJSONObject(i);
+            String option = optionObj.getString("option");
+            String optionValue = optionObj.getString("value");
+
+            RadioButton radioButton = new RadioButton(getContext());
+            radioButton.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            radioButton.setText(option);
+            radioButton.setTag(value);
+
+            input.addView(radioButton);
+
+            if (option.equals(value)) {
+                input.check(radioButton.getId());
+            }
+        }
+
+
+        LinearLayout container = getContainer();
+        container.addView(getQuestionLabel(title));
+        container.addView(input);
+
+        return container;
+    }
+
+    private LinearLayout createInputField(JSONObject json) throws JSONException {
+        String title = json.getString("title");
+        String value = json.getString("value");
+        String name = json.getString("name");
+        String constraint = json.getString("constraint");
+
+        EditText input = new EditText(getContext());
+        input.setTag(name);
+        input.setHint(title);
+        input.setText(value);
+
+        switch (constraint) {
+            case "number":
+                input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                break;
+            case "tel":
+                input.setInputType(InputType.TYPE_CLASS_PHONE);
+                break;
+            default:
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+        }
+
+        LinearLayout container = getContainer();
+        container.addView(getQuestionLabel(title));
+        container.addView(input);
+        return container;
+    }
+
+    private View createLabelField(JSONObject json) throws JSONException {
+        float scale = getResources().getDisplayMetrics().density;
+
+        int paddingLeft = (int) (scale * 0 + 0.5f);
+        int paddingRight = (int) (scale * 0 + 0.5f);
+        int paddingTop = (int) (scale * 32 + 0.5f);
+        int paddingBottom = (int) (scale * 0 + 0.5f);
+
+        TextView label = new TextView(getContext());
+        label.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        label.setText(json.getString("title").toUpperCase());
+        label.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        label.setTypeface(label.getTypeface(), Typeface.BOLD);
+        return label;
+    }
+
+    private boolean validateExtraFields() throws JSONException {
+        boolean isValid = true;
+
+        jsonResults = new JSONObject();
+        for (int i = 0; i < jsonArray.length(); i++) {
+
+            JSONObject json = jsonArray.getJSONObject(i);
+            String name = json.getString("name");
+            String type = json.getString("type");
+            boolean required = json.getBoolean("required");
+            if (type.equals("label"))
+                continue;
+
+            String value = getValue(name, type);
+
+            if (required && value.equals("")) {
+                Log.e("Is Valid", "FALSe");
+                Log.e("name", name + ": " + value);
+                isValid = false;
+            }
+
+            jsonResults.put(name, value);
+
+        }
+
+        return isValid;
+    }
+
+    private String getValue(String name, String type) {
+
+        switch (type) {
+
+            case "input":
+                EditText editText = (EditText) layoutQuestions.findViewWithTag(name);
+                return editText.getText().toString();
+
+            case "radio":
+                RadioGroup radioGroup = (RadioGroup) layoutQuestions.findViewWithTag(name);
+                int selected = radioGroup.getCheckedRadioButtonId();
+                if (selected != -1) {
+                    RadioButton radioButton = (RadioButton) layoutQuestions.findViewById(selected);
+                    return radioButton.getText().toString();
+                }
+                return "";
+
+            default:
+                return "";
+        }
     }
 }
