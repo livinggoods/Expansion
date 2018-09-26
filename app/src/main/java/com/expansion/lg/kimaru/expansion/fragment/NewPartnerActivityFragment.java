@@ -5,6 +5,7 @@ package com.expansion.lg.kimaru.expansion.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.R;
@@ -39,10 +41,12 @@ import com.expansion.lg.kimaru.expansion.mzigos.PartnerActivity;
 import com.expansion.lg.kimaru.expansion.mzigos.Partners;
 import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.mzigos.Village;
+import com.expansion.lg.kimaru.expansion.other.UtilFunctions;
 import com.expansion.lg.kimaru.expansion.tables.IccmComponentTable;
 import com.expansion.lg.kimaru.expansion.tables.PartnerActivityTable;
 import com.expansion.lg.kimaru.expansion.tables.PartnersTable;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -52,6 +56,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+
+import okhttp3.internal.Util;
 
 
 /**
@@ -84,6 +90,9 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
     List<String> partnerNames = new ArrayList<String>();
     List<IccmComponent> iccmComponentList = new ArrayList<IccmComponent>();
 
+    JSONArray jsonArray;
+    JSONObject jsonResults;
+
 
     Button buttonSave, buttonList;
     public PartnerActivity editingPartnerActivity = null;
@@ -93,6 +102,8 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
     public CommunityUnit communityUnit = null;
 
     EditText txtIccmComments, txtMedicineComments, txtStipendComments, txtMhealthComments;
+
+    LinearLayout layoutQuestions;
 
    static final int DATE_DIALOG_ID = 100;
 
@@ -131,6 +142,13 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        String jsonStr = UtilFunctions.loadFromAsset(getContext(), "partner_activity.json");
+        try {
+            jsonArray = new JSONArray(jsonStr);
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -160,6 +178,8 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
         txtMedicineComments = (EditText) v.findViewById(R.id.txt_medicine_comments);
         txtMhealthComments = (EditText) v.findViewById(R.id.txt_mhealth_comments);
         txtStipendComments = (EditText) v.findViewById(R.id.txt_stipend_comments);
+
+        layoutQuestions = (LinearLayout) v.findViewById(R.id.layout_additional_questions);
 
         editIsDoingIccm.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -234,7 +254,6 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
             checkParams.gravity = Gravity.CENTER_VERTICAL;
             parentLayout.addView(checkBox, params);
         }
-
         setUpEditingMode();
 
         buttonList = (Button) v.findViewById(R.id.buttonList);
@@ -242,6 +261,8 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
 
         buttonSave = (Button) v.findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(this);
+
+        setupAdditionalQuestions();
 
 
         return v;
@@ -428,6 +449,9 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                 String mHealthComment = txtMhealthComments.getText().toString();
 
                 JSONObject other = new JSONObject();
+
+
+
                 try {
                     other.put("iccm_comment", iccmComment);
                     other.put("medicine_comment", medicineComment);
@@ -435,6 +459,20 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                     other.put("mhealth_comment", mHealthComment);
                 } catch (Exception ex) {
                     ex.printStackTrace();
+                }
+
+                try {
+                    if (!validateExtraFields()) {
+                        Log.e("JSON", jsonResults.toString());
+                        throw new Exception("Please check your input");
+                    }
+
+                    other = UtilFunctions.mergeJSONObjects(other, jsonResults);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
                 }
 
                 JSONObject activities = new JSONObject();
@@ -544,6 +582,209 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                     checkbox.setChecked(activities.getBoolean(String.valueOf(key)));
                 }
             } catch (JSONException je){}
+        }
+    }
+
+    /**
+     * Adds additional questions
+     */
+    private void setupAdditionalQuestions() {
+
+        try {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject json = jsonArray.getJSONObject(i);
+
+                View questionView = getQuestionView(json);
+
+                if (questionView != null)
+                    layoutQuestions.addView(questionView);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private View getQuestionView(JSONObject json) throws JSONException {
+
+        String type = json.getString("type");
+
+        switch (type) {
+            case "label":
+                return createLabelField(json);
+            case "input":
+                return createInputField(json);
+            case "radio":
+                return createRadioButtons(json);
+            default:
+                return null;
+        }
+    }
+
+    private LinearLayout getContainer() {
+
+        LinearLayout container = new LinearLayout(getContext());
+        container.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        container.setOrientation(LinearLayout.VERTICAL);
+
+        float scale = getResources().getDisplayMetrics().density;
+
+        int paddingLeft = (int) (scale * 10 + 0.5f);
+        int paddingRight = (int) (scale * 0 + 0.5f);
+        int paddingTop = (int) (scale * 0 + 0.5f);
+        int paddingBottom = (int) (scale * 0 + 0.5f);
+
+        container.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+
+        return container;
+    }
+
+    private TextView getQuestionLabel(String title) {
+        TextView label = new TextView(getContext());
+        label.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        label.setText(title);
+
+        float scale = getResources().getDisplayMetrics().density;
+
+        int paddingLeft = (int) (scale * 0 + 0.5f);
+        int paddingRight = (int) (scale * 0 + 0.5f);
+        int paddingTop = (int) (scale * 16 + 0.5f);
+        int paddingBottom = (int) (scale * 2 + 0.5f);
+
+        label.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        label.setTextColor(getResources().getColor(android.R.color.primary_text_light));
+
+        return label;
+    }
+
+    private View createRadioButtons(JSONObject json) throws JSONException {
+        String title = json.getString("title");
+        String value = json.getString("value");
+        String name = json.getString("name");
+        JSONArray options = json.getJSONArray("options");
+
+        RadioGroup input = new RadioGroup(getContext());
+        input.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        input.setOrientation(RadioGroup.HORIZONTAL);
+        input.setTag(name);
+
+        for (int i = 0; i < options.length(); i++) {
+            JSONObject optionObj = options.getJSONObject(i);
+            String option = optionObj.getString("option");
+            String optionValue = optionObj.getString("value");
+
+            RadioButton radioButton = new RadioButton(getContext());
+            radioButton.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            radioButton.setChecked(optionValue.equals(value));
+            radioButton.setText(option);
+            radioButton.setTag(value);
+
+            input.addView(radioButton);
+        }
+
+
+        LinearLayout container = getContainer();
+        container.addView(getQuestionLabel(title));
+        container.addView(input);
+
+        return container;
+    }
+
+    private LinearLayout createInputField(JSONObject json) throws JSONException {
+        String title = json.getString("title");
+        String value = json.getString("value");
+        String name = json.getString("name");
+        String constraint = json.getString("constraint");
+
+        EditText input = new EditText(getContext());
+        input.setTag(name);
+        input.setHint(title);
+        input.setText(value);
+
+        switch (constraint) {
+            case "number":
+                input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                break;
+            case "tel":
+                input.setInputType(InputType.TYPE_CLASS_PHONE);
+                break;
+            default:
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+        }
+
+        LinearLayout container = getContainer();
+        container.addView(getQuestionLabel(title));
+        container.addView(input);
+        return container;
+    }
+
+    private View createLabelField(JSONObject json) throws JSONException {
+        float scale = getResources().getDisplayMetrics().density;
+
+        int paddingLeft = (int) (scale * 0 + 0.5f);
+        int paddingRight = (int) (scale * 0 + 0.5f);
+        int paddingTop = (int) (scale * 32 + 0.5f);
+        int paddingBottom = (int) (scale * 0 + 0.5f);
+
+        TextView label = new TextView(getContext());
+        label.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        label.setText(json.getString("title").toUpperCase());
+        label.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        label.setTypeface(label.getTypeface(), Typeface.BOLD);
+        return label;
+    }
+
+    private boolean validateExtraFields() throws JSONException {
+        boolean isValid = true;
+
+        if (jsonResults == null) {
+            jsonResults = new JSONObject();
+        }
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+
+            JSONObject json = jsonArray.getJSONObject(i);
+            String name = json.getString("name");
+            String type = json.getString("type");
+            boolean required = json.getBoolean("required");
+            if (type.equals("label"))
+                continue;
+
+            String value = getValue(name, type);
+
+            if (required && value.equals("")) {
+                Log.e("Is Valid", "FALSe");
+                Log.e("name", name +": " + value);
+                isValid = false;
+            }
+
+            jsonResults.put(name, value);
+
+        }
+
+        return isValid;
+    }
+
+    private String getValue(String name, String type) {
+
+        switch (type) {
+
+            case "input":
+                EditText editText = (EditText) layoutQuestions.findViewWithTag(name);
+                return editText.getText().toString();
+
+            case "radio":
+                RadioGroup radioGroup = (RadioGroup) layoutQuestions.findViewWithTag(name);
+                int selected = radioGroup.getCheckedRadioButtonId();
+                if (selected != -1) {
+                    RadioButton radioButton = (RadioButton) layoutQuestions.findViewById(selected);
+                    return radioButton.getText().toString();
+                }
+                return "";
+
+            default:
+                return "";
         }
     }
 }

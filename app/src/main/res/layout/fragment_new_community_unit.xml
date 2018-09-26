@@ -112,6 +112,7 @@
 
 
             <android.support.design.widget.TextInputLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
@@ -125,6 +126,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
@@ -138,6 +140,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
@@ -151,6 +154,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
@@ -183,7 +187,7 @@
                     android:id="@+id/editChvHouseHold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="No of Households per CHVs"
+                    android:hint="Average Households per CHV"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />
@@ -197,7 +201,7 @@
                     android:id="@+id/editChiefChvHouseHold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="No of CHV's Households as per Chief"
+                    android:hint="Total number of households in the sub location as per Chief"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />
@@ -210,7 +214,7 @@
                     android:id="@+id/editNumberOfHouseHolds"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="No of Households"
+                    android:hint="Total number of CHV households in the CU"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />
@@ -223,7 +227,7 @@
                     android:id="@+id/editChiefPopulation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Population Density As per Chief"
+                    android:hint="Population density as per Chief"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />
@@ -275,7 +279,7 @@
                     android:id="@+id/editDistanceToBranch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Distance to Branch"
+                    android:hint="Distance to branch from the furthest village"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />
@@ -288,7 +292,7 @@
                     android:id="@+id/editTransportCost"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Transport Cost to Branch"
+                    android:hint="Transport cost to branch from the furthest village"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />

@@ -1,0 +1,42 @@
+[
+  {
+    "type": "label",
+    "value": "",
+    "required": true,
+    "title": "Additional questions",
+    "name": "additional_requirements_label"
+  },
+  {
+    "name": "no_chv_working_with_partner",
+    "type": "input",
+    "value": "",
+    "title": "Number of CHVs working with the partner?",
+    "required": true,
+    "constraint": "number"
+  },
+  {
+    "name": "cu_partner_active",
+    "type": "input",
+    "value": "",
+    "title": "Specify the Community Units Working with the partner?",
+    "required": true,
+    "constraint": "text"
+  },
+  {
+    "name": "is_partner_active",
+    "type": "radio",
+    "value": "",
+    "title": "Is the partner still active?",
+    "required": true,
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  }
+]

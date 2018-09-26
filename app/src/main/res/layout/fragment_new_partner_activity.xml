@@ -253,7 +253,6 @@
             </LinearLayout>
 
 
-
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -267,6 +266,12 @@
                     android:minLines="@integer/comment_box_size" />
 
             </android.support.design.widget.TextInputLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_additional_questions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
             <!-- -->
                         <!-- <android.support.design.widget.TextInputLayout
                             android:layout_width="match_parent"

@@ -371,11 +371,28 @@
     "value": ""
   },
   {
-    "name": "is_lockable_medicine_storage",
+    "name": "is_there_medicine_storage",
     "value": "",
     "required": true,
     "type": "radio",
-    "title": "Is there a lockable Medicine storage room in the facility?",
+    "title": "Is there a medicine storage facility?",
+    "options": [
+      {
+        "option": "Yes",
+        "value": "Yes"
+      },
+      {
+        "option": "No",
+        "value": "No"
+      }
+    ]
+  },
+  {
+    "name": "is_medicine_storage_lockable",
+    "value": "",
+    "required": true,
+    "type": "radio",
+    "title": "Is the medicine storage facility Lockable?",
     "options": [
       {
         "option": "Yes",
