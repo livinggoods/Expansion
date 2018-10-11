@@ -34,7 +34,7 @@ public class PartnersTable extends SQLiteOpenHelper {
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
-    public static String JSON_ROOT = "partners";
+    public static final String JSON_ROOT = "partners";
 
     public static final String ID = "id";
     public static final String NAME = "name";

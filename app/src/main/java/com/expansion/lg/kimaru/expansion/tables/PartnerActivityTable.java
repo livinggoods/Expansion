@@ -35,7 +35,7 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
-    public static String JSON_ROOT = "partner_activity";
+    public static String JSON_ROOT = "partners_cu";
 
     public static final String ID = "id";
     public static final String PARTNERID = "partner_id";
