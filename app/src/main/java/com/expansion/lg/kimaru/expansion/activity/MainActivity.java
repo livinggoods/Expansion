@@ -724,6 +724,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_offline_data:
                         Intent intent = new Intent(MainActivity.this, OfflineDataSummary.class);
                         startActivity(intent);
+                        drawer.closeDrawers();
                         return true;
 
                     default:

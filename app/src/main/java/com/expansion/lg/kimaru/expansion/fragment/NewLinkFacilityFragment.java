@@ -178,13 +178,6 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-        String jsonStr = UtilFunctions.loadFromAsset(getContext(), "link_facility.json");
-        try {
-            jsonArray = new JSONArray(jsonStr);
-        } catch (JSONException ex) {
-            ex.printStackTrace();
-        }
     }
 
     @Override
@@ -208,15 +201,29 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
         textLat = (TextView) v.findViewById(R.id.textLat);
         textLon = (TextView) v.findViewById(R.id.textLon);
 
+        if (user.get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("ug")) {
+            editMrdtLevels.setVisibility(View.GONE);
+            editActLevels.setVisibility(View.GONE);
+
+            jsonArray = new JSONArray();
+        } else {
+
+            editMrdtLevels.setVisibility(View.GONE);
+            editActLevels.setVisibility(View.GONE);
+
+            String jsonStr = UtilFunctions.loadFromAsset(getContext(), "link_facility.json");
+            try {
+                jsonArray = new JSONArray(jsonStr);
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
+        }
+
         layoutQuestions = (LinearLayout) v.findViewById(R.id.layout_additional_questions);
 
         textLat.setText("Capturing LAT");
         textLon.setText("Capturing LON");
 
-        if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")) {
-            editActLevels.setVisibility(View.GONE);
-            editMrdtLevels.setVisibility(View.GONE);
-        }
         if (editingLinkFacility != null) {
 
             for (int i = 0; i < jsonArray.length(); i++) {
