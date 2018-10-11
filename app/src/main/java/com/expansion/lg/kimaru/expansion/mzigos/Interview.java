@@ -9,13 +9,14 @@ import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 
 public class Interview {
 
-    Integer motivation, community, mentality, selling, health, investment;
-    Integer interpersonal, commitment, total, addedBy, synced, selected, readAndInterpret,
+    private Integer motivation, community, mentality, selling, health, investment;
+    private Integer interpersonal, commitment, total, addedBy, synced, selected, readAndInterpret,
             interviewerMotivationAssessment, interviewerAgeAssessment, interviewerResidenyAssessment,
             interviewerBracAssessment, interviewerAbilityToReadAssessment, interviewerQualifyAssessment;
-    String comment, id, applicant, recruitment, country;
+
+    private String comment, id, applicant, recruitment, country;
     Long dateAdded;
-    boolean isRead, isImportant, canJoin;
+    private boolean isRead, isImportant, canJoin;
     int color = -1;
     String picture =  "";
 

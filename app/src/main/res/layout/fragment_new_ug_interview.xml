@@ -717,98 +717,74 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+                <CheckBox
+                    android:id="@+id/cb_good_motivation_attitude"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/text_size"
                     android:text="@string/good_motivation_comment"/>
-                <CheckBox
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+                <CheckBox
+                    android:id="@+id/cb_age_30_55"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/text_size"
                     android:text="@string/age_comment"/>
-                <CheckBox
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+                <CheckBox
+                    android:id="@+id/cb_residency_2_more"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/text_size"
                     android:text="@string/residency_comment"/>
-                <CheckBox
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+                <CheckBox
+                    android:id="@+id/cb_not_brac_chp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/text_size"
                     android:text="@string/brac_comment"/>
-                <CheckBox
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/text_size"
-                    android:text="@string/read_interpret_comment"/>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
                 <CheckBox
+                    android:id="@+id/cb_read_inteprete_english"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="wrap_content"
+                    android:text="@string/read_interpret_comment"
+                    />
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+                <CheckBox
+                    android:id="@+id/cb_qualified_assessment"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/text_size"
                     android:text="@string/qualifies_comment"/>
-                <CheckBox
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Test"/>
-                <CheckBox
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-                <CheckBox
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
             </LinearLayout>
 
             <LinearLayout
