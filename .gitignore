@@ -11,3 +11,5 @@ app/*.apk
 app/*.bck
 app/build.gradle
 .idea
+app/release
+.idea

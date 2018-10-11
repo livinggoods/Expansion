@@ -6,28 +6,19 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
-import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
-import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.other.Constants;
-import com.expansion.lg.kimaru.expansion.other.FileUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -39,10 +30,10 @@ import java.util.UUID;
 
 public class RegistrationTable extends SQLiteOpenHelper {
 
-    public static final String TABLE_NAME="registration";
-    public static final String DATABASE_NAME= Constants.DATABASE_NAME;
-    public static final int DATABASE_VERSION= Constants.DATABASE_VERSION;
-    public static final String JSON_ROOT="registrations";
+    public static final String TABLE_NAME = "registration";
+    public static final String DATABASE_NAME = Constants.DATABASE_NAME;
+    public static final int DATABASE_VERSION = Constants.DATABASE_VERSION;
+    public static final String JSON_ROOT = "registrations";
 
     public static String varchar_field = " varchar(512) ";
     public static String primary_field = " _id INTEGER PRIMARY KEY AUTOINCREMENT ";
@@ -50,7 +41,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public static String text_field = " text ";
 
     public static final String ID = "id";
-    public static final String NAME= "name";
+    public static final String NAME = "name";
     public static final String PHONE = "phone";
     public static final String GENDER = "gender";
     public static final String RECRUITMENT = "recruitment";
@@ -97,14 +88,14 @@ public class RegistrationTable extends SQLiteOpenHelper {
 
     Context context;
 
-    public static final String [] columns=new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
+    public static final String[] columns = new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
             VILLAGE, MARK, READ_ENGLISH, DATE_MOVED, LANGS, BRAC, BRAC_CHP, EDUCATION, OCCUPATION,
             COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED, RECRUITMENT, COUNTRY,
             CHEW_NAME, CHEW_NUMBER, WARD, CU_NAME, LINK_FACILITY, HOUSEHOLDS, TRAININGS, CHV,
             GOK_TRAINED, REFERRAL_NAME, REFERRAL_NUMBER, REFERRAL_TITLE, VHT, PARISH, ACCOUNTS,
             REC_TRANSPORT, BRANCH_TRANPORT, CHEW_ID, MARITAL_STATUS};
 
-    public static final String CREATE_DATABASE="CREATE TABLE " + TABLE_NAME + "("
+    public static final String CREATE_DATABASE = "CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ", "
             + NAME + varchar_field + ", "
             + PHONE + varchar_field + ", "
@@ -150,9 +141,9 @@ public class RegistrationTable extends SQLiteOpenHelper {
             + MARITAL_STATUS + varchar_field + ", "
             + SYNCED + integer_field + "); ";
 
-    public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
+    public static final String DATABASE_DROP = "DROP TABLE IF EXISTS" + TABLE_NAME;
     public static final String DB_UPDATE_V2 = "ALTER TABLE " + TABLE_NAME +
-            "  ADD "+ CHEW_ID + varchar_field +";";
+            "  ADD " + CHEW_ID + varchar_field + ";";
 
     public RegistrationTable(Context context) {
         super(context, TABLE_NAME, null, DATABASE_VERSION);
@@ -171,7 +162,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
 
         Log.w("RegistrationTable", "upgrading database from" + oldVersion + "to" + newVersion);
         // need to sequentially upgrade the database
-        if (oldVersion < 2){
+        if (oldVersion < 2) {
             upgradeVersion2(db);
         }
         //if (oldVersion < 3){
@@ -184,9 +175,9 @@ public class RegistrationTable extends SQLiteOpenHelper {
 
     public long addData(Registration registration) {
 
-        SQLiteDatabase db=getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
 
-        ContentValues cv=new ContentValues();
+        ContentValues cv = new ContentValues();
         cv.put(ID, registration.getId());
         cv.put(NAME, registration.getName());
         cv.put(PHONE, registration.getPhone());
@@ -233,40 +224,40 @@ public class RegistrationTable extends SQLiteOpenHelper {
         cv.put(MARITAL_STATUS, registration.getMaritalStatus());
 
         long id;
-        if (isExist(registration)){
-            cv.put(SYNCED, 0);
-            id = db.update(TABLE_NAME, cv, ID+"='"+registration.getId()+"'", null);
-        }else{
-            id = db.insert(TABLE_NAME,null,cv);
+        if (isExist(registration)) {
+            id = db.update(TABLE_NAME, cv, ID + "='" + registration.getId() + "'", null);
+        } else {
+            id = db.insert(TABLE_NAME, null, cv);
         }
         db.close();
         return id;
 
     }
+
     public Cursor getRegistrationDataCursor() {
 
-        SQLiteDatabase db=getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         String orderBy = "id desc";
 
-        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,orderBy,null);
+        Cursor cursor = db.query(TABLE_NAME, columns, null, null, null, null, orderBy, null);
         db.close();
         return cursor;
     }
 
     public List<Registration> getRegistrationData() {
 
-        SQLiteDatabase db=getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         String orderBy = "id desc";
 
-        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,orderBy,null);
+        Cursor cursor = db.query(TABLE_NAME, columns, null, null, null, null, orderBy, null);
 
-        List<Registration> registrationList=new ArrayList<>();
-
-
-        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+        List<Registration> registrationList = new ArrayList<>();
 
 
-            Registration registration=new Registration();
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+
+
+            Registration registration = new Registration();
 
             registration.setId(cursor.getString(0));
             registration.setName(cursor.getString(1));
@@ -322,27 +313,27 @@ public class RegistrationTable extends SQLiteOpenHelper {
 
     public List<Registration> searchRegistrations(Recruitment recruitment, String query) {
 
-        SQLiteDatabase db=getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         String orderBy = "id desc";
-        String whereClause = NAME+" LIKE ? OR " +
-                VILLAGE+ " LIKE ? OR " +
-                WARD+ " LIKE ? OR " +
-                COMMUNITY+ " LIKE ? " +
-                "AND " +RECRUITMENT+" = ? " ;
-        String[] whereArgs = new String[] {
-                "%"+query+"%",
-                "%"+query+"%",
-                "%"+query+"%",
-                "%"+query+"%",
+        String whereClause = NAME + " LIKE ? OR " +
+                VILLAGE + " LIKE ? OR " +
+                WARD + " LIKE ? OR " +
+                COMMUNITY + " LIKE ? " +
+                "AND " + RECRUITMENT + " = ? ";
+        String[] whereArgs = new String[]{
+                "%" + query + "%",
+                "%" + query + "%",
+                "%" + query + "%",
+                "%" + query + "%",
                 recruitment.getId()
         };
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        Cursor cursor = db.query(TABLE_NAME, columns, whereClause, whereArgs, null, null, null, null);
 
-        List<Registration> registrationList=new ArrayList<>();
+        List<Registration> registrationList = new ArrayList<>();
 
 
-        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
-            Registration registration=new Registration();
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            Registration registration = new Registration();
 
             registration.setId(cursor.getString(0));
             registration.setName(cursor.getString(1));
@@ -395,18 +386,18 @@ public class RegistrationTable extends SQLiteOpenHelper {
         return registrationList;
     }
 
-    public Registration getRegistrationById(String registrationUuid){
+    public Registration getRegistrationById(String registrationUuid) {
         SQLiteDatabase db = getReadableDatabase();
-        String whereClause = ID+" = ?";
-        String[] whereArgs = new String[] {
+        String whereClause = ID + " = ?";
+        String[] whereArgs = new String[]{
                 registrationUuid,
         };
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        Cursor cursor = db.query(TABLE_NAME, columns, whereClause, whereArgs, null, null, null, null);
 
-        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+        if (!(cursor.moveToFirst()) || cursor.getCount() == 0) {
             return null;
-        }else{
-            Registration registration=new Registration();
+        } else {
+            Registration registration = new Registration();
 
             registration.setId(cursor.getString(0));
             registration.setName(cursor.getString(1));
@@ -462,45 +453,54 @@ public class RegistrationTable extends SQLiteOpenHelper {
 
     public boolean isExist(Registration registration) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cur = db.rawQuery("SELECT "+ID+" FROM " + TABLE_NAME + " WHERE " + ID + " = '" + registration.getId() + "'", null);
+        Cursor cur = db.rawQuery("SELECT " + ID + " FROM " + TABLE_NAME + " WHERE " + ID + " = '" + registration.getId() + "'", null);
         boolean exist = (cur.getCount() > 0);
         cur.close();
         return exist;
     }
 
+    public long getPendingRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                SYNCED + "=?",
+                new String[]{String.valueOf(Constants.SYNC_STATUS_UNSYNCED)});
+        db.close();
+        return cnt;
+    }
+
 
     public long getRegistrationCount() {
         SQLiteDatabase db = this.getReadableDatabase();
-        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME);
+        long cnt = DatabaseUtils.queryNumEntries(db, TABLE_NAME);
         db.close();
         return cnt;
     }
 
     public List<Registration> getPassedRegistrations(Recruitment recruitment, boolean passed) {
 
-        SQLiteDatabase db=getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         String orderBy = DATE_ADDED + " desc";
-        String whereClause = PROCEED+" = ? AND " +RECRUITMENT+" = ? " ;
+        String whereClause = PROCEED + " = ? AND " + RECRUITMENT + " = ? ";
 
         Cursor cursor;
-        if (passed){
-            String[] whereArgs = new String[] {
+        if (passed) {
+            String[] whereArgs = new String[]{
                     "1", recruitment.getId()
             };
-            cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
-        }else {
-            String[] whereArgs = new String[] {
+            cursor = db.query(TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy, null);
+        } else {
+            String[] whereArgs = new String[]{
                     "0", recruitment.getId()
             };
-            cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
+            cursor = db.query(TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy, null);
         }
 
-        List<Registration> registrationList=new ArrayList<>();
+        List<Registration> registrationList = new ArrayList<>();
 
 
-        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
 
-            Registration registration=new Registration();
+            Registration registration = new Registration();
 
             registration.setId(cursor.getString(0));
             registration.setName(cursor.getString(1));
@@ -555,21 +555,21 @@ public class RegistrationTable extends SQLiteOpenHelper {
 
     public List<Registration> getRegistrationsByRecruitment(Recruitment recruitment) {
 
-        SQLiteDatabase db=getReadableDatabase();
-        String orderBy =NAME+" asc,"+ DATE_ADDED + " desc";
-        String whereClause = RECRUITMENT+" = ?";
-        String[] whereArgs = new String[] {
+        SQLiteDatabase db = getReadableDatabase();
+        String orderBy = NAME + " asc," + DATE_ADDED + " desc";
+        String whereClause = RECRUITMENT + " = ?";
+        String[] whereArgs = new String[]{
                 recruitment.getId(),
         };
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
+        Cursor cursor = db.query(TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy, null);
 
-        List<Registration> registrationList=new ArrayList<>();
-
-
-        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+        List<Registration> registrationList = new ArrayList<>();
 
 
-            Registration registration=new Registration();
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+
+
+            Registration registration = new Registration();
 
             registration.setId(cursor.getString(0));
             registration.setName(cursor.getString(1));
@@ -625,22 +625,22 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public List<Registration> getRegistrationsByRecruitmentAndCommunityUnit(
             Recruitment recruitment, CommunityUnit communityUnit) {
 
-        SQLiteDatabase db=getReadableDatabase();
-        String orderBy =NAME+" asc,"+ DATE_ADDED + " desc";
-        String whereClause = RECRUITMENT+" = ? AND "+CU_NAME+" = ? ";
-        String[] whereArgs = new String[] {
+        SQLiteDatabase db = getReadableDatabase();
+        String orderBy = NAME + " asc," + DATE_ADDED + " desc";
+        String whereClause = RECRUITMENT + " = ? AND " + CU_NAME + " = ? ";
+        String[] whereArgs = new String[]{
                 recruitment.getId(),
                 communityUnit.getId()
         };
 
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
-        List<Registration> registrationList=new ArrayList<>();
+        Cursor cursor = db.query(TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy, null);
+        List<Registration> registrationList = new ArrayList<>();
 
 
-        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
 
 
-            Registration registration=new Registration();
+            Registration registration = new Registration();
 
             registration.setId(cursor.getString(0));
             registration.setName(cursor.getString(1));
@@ -695,21 +695,21 @@ public class RegistrationTable extends SQLiteOpenHelper {
 
     public List<Registration> getRegistrationsByChewReferral(ChewReferral chewReferral) {
 
-        SQLiteDatabase db=getReadableDatabase();
-        String orderBy =NAME+" asc,"+ DATE_ADDED + " desc";
-        String whereClause = RECRUITMENT+" = ?";
-        String[] whereArgs = new String[] {
+        SQLiteDatabase db = getReadableDatabase();
+        String orderBy = NAME + " asc," + DATE_ADDED + " desc";
+        String whereClause = RECRUITMENT + " = ?";
+        String[] whereArgs = new String[]{
                 chewReferral.getId(),
         };
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,orderBy,null);
+        Cursor cursor = db.query(TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy, null);
 
-        List<Registration> registrationList=new ArrayList<>();
-
-
-        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+        List<Registration> registrationList = new ArrayList<>();
 
 
-            Registration registration=new Registration();
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+
+
+            Registration registration = new Registration();
 
             registration.setId(cursor.getString(0));
             registration.setName(cursor.getString(1));
@@ -763,9 +763,9 @@ public class RegistrationTable extends SQLiteOpenHelper {
     }
 
 
-    public void fromJsonObject(JSONObject jsonObject){
-        try{
-            Registration registration=new Registration();
+    public void fromJsonObject(JSONObject jsonObject) {
+        try {
+            Registration registration = new Registration();
             registration.setId(jsonObject.getString(ID));
             registration.setName(jsonObject.getString(NAME));
             registration.setPhone(jsonObject.getString(PHONE));
@@ -812,32 +812,33 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setMaritalStatus(jsonObject.getString(MARITAL_STATUS));
             registration.setPicture("");
             this.addData(registration);
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
     }
 
     public JSONObject getRegistrationJson() {
 
-        SQLiteDatabase db=getReadableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
+        Cursor cursor = db.query(TABLE_NAME, columns, null, null, null, null, null, null);
 
         JSONObject results = new JSONObject();
 
         JSONArray resultSet = new JSONArray();
 
-        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             int totalColumns = cursor.getColumnCount();
             JSONObject rowObject = new JSONObject();
 
-            for (int i =0; i < totalColumns; i++){
-                if (cursor.getColumnName(i) != null){
+            for (int i = 0; i < totalColumns; i++) {
+                if (cursor.getColumnName(i) != null) {
                     try {
-                        if (cursor.getString(i) != null){
+                        if (cursor.getString(i) != null) {
                             rowObject.put(cursor.getColumnName(i), cursor.getString(i));
-                        }else{
+                        } else {
                             rowObject.put(cursor.getColumnName(i), "");
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                     }
                 }
             }
@@ -852,33 +853,35 @@ public class RegistrationTable extends SQLiteOpenHelper {
         db.close();
         return results;
     }
-    public JSONObject getRegistrationToSyncAsJson() {
 
-        SQLiteDatabase db=getReadableDatabase();
-        String whereClause = SYNCED+" = ?";
-        String[] whereArgs = new String[] {
+    public JSONObject getRegistrationToSyncAsJson(int offset) {
+
+        SQLiteDatabase db = getReadableDatabase();
+        String whereClause = SYNCED + " = ?";
+        String[] whereArgs = new String[]{
                 "0",
         };
 
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        Cursor cursor = db.query(TABLE_NAME, columns, whereClause, whereArgs, null, null, null,
+                String.format("%d,%d", offset, Constants.SYNC_PAGINATION_SIZE));
 
         JSONObject results = new JSONObject();
 
         JSONArray resultSet = new JSONArray();
 
-        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             int totalColumns = cursor.getColumnCount();
             JSONObject rowObject = new JSONObject();
 
-            for (int i =0; i < totalColumns; i++){
-                if (cursor.getColumnName(i) != null){
+            for (int i = 0; i < totalColumns; i++) {
+                if (cursor.getColumnName(i) != null) {
                     try {
-                        if (cursor.getString(i) != null){
+                        if (cursor.getString(i) != null) {
                             rowObject.put(cursor.getColumnName(i), cursor.getString(i));
-                        }else{
+                        } else {
                             rowObject.put(cursor.getColumnName(i), "");
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                     }
                 }
             }
@@ -898,7 +901,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
     private void upgradeVersion2(SQLiteDatabase db) {
         db.execSQL(DB_UPDATE_V2);
 
-        String [] columns=new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
+        String[] columns = new String[]{ID, NAME, PHONE, GENDER, DOB, DISTRICT, SUB_COUNTY, DIVISION,
                 VILLAGE, MARK, READ_ENGLISH, DATE_MOVED, LANGS, BRAC, BRAC_CHP, EDUCATION, OCCUPATION,
                 COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED, RECRUITMENT, COUNTRY,
                 CHEW_NAME, CHEW_NUMBER, WARD, CU_NAME, LINK_FACILITY, HOUSEHOLDS, TRAININGS, CHV,
@@ -906,7 +909,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
                 REC_TRANSPORT, BRANCH_TRANPORT};
         Cursor cursor = db.query(TABLE_NAME, columns, null, null, null, null, null, null);
         ChewReferralTable chewReferralTable = new ChewReferralTable(context);
-        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             // with this selection, let us extract the details
             //
             // IF CHEW EXISTS DO NOT CREATE< JUST UPDATE THE REGISTRATION
@@ -914,7 +917,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             //getChewByPhone();
             //getChewbyName();
             String country = cursor.getString(24);
-            if (country.equalsIgnoreCase("UG")){
+            if (country.equalsIgnoreCase("UG")) {
                 String id, name, phone, title, recruitmentID;
                 id = UUID.randomUUID().toString();
                 name = cursor.getString(34);
@@ -925,25 +928,25 @@ public class RegistrationTable extends SQLiteOpenHelper {
                 List<ChewReferral> chews = chewReferralTable.getChewReferralByPhone(phone);
                 Integer savedChews = chews.size();
                 ContentValues cv = new ContentValues();
-                if (savedChews.equals(0)){
+                if (savedChews.equals(0)) {
                     //does not exist
                     ChewReferral chew = new ChewReferral(id, name, phone, title, country, recruitmentID, 0,
                             "", "", "", "", "", "", "", "", "");
                     chewReferralTable.addChewReferral(chew);
                     cv.put(CHEW_ID, id);
-                    db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                    db.update(TABLE_NAME, cv, ID + "='" + cursor.getString(0) + "'", null);
 
-                }else if(savedChews.equals(1)) {
+                } else if (savedChews.equals(1)) {
                     //exists, and it is the only one, get it and
                     ChewReferral c = chews.get(0);
                     cv.put(CHEW_ID, c.getId());
-                    db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                    db.update(TABLE_NAME, cv, ID + "='" + cursor.getString(0) + "'", null);
 
-                }else {
+                } else {
                     // it is more than one
                     // we compare the names, if match, we update, if not, we create a new one
-                    for (ChewReferral c : chews){
-                        if (c.getName().equalsIgnoreCase(name)){
+                    for (ChewReferral c : chews) {
+                        if (c.getName().equalsIgnoreCase(name)) {
                             // we have a match
                             id = c.getId();
                             name = c.getName();
@@ -957,10 +960,10 @@ public class RegistrationTable extends SQLiteOpenHelper {
                             "", "", "", "", "", "", "", "", "");
                     chewReferralTable.addChewReferral(chew);
                     cv.put(CHEW_ID, id);
-                    db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                    db.update(TABLE_NAME, cv, ID + "='" + cursor.getString(0) + "'", null);
                 }
 
-            }else{
+            } else {
                 //we call them CHEW
                 String id, name, phone, title, recruitmentID, synced;
                 id = UUID.randomUUID().toString();
@@ -971,22 +974,22 @@ public class RegistrationTable extends SQLiteOpenHelper {
                 List<ChewReferral> chews = chewReferralTable.getChewReferralByPhone(phone);
                 Integer savedChews = chews.size();
                 ContentValues cv = new ContentValues();
-                if (savedChews.equals(0)){
+                if (savedChews.equals(0)) {
                     ChewReferral chew = new ChewReferral(id, name, phone, title, country, recruitmentID, 0,
                             "", "", "", "", "", "", "", "", "");
                     chewReferralTable.addChewReferral(chew);
                     cv.put(CHEW_ID, id);
-                    db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
-                }else if(savedChews.equals(1)) {
+                    db.update(TABLE_NAME, cv, ID + "='" + cursor.getString(0) + "'", null);
+                } else if (savedChews.equals(1)) {
                     //exists, and it is the only one, get it and
                     ChewReferral c = chews.get(0);
                     cv.put(CHEW_ID, c.getId());
-                    db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
-                }else {
+                    db.update(TABLE_NAME, cv, ID + "='" + cursor.getString(0) + "'", null);
+                } else {
                     // it is more than one
                     // we compare the names, if match, we update, if not, we create a new one
-                    for (ChewReferral c : chews){
-                        if (c.getName().equalsIgnoreCase(name)){
+                    for (ChewReferral c : chews) {
+                        if (c.getName().equalsIgnoreCase(name)) {
                             // we have a match
                             id = c.getId();
                             name = c.getName();
@@ -1000,7 +1003,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
                             "", "", "", "", "", "", "", "", "");
                     chewReferralTable.addChewReferral(chew);
                     cv.put(CHEW_ID, id);
-                    db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                    db.update(TABLE_NAME, cv, ID + "='" + cursor.getString(0) + "'", null);
                 }
                 // Update the Community Unit.
                 // Update the Link Facility
@@ -1010,12 +1013,12 @@ public class RegistrationTable extends SQLiteOpenHelper {
                 CommunityUnitTable cuTbl = new CommunityUnitTable(context);
                 String linkFacilityUuid = UUID.randomUUID().toString();
                 String communityUnitUuid = UUID.randomUUID().toString();
-                if (!cursor.getString(cursor.getColumnIndex(LINK_FACILITY)).equalsIgnoreCase("")){
+                if (!cursor.getString(cursor.getColumnIndex(LINK_FACILITY)).equalsIgnoreCase("")) {
                     LinkFacility linkFacility = lFTbl.getLinkFacilityByName(cursor.getString(cursor.getColumnIndex(LINK_FACILITY)));
-                    if (linkFacility != null){
+                    if (linkFacility != null) {
                         cv.put(LINK_FACILITY, linkFacility.getId());
-                        db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
-                    }else{
+                        db.update(TABLE_NAME, cv, ID + "='" + cursor.getString(0) + "'", null);
+                    } else {
                         // create the Link Facility
                         // For some registration, Subcounty is missing.
                         RecruitmentTable rctbl = new RecruitmentTable(context);
@@ -1035,18 +1038,18 @@ public class RegistrationTable extends SQLiteOpenHelper {
                         newLinkFacility.setCountry(cursor.getString(24));
                         lFTbl.addData(newLinkFacility);
                         cv.put(LINK_FACILITY, linkFacilityUuid);
-                        db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                        db.update(TABLE_NAME, cv, ID + "='" + cursor.getString(0) + "'", null);
                     }
                 }
-                if (!cursor.getString(cursor.getColumnIndex(COMMUNITY)).equalsIgnoreCase("")){
+                if (!cursor.getString(cursor.getColumnIndex(COMMUNITY)).equalsIgnoreCase("")) {
                     CommunityUnit communityUnit = cuTbl.getCommunityUnitByName(cursor
                             .getString(cursor.getColumnIndex(CU_NAME)));
-                    if (communityUnit != null){
+                    if (communityUnit != null) {
                         cv.put(CU_NAME, communityUnit.getId());
-                        db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
-                    }else{
+                        db.update(TABLE_NAME, cv, ID + "='" + cursor.getString(0) + "'", null);
+                    } else {
                         // create the Link Facility
-                        RecruitmentTable  recruitmentTable = new RecruitmentTable(context);
+                        RecruitmentTable recruitmentTable = new RecruitmentTable(context);
 
                         Recruitment recruitment = recruitmentTable.getRecruitmentById(recruitmentID);
                         CommunityUnit newCommunityUnit = new CommunityUnit();
@@ -1061,7 +1064,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
 
                         cv.put(CU_NAME, communityUnitUuid);
                         cv.put(SUB_COUNTY, recruitment.getSubcounty());
-                        db.update(TABLE_NAME, cv, ID+"='"+cursor.getString(0)+"'", null);
+                        db.update(TABLE_NAME, cv, ID + "='" + cursor.getString(0) + "'", null);
                     }
                 }
             }

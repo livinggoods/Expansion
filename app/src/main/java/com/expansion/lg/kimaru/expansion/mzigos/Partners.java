@@ -11,8 +11,10 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 public class Partners {
     String partnerID, partnerName, contactPerson, contactPersonPhone,
             parent, mappingId, country, comment;
-    boolean synced, archived;
+    boolean archived;
     Long dateAdded, addedBy;
+
+    int synced = 0;
 
     int color = -1;
 
@@ -21,7 +23,7 @@ public class Partners {
 
     public Partners(String partnerID, String partnerName, String contactPerson,
                     String contactPersonPhone, String parent, String mappingId,
-                    String country, String comment, boolean synced, boolean archived,
+                    String country, String comment, int synced, boolean archived,
                     Long dateAdded, Long addedBy) {
         this.partnerID = partnerID;
         this.partnerName = partnerName;
@@ -69,7 +71,7 @@ public class Partners {
         return comment;
     }
 
-    public boolean isSynced() {
+    public int getSynced() {
         return synced;
     }
 
@@ -117,7 +119,7 @@ public class Partners {
         this.comment = comment;
     }
 
-    public void setSynced(boolean synced) {
+    public void setSynced(int synced) {
         this.synced = synced;
     }
 

@@ -87,6 +87,19 @@ public class SessionManagement {
     public static final String PEER_SERVER = "peer_server";
     public static final String PEER_SERVER_PORT = "peer_server_port";
 
+    public static final String LAST_SYNC_RECRUITMENT = "sync_recruitment";
+    public static final String LAST_SYNC_REGISTRATIONS ="sync_registrations";
+    public static final String LAST_SYNC_EXAMS = "sync_exams";
+    public static final String LAST_SYNC_INTERVIEWS = "sync_interviews";
+    public static final String LAST_SYNC_CU = "sync_cu";
+    public static final String LAST_SYNC_CHEW = "sync_chew";
+    public static final String LAST_SYNC_MAPPING = "mapping";
+    public static final String LAST_SYNC_LF = "sync_lf";
+    public static final String LAST_SYNC_VILLAGES = "sync_villages";
+    public static final String LAST_SYNC_PARISHES = "sync_parishes";
+    public static final String LAST_SYNC_PARTNERS = "sync_partners";
+    public static final String LAST_SYNC_PARTNER_ACTIVITY = "sync_partner_activity";
+
     //constructor
     public SessionManagement (Context context){
         this._context = context;

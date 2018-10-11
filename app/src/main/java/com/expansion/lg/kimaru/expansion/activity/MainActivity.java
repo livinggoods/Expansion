@@ -2,24 +2,19 @@ package com.expansion.lg.kimaru.expansion.activity;
 
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -40,28 +35,28 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.expansion.lg.kimaru.expansion.R;
+import com.expansion.lg.kimaru.expansion.fragment.ExamsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.HomeFragment;
 import com.expansion.lg.kimaru.expansion.fragment.InterviewsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.MappingFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewCommunityUnitFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewExamFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewInterviewFragment;
+import com.expansion.lg.kimaru.expansion.fragment.NewKeMappingFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewKeRecruitmentFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewKeRegistrationFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewLinkFacilityFragment;
-import com.expansion.lg.kimaru.expansion.fragment.NewKeMappingFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRecruitmentFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewRegistrationFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewSubCountyFragment;
 import com.expansion.lg.kimaru.expansion.fragment.NewUgMappingFragment;
-import com.expansion.lg.kimaru.expansion.fragment.RegistrationsFragment;
-import com.expansion.lg.kimaru.expansion.fragment.ExamsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.RecruitmentsFragment;
+import com.expansion.lg.kimaru.expansion.fragment.RegistrationsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.SettingsFragment;
 import com.expansion.lg.kimaru.expansion.other.CircleTransform;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.other.SetUpApp;
-import com.expansion.lg.kimaru.expansion.service.MappingsSyncService;
+import com.expansion.lg.kimaru.expansion.other.UtilFunctions;
 import com.expansion.lg.kimaru.expansion.service.MappingsSyncServiceAdapter;
 import com.expansion.lg.kimaru.expansion.service.RecruitmentsSyncServiceAdapter;
 import com.expansion.lg.kimaru.expansion.sync.ApiClient;
@@ -72,8 +67,13 @@ import com.expansion.lg.kimaru.expansion.tables.EducationTable;
 import com.expansion.lg.kimaru.expansion.tables.MappingTable;
 import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
 import com.expansion.lg.kimaru.expansion.tables.WardTable;
+import com.idescout.sql.SqlScoutServer;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.ontbee.legacyforks.cn.pedant.SweetAlert.SweetAlertDialog;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,6 +85,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -95,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imgNavHeaderBg, imgProfile;
     private TextView txtName, txtWebsite;
     public Toolbar toolbar;
+
+    private SqlScoutServer sqlScoutServer;
 
     // index to identify current nav menu item
     public static int navItemIndex = 0;
@@ -158,18 +161,25 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_CALLBACK_CONSTANT = 101;
     private static final int REQUEST_PERMISSION_SETTING = 102;
     String[] permissionsRequired = new String[]{
-            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
     private SharedPreferences permissionStatus;
     private boolean sentToSettings = false;
-    private int i =-1;
+    private int i = -1;
     private LocationDataSync locationDataSync;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        sqlScoutServer = SqlScoutServer.create(this, getPackageName());
+
         session = new SessionManagement(getBaseContext());
-        session.checkLogin();
+
+        if (!session.isLoggedIn()) {
+            session.checkLogin();
+            finish();
+        }
 
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -181,29 +191,29 @@ public class MainActivity extends AppCompatActivity {
         try {
             SetUpApp setUpApp = new SetUpApp(getBaseContext());
             setUpApp.setUpEducation();
-        }catch (Exception e){
+        } catch (Exception e) {
             new EducationTable(getBaseContext()).createEducationLevels();
         }
 
         locationDataSync = new LocationDataSync(getBaseContext());
 
-        if (session.isLoggedIn()){
+        if (session.isLoggedIn()) {
             RecruitmentsSyncServiceAdapter.initializeSyncAdapter(getApplicationContext());
             MappingsSyncServiceAdapter.initializeSyncAdapter(getApplicationContext());
-            if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")){
+            if (session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY).equalsIgnoreCase("UG")) {
                 //Force the app to sync all the location details on initial Load
-                if(!session.isInitialDataSynced()){
-                    new syncLocations().execute(new Constants(getApplicationContext()).getCloudAddress()+"/api/v1/sync/locations");
+                if (!session.isInitialDataSynced()) {
+                    new syncLocations().execute(new Constants(getApplicationContext()).getCloudAddress() + "/api/v1/sync/locations");
                 }
                 /**
                  * sync Counties, subcounties, parish, villages
                  * the county, subcounty and villages are in the same DB (one class is enough to pull the data)
                  */
-            }else{
+            } else {
                 IccmDataSync iccmDataSync = new IccmDataSync(getBaseContext());
                 iccmDataSync.pollNewComponents();
-                if(!session.isInitialDataSynced()){
-                    new syncKeWards().execute(new Constants(context).getCloudAddress()+"/api/v1/sync/ke-counties");
+                if (!session.isInitialDataSynced()) {
+                    new syncKeWards().execute(new Constants(context).getCloudAddress() + "/api/v1/sync/ke-counties");
                 }
             }
 //            new Thread(new Runnable() {
@@ -219,7 +229,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
         //we can now extract User details
         HashMap<String, String> user = session.getUserDetails();
 
@@ -230,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
         email = user.get(SessionManagement.KEY_EMAIL);
         country = user.get(SessionManagement.KEY_USER_COUNTRY);
 
-        if (country.equalsIgnoreCase("UG")){
+        if (country.equalsIgnoreCase("UG")) {
             CountyLocationTable countyLocationTable = new CountyLocationTable(getBaseContext());
             countyLocationTable.createLocations();
         }
@@ -272,9 +281,9 @@ public class MainActivity extends AppCompatActivity {
      * THis is a dirty trick to ensure that they get loaded
      */
 
-    public void loadFragment(View view){
+    public void loadFragment(View view) {
         Runnable mPendingRunnable;
-        switch (CURRENT_TAG){
+        switch (CURRENT_TAG) {
             case TAG_HOME:
                 break;
             case TAG_RECRUITMENTS:
@@ -283,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         // update the main content by replacing fragments
                         Fragment fragment = null;
-                        switch (country){
+                        switch (country) {
                             case "KE":
                                 NewKeRecruitmentFragment newKeRecruitmentFragment = new NewKeRecruitmentFragment();
                                 fragment = newKeRecruitmentFragment;
@@ -293,11 +302,11 @@ public class MainActivity extends AppCompatActivity {
                                 fragment = newRecruitmentFragment;
                                 break;
                         }
-                        if (fragment != null){
+                        if (fragment != null) {
                             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                             fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
                                     android.R.anim.fade_out);
-                            fragmentTransaction.replace( R.id.frame, fragment).addToBackStack( CURRENT_TAG).commit();
+                            fragmentTransaction.replace(R.id.frame, fragment).addToBackStack(CURRENT_TAG).commit();
                         }
 
                     }
@@ -316,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
                         if (country.equalsIgnoreCase("UG")) {
                             NewRegistrationFragment newRegistrationFragment = new NewRegistrationFragment();
                             fragment = newRegistrationFragment;
-                        }else{
+                        } else {
                             NewKeRegistrationFragment newKeRegistrationFragment = new NewKeRegistrationFragment();
                             fragment = newKeRegistrationFragment;
                         }
@@ -375,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case TAG_MAPPINGS:
-                Toast.makeText(getBaseContext(), "Countyr is "+ country, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Countyr is " + country, Toast.LENGTH_SHORT).show();
                 if (country.equalsIgnoreCase("KE")) {
                     mPendingRunnable = new Runnable() {
                         @Override
@@ -395,7 +404,7 @@ public class MainActivity extends AppCompatActivity {
                     if (mPendingRunnable != null) {
                         mHandler.post(mPendingRunnable);
                     }
-                }else{
+                } else {
                     mPendingRunnable = new Runnable() {
                         @Override
                         public void run() {
@@ -591,7 +600,7 @@ public class MainActivity extends AppCompatActivity {
             case 2:
                 // registrations fragment
                 // Before loading the Registrations, ensure that the user has already set the recruitment\
-                if (session.isRecruitmentSet()){
+                if (session.isRecruitmentSet()) {
                     RegistrationsFragment registrationsFragment = new RegistrationsFragment();
                     return registrationsFragment;
                 } else {
@@ -604,7 +613,7 @@ public class MainActivity extends AppCompatActivity {
             case 3:
                 // exams fragment
                 // Before loading the Exams, ensure that the user has already set the recruitment
-                if (session.isRecruitmentSet()){
+                if (session.isRecruitmentSet()) {
                     ExamsFragment examsFragment = new ExamsFragment();
                     return examsFragment;
                 } else {
@@ -617,7 +626,7 @@ public class MainActivity extends AppCompatActivity {
             case 4:
                 // interviews fragment
                 // Before loading the Interviews, ensure that the user has already set the recruitment
-                if (session.isRecruitmentSet()){
+                if (session.isRecruitmentSet()) {
                     InterviewsFragment interviewsFragment = new InterviewsFragment();
                     return interviewsFragment;
                 } else {
@@ -641,15 +650,15 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(activityTitles[navItemIndex]);
     }
 
-    public void setSelectedNavMenu(int navItemIndex){
+    public void setSelectedNavMenu(int navItemIndex) {
         navigationView.getMenu().getItem(navItemIndex).setChecked(true);
     }
 
     private void selectNavMenu() {
-        navigationView.getMenu().getItem(navItemIndex).setChecked(true);
+        //navigationView.getMenu().getItem(navItemIndex).setChecked(true);
     }
 
-    public void setUpMenus(int itemIndex, String tag){
+    public void setUpMenus(int itemIndex, String tag) {
         navItemIndex = itemIndex;
         CURRENT_TAG = tag;
         setUpNavigationView();
@@ -674,36 +683,6 @@ public class MainActivity extends AppCompatActivity {
                         navItemIndex = 1;
                         CURRENT_TAG = TAG_RECRUITMENTS;
                         break;
-                    case R.id.nav_registrations:
-                        if (session.isRecruitmentSet()){
-                            navItemIndex = 2;
-                            CURRENT_TAG = TAG_REGISTRATIONS;
-                        }else {
-                            Toast.makeText(getBaseContext(), "Long press on Recruitment before creating a registration", Toast.LENGTH_LONG).show();
-                            navItemIndex = 1;
-                            CURRENT_TAG = TAG_RECRUITMENTS;
-                        }
-                        break;
-                    case R.id.nav_notifications:
-                        if (session.isRecruitmentSet()){
-                            navItemIndex = 3;
-                            CURRENT_TAG = TAG_EXAMS;
-                        }else {
-                            Toast.makeText(getBaseContext(), "Long press on Recruitment before conducting an exam", Toast.LENGTH_SHORT).show();
-                            navItemIndex = 1;
-                            CURRENT_TAG = TAG_RECRUITMENTS;
-                        }
-                        break;
-                    case R.id.nav_settings:
-                        if (session.isRecruitmentSet()){
-                            navItemIndex = 4;
-                            CURRENT_TAG = TAG_INTERVIEWS;
-                        }else {
-                            Toast.makeText(getBaseContext(), "Long press on Recruitment before conducting an interview", Toast.LENGTH_SHORT).show();
-                            navItemIndex = 1;
-                            CURRENT_TAG = TAG_RECRUITMENTS;
-                        }
-                        break;
 
                     case R.id.nav_mapping:
                         navItemIndex = 5;
@@ -725,11 +704,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
                         drawer.closeDrawers();
                         return true;
-                    case R.id.nav_privacy_policy:
-                        // launch new intent instead of loading fragment
-                        startActivity(new Intent(MainActivity.this, PrivacyPolicyActivity.class));
-                        drawer.closeDrawers();
-                        return true;
+
                     case R.id.nav_http_server:
                         startActivity(new Intent(MainActivity.this, HttpServerActivity.class));
                         drawer.closeDrawers();
@@ -739,7 +714,16 @@ public class MainActivity extends AppCompatActivity {
                         //logout User
                         session.logoutUser();
                         drawer.closeDrawers();
-                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                        Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(i);
+                        finish();
+                        return true;
+
+                    case R.id.nav_offline_data:
+                        Intent intent = new Intent(MainActivity.this, OfflineDataSummary.class);
+                        startActivity(intent);
                         return true;
 
                     default:
@@ -790,7 +774,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         Runnable mPendingRunnable;
-        if (backFragment != null){
+        if (backFragment != null) {
             mPendingRunnable = new Runnable() {
                 @Override
                 public void run() {
@@ -900,10 +884,10 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void checkPermissions(){
-        try{
-            if(ActivityCompat.checkSelfPermission(this, permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED){
-                if(ActivityCompat.shouldShowRequestPermissionRationale(this,permissionsRequired[0])){
+    public void checkPermissions() {
+        try {
+            if (ActivityCompat.checkSelfPermission(this, permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissionsRequired[0])) {
                     //Show Information about why you need the permission
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle("Multiple Permissions Request");
@@ -912,7 +896,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
-                            ActivityCompat.requestPermissions(MainActivity.this,permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
+                            ActivityCompat.requestPermissions(MainActivity.this, permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -922,7 +906,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                     builder.show();
-                }else if (permissionStatus.getBoolean(permissionsRequired[0], false)){
+                } else if (permissionStatus.getBoolean(permissionsRequired[0], false)) {
                     //Previously Permission Request was cancelled with 'Dont Ask Again',
                     // Redirect to Settings after showing Information about why you need the permission
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -948,26 +932,27 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                     builder.show();
-                }else {
+                } else {
                     ActivityCompat.requestPermissions(this, permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
                 }
                 SharedPreferences.Editor editor = permissionStatus.edit();
-                editor.putBoolean(permissionsRequired[0],true);
+                editor.putBoolean(permissionsRequired[0], true);
                 editor.commit();
-            }else{
+            } else {
                 proceedAfterPermission();
             }
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == PERMISSION_CALLBACK_CONSTANT){
+        if (requestCode == PERMISSION_CALLBACK_CONSTANT) {
             //check if all permissions are granted
             boolean allgranted = false;
-            for(int i=0;i<grantResults.length;i++){
-                if(grantResults[i]==PackageManager.PERMISSION_GRANTED){
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                     allgranted = true;
                 } else {
                     allgranted = false;
@@ -975,9 +960,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            if(allgranted){
+            if (allgranted) {
                 proceedAfterPermission();
-            } else if(ActivityCompat.shouldShowRequestPermissionRationale(this,permissionsRequired[0])){
+            } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissionsRequired[0])) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Need Multiple Permissions");
                 builder.setMessage("This app needs Location permissions.");
@@ -985,7 +970,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
-                        ActivityCompat.requestPermissions(MainActivity.this,permissionsRequired,PERMISSION_CALLBACK_CONSTANT);
+                        ActivityCompat.requestPermissions(MainActivity.this, permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -996,10 +981,11 @@ public class MainActivity extends AppCompatActivity {
                 });
                 builder.show();
             } else {
-                Toast.makeText(this,"Unable to get Permission",Toast.LENGTH_LONG).show();
+                // Toast.makeText(this,"Unable to get Permission",Toast.LENGTH_LONG).show();
             }
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -1010,31 +996,53 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();
-        if (sentToSettings) {
-            if (ActivityCompat.checkSelfPermission(this, permissionsRequired[0]) == PackageManager.PERMISSION_GRANTED) {
-                //Got Permission
-                proceedAfterPermission();
-            }
+        Log.e("STATUS", "MainActivity.onResume");
+        sqlScoutServer.resume();
+        if (UtilFunctions.checkPermissions(this, Constants.PERMISSIONS)) {
+            proceedAfterPermission();
+        } else {
+            Dexter.withActivity(this)
+                    .withPermissions(Constants.PERMISSIONS)
+                    .withListener(new MultiplePermissionsListener() {
+                        @Override
+                        public void onPermissionsChecked(MultiplePermissionsReport report) {
+                            if (report.areAllPermissionsGranted()) {
+                                proceedAfterPermission();
+                            } else {
+                                Toast.makeText(MainActivity.this, "All permissions are required for the application to work", Toast.LENGTH_LONG)
+                                        .show();
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+
+                        }
+                    }).check();
         }
     }
+
     private void proceedAfterPermission() {
+        Log.e("STATUS", "proceedAfterPermission");
         exportDB();
     }
 
-    private void exportDB(){
+    private void exportDB() {
         File sd = Environment.getExternalStorageDirectory();
         File data = Environment.getDataDirectory();
-        FileChannel source=null;
-        FileChannel destination=null;
-        String currentDBPath = "/data/"+ getPackageName() +"/databases/"+MappingTable.DATABASE_NAME;
+        FileChannel source = null;
+        FileChannel destination = null;
+        String currentDBPath = "/data/" + getPackageName() + "/databases/" + MappingTable.DATABASE_NAME;
         String backupDBPath = MappingTable.DATABASE_NAME;
         File currentDB = new File(data, currentDBPath);
         //File backupDB = new File(sd, backupDBPath);
         File backupDB = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "expansion_backup.db");
-        Toast.makeText(this, backupDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        // Toast.makeText(this, backupDB.getAbsolutePath(), Toast.LENGTH_LONG).show();
         try {
             source = new FileInputStream(currentDB).getChannel();
             destination = new FileOutputStream(backupDB).getChannel();
@@ -1042,7 +1050,7 @@ public class MainActivity extends AppCompatActivity {
             source.close();
             destination.close();
             //Toast.makeText(this, "DB Exported!", Toast.LENGTH_LONG).show();
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             //Toast.makeText(this, "Error in backing up the db!\n"+e.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -1051,7 +1059,7 @@ public class MainActivity extends AppCompatActivity {
     private class syncLocations extends AsyncTask<String, Void, String> {
 
         @Override
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE)
                     .setTitleText("Loading. Please wait");
@@ -1059,7 +1067,7 @@ public class MainActivity extends AppCompatActivity {
             pDialog.setCancelable(false);
         }
 
-        protected String doInBackground(String... strings){
+        protected String doInBackground(String... strings) {
             String stream = null;
             String urlString = strings[0];
             // Start Village
@@ -1091,21 +1099,22 @@ public class MainActivity extends AppCompatActivity {
             }).start();
             ApiClient hh = new ApiClient();
             stream = hh.GetHTTPData(urlString);
-            if(stream !=null){
-                try{
-                    JSONObject reader= new JSONObject(stream);
+            if (stream != null) {
+                try {
+                    JSONObject reader = new JSONObject(stream);
                     JSONArray recs = reader.getJSONArray("locations");
                     CountyLocationTable countyLocationTable = new CountyLocationTable(getBaseContext());
-                    for (int x = 0; x < recs.length(); x++){
+                    for (int x = 0; x < recs.length(); x++) {
                         countyLocationTable.fromJson(recs.getJSONObject(x));
                     }
-                }catch(JSONException e){
+                } catch (JSONException e) {
                 }
 
             }
             return stream;
         }
-        protected void onPostExecute(String stream){
+
+        protected void onPostExecute(String stream) {
             session.flagSynced(true);
             pDialog.dismiss();
         } // onPostExecute() end
@@ -1114,7 +1123,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class syncKeWards extends AsyncTask<String, Void, String> {
         @Override
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE)
                     .setTitleText("Loading Wards. Please wait");
@@ -1122,43 +1131,62 @@ public class MainActivity extends AppCompatActivity {
             pDialog.setCancelable(false);
         }
 
-        protected String doInBackground(String... strings){
+        protected String doInBackground(String... strings) {
             String stream = null;
             String urlString = strings[0];
             ApiClient hh = new ApiClient();
             stream = hh.GetHTTPData(urlString);
-            if(stream !=null){
-                try{
-                    JSONObject reader= new JSONObject(stream);
+            if (stream != null) {
+                try {
+                    JSONObject reader = new JSONObject(stream);
                     JSONArray recs = reader.getJSONArray("counties");
                     SubCountyTable subCountyTable = new SubCountyTable(context);
-                    for (int x = 0; x < recs.length(); x++){
+                    for (int x = 0; x < recs.length(); x++) {
                         // I have the county Details, lets extract all subcounties
                         JSONObject county = recs.getJSONObject(x);
                         JSONArray subCounties = county.getJSONArray("subcounties");
-                        for (int a = 0; a<subCounties.length(); a++){
+                        for (int a = 0; a < subCounties.length(); a++) {
                             // I have the subcounty, create the subcounty
                             JSONObject subCounty = subCounties.getJSONObject(a);
                             subCountyTable.fromJson(subCounty);
                             //also get the wards
                             JSONArray wards = subCounty.getJSONArray("wards");
-                            for (int b=0; b<wards.length(); b++){
+                            for (int b = 0; b < wards.length(); b++) {
                                 JSONObject ward = wards.getJSONObject(b);
                                 //create a ward
                                 new WardTable(context).fromJson(ward);
                             }
                         }
                     }
-                }catch(JSONException e){
-                    Log.d("TREMAP", "KE County Sync ERROR "+e.getMessage());
+                } catch (JSONException e) {
+                    Log.d("TREMAP", "KE County Sync ERROR " + e.getMessage());
                 }
 
             }
             return stream;
         }
-        protected void onPostExecute(String stream){
+
+        protected void onPostExecute(String stream) {
             session.flagSynced(true);
             pDialog.dismiss();
         } // onPostExecute() end
+    }
+
+    @Override
+    protected void onPause() {
+        sqlScoutServer.destroy();
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        sqlScoutServer.destroy();
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        sqlScoutServer.destroy();
+        super.onDestroy();
     }
 }

@@ -5,17 +5,17 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
-/**
- * Created by kimaru on 7/19/17.
- */
-
-
+import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
+import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
+import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
+import com.expansion.lg.kimaru.expansion.mzigos.Mapping;
+import com.expansion.lg.kimaru.expansion.mzigos.Parish;
+import com.expansion.lg.kimaru.expansion.mzigos.PartnerActivity;
+import com.expansion.lg.kimaru.expansion.mzigos.Partners;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
-import com.expansion.lg.kimaru.expansion.mzigos.TrainingClass;
-import com.expansion.lg.kimaru.expansion.mzigos.TrainingTrainee;
 import com.expansion.lg.kimaru.expansion.mzigos.Village;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.other.WifiState;
@@ -53,6 +53,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+/**
+ * Created by kimaru on 7/19/17.
+ */
 
 public class HttpClient{
     Context context;
@@ -1391,228 +1395,423 @@ public class HttpClient{
         return ret.toString();
     }
 
+    /**
+     * Syncs recruitment data
+     */
     public void syncRecruitments () {
-        String syncResults;
         RecruitmentTable recruitmentTable = new RecruitmentTable(context);
-        try {
-            syncResults = this.syncClient(recruitmentTable.getRecruitmentToSyncAsJson(),
-                    HttpServer.RECRUIRMENT_URL);
-        } catch (Exception e){
-            syncResults = null;
-        }
+        long pendingRecords = recruitmentTable.getPendingRecordCount();
 
-        if (syncResults != null){
-            processSyncedRecruitments(syncResults);
-        }
-    }
-    private void processSyncedRecruitments(String stream){
-        try {
+        if (pendingRecords == 0) return;
 
-            JSONObject reader = new JSONObject(stream);
+        int max = (int) Math.ceil(pendingRecords / (double) Constants.SYNC_PAGINATION_SIZE);
+        int errors = 0;
+        for (int i = 0; i < max; i++) {
+            String syncResults = null;
+            try {
+                JSONObject payload = recruitmentTable.getRecruitmentToSyncAsJson(Constants.SYNC_PAGINATION_SIZE * errors);
+                syncResults = this.syncClient(payload, HttpServer.RECRUIRMENT_URL);
 
-            // Get the JSONArray recruitments
-            JSONArray recs = reader.getJSONArray("status");
-            RecruitmentTable recruitmentTable = new RecruitmentTable(context);
+                if (syncResults != null){
+                    JSONObject reader = new JSONObject(syncResults);
+                    JSONArray recs = reader.getJSONArray("status");
 
-            for (int x = 0; x < recs.length(); x++) {
-                Recruitment recruitment = recruitmentTable.getRecruitmentById(
-                        recs.getJSONObject(x).getString("id"));
-                recruitment.setSynced(recs.getJSONObject(x).getString("status") == "ok" ? 1 : 0);
-                // update recruitment
-                recruitmentTable.addData(recruitment);
+                    for (int x = 0; x < recs.length(); x++) {
+                        JSONObject rec = recs.getJSONObject(x);
+                        String id = rec.getString("id");
+                        String status = rec.getString("status");
+
+                        Recruitment recruitment = recruitmentTable.getRecruitmentById(id);
+                        recruitment.setSynced(status.equals("ok") ? 1 : 0);
+                        recruitmentTable.addData(recruitment);
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                errors++;
             }
-        }catch (Exception e){}
-
+        }
     }
 
+    /**
+     * Sync Registrations data
+     */
     public void syncRegistrations () {
-        String syncResults;
         RegistrationTable registrationTable = new RegistrationTable(context);
-        try {
-            syncResults = this.syncClient(registrationTable.getRegistrationToSyncAsJson(),
-                    HttpServer.REGISTRATION_URL);
-        } catch (Exception e){
-            syncResults = null;
-        }
+        long pendingRecords = registrationTable.getPendingRecordCount();
 
-        if (syncResults != null){
-            processSyncedRegistrations(syncResults);
-        }
-    }
-    private void processSyncedRegistrations(String stream){
-        try {
+        if (pendingRecords == 0) return;
 
-            JSONObject reader = new JSONObject(stream);
-
-            // Get the JSONArray recruitments
-            JSONArray recs = reader.getJSONArray("status");
-            RegistrationTable registrationTable = new RegistrationTable(context);
-
-            for (int x = 0; x < recs.length(); x++) {
-                Registration registration = registrationTable.getRegistrationById(
-                        recs.getJSONObject(x).getString("id"));
-                registration.setSynced(recs.getJSONObject(x).getString("status") == "ok" ? 1 : 0);
-                // update recruitment
-                registrationTable.addData(registration);
+        int max = (int) Math.ceil(pendingRecords / (double) Constants.SYNC_PAGINATION_SIZE);
+        int errors = 0;
+        for (int i = 0; i < max; i++) {
+            String syncResults = null;
+            try {
+                JSONObject payload = registrationTable.getRegistrationToSyncAsJson(Constants.SYNC_PAGINATION_SIZE * errors);
+                syncResults = this.syncClient(payload, HttpServer.REGISTRATION_URL);
+                if (syncResults != null) {
+                    JSONObject reader = new JSONObject(syncResults);
+                    JSONArray recs = reader.getJSONArray("status");
+                    for (int x = 0; x < recs.length(); x++) {
+                        JSONObject rec = recs.getJSONObject(x);
+                        String id = rec.getString("id");
+                        String status = rec.getString("status");
+                        Registration registration = registrationTable.getRegistrationById(id);
+                        registration.setSynced(status.equals("ok") ? 1 : 0);
+                        registrationTable.addData(registration);
+                    }
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+                errors++;
             }
-        }catch (Exception e){}
-
+        }
     }
 
+    /**
+     * Syncs interview data
+     */
     public void syncInterviews () {
-        String syncResults;
         InterviewTable interviewTable = new InterviewTable(context);
-        try {
-            syncResults = this.syncClient(interviewTable.getInterviewsToSyncAsJson(),
-                    HttpServer.INTERVIEW_URL);
-        } catch (Exception e){
-            syncResults = null;
-        }
+        long pendingRecords = interviewTable.getPendingRecordCount();
 
-        if (syncResults != null){
-            processSyncedInterviews(syncResults);
-        }
-    }
-    private void processSyncedInterviews(String stream){
-        try {
+        if (pendingRecords == 0) return;
 
-            JSONObject reader = new JSONObject(stream);
+        int max = (int) Math.ceil(pendingRecords / (double) Constants.SYNC_PAGINATION_SIZE);
+        int errors = 0;
+        for (int i = 0; i < max; i++) {
+            try {
+                JSONObject payload = interviewTable.getInterviewsToSyncAsJson(Constants.SYNC_PAGINATION_SIZE * errors);
+                String syncResults = this.syncClient(payload, HttpServer.INTERVIEW_URL);
+                if (syncResults != null) {
+                    JSONObject reader = new JSONObject(syncResults);
 
-            // Get the JSONArray
-            JSONArray recs = reader.getJSONArray("status");
-            InterviewTable interviewTable = new InterviewTable(context);
-
-            for (int x = 0; x < recs.length(); x++) {
-                Interview interview = interviewTable.getInterviewById(
-                        recs.getJSONObject(x).getString("id"));
-                interview.setSynced(recs.getJSONObject(x).getString("status") == "ok" ? 1 : 0);
-                // update recruitment
-                interviewTable.addData(interview);
+                    JSONArray recs = reader.getJSONArray("status");
+                    for (int x = 0; x < recs.length(); x++) {
+                        JSONObject rec = recs.getJSONObject(x);
+                        String id = rec.getString("id");
+                        String status = rec.getString("status");
+                        Interview interview = interviewTable.getInterviewById(id);
+                        interview.setSynced(status.equals("ok") ? 1 : 0);
+                        interviewTable.addData(interview);
+                    }
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+                errors++;
             }
-        }catch (Exception e){}
-
+        }
     }
 
+    /**
+     * Syncs the exams
+     */
     public void syncExams () {
-        String syncResults;
         ExamTable examTable = new ExamTable(context);
-        try {
-            syncResults = this.syncClient(examTable.getExamsToSyncAsJson(),
-                    HttpServer.EXAM_URL);
-        } catch (Exception e){
-            syncResults = null;
-        }
+        long pendingRecords = examTable.getPendingRecordCount();
 
-        if (syncResults != null){
-            processSyncedExams(syncResults);
-        }
-    }
-    private void processSyncedExams(String stream){
-        try {
+        if (pendingRecords == 0) return;
 
-            JSONObject reader = new JSONObject(stream);
+        int max = (int) Math.ceil(pendingRecords / (double) Constants.SYNC_PAGINATION_SIZE);
+        int errors = 0;
+        for (int i = 0; i < max; i++) {
+            String syncResults;
+            try {
+                JSONObject payload = examTable.getExamsToSyncAsJson(Constants.SYNC_PAGINATION_SIZE * errors);
+                syncResults = this.syncClient(payload, HttpServer.EXAM_URL);
 
-            // Get the JSONArray
-            JSONArray recs = reader.getJSONArray("status");
-            ExamTable examTable = new ExamTable(context);
+                if (syncResults != null) {
+                    JSONObject reader = new JSONObject(syncResults);
 
-            for (int x = 0; x < recs.length(); x++) {
-                Exam exam = examTable.getExamById(
-                        recs.getJSONObject(x).getString("id"));
-                exam.setSynced(recs.getJSONObject(x).getString("status") == "ok" ? 1 : 0);
-                // update recruitment
-                examTable.addData(exam);
+                    JSONArray recs = reader.getJSONArray("status");
+
+                    for (int x = 0; x < recs.length(); x++) {
+                        JSONObject rec = recs.getJSONObject(x);
+                        String id = rec.getString("id");
+                        String status = rec.getString("status");
+                        Exam exam = examTable.getExamById(id);
+                        exam.setSynced(status.equals("ok") ? 1 : 0);
+                        examTable.addData(exam);
+                    }
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+                errors++;
             }
-        }catch (Exception e){}
-
+        }
     }
+
+    /**
+     * Sync community units
+     */
     public void syncCommunityUnits () {
-        String syncResults;
         CommunityUnitTable communityUnitTable = new CommunityUnitTable(context);
-        try {
-            syncResults = this.syncClient(communityUnitTable.getJson(),
-                    HttpServer.CU_URL);
-        } catch (Exception e){
-            syncResults = null;
+        long pendingRecords = communityUnitTable.getPendingRecordCount();
+
+        if (pendingRecords == 0) return;
+
+        int max = (int) Math.ceil(pendingRecords / (double) Constants.SYNC_PAGINATION_SIZE);
+        int errors = 0;
+        for (int i = 0; i < max; i++) {
+            try {
+                JSONObject payload = communityUnitTable.getPayload(Constants.SYNC_PAGINATION_SIZE * errors);
+                String syncResults = this.syncClient(payload, HttpServer.CU_URL);
+
+                if (syncResults != null) {
+                    JSONObject results = new JSONObject(syncResults);
+                    JSONArray statusArr = results.getJSONArray("status");
+                    for (int x = 0; x < statusArr.length(); x++) {
+                        JSONObject statusObj = statusArr.getJSONObject(x);
+                        String id  = statusObj.getString("id");
+                        CommunityUnit cu = communityUnitTable.getCommunityUnitById(id);
+                        cu.setSynced(Constants.SYNC_STATUS_SYNCED);
+                        communityUnitTable.addCommunityUnitData(cu);
+                    }
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+                errors++;
+            }
         }
     }
 
+    /**
+     * Sync CHEW Referral data
+     */
     public void syncReferrals () {
-        String syncResults;
         ChewReferralTable chewReferralTable = new ChewReferralTable(context);
-        try {
-            syncResults = this.syncClient(chewReferralTable.getChewReferralJson(),
-                    HttpServer.CHEW_REFERRAL_URL);
-        } catch (Exception e){
-            syncResults = null;
+        long pendingRecords = chewReferralTable.getPendingRecordCount();
+
+        if (pendingRecords == 0) return;
+
+        int max = (int) Math.ceil(pendingRecords / (double) Constants.SYNC_PAGINATION_SIZE);
+        int errors = 0;
+        for (int i = 0; i < max; i++) {
+            try {
+                JSONObject payload = chewReferralTable.getPayload(Constants.SYNC_PAGINATION_SIZE * errors);
+                String syncResults = this.syncClient(payload, HttpServer.CHEW_REFERRAL_URL);
+
+                if (syncResults != null) {
+                    JSONObject results = new JSONObject(syncResults);
+                    JSONArray statusArr = results.getJSONArray("status");
+                    for (int x = 0; x < statusArr.length(); x++) {
+                        JSONObject statusObj = statusArr.getJSONObject(x);
+                        String id  = statusObj.getString("id");
+                        ChewReferral chewReferral = chewReferralTable.getChewReferralById(id);
+                        chewReferral.setSynced(Constants.SYNC_STATUS_SYNCED);
+                        chewReferralTable.addChewReferral(chewReferral);
+                    }
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+                errors++;
+            }
+
         }
+
     }
+
+    /**
+     * Sync parish data
+     */
     public void syncParishes () {
-        String syncResults;
         ParishTable parishTable = new ParishTable(context);
-        try {
-            syncResults = this.syncClient(parishTable.getJson(),
-                    HttpServer.PARISH_URL);
-        } catch (Exception e){
-            syncResults = null;
+        long pendingRecords = parishTable.getPendingRecordCount();
+
+        if (pendingRecords == 0) return;
+
+        int max = (int) Math.ceil(pendingRecords / (double) Constants.SYNC_PAGINATION_SIZE);
+        int errors = 0;
+        for (int i = 0; i < max; i++) {
+            try {
+                JSONObject payload = parishTable.getPayload(Constants.SYNC_PAGINATION_SIZE * errors);
+                String syncResults = this.syncClient(payload, HttpServer.PARISH_URL);
+
+                if (syncResults != null) {
+                    JSONObject results = new JSONObject(syncResults);
+                    JSONArray statusArr = results.getJSONArray("status");
+                    for (int x = 0; x < statusArr.length(); x++) {
+                        JSONObject statusObj = statusArr.getJSONObject(x);
+                        String id  = statusObj.getString("id");
+                        Parish parish = parishTable.getParishById(id);
+                        parish.setSynced(Constants.SYNC_STATUS_SYNCED);
+                        parishTable.addData(parish);
+                    }
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+                errors++;
+            }
         }
     }
 
-
+    /**
+     * Sync partner data
+     */
     public void syncPartners () {
-        String syncResults;
          PartnersTable partnersTable = new PartnersTable(context);
-        try {
-            syncResults = this.syncClient(partnersTable.getJson(),
-                    HttpServer.PARTNERS_URL);
-        } catch (Exception e){
-            syncResults = null;
+         long pendingRecords = partnersTable.getPendingRecordCount();
+
+         if (pendingRecords == 0) return;
+
+        int max = (int) Math.ceil(pendingRecords / (double) Constants.SYNC_PAGINATION_SIZE);
+        int errors = 0;
+        for (int i = 0; i < max; i++) {
+            try {
+                JSONObject payload = partnersTable.getPayload(errors * Constants.SYNC_PAGINATION_SIZE);
+                String syncResults = this.syncClient(payload, HttpServer.PARTNERS_URL);
+                if (syncResults != null) {
+                    JSONObject results = new JSONObject(syncResults);
+                    JSONArray statusArr = results.getJSONArray("status");
+                    for (int x = 0; x < statusArr.length(); x++) {
+                        JSONObject statusObj = statusArr.getJSONObject(x);
+                        String id  = statusObj.getString("id");
+                        String status = statusObj.getString("status");
+                        Partners partners = partnersTable.getPartnerById(id);
+                        partners.setSynced(status.equals("ok") ? Constants.SYNC_STATUS_SYNCED : Constants.SYNC_STATUS_UNSYNCED);
+                        partnersTable.addData(partners);
+                    }
+                }
+
+            } catch (Exception e){
+                e.printStackTrace();
+                errors++;
+            }
         }
     }
 
-    public void syncPartnersCommunityUnits () {
-        String syncResults;
+    public void syncPartnersActivity() {
         PartnerActivityTable partnerActivityTable = new PartnerActivityTable(context);
-        try {
-            syncResults = this.syncClient(partnerActivityTable.getJson(),
-                    HttpServer.PARTNERS_ACTIVITY_URL);
-        } catch (Exception e){
-            syncResults = null;
+        long pendingRecords = partnerActivityTable.getPendingRecordCount();
+
+        if (pendingRecords == 0) return;
+
+        int max = (int) Math.ceil(pendingRecords / (double) Constants.SYNC_PAGINATION_SIZE);
+        int errors = 0;
+        for (int i = 0; i < max; i++) {
+
+            try {
+                JSONObject payload = partnerActivityTable.getPayload(Constants.SYNC_PAGINATION_SIZE * errors);
+                String syncResults = this.syncClient(payload, HttpServer.PARTNERS_ACTIVITY_URL);
+
+                if (syncResults != null) {
+                    JSONObject results = new JSONObject(syncResults);
+                    JSONArray statusArr = results.getJSONArray("status");
+                    for (int x = 0; x < statusArr.length(); x++) {
+                        JSONObject statusObj = statusArr.getJSONObject(x);
+                        String id  = statusObj.getString("id");
+                        String status = statusObj.getString("status");
+                        PartnerActivity partners = partnerActivityTable.getPartnerActivityById(id);
+                        partners.setSynced(status.equals("ok") ? Constants.SYNC_STATUS_SYNCED : Constants.SYNC_STATUS_UNSYNCED);
+                        partnerActivityTable.addData(partners);
+                    }
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+                errors++;
+            }
         }
     }
 
-
+    /**
+     * Sync mapping data
+     */
     public void syncMapping () {
-        String syncResults;
         MappingTable mappingTable = new MappingTable(context);
-        try {
-            syncResults = this.syncClient(mappingTable.getJson(),
-                    HttpServer.MAPPING_URL);
-        } catch (Exception e){
-            syncResults = null;
+        long pendingRecords = mappingTable.getPendingRecordCount();
+
+        if (pendingRecords == 0) return;
+
+        int max = (int) Math.ceil(pendingRecords / (double) Constants.SYNC_PAGINATION_SIZE);
+        int errors = 0;
+        for (int i = 0; i < max; i++) {
+            try {
+                JSONObject payload = mappingTable.getPayload(Constants.SYNC_PAGINATION_SIZE * errors);
+                String syncResults = this.syncClient(payload, HttpServer.MAPPING_URL);
+                if (syncResults != null) {
+                    JSONObject results = new JSONObject(syncResults);
+                    JSONArray statusArr = results.getJSONArray("status");
+                    for (int x = 0; x < statusArr.length(); x++) {
+                        JSONObject statusObj = statusArr.getJSONObject(x);
+                        String id  = statusObj.getString("id");
+                        Mapping mapping = mappingTable.getMappingById(id);
+                        mapping.setSynced(Constants.SYNC_STATUS_SYNCED);
+                        mappingTable.addData(mapping);
+                    }
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+                errors++;
+            }
         }
     }
 
+    /**
+     * Sync village data
+     */
     public void syncVillages () {
-        String syncResults;
         VillageTable villageTable = new VillageTable(context);
-        try {
-            syncResults = this.syncClient(villageTable.getJson(),
-                    HttpServer.VILLAGE_URL);
-        } catch (Exception e){
-            Log.d("Tremap", "================ERROR PUSHING VILLAGES =================");
-            Log.d("Tremap", e.getMessage());
+        long pendingRecords = villageTable.getPendingRecordCount();
+
+        if (pendingRecords == 0) return;
+
+        int max = (int) Math.ceil(pendingRecords / (double) Constants.SYNC_PAGINATION_SIZE);
+        int errors = 0;
+        for (int i = 0; i < max; i++) {
+            try {
+                JSONObject payload = villageTable.getPayload(Constants.SYNC_PAGINATION_SIZE * errors);
+                String syncResults = this.syncClient(payload, HttpServer.VILLAGE_URL);
+                if (syncResults != null) {
+                    JSONObject results = new JSONObject(syncResults);
+                    JSONArray statusArr = results.getJSONArray("status");
+                    for (int x = 0; x < statusArr.length(); x++) {
+                        JSONObject statusObj = statusArr.getJSONObject(x);
+                        String id  = statusObj.getString("id");
+                        Village village = villageTable.getVillageById(id);
+                        village.setSynced(Constants.SYNC_STATUS_SYNCED);
+                        villageTable.addData(village);
+                    }
+                }
+
+            } catch (Exception e){
+                e.printStackTrace();
+                errors++;
+            }
         }
     }
 
+    /**
+     * Sync Link Facility data
+     */
     public void syncLinkFacilities () {
         String syncResults;
         LinkFacilityTable linkFacilityTable = new LinkFacilityTable(context);
-        try {
-            syncResults = this.syncClient(linkFacilityTable.getJson(),
-                    HttpServer.LINKFACILITY_URL);
-        } catch (Exception e){
-            syncResults = null;
+        long pendingRecords = linkFacilityTable.getPendingRecordCount();
+
+        if (pendingRecords == 0) return;
+
+        int max = (int) Math.ceil(pendingRecords / (double) Constants.SYNC_PAGINATION_SIZE);
+        int errors = 0;
+        for (int i = 0; i < max; i++) {
+            try {
+                JSONObject payload = linkFacilityTable.getPayload(Constants.SYNC_PAGINATION_SIZE * errors);
+                syncResults = this.syncClient(payload, HttpServer.LINKFACILITY_URL);
+                if (syncResults != null) {
+                    JSONObject results = new JSONObject(syncResults);
+                    JSONArray statusArr = results.getJSONArray("status");
+                    for (int x = 0; x < statusArr.length(); x++) {
+                        JSONObject statusObj = statusArr.getJSONObject(x);
+                        String id  = statusObj.getString("id");
+                        LinkFacility linkFacility = linkFacilityTable.getLinkFacilityById(id);
+                        linkFacility.setSynced(Constants.SYNC_STATUS_SYNCED);
+                        linkFacilityTable.addData(linkFacility);
+                    }
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+                errors++;
+            }
         }
     }
 }

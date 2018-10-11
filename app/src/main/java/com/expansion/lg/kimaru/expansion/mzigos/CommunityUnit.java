@@ -47,6 +47,7 @@ public class CommunityUnit {
     String picture =  "";
 
     String  other;
+    int synced = 0;
 
     public CommunityUnit(){
 
@@ -527,5 +528,13 @@ public class CommunityUnit {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public int getSynced() {
+        return synced;
+    }
+
+    public void setSynced(int synced) {
+        this.synced = synced;
     }
 }

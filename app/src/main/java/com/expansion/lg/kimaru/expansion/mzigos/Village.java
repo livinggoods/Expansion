@@ -32,11 +32,11 @@ public class Village {
     Integer addedBy, numberOfFactories, mtnSignalStrength, safaricomSignalStrength,
             orangeSignalStrength, airtelSignalStrength;
 
-    boolean isRead, isImportant, synced, bracOperating;
+    boolean isRead, isImportant, bracOperating;
     int color = -1;
     String picture =  "";
 
-
+    int synced = 0;
 
     public Village(){
 
@@ -53,7 +53,7 @@ public class Village {
                    String distributorsInTheArea, Boolean traderMarket, Boolean largeSupermarket, Boolean ngosGivingFreeDrugs,
                    Boolean ngoDoingIccm, Boolean ngoDoingMhealth, String nameOfNgoDoingIccm,
                    String nameOfNgoDoingMhealth, String privateFacilityForAct, String privateFacilityForMrdt,
-                   Long dateAdded, Integer addedBy, String comment, Boolean chvsTrained, boolean synced,
+                   Long dateAdded, Integer addedBy, String comment, Boolean chvsTrained, int synced,
                    boolean bracOperating, Integer mtnSignalStrength, Integer safaricomSignalStrength,
                    Integer orangeSignalStrength, Integer airtelSignalStrength, Boolean actStock){
 
@@ -204,7 +204,7 @@ public class Village {
         this.subCountyId = subCountyId;
     }
 
-    public void setSynced(boolean synced) {
+    public void setSynced(int synced) {
         this.synced = synced;
     }
 
@@ -526,7 +526,7 @@ public class Village {
         return noOfHouseholds;
     }
 
-    public boolean isSynced() {
+    public int getSynced() {
         return synced;
     }
 

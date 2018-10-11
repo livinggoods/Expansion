@@ -10,7 +10,7 @@ public class Mapping {
             comment, county, district, mappingRegion;
     Integer addedBy;
     Long dateAdded;
-    boolean synced;
+    int synced = 0;
 
     boolean isRead = false;
     boolean isImportant = true;
@@ -23,7 +23,7 @@ public class Mapping {
 
     public Mapping(String id, String mappingName, String country, String county, Long dateAdded,
                    Integer addedBy, String contactPerson, String contactPersonPhone,
-                   boolean synced, String comment, String district, String subCounty,
+                   int synced, String comment, String district, String subCounty,
                    String mappingRegion) {
         this.id = id;
         this.mappingName = mappingName;
@@ -124,7 +124,7 @@ public class Mapping {
         this.county = county;
     }
 
-    public boolean isSynced() {
+    public int getSynced() {
         return synced;
     }
 
@@ -136,7 +136,7 @@ public class Mapping {
         this.comment = comment;
     }
 
-    public void setSynced(boolean synced) {
+    public void setSynced(int synced) {
         this.synced = synced;
     }
 

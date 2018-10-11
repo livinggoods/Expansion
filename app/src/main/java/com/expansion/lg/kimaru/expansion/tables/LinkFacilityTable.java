@@ -2,12 +2,14 @@ package com.expansion.lg.kimaru.expansion.tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.other.Constants;
+import com.expansion.lg.kimaru.expansion.other.UtilFunctions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +53,7 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
     public static final String COUNTRY = "country";
     public static final String PARISH = "parish";
     public static final String OTHER = "other";
+    public static final String SYNCED = "synced";
     String [] columns=new String[]{ID, NAME, COUNTY, LAT, LON, SUBCOUNTY, ADDED, ADDEDBY,
             MRDTLEVELS, ACTLEVELS, COUNTRY, MFLCODE, MAPPING, PARISH, OTHER};
 
@@ -69,6 +72,7 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
             + ACTLEVELS + integer_field + ", "
             + PARISH + varchar_field + ", "
             + OTHER + text_field + ", "
+            + SYNCED + integer_field + ", "
             + COUNTRY + varchar_field + "); ";
 
     public static final String DATABASE_DROP="DROP TABLE IF EXISTS" + TABLE_NAME;
@@ -100,6 +104,10 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
         if (oldVersion < 2){
             upgradeVersion2(db);
         }
+
+        if (oldVersion < 3) {
+            upgradeVersion3(db);
+        }
     }
 
     public long addData(LinkFacility linkFacility) {
@@ -121,6 +129,7 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
         cv.put(COUNTRY, linkFacility.getCountry());
         cv.put(PARISH, linkFacility.getParish());
         cv.put(OTHER, linkFacility.getOther());
+        cv.put(SYNCED, linkFacility.getSynced());
 
         long id;
         if (isExist(linkFacility)){
@@ -243,6 +252,65 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
         SQLiteDatabase db=getReadableDatabase();
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
         return cursor;
+    }
+
+    public long getAllRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                null,
+                null);
+        db.close();
+        return cnt;
+    }
+
+    public long getPendingRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                SYNCED + "=?",
+                new String[] {String.valueOf(Constants.SYNC_STATUS_UNSYNCED)});
+        db.close();
+        return cnt;
+    }
+
+    public JSONObject getPayload(int offset) {
+
+        SQLiteDatabase db=getReadableDatabase();
+
+        Cursor cursor=db.query(TABLE_NAME,columns,
+                SYNCED+ "=?",new String[]{Constants.SYNC_STATUS_UNSYNCED+""},null,null,null,
+                String.format("%d,%d", offset, Constants.SYNC_PAGINATION_SIZE ));
+
+        JSONObject results = new JSONObject();
+
+        JSONArray resultSet = new JSONArray();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
     }
 
     public JSONObject getJson() {
@@ -373,6 +441,14 @@ public class LinkFacilityTable extends SQLiteOpenHelper {
         return linkFacility;
     }
     private void upgradeVersion2(SQLiteDatabase db) {}
+
+    private void upgradeVersion3(SQLiteDatabase db) {
+        if (!UtilFunctions.isColumnExists(db, TABLE_NAME, SYNCED))
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + SYNCED + integer_field + ";");
+
+        if (!UtilFunctions.isColumnExists(db, TABLE_NAME, OTHER))
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + OTHER + text_field + " default '{}';");
+    }
 
     public boolean isFieldExist(String fieldName)
     {

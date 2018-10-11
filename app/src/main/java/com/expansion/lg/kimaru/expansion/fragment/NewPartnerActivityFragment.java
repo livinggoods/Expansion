@@ -319,7 +319,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                         partner.setMappingId(session.getSavedMapping().getId());
                         partner.setCountry(session.getUserDetails().get(SessionManagement.KEY_USER_COUNTRY));
                         partner.setComment(editTextComment.getText().toString());
-                        partner.setSynced(false);
+                        partner.setSynced(0);
                         partner.setArchived(false);
                         partner.setDateAdded(new Date().getTime());
                         partner.setAddedBy(Long.valueOf(session.getUserDetails().get(SessionManagement.KEY_USERID)));
@@ -477,7 +477,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                 JSONObject activities = new JSONObject();
                 String partnerActivities = "";
 
-                partnerActivity.setSynced(false);
+                partnerActivity.setSynced(0);
                 partnerActivity.setOther(other.toString());
 
                 ArrayList<Integer> listOfSelectedCheckBoxId = new ArrayList<>();

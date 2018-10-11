@@ -3,13 +3,13 @@ package com.expansion.lg.kimaru.expansion.tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.Parish;
 import com.expansion.lg.kimaru.expansion.other.Constants;
-import com.expansion.lg.kimaru.expansion.sync.LocationDataSync;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -166,19 +166,24 @@ public class ParishTable extends SQLiteOpenHelper {
         Parish parish = new Parish();
         String [] selection = new String[]{uuid};
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_NAME, columns,ID, selection, null,null,null,null);
-        parish.setId(cursor.getString(0));
-        parish.setName(cursor.getString(1));
-        parish.setCountry(cursor.getString(2));
-        parish.setParent(cursor.getString(3));
-        parish.setMapping(cursor.getString(4));
-        parish.setAddedBy(cursor.getInt(5));
-        parish.setContactPerson(cursor.getString(6));
-        parish.setContactPersonPhone(cursor.getString(7));
-        parish.setComment(cursor.getString(8));
-        parish.setSynced(cursor.getInt(9));
-        parish.setDateAdded(cursor.getLong(10));
-        return parish;
+        Cursor cursor = db.query(TABLE_NAME, columns,ID+"=?", selection, null,null,null,null);
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            parish.setId(cursor.getString(0));
+            parish.setName(cursor.getString(1));
+            parish.setCountry(cursor.getString(2));
+            parish.setParent(cursor.getString(3));
+            parish.setMapping(cursor.getString(4));
+            parish.setAddedBy(cursor.getInt(5));
+            parish.setContactPerson(cursor.getString(6));
+            parish.setContactPersonPhone(cursor.getString(7));
+            parish.setComment(cursor.getString(8));
+            parish.setSynced(cursor.getInt(9));
+            parish.setDateAdded(cursor.getLong(10));
+            return parish;
+        }
+
+        return null;
     }
     public List<Parish> getParishByCountry(String countryCode) {
 
@@ -271,6 +276,60 @@ public class ParishTable extends SQLiteOpenHelper {
 
         return parishList;
     }
+
+    public long getAllRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                null,
+                null);
+        db.close();
+        return cnt;
+    }
+
+    public long getPendingRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                SYNCED + "=?",
+                new String[] {String.valueOf(Constants.SYNC_STATUS_UNSYNCED)});
+        db.close();
+        return cnt;
+    }
+
+    public JSONObject getPayload(int offset) {
+        SQLiteDatabase db=getReadableDatabase();
+        Cursor cursor=db.query(TABLE_NAME,columns,SYNCED+"=?",new String[]{Constants.SYNC_STATUS_UNSYNCED + ""},null,null,null,
+                String.format("%d,%d", offset, Constants.SYNC_PAGINATION_SIZE));
+        JSONObject results = new JSONObject();
+        JSONArray resultSet = new JSONArray();
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
+    }
+
     public JSONObject getJson() {
         SQLiteDatabase db=getReadableDatabase();
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
@@ -303,6 +362,7 @@ public class ParishTable extends SQLiteOpenHelper {
         db.close();
         return results;
     }
+
     public void fromJson(JSONObject jsonObject){
         Parish parish = new Parish();
         try {

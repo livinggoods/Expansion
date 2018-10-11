@@ -1,4 +1,5 @@
 package com.expansion.lg.kimaru.expansion.tables;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -6,7 +7,6 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.expansion.lg.kimaru.expansion.mzigos.CountyLocation;
 import com.expansion.lg.kimaru.expansion.mzigos.KeCounty;
@@ -128,7 +128,6 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         long id;
         if (isExist(recruitment)){
             //uupdate
-            cv.put(SYNCED, 0);
             id = db.update(TABLE_NAME, cv, ID+"='"+recruitment.getId()+"'", null);
         }else{
             //create new
@@ -144,6 +143,15 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         boolean exist = (cur.getCount() > 0);
         cur.close();
         return exist;
+    }
+
+    public long getPendingRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                SYNCED + "=?",
+                new String[] {String.valueOf(Constants.SYNC_STATUS_UNSYNCED)});
+        db.close();
+        return cnt;
     }
 
 
@@ -349,13 +357,20 @@ public class RecruitmentTable extends SQLiteOpenHelper {
         }
     }
 
-    public JSONObject getRecruitmentToSyncAsJson() {
+    public JSONObject getRecruitmentToSyncAsJson(int offset) {
         SQLiteDatabase db=getReadableDatabase();
-        String whereClause = SYNCED+" = ?";
+        String whereClause = SYNCED + " = ?";
         String[] whereArgs = new String[] {
-                "0",
+                String.valueOf(Constants.SYNC_STATUS_UNSYNCED),
         };
-        Cursor cursor=db.query(TABLE_NAME,columns, whereClause, whereArgs,null,null,null,null);
+        Cursor cursor=db.query(TABLE_NAME,columns,
+                whereClause,
+                whereArgs,
+                null,
+                null,
+                null,
+                String.format("%d,%d", offset, Constants.SYNC_PAGINATION_SIZE));
+
         JSONObject results = new JSONObject();
         JSONArray resultSet = new JSONArray();
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){

@@ -41,7 +41,9 @@
                     android:hint="MRDT Levels"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
-                    android:maxLines="1" />
+                    android:text="0"
+                    android:maxLines="1"
+                    android:visibility="gone"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -67,6 +69,8 @@
                     android:hint="ACT Levels"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
+                    android:text="0"
+                    android:visibility="gone"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 

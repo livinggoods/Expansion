@@ -221,7 +221,7 @@ public class NewPartnerFragment extends Fragment implements OnClickListener {
                 partner.setMappingId(session.getSavedMapping().getId());
                 partner.setCountry(country);
                 partner.setComment(comment);
-                partner.setSynced(false);
+                partner.setSynced(0);
                 partner.setArchived(false);
                 partner.setDateAdded(currentDate);
                 partner.setAddedBy(Long.valueOf(user.get(SessionManagement.KEY_USERID)));

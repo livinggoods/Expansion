@@ -1,45 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single">
-        <!-- <item
-            android:id="@+id/nav_counties"
-            android:icon="@drawable/ic_map_black_24dp"
-            android:title="@string/nav_mapping" /> -->
-        <item
-            android:id="@+id/nav_mapping"
-            android:icon="@drawable/ic_map_black_24dp"
-            android:title="@string/nav_mapping" />
-        <!-- <item
-            android:id="@+id/nav_subcounty_screening"
-            android:icon="@drawable/ic_map_black_24dp"
-            android:title="@string/nav_sub_county_screening" /> -->
-    </group>
+
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home_black_24dp"
             android:title="@string/nav_home" />
+
+        <item
+            android:id="@+id/nav_mapping"
+            android:icon="@drawable/ic_map_black_24dp"
+            android:title="@string/nav_mapping" />
+
         <item
             android:id="@+id/nav_recruitments"
-            android:icon="@drawable/ic_photo_library_black_24dp"
+            android:icon="@drawable/ic_view_list_black"
             android:title="@string/nav_photos" />
-        <item
-            android:id="@+id/nav_registrations"
-            android:icon="@drawable/ic_registrations_24dp"
-            android:title="@string/nav_movies" />
 
-        <item
-            android:id="@+id/nav_notifications"
-            android:icon="@drawable/ic_exam_black_24dp"
-            android:title="@string/nav_notifications" />
-
-        <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_local_library_black_24dp"
-            android:title="@string/nav_settings" />
     </group>
 
-    <item android:title="Other">
+    <item android:title="Miscellaneous">
         <menu>
             <item
                 android:id="@+id/nav_app_setting"
@@ -47,18 +27,26 @@
                 android:title="@string/nav_app_setting" />
 
             <item
+                android:id="@+id/nav_offline_data"
+                android:title="Cached Data"
+                android:icon="@drawable/ic_folder_black"
+                />
+
+            <item
+                android:id="@+id/nav_http_server"
+                android:title="Peer Share"
+                android:icon="@drawable/ic_compare_arrows_black"
+                />
+
+            <item
                 android:id="@+id/nav_about_us"
-                android:title="@string/nav_about_us" />
+                android:title="About"
+                android:icon="@drawable/ic_info_black"/>
+
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_logout"
                 android:title="@string/nav_logout" />
-            <item
-                android:id="@+id/nav_privacy_policy"
-                android:title="@string/privacy_policy" />
-            <item
-                android:id="@+id/nav_http_server"
-                android:title="@string/nav_http_server" />
         </menu>
     </item>
 

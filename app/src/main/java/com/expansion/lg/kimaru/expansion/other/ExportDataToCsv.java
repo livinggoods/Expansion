@@ -22,7 +22,6 @@ import com.expansion.lg.kimaru.expansion.tables.VillageTable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -223,7 +222,7 @@ public class ExportDataToCsv {
                         + m.getPrivateFacilityForMrdt().replaceAll(",",";")+","
                         + m.getDateAdded()+","
                         + m.getComment().replaceAll(",",";")+","
-                        + m.isSynced()+","
+                        + m.getSynced()+","
                         + m.getChvsTrained()+","
                         + m.isBracOperating()+","
                         + m.getSafaricomSignalStrength()+","
@@ -287,7 +286,7 @@ public class ExportDataToCsv {
                         + m.getContactPersonPhone().replaceAll(",", ";")+","
                         + m.getComment().replaceAll(",", ";")+","
                         + m.getDateAdded()+","
-                        + m.isSynced()+","
+                        + m.getSynced()+","
                         + m.getDistrict().replaceAll(",", ";")+","
                         + m.getSubCounty().replaceAll(",", ";");
                 printWriter.println(detailsLine);

@@ -1009,7 +1009,7 @@ public class RegistrationsFragment extends Fragment  {
                 });
                 builder.show();
             } else {
-                Toast.makeText(getContext(),"Unable to get Permission",Toast.LENGTH_LONG).show();
+                // Toast.makeText(getContext(),"Unable to get Permission",Toast.LENGTH_LONG).show();
             }
         }
     }

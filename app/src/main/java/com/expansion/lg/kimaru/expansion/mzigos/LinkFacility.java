@@ -15,7 +15,7 @@ public class LinkFacility {
     int color = -1;
     Boolean read = false;
     String other;
-
+    int synced = 0;
 
     public LinkFacility(){
 
@@ -195,5 +195,13 @@ public class LinkFacility {
 
     public void setOther(String other) {
         this.other = other;
+    }
+
+    public int getSynced() {
+        return synced;
+    }
+
+    public void setSynced(int synced) {
+        this.synced = synced;
     }
 }

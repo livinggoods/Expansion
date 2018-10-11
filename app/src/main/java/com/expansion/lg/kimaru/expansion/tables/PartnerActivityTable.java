@@ -2,12 +2,14 @@ package com.expansion.lg.kimaru.expansion.tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.PartnerActivity;
 import com.expansion.lg.kimaru.expansion.other.Constants;
+import com.expansion.lg.kimaru.expansion.other.UtilFunctions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -99,6 +101,10 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
         if (oldVersion < 2){
             upgradeVersion2(db);
         }
+
+        if (oldVersion < 3) {
+            upgradeVersion3(db);
+        }
     }
 
     public long addData(PartnerActivity partnerActivity) {
@@ -122,7 +128,7 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
         cv.put(DATEADDED, partnerActivity.getDateAdded());
         cv.put(ADDEDBY, partnerActivity.getAddedBy());
         cv.put(ACTIVITIES, partnerActivity.getActivities());
-        cv.put(SYNCED, partnerActivity.isSynced() ? 1:0);
+        cv.put(SYNCED, partnerActivity.getSynced());
         cv.put(OTHER, partnerActivity.getOther());
 
 
@@ -213,9 +219,63 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
         partners.setDateAdded(c.getLong(c.getColumnIndex(ADDEDBY)));
         partners.setAddedBy(c.getLong(c.getColumnIndex(ADDEDBY)));
         partners.setActivities(c.getString(c.getColumnIndex(ACTIVITIES)));
-        partners.setSynced(c.getInt(c.getColumnIndex(SYNCED))==1);
+        partners.setSynced(c.getInt(c.getColumnIndex(SYNCED)));
         partners.setOther(c.getString(c.getColumnIndex(OTHER)));
         return partners;
+    }
+
+    public long getPendingRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                SYNCED + "=?",
+                new String[] {String.valueOf(Constants.SYNC_STATUS_UNSYNCED)});
+        db.close();
+        return cnt;
+    }
+
+    public long getAllRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                null,
+                null);
+        db.close();
+        return cnt;
+    }
+
+    public JSONObject getPayload(int offset) {
+        SQLiteDatabase db=getReadableDatabase();
+        Cursor cursor=db.query(TABLE_NAME,columns,SYNCED + "=?",
+                new String[]{Constants.SYNC_STATUS_UNSYNCED + ""},null,null,null,
+                String.format("%d,%d", offset, Constants.SYNC_PAGINATION_SIZE ));
+        JSONObject results = new JSONObject();
+        JSONArray resultSet = new JSONArray();
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
     }
 
     //JSON
@@ -274,7 +334,7 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
             partners.setDateAdded(jsonObject.getLong(ADDEDBY));
             partners.setAddedBy(jsonObject.getLong(ADDEDBY));
             partners.setActivities(jsonObject.getString(ACTIVITIES));
-            partners.setSynced(jsonObject.getInt(SYNCED)==1);
+            partners.setSynced(jsonObject.getInt(SYNCED));
             partners.setOther(jsonObject.getString(OTHER));
 
             addData(partners);
@@ -285,5 +345,13 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
     }
 
     private void upgradeVersion2(SQLiteDatabase db) {}
+
+    private void upgradeVersion3(SQLiteDatabase db) {
+        if (!UtilFunctions.isColumnExists(db, TABLE_NAME, SYNCED))
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + SYNCED + integer_field + ";");
+
+        if (!UtilFunctions.isColumnExists(db, TABLE_NAME, OTHER))
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + OTHER + text_field + " default '{}';");
+    }
 }
 

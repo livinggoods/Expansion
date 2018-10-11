@@ -318,7 +318,7 @@
                     android:id="@+id/editDistanceToHealthFacility"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Distance to Health Facility"
+                    android:hint="Distance from the furthest village to the Link Facility"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" />

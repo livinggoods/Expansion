@@ -11,11 +11,13 @@ package com.expansion.lg.kimaru.expansion.mzigos;
 public class PartnerActivity {
     String id, partnerId, country, county, subcounty, parish, village, communityUnit, mappingId,
             comment, activities;
-    boolean doingMhealth, doingIccm, givingFreeDrugs, givingStipend, synced;
+    boolean doingMhealth, doingIccm, givingFreeDrugs, givingStipend;
     Long dateAdded, addedBy;
     String other;
 
     int color = -1;
+
+    int synced = 0;
 
     //empty constructor
     public PartnerActivity(){}
@@ -24,7 +26,7 @@ public class PartnerActivity {
                            String parish, String village, String communityUnit, String mappingId,
                            String comment, boolean doingMhealth, boolean doingIccm,
                            boolean givingFreeDrugs, boolean givingStipend,
-                           Long dateAdded, Long addedBy, String activities, boolean synced, String other) {
+                           Long dateAdded, Long addedBy, String activities, int synced, String other) {
         this.id = id;
         this.partnerId = partnerId;
         this.country = country;
@@ -114,7 +116,7 @@ public class PartnerActivity {
         return activities;
     }
 
-    public boolean isSynced() {
+    public int getSynced() {
         return synced;
     }
 
@@ -186,7 +188,7 @@ public class PartnerActivity {
         this.activities = activities;
     }
 
-    public void setSynced(boolean synced) {
+    public void setSynced(int synced) {
         this.synced = synced;
     }
 

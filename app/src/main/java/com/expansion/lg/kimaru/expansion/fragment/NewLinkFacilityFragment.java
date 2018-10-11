@@ -98,7 +98,8 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
     String[] permissionsRequired = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION};
+            Manifest.permission.ACCESS_COARSE_LOCATION
+    };
     private SharedPreferences permissionStatus;
     private boolean sentToSettings = false;
 
@@ -555,6 +556,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 proceedAfterPermission();
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -595,7 +597,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 });
                 builder.show();
             } else {
-                Toast.makeText(getContext(), "Unable to get Permission", Toast.LENGTH_LONG).show();
+                // Toast.makeText(getContext(), "Unable to get Permission", Toast.LENGTH_LONG).show();
             }
         }
     }

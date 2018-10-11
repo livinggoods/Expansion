@@ -109,6 +109,7 @@ public class LocationDataSync {
                     totalParishes = recs.length();
                     for (int x = 0; x < recs.length(); x++){
                         JSONObject parish = recs.getJSONObject(x);
+                        parish.put(ParishTable.SYNCED, 1);
                         parishTable.fromJson(parish);
                         processedParishes = x;
                         publishProgress((int) ((x / recs.length()*100)));
@@ -146,6 +147,7 @@ public class LocationDataSync {
                     VillageTable villageTable = new VillageTable(context);
                     for (int x = 0; x < recs.length(); x++){
                         JSONObject village = recs.getJSONObject(x);
+                        village.put(VillageTable.SYNCED, 1);
                         villageTable.fromJson(village);
                     }
                 }catch(JSONException e){

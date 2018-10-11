@@ -446,7 +446,7 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
                 });
                 builder.show();
             } else {
-                Toast.makeText(getContext(),"Unable to get Permission",Toast.LENGTH_LONG).show();
+                // Toast.makeText(getContext(),"Unable to get Permission",Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -638,7 +638,7 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
                 Integer safaricomSignal = 0;
                 long mrdtLevels = 0L;
                 long mrdtPrice = 0L;
-                boolean synced = false;
+                int synced = 0;
                 boolean presenceOfDistributors = getSelectedRadioItemValue(editPresenceDistributors).equalsIgnoreCase("Yes");
                 boolean chvsTrained = false;
                 boolean presenceOfHostels = false;

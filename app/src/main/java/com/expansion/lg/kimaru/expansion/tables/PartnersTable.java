@@ -2,6 +2,7 @@ package com.expansion.lg.kimaru.expansion.tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -33,7 +34,7 @@ public class PartnersTable extends SQLiteOpenHelper {
     public static String integer_field = " integer default 0 ";
     public static String text_field = " text ";
 
-    public static String JSON_ROOT = "community_unit";
+    public static String JSON_ROOT = "partners";
 
     public static final String ID = "id";
     public static final String NAME = "name";
@@ -106,7 +107,7 @@ public class PartnersTable extends SQLiteOpenHelper {
         cv.put(MAPPINGID, partner.getMappingId());
         cv.put(DATEADDED, partner.getDateAdded());
         cv.put(ADDEDBY, partner.getAddedBy());
-        cv.put(SYNCED, partner.isSynced() ? 1:0);
+        cv.put(SYNCED, partner.getSynced());
         cv.put(COUNTRY, partner.getCountry());
         cv.put(COMMENT, partner.getComment());
         cv.put(ARCHIVED, partner.isArchived() ? 1:0);
@@ -145,7 +146,7 @@ public class PartnersTable extends SQLiteOpenHelper {
             partners.setMappingId(c.getString(c.getColumnIndex(MAPPINGID)));
             partners.setCountry(c.getString(c.getColumnIndex(COUNTRY)));
             partners.setComment(c.getString(c.getColumnIndex(COMMENT)));
-            partners.setSynced(c.getInt(c.getColumnIndex(SYNCED))==1);
+            partners.setSynced(c.getInt(c.getColumnIndex(SYNCED)));
             partners.setArchived(c.getInt(c.getColumnIndex(ARCHIVED))==1);
             partners.setDateAdded(c.getLong(c.getColumnIndex(DATEADDED)));
             partners.setAddedBy(c.getLong(c.getColumnIndex(ADDEDBY)));
@@ -176,7 +177,7 @@ public class PartnersTable extends SQLiteOpenHelper {
             partners.setMappingId(c.getString(c.getColumnIndex(MAPPINGID)));
             partners.setCountry(c.getString(c.getColumnIndex(COUNTRY)));
             partners.setComment(c.getString(c.getColumnIndex(COMMENT)));
-            partners.setSynced(c.getInt(c.getColumnIndex(SYNCED))==1);
+            partners.setSynced(c.getInt(c.getColumnIndex(SYNCED)));
             partners.setArchived(c.getInt(c.getColumnIndex(ARCHIVED))==1);
             partners.setDateAdded(c.getLong(c.getColumnIndex(DATEADDED)));
             partners.setAddedBy(c.getLong(c.getColumnIndex(ADDEDBY)));
@@ -208,13 +209,65 @@ public class PartnersTable extends SQLiteOpenHelper {
             partners.setMappingId(c.getString(c.getColumnIndex(MAPPINGID)));
             partners.setCountry(c.getString(c.getColumnIndex(COUNTRY)));
             partners.setComment(c.getString(c.getColumnIndex(COMMENT)));
-            partners.setSynced(c.getInt(c.getColumnIndex(SYNCED))==1);
+            partners.setSynced(c.getInt(c.getColumnIndex(SYNCED)));
             partners.setArchived(c.getInt(c.getColumnIndex(ARCHIVED))==1);
             partners.setDateAdded(c.getLong(c.getColumnIndex(DATEADDED)));
             partners.setAddedBy(c.getLong(c.getColumnIndex(ADDEDBY)));
             return partners;
         }
 
+    }
+
+    public long getAllRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                null,
+                null);
+        db.close();
+        return cnt;
+    }
+
+    public long getPendingRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                SYNCED + "=?",
+                new String[] {String.valueOf(Constants.SYNC_STATUS_UNSYNCED)});
+        db.close();
+        return cnt;
+    }
+
+    public JSONObject getPayload(int offset) {
+        SQLiteDatabase db=getReadableDatabase();
+        Cursor cursor=db.query(TABLE_NAME,columns,SYNCED + "=?",new String[] {Constants.SYNC_STATUS_UNSYNCED + ""},null,null,null,
+                String.format("%d,%d", offset, Constants.SYNC_PAGINATION_SIZE));
+        JSONObject results = new JSONObject();
+        JSONArray resultSet = new JSONArray();
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
     }
 
     //JSON
@@ -265,7 +318,7 @@ public class PartnersTable extends SQLiteOpenHelper {
             partners.setMappingId(jsonObject.getString(MAPPINGID));
             partners.setCountry(jsonObject.getString(COUNTRY));
             partners.setComment(jsonObject.getString(COMMENT));
-            partners.setSynced(jsonObject.getInt(SYNCED)==1);
+            partners.setSynced(jsonObject.getInt(SYNCED));
             partners.setArchived(jsonObject.getInt(ARCHIVED)==1);
             partners.setDateAdded(jsonObject.getLong(DATEADDED));
             partners.setAddedBy(jsonObject.getLong(ADDEDBY));

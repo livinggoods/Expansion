@@ -2,6 +2,7 @@ package com.expansion.lg.kimaru.expansion.tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -187,6 +188,24 @@ public class InterviewTable extends SQLiteOpenHelper {
         }
     }
 
+    public long getAllRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                null,
+                null);
+        db.close();
+        return cnt;
+    }
+
+    public long getPendingRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                SYNCED + "=?",
+                new String[] {String.valueOf(Constants.SYNC_STATUS_UNSYNCED)});
+        db.close();
+        return cnt;
+    }
+
     public long addData(Interview interview) {
 
         SQLiteDatabase db=getWritableDatabase();
@@ -221,7 +240,6 @@ public class InterviewTable extends SQLiteOpenHelper {
 
         long id;
         if (isExist(interview)){
-            cv.put(SYNCED, 0);
             id = db.update(TABLE_NAME, cv, ID+"='"+interview.getId()+"'", null);
         }else{
             id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
@@ -375,13 +393,14 @@ public class InterviewTable extends SQLiteOpenHelper {
         return results;
     }
 
-    public JSONObject getInterviewsToSyncAsJson() {
+    public JSONObject getInterviewsToSyncAsJson(int offset) {
         SQLiteDatabase db=getReadableDatabase();
         String whereClause = SYNCED+" = ?";
         String[] whereArgs = new String[] {
                 "0",
         };
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,
+                String.format("%d,%d", offset, Constants.SYNC_PAGINATION_SIZE));
         JSONObject results = new JSONObject();
         JSONArray resultSet = new JSONArray();
         for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){

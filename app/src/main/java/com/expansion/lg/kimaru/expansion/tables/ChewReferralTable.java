@@ -3,12 +3,12 @@ package com.expansion.lg.kimaru.expansion.tables;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
-import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 
 import org.json.JSONArray;
@@ -124,7 +124,6 @@ public class ChewReferralTable extends SQLiteOpenHelper {
         //COUNTY, DISTRICT, SUBCOUNTY, COMMUNITY_UNIT, VILLAGE, MAPPING, MOBILIZATION, LAT, LON
         long id;
         if (isExist(chewReferral)){
-            cv.put(SYNCED, 0);
             id = db.update(TABLE_NAME, cv, ID+"='"+chewReferral.getId()+"'", null);
             Log.d("Tremap DB Op", "CHEW Referral updated");
         }else{
@@ -377,6 +376,68 @@ public class ChewReferralTable extends SQLiteOpenHelper {
         Cursor cursor=db.query(TABLE_NAME,columns,null,null,null,null,null,null);
         return cursor;
     }
+    public long getAllRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                null,
+                null);
+        db.close();
+        return cnt;
+    }
+
+    public long getPendingRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                SYNCED + "=?",
+                new String[] {String.valueOf(Constants.SYNC_STATUS_UNSYNCED)});
+        db.close();
+        return cnt;
+    }
+
+    public JSONObject getPayload(int offset) {
+        SQLiteDatabase db=getReadableDatabase();
+
+        Cursor cursor=db.query(TABLE_NAME,columns,
+                SYNCED + "=?",
+                new String[] {Constants.SYNC_STATUS_UNSYNCED + ""},
+                null,
+                null,
+                null,
+                String.format("%d,%d", offset, Constants.SYNC_PAGINATION_SIZE));
+
+        JSONObject results = new JSONObject();
+
+        JSONArray resultSet = new JSONArray();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+                e.printStackTrace();
+
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
+    }
 
     public JSONObject getChewReferralJson() {
 
@@ -479,5 +540,18 @@ public class ChewReferralTable extends SQLiteOpenHelper {
         db.delete(TABLE_NAME, ID + " = ?", new String[] { chewReferral.getId() });
     }
     private void upgradeVersion2(SQLiteDatabase db) {}
+
+    /**
+     * BUGFIX
+     * This method prunes all the invalid records for chew referrals
+     */
+    public void removeInvalidRecords() {
+        SQLiteDatabase db = getWritableDatabase();
+        // Remove all the invalid records
+        db.delete(TABLE_NAME, ID + "=?", new String[]{""});
+        db.delete(TABLE_NAME, ID + " IS NULL", null);
+
+        db.close();
+    }
 }
 

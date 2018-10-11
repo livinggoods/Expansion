@@ -10,7 +10,7 @@
     "name": "active_chvs",
     "type": "input",
     "value": "",
-    "title": "How many active CHVs?",
+    "title": "How many active CHVs are in the CU?",
     "required": false,
     "constraint": "number"
   },

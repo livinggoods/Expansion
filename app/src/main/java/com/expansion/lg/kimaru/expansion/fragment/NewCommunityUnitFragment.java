@@ -507,10 +507,11 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                     int gokTrainedCount = noChvGokTrained.equals("") ? 0 : Integer.parseInt(noChvGokTrained);
 
                     try {
-                        Log.e("JSON", jsonResults.toString());
                         if (!validateExtraFields()) {
                             throw new Exception("Please check your input");
                         }
+
+                        Log.e("JSON", jsonResults.toString());
 
                         jsonResults.put("gok_trained_count", gokTrainedCount);
                     } catch (Exception e) {

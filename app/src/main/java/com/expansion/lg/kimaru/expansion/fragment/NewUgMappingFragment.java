@@ -341,7 +341,7 @@ public class NewUgMappingFragment extends Fragment implements OnClickListener {
 
                 String comment = mComment.getText().toString();
                 Integer applicantAddedBy = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
-                boolean sync = false;
+                int sync = 0;
 
 
                 // Do some validations

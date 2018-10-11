@@ -1,7 +1,9 @@
 package com.expansion.lg.kimaru.expansion.tables;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -221,7 +223,7 @@ public class VillageTable extends SQLiteOpenHelper {
         cv.put(DATEADDED, village.getDateAdded());
         cv.put(ADDEDBY, village.getAddedBy());
         cv.put(COMMENT, village.getComment());
-        cv.put(SYNCED, village.isSynced());
+        cv.put(SYNCED, village.getSynced());
         cv.put(CHVS_TRAINED, village.getChvsTrained());
         cv.put(BRAC_OPERATING, village.isBracOperating() ? 1 : 0);
         cv.put(SAFARICOM, village.getSafaricomSignalStrength());
@@ -232,7 +234,6 @@ public class VillageTable extends SQLiteOpenHelper {
 
         long id;
         if (isExist(village)){
-            cv.put(SYNCED, 0);
             id = db.update(TABLE_NAME, cv, ID+"='"+village.getId()+"'", null);
             Log.d("Tremap DB Op", "Village updated");
         }else{
@@ -250,6 +251,25 @@ public class VillageTable extends SQLiteOpenHelper {
         cur.close();
         return exist;
 
+    }
+
+    public Village getVillageById(String id) {
+        SQLiteDatabase db=getReadableDatabase();
+
+        String whereClause = ID+" = ? ";
+
+        String[] whereArgs = new String[] {
+                id
+        };
+
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        if (!(cursor.moveToFirst()) || cursor.getCount() ==0){
+            return null;
+        }else {
+            Village village = cursorToVillage(cursor);
+            db.close();
+            return village;
+        }
     }
 
     public List<Village> getVillageData() {
@@ -329,6 +349,61 @@ public class VillageTable extends SQLiteOpenHelper {
         }
         return isExist;
     }
+
+    public long getAllRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                null,
+                null);
+        db.close();
+        return cnt;
+    }
+
+    public long getPendingRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                SYNCED + "=?",
+                new String[] {String.valueOf(Constants.SYNC_STATUS_UNSYNCED)});
+        db.close();
+        return cnt;
+    }
+
+    public JSONObject getPayload(int offset) {
+        SQLiteDatabase db=getReadableDatabase();
+        Cursor cursor=db.query(TABLE_NAME,columns,
+                SYNCED + "=?",new String[]{Constants.SYNC_STATUS_UNSYNCED + ""},null,null,null,
+                String.format("%d,%d", offset, Constants.SYNC_PAGINATION_SIZE ));
+        JSONObject results = new JSONObject();
+        JSONArray resultSet = new JSONArray();
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
+    }
+
 
     //JSON
     public JSONObject getJson() {
@@ -498,7 +573,7 @@ public class VillageTable extends SQLiteOpenHelper {
                 village.setComment(jsonObject.getString(COMMENT));
             }
             if(!jsonObject.isNull(SYNCED)){
-                village.setSynced(jsonObject.getInt(SYNCED)==1);
+                village.setSynced(jsonObject.getInt(SYNCED));
             }
             if(!jsonObject.isNull(CHVS_TRAINED)){
                 village.setChvsTrained(jsonObject.getInt(CHVS_TRAINED)==1);
@@ -573,7 +648,7 @@ public class VillageTable extends SQLiteOpenHelper {
         village.setDateAdded(cursor.getLong(cursor.getColumnIndex(DATEADDED)));
         village.setAddedBy(cursor.getInt(cursor.getColumnIndex(ADDEDBY)));
         village.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
-        village.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED))==1);
+        village.setSynced(cursor.getInt(cursor.getColumnIndex(SYNCED)));
         village.setChvsTrained(cursor.getInt(cursor.getColumnIndex(CHVS_TRAINED))==1);
         village.setBracOperating(cursor.getInt(cursor.getColumnIndex(BRAC_OPERATING))==1);
         village.setSafaricomSignalStrength(cursor.getInt(cursor.getColumnIndex(SAFARICOM)));

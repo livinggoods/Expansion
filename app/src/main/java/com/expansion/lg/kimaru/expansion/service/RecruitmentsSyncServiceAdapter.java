@@ -21,6 +21,8 @@ import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.sync.HttpClient;
+import com.expansion.lg.kimaru.expansion.tables.ChewReferralTable;
+import com.expansion.lg.kimaru.expansion.tables.MappingTable;
 
 /**
  * Created by kimaru on 4/11/17.
@@ -42,6 +44,8 @@ public class RecruitmentsSyncServiceAdapter extends AbstractThreadedSyncAdapter 
         //TODO get some data from the internet, api calls, etc.
         //TODO save the data to database, sqlite, etc
 
+        removeInvalidRecords();
+
         // syncRecruitments
         HttpClient client = new HttpClient(getContext());
         client.syncRecruitments();
@@ -55,15 +59,11 @@ public class RecruitmentsSyncServiceAdapter extends AbstractThreadedSyncAdapter 
         client.syncVillages();
         client.syncParishes();
 
-
-
         // Add parishes, partners. partnercu, mapping
         client.syncParishes();
         client.syncPartners();
-        client.syncPartnersCommunityUnits();
+        client.syncPartnersActivity();
         client.syncMapping();
-
-
     }
 
     /**
@@ -159,6 +159,15 @@ public class RecruitmentsSyncServiceAdapter extends AbstractThreadedSyncAdapter 
     public static void initializeSyncAdapter(Context context) {
         Log.d("MyServiceSyncAdapter", "initializeSyncAdapter");
         getSyncAccount(context);
+    }
+
+
+    public void removeInvalidRecords() {
+        MappingTable mappingTable = new MappingTable(getContext());
+        mappingTable.removeInvalidRecords();
+
+        ChewReferralTable chewReferralTable = new ChewReferralTable(getContext());
+        chewReferralTable.removeInvalidRecords();
     }
 
 }

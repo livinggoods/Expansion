@@ -1,7 +1,9 @@
 package com.expansion.lg.kimaru.expansion.tables;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -9,6 +11,7 @@ import android.util.Log;
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Partners;
 import com.expansion.lg.kimaru.expansion.other.Constants;
+import com.expansion.lg.kimaru.expansion.other.UtilFunctions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,6 +91,7 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
     public static final String OTHER = "other";
     public static final String CHVS_HOUSEHOLDS_AS_PER_CHIEF = "chief_households_per_chv";
     public static final String POPULATION_AS_PER_CHIEF = "population_as_per_chief";
+    public static final String SYNCED = "synced";
     public String [] columns=new String[]{ID, NAME, MAPPINGID, LAT, LON, COUNTRY,
             SUBCOUNTYID, LINKFACILITYID, AREACHIEFNAME, WARD, ECONOMICSTATUS,
             PRIVATEFACILITYFORACT, PRIVATEFACILITYFORMRDT, NAMEOFNGODOINGICCM,
@@ -144,6 +148,7 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
             + CHVS_HOUSEHOLDS_AS_PER_CHIEF + integer_field + ","
             + POPULATION_AS_PER_CHIEF + integer_field + ","
             + OTHER + text_field + ","
+            + SYNCED + integer_field + ","
             + NGODOINGMHEALTH + integer_field + ");";
 
     String [] partnerColumns = {ID, NAME, ICCM, ICCMCOMPONENT, MHEALTH, COMMENT, DATEADDED, ADDEDBY};
@@ -215,6 +220,10 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
         if (oldVersion < 2){
             upgradeVersion2(db);
         }
+
+        if (oldVersion < 3) {
+            upgradeVersion3(db);
+        }
     }
 
     public long addCommunityUnitData(CommunityUnit communityUnit) {
@@ -266,6 +275,7 @@ public class CommunityUnitTable extends SQLiteOpenHelper {
         cv.put(POPULATION_AS_PER_CHIEF, communityUnit.getChvsHouseholdsAsPerChief());
         cv.put(COMMENT, communityUnit.getComment());
         cv.put(OTHER, communityUnit.getOther());
+        cv.put(SYNCED, communityUnit.getSynced());
 
         long id;
         if (isCommunityUnitExisting(communityUnit)){
@@ -418,6 +428,67 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
         return cursor;
     }
 
+    public long getAllRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                null,
+                null);
+        db.close();
+        return cnt;
+    }
+
+    public long getPendingRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                SYNCED + "=?",
+                new String[] {String.valueOf(Constants.SYNC_STATUS_UNSYNCED)});
+        db.close();
+        return cnt;
+    }
+
+    public JSONObject getPayload(int offset) {
+        SQLiteDatabase db=getReadableDatabase();
+
+        Cursor cursor=db.query(TABLE_NAME,columns,
+                SYNCED + "=?",
+                new String[] {Constants.SYNC_STATUS_UNSYNCED + ""},
+                null,
+                null,
+                null,
+                String.format("%d,%d", offset, Constants.SYNC_PAGINATION_SIZE));
+
+        JSONObject results = new JSONObject();
+
+        JSONArray resultSet = new JSONArray();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast();cursor.moveToNext()){
+            int totalColumns = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+
+            for (int i =0; i < totalColumns; i++){
+                if (cursor.getColumnName(i) != null){
+                    try {
+                        if (cursor.getString(i) != null){
+                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                        }else{
+                            rowObject.put(cursor.getColumnName(i), "");
+                        }
+                    }catch (Exception e){
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            try {
+                results.put(CU_JSON_ROOT, resultSet);
+            } catch (JSONException e) {
+
+            }
+        }
+        cursor.close();
+        db.close();
+        return results;
+    }
+
     public JSONObject getJson() {
 
         SQLiteDatabase db=getReadableDatabase();
@@ -516,6 +587,14 @@ public List<CommunityUnit> getCommunityUnitByLinkFacility(String linkFacilityId)
     }
 
     private void upgradeVersion2(SQLiteDatabase db) {}
+
+    private void upgradeVersion3(SQLiteDatabase db) {
+        if (!UtilFunctions.isColumnExists(db, TABLE_NAME, SYNCED))
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + SYNCED + integer_field + ";");
+
+        if (!UtilFunctions.isColumnExists(db, TABLE_NAME, OTHER))
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + OTHER + text_field + " default '{}';");
+    }
 
     private CommunityUnit cursorToCommunityUnit(Cursor cursor){
         CommunityUnit communityUnit = new CommunityUnit();

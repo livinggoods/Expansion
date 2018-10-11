@@ -110,7 +110,6 @@ public class ExamTable extends SQLiteOpenHelper {
 
         long id;
         if (isExist(exam)){
-            cv.put(SYNCED, 0);
             id = db.update(TABLE_NAME, cv, ID+"='"+exam.getId()+"'", null);
         }else{
             id = db.insertWithOnConflict(TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
@@ -285,6 +284,15 @@ public class ExamTable extends SQLiteOpenHelper {
 
     }
 
+    public long getPendingRecordCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME,
+                SYNCED + "=?",
+                new String[] {String.valueOf(Constants.SYNC_STATUS_UNSYNCED)});
+        db.close();
+        return cnt;
+    }
+
     public long getExamCount() {
         SQLiteDatabase db = this.getReadableDatabase();
         long cnt  = DatabaseUtils.queryNumEntries(db, TABLE_NAME);
@@ -338,7 +346,7 @@ public class ExamTable extends SQLiteOpenHelper {
         return results;
     }
 
-    public JSONObject getExamsToSyncAsJson() {
+    public JSONObject getExamsToSyncAsJson(int offset) {
 
         SQLiteDatabase db=getReadableDatabase();
         String whereClause = SYNCED+" = ?";
@@ -346,7 +354,8 @@ public class ExamTable extends SQLiteOpenHelper {
                 "0",
         };
 
-        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+        Cursor cursor=db.query(TABLE_NAME,columns,whereClause,whereArgs,null,null,null,
+                String.format("%d,%d", offset, Constants.SYNC_PAGINATION_SIZE));
 
         JSONObject results = new JSONObject();
 
