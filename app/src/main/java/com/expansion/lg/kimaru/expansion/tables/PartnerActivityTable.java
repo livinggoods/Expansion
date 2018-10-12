@@ -200,28 +200,33 @@ public class PartnerActivityTable extends SQLiteOpenHelper {
 
 
     private PartnerActivity cursorToPartner(Cursor c){
-        PartnerActivity partners = new PartnerActivity();
 
-        partners.setId(c.getString(c.getColumnIndex(ID)));
-        partners.setPartnerId(c.getString(c.getColumnIndex(PARTNERID)));
-        partners.setCountry(c.getString(c.getColumnIndex(COUNTRY)));
-        partners.setCounty(c.getString(c.getColumnIndex(COUNTY)));
-        partners.setSubcounty(c.getString(c.getColumnIndex(SUBCOUNTY)));
-        partners.setParish(c.getString(c.getColumnIndex(PARISH)));
-        partners.setVillage(c.getString(c.getColumnIndex(VILLAGE)));
-        partners.setCommunityUnit(c.getString(c.getColumnIndex(COMMUNITYUNIT)));
-        partners.setMappingId(c.getString(c.getColumnIndex(MAPPINGID)));
-        partners.setComment(c.getString(c.getColumnIndex(COMMENT)));
-        partners.setDoingMhealth(c.getInt(c.getColumnIndex(DOINGMHEALTH))==1);
-        partners.setDoingIccm(c.getInt(c.getColumnIndex(DOINGICCM))==1);
-        partners.setGivingFreeDrugs(c.getInt(c.getColumnIndex(GIVINGFREEDRUGS))==1);
-        partners.setGivingStipend(c.getInt(c.getColumnIndex(GIVINGSTIPEND))==1);
-        partners.setDateAdded(c.getLong(c.getColumnIndex(ADDEDBY)));
-        partners.setAddedBy(c.getLong(c.getColumnIndex(ADDEDBY)));
-        partners.setActivities(c.getString(c.getColumnIndex(ACTIVITIES)));
-        partners.setSynced(c.getInt(c.getColumnIndex(SYNCED)));
-        partners.setOther(c.getString(c.getColumnIndex(OTHER)));
-        return partners;
+        if (c.moveToFirst()) {
+            PartnerActivity partners = new PartnerActivity();
+
+            partners.setId(c.getString(c.getColumnIndex(ID)));
+            partners.setPartnerId(c.getString(c.getColumnIndex(PARTNERID)));
+            partners.setCountry(c.getString(c.getColumnIndex(COUNTRY)));
+            partners.setCounty(c.getString(c.getColumnIndex(COUNTY)));
+            partners.setSubcounty(c.getString(c.getColumnIndex(SUBCOUNTY)));
+            partners.setParish(c.getString(c.getColumnIndex(PARISH)));
+            partners.setVillage(c.getString(c.getColumnIndex(VILLAGE)));
+            partners.setCommunityUnit(c.getString(c.getColumnIndex(COMMUNITYUNIT)));
+            partners.setMappingId(c.getString(c.getColumnIndex(MAPPINGID)));
+            partners.setComment(c.getString(c.getColumnIndex(COMMENT)));
+            partners.setDoingMhealth(c.getInt(c.getColumnIndex(DOINGMHEALTH))==1);
+            partners.setDoingIccm(c.getInt(c.getColumnIndex(DOINGICCM))==1);
+            partners.setGivingFreeDrugs(c.getInt(c.getColumnIndex(GIVINGFREEDRUGS))==1);
+            partners.setGivingStipend(c.getInt(c.getColumnIndex(GIVINGSTIPEND))==1);
+            partners.setDateAdded(c.getLong(c.getColumnIndex(ADDEDBY)));
+            partners.setAddedBy(c.getLong(c.getColumnIndex(ADDEDBY)));
+            partners.setActivities(c.getString(c.getColumnIndex(ACTIVITIES)));
+            partners.setSynced(c.getInt(c.getColumnIndex(SYNCED)));
+            partners.setOther(c.getString(c.getColumnIndex(OTHER)));
+            return partners;
+        }
+
+        return null;
     }
 
     public long getPendingRecordCount() {

@@ -569,10 +569,11 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                 // String applicantParish = editParish.getText().toString();
 
 
-                String applicantDistrict = "";
-                // String applicantSubcounty = editSubCounty.getText().toString();
+                String applicantDistrict =session.getSavedRecruitment().getDistrict();
+                 // String applicantSubcounty = selectSubCounty.getSelectedItem().toString(); // TODO start using this
                 String applicantDivision = "";
-                // String applicantVillage = mVillage.getText().toString();
+                // String applicantVillage = selectVillage.getSelectedItem().toString(); // TODO Start using this
+                // String applicantParish = selectParish.getSelectedItem().toString(); // TODO Start using this
                 String applicantMark = mMark.getText().toString();
                 String applicantLangs = mLangs.getText().toString();
                 String applicantEducation = String.valueOf(educationLevel.getSelectedItemId());
@@ -726,14 +727,14 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
 //                    Registration registration = new Registration(mName, mNumber, mEmail);
                 Registration registration;
                 registration = new Registration(registrationId, applicantName, applicantPhone, applicantGender,
-                        applicantDistrict, "", applicantDivision, "",
+                        applicantDistrict, subCountyId, applicantDivision, villageId,
                         applicantMark, applicantLangs, applicantEducation, applicantOccupation,
                         applicantComment, applicantDob, applicantReadEnglish, applicantRecruitment,
                         country, applicantDateMoved, applicantBrac, applicantBracChp, applicantCommunity,
                         applicantAddedBy, applicantProceed, applicantDateAdded, applicantSync, "",
                         "", "", "", "", 0L,
                         false, false, "", referralName, referralTitle,
-                        referralNumber, isVht, false, "",
+                        referralNumber, isVht, false, parishId,
                         0L, 0L, chewUuid, "",
                         subCountyId, parishId, villageId);
 
@@ -889,7 +890,9 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
             educationLevel.setSelection(Integer.valueOf(editingRegistration.getEducation()) - 1, true);
             int x = 0;
             for (ChewReferral c : chewReferralList){
+
                 if (c.getId().equalsIgnoreCase(editingRegistration.getChewUuid())){
+                    x = chewReferralList.indexOf(c);
                     selectChew.setSelection(x, true);
                     break;
                 }
@@ -898,7 +901,8 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
             //SubCounty
             x=0;
             for (CountyLocation cv: countyLocationList){
-                if (cv.getId().equals(editingRegistration.getSubCountyId())){
+                if (cv.getId().equals(editingRegistration.getSubcounty())){
+                    x = countyLocationList.indexOf(cv);
                     selectSubCounty.setSelection(x, true);
                     break;
                 }
@@ -906,7 +910,8 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
             //Parish
             x=0;
             for (Parish p: parishList){
-                if (p.getId().equalsIgnoreCase(editingRegistration.getParishId())){
+                if (p.getId().equalsIgnoreCase(editingRegistration.getParish())){
+                    x = parishList.indexOf(p);
                     selectParish.setSelection(x, true);
                     break;
                 }
@@ -915,7 +920,8 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
             //village
             x=0;
             for (Village v: villageList){
-                if (v.getId().equalsIgnoreCase(editingRegistration.getVillageId())){
+                if (v.getId().equalsIgnoreCase(editingRegistration.getVillage())){
+                    x = villageList.indexOf(v);
                     selectVillage.setSelection(x, true);
                     break;
                 }
