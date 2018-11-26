@@ -14,6 +14,7 @@ import com.expansion.lg.kimaru.expansion.mzigos.LinkFacility;
 import com.expansion.lg.kimaru.expansion.mzigos.Recruitment;
 import com.expansion.lg.kimaru.expansion.mzigos.Registration;
 import com.expansion.lg.kimaru.expansion.other.Constants;
+import com.expansion.lg.kimaru.expansion.other.UtilFunctions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,6 +86,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
     public static final String REC_TRANSPORT = "recruitment_transport";
     public static final String BRANCH_TRANPORT = "branch_transport";
     public static final String MARITAL_STATUS = "marital_status";
+    public static final String OTHER = "other";
 
     Context context;
 
@@ -93,7 +95,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             COMMUNITY, ADDED_BY, COMMENT, PROCEED, DATE_ADDED, SYNCED, RECRUITMENT, COUNTRY,
             CHEW_NAME, CHEW_NUMBER, WARD, CU_NAME, LINK_FACILITY, HOUSEHOLDS, TRAININGS, CHV,
             GOK_TRAINED, REFERRAL_NAME, REFERRAL_NUMBER, REFERRAL_TITLE, VHT, PARISH, ACCOUNTS,
-            REC_TRANSPORT, BRANCH_TRANPORT, CHEW_ID, MARITAL_STATUS};
+            REC_TRANSPORT, BRANCH_TRANPORT, CHEW_ID, MARITAL_STATUS, OTHER};
 
     public static final String CREATE_DATABASE = "CREATE TABLE " + TABLE_NAME + "("
             + ID + varchar_field + ", "
@@ -139,6 +141,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             + BRANCH_TRANPORT + integer_field + ", "
             + CHEW_ID + varchar_field + ", "
             + MARITAL_STATUS + varchar_field + ", "
+            + OTHER + text_field + ", "
             + SYNCED + integer_field + "); ";
 
     public static final String DATABASE_DROP = "DROP TABLE IF EXISTS" + TABLE_NAME;
@@ -171,6 +174,11 @@ public class RegistrationTable extends SQLiteOpenHelper {
         //if (oldVersion < 3){
         //    upgradeVersion3(db);
         //}
+
+
+        if (oldVersion < 4) {
+            upgradeVersion4(db);
+        }
     }
 
     public long addData(Registration registration) {
@@ -222,6 +230,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
         cv.put(BRANCH_TRANPORT, registration.getTransportCostToBranch());
         cv.put(CHEW_ID, registration.getChewUuid());
         cv.put(MARITAL_STATUS, registration.getMaritalStatus());
+        cv.put(OTHER, registration.getOther());
 
         long id;
         if (isExist(registration)) {
@@ -304,6 +313,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setPicture("");
             registration.setChewUuid(cursor.getString(42));
             registration.setMaritalStatus(cursor.getString(cursor.getColumnIndex(MARITAL_STATUS)));
+            registration.setOther(cursor.getString(cursor.getColumnIndex(OTHER)));
             registrationList.add(registration);
         }
         db.close();
@@ -380,6 +390,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setChewUuid(cursor.getString(42));
             registration.setMaritalStatus(cursor.getString(cursor.getColumnIndex(MARITAL_STATUS)));
             registration.setPicture("");
+            registration.setOther(cursor.getString(cursor.getColumnIndex(OTHER)));
             registrationList.add(registration);
         }
         db.close();
@@ -444,6 +455,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setChewUuid(cursor.getString(42));
             registration.setMaritalStatus(cursor.getString(cursor.getColumnIndex(MARITAL_STATUS)));
             registration.setPicture("");
+            registration.setOther(cursor.getString(cursor.getColumnIndex(OTHER)));
             db.close();
             return registration;
         }
@@ -547,6 +559,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setChewUuid(cursor.getString(42));
             registration.setMaritalStatus(cursor.getString(cursor.getColumnIndex(MARITAL_STATUS)));
             registration.setPicture("");
+            registration.setOther(cursor.getString(cursor.getColumnIndex(OTHER)));
             registrationList.add(registration);
         }
         db.close();
@@ -616,6 +629,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setChewUuid(cursor.getString(42));
             registration.setMaritalStatus(cursor.getString(cursor.getColumnIndex(MARITAL_STATUS)));
             registration.setPicture("");
+            registration.setOther(cursor.getString(cursor.getColumnIndex(OTHER)));
             registrationList.add(registration);
         }
         db.close();
@@ -687,6 +701,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setChewUuid(cursor.getString(42));
             registration.setMaritalStatus(cursor.getString(cursor.getColumnIndex(MARITAL_STATUS)));
             registration.setPicture("");
+            registration.setOther(cursor.getString(cursor.getColumnIndex(OTHER)));
             registrationList.add(registration);
         }
         db.close();
@@ -756,6 +771,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setChewUuid(cursor.getString(42));
             registration.setMaritalStatus(cursor.getString(cursor.getColumnIndex(MARITAL_STATUS)));
             registration.setPicture("");
+            registration.setOther(cursor.getString(cursor.getColumnIndex(OTHER)));
             registrationList.add(registration);
         }
         db.close();
@@ -811,6 +827,7 @@ public class RegistrationTable extends SQLiteOpenHelper {
             registration.setChewUuid(jsonObject.getString(CHEW_ID));
             registration.setMaritalStatus(jsonObject.getString(MARITAL_STATUS));
             registration.setPicture("");
+            registration.setOther(jsonObject.getString(OTHER));
             this.addData(registration);
         } catch (Exception e) {
         }
@@ -1073,5 +1090,16 @@ public class RegistrationTable extends SQLiteOpenHelper {
         // but SQLite does not allow deleting the rows, too bad
         // THe hack that is common is to copy the table onto another one, and deleting the old one
         // with unwanted fields.
+    }
+
+    /**
+     * Migration to update to version 4 of the database
+     * Add new column OTHER
+     * @param db
+     */
+    private void upgradeVersion4(SQLiteDatabase db) {
+
+        if (!UtilFunctions.isColumnExists(db, TABLE_NAME, OTHER))
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + OTHER + text_field + " default '{}';");
     }
 }

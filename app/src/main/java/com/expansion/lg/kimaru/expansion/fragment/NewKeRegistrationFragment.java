@@ -48,6 +48,10 @@ import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
 import com.expansion.lg.kimaru.expansion.tables.WardTable;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -102,6 +106,9 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
     EditText editOtherTrainings;
     Spinner educationLevel;
     Spinner selectChew;
+    EditText txtShortTermPlan, txtLngTermPlan, txtU5Count; //new fields
+
+    JSONObject jsonResults;
 
     Button buttonSave, buttonList;
 
@@ -136,6 +143,8 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
     List<String> wards = new ArrayList<String>();
 
     List<Education> educationList = new ArrayList<Education>();
+
+
 
     public NewKeRegistrationFragment() {
         // Required empty public constructor
@@ -223,6 +232,9 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
         editIsGokTrained = (RadioGroup) v.findViewById(R.id.editIsGokTrained);
         mCommunity = (RadioGroup) v.findViewById(R.id.editCommunityMembership);
         educationLevel = (Spinner) v.findViewById(R.id.selectEdducation);
+        txtLngTermPlan = (EditText) v.findViewById(R.id.txt_lng_term_plan);
+        txtShortTermPlan = (EditText) v.findViewById(R.id.txt_short_term_plan);
+        txtU5Count = (EditText) v.findViewById(R.id.txt_u5_count);
 
         mAge.setVisibility(View.GONE);
         mDob.setVisibility(View.GONE);
@@ -864,6 +876,21 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                 String applicantRecruitment = recruitmentId;
                 String country = user.get(SessionManagement.KEY_USER_COUNTRY);
 
+                jsonResults = new JSONObject();
+
+                String u5Count = txtU5Count.getText().toString();
+                String shortTerm = txtShortTermPlan.getText().toString();
+                String longTerm = txtLngTermPlan.getText().toString();
+
+                try {
+                    jsonResults.put("u5_count", u5Count);
+                    jsonResults.put("short_term_plan", shortTerm);
+                    jsonResults.put("long_term_plan", longTerm);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+
+
                 // Do some validations
                 if (applicantName.toString().trim().equals("")){
                     mName.requestFocus();
@@ -912,7 +939,7 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
                         applicantChewNumber, applicantWard, applicantCuName, applicantLinkFacility,
                         applicantNoOfHouseholds, applicantIsChv, isGokTrained, applicantOtherTrainings,
                         "", "","",false, applicantAccounts, "", recruitmentTransportCost,
-                        transportCostToBranch, chewUuid, maritalStatus,"","","");
+                        transportCostToBranch, chewUuid, maritalStatus,"","","", jsonResults.toString());
 
                 // Before saving, do some validations
                 // Years in location should always be less than age
@@ -1147,6 +1174,23 @@ public class NewKeRegistrationFragment extends Fragment implements View.OnClickL
             mName.requestFocus();
             editBranchTransportCost.setText(String.valueOf(editingRegistration.getTransportCostToBranch()));
             editRecruitmentTransportCost.setText(String.valueOf(editingRegistration.getRecruitmentTransportCost()));
+
+            String other = editingRegistration.getOther();
+            try {
+                jsonResults = other.equals("") ? new JSONObject() : new JSONObject(other);
+
+                String u5Count = jsonResults.getString("u5_count");
+                String shortTerm = jsonResults.getString("short_term_plan");
+                String longTerm = jsonResults.getString("long_term_plan");
+
+                txtU5Count.setText(u5Count);
+                txtShortTermPlan.setText(shortTerm);
+                txtLngTermPlan.setText(longTerm);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 }

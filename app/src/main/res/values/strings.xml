@@ -12,8 +12,8 @@
     <string name="openDrawer">open_drawer</string>
     <string name="closeDrawer">close_drawer</string>
     <string name="download">Download</string>
-    <string name="failed">Failed</string>
-    <string name="passed">Passed</string>
+    <string name="failed">Out</string>
+    <string name="passed">Invite</string>
     <string name="new_registration">Create New</string>
     <string name="all">All</string>
     <string name="search">Search</string>
@@ -244,5 +244,12 @@
     <string name="qualifies_comment">
         Qualifies
     </string>
+
+    <string-array name="filter_registations_entries">
+        <item>All</item>
+        <item>Invite</item>
+        <!--<item>Waiting</item>-->
+        <item>Out</item>
+    </string-array>
 
 </resources>

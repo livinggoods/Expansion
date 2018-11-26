@@ -18,6 +18,8 @@ public class Registration {
     int color = -1;
     Boolean read = false;
 
+    String other;
+
     public Registration(){
 
     }
@@ -33,7 +35,7 @@ public class Registration {
                         String otherTrainings, String referralName, String referralTitle,
                         String referralPhone, boolean vht, boolean accounts, String parish,
                         Long recruitmentTransportCost, Long transportCostToBranch, String chewUuid,
-                        String maritalStatus, String subCountyId, String parishId, String villageId) {
+                        String maritalStatus, String subCountyId, String parishId, String villageId, String other) {
         this.name = mName;
         this.phone = mPhone;
         this.recruitment = mRecruitment;
@@ -82,6 +84,7 @@ public class Registration {
         this.subCountyId = subCountyId;
         this.villageId = villageId;
         this.parishId = parishId;
+        this.other = other;
     }
 
 
@@ -496,6 +499,15 @@ public class Registration {
 //            }
 //        }
 //    }
+
+
+    public String getOther() {
+        return other;
+    }
+
+    public void setOther(String other) {
+        this.other = other;
+    }
 
     public boolean hasPassed(){
         Integer age = getAge().intValue();

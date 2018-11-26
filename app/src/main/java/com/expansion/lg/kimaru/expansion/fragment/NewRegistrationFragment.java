@@ -736,7 +736,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
                         false, false, "", referralName, referralTitle,
                         referralNumber, isVht, false, parishId,
                         0L, 0L, chewUuid, "",
-                        subCountyId, parishId, villageId);
+                        subCountyId, parishId, villageId, "{}");
 
                 // Before saving, do some validations
                 // Years in location should always be less than age

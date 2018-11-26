@@ -28,6 +28,8 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -467,9 +469,9 @@ public class RegistrationsFragment extends Fragment  {
         try {
             // get the registrations
             // Depending on the mode
-            if (which == "passed"){
+            if (which.equals("passed")){
                 registrationList = registrationTable.getPassedRegistrations(session.getSavedRecruitment(), true);
-            }else if (which == "failed"){
+            }else if (which.equals("failed")){
                 registrationList = registrationTable.getPassedRegistrations(session.getSavedRecruitment(), false);
             }else{
                 registrationList = registrationTable.getRegistrationsByRecruitment(session.getSavedRecruitment());

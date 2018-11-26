@@ -32,8 +32,7 @@
                     android:id="@+id/editName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Applicant's Name"
-                    android:imeActionId="@+id/login"
+                    android:hint="Name as per the ID"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textCapWords"
@@ -315,6 +314,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
+                    android:id="@+id/txt_u5_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Number of Under 5 within your households"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="number"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
                     android:id="@+id/editVillage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -488,7 +500,8 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -589,9 +602,35 @@
                     android:id="@+id/editOccupation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Previous and current business experience"
+                    android:hint="Current Occupation"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textCapWords"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/txt_short_term_plan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Short term plan (Below 1yr)"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="textMultiLine"
+                    android:maxLines="1" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/txt_lng_term_plan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Long term plan (More 1yr)"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="textMultiLine"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 

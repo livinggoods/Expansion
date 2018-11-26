@@ -13,7 +13,7 @@ public class Constants {
     SessionManagement session;
     public static final String PEER_SERVER = "http://192.168.43.1";
     public static final int PEER_SERVER_PORT = 8090;
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "expansion";
 
     public static String varchar_field = " varchar(512) ";
