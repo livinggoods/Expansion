@@ -39,6 +39,7 @@ import android.widget.Toast;
 import android.support.v7.app.AppCompatActivity;
 
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.AlertDialogManager;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
@@ -67,6 +68,8 @@ import com.poliveira.parallaxrecycleradapter.ParallaxRecyclerAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 // to show list in Gmail Mode
 public class RecruitmentViewFragment extends Fragment implements View.OnClickListener {
@@ -128,6 +131,8 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(getContext(), new Crashlytics());
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -313,6 +318,7 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
                 chewReferrals.add(chewReferral);
             }
         }catch (Exception e){
+            Crashlytics.log(e.toString());
            // ivReferrals.setText("No recruitments added. Please create one");
         }
 
@@ -328,6 +334,7 @@ public class RecruitmentViewFragment extends Fragment implements View.OnClickLis
             }
         }catch (Exception e){
             Toast.makeText(getContext(), "Error "+ e.getMessage(), Toast.LENGTH_SHORT).show();
+            Crashlytics.log(e.toString());
         }
 
     }

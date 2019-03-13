@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
@@ -33,6 +34,8 @@ import com.poliveira.parallaxrecycleradapter.ParallaxRecyclerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by kimaru on 3/30/17.
@@ -128,6 +131,7 @@ public class SubCountyViewFragment extends Fragment implements  View.OnClickList
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Fabric.with(getContext(), new Crashlytics());
         String county = mapping.getCounty();
         String subCountyName = subCounty.getSubCountyName();
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(county + " - "+ subCountyName + "Sub County");

@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
@@ -35,6 +36,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
+import io.fabric.sdk.android.Fabric;
 
 
 /**
@@ -111,6 +114,7 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(getContext(), new Crashlytics());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -171,7 +175,9 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
         //counties.get(position).getName();; get postion, then extract item at pos
         try{
             subCounties = countyLocationTable.getChildrenLocations(counties.get(mCounty.getSelectedItemPosition()));
-        }catch(Exception e){}
+        }catch(Exception e){
+            Crashlytics.log(e.toString());
+        }
 
         for (CountyLocation subCounty: subCounties){
             listSubCounties.add(subCounty.getName());
@@ -348,7 +354,9 @@ public class NewRecruitmentFragment extends Fragment implements OnClickListener 
                 recruitment.setCountry(country);
                 try{
                     recruitment.setLocationId(Integer.parseInt(recruitmentRegion));
-                }catch (Exception e){}
+                }catch (Exception e){
+                    Crashlytics.log(e.toString());
+                }
                 recruitment.setSubCountyId(recruitmentSubCounty);
 
 

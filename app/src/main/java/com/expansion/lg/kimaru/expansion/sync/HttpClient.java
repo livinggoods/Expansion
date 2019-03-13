@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.mzigos.ChewReferral;
 import com.expansion.lg.kimaru.expansion.mzigos.CommunityUnit;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
@@ -227,6 +228,7 @@ public class HttpClient{
                         new CommunityUnitTable(context).CuFromJson(recs.getJSONObject(x));
                     }
                 }catch(JSONException e){
+                    Crashlytics.setString("Err: Process Community Unit",e.getMessage());
                     Log.d("Tremap Sync ERR", "Community Unit "+ e.getMessage());
                 }
             }
@@ -257,6 +259,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process Education",e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -286,6 +289,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process Iccm components",e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -315,6 +319,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process mapping",e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -344,6 +349,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process Mobilization",e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -373,6 +379,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process Parish",e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -402,7 +409,9 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process Partner Activity",e.getMessage());
                 }
+
             }
             // Return the data from specified url
             return stream;
@@ -431,6 +440,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process Partners",e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -460,6 +470,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process SubCounty",e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -489,6 +500,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process Training Classes",e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -518,6 +530,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process Training Roles",e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -547,6 +560,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process Trainings",e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -576,6 +590,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Training Traninees",e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -605,6 +620,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process Training Trainers",e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -634,6 +650,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process Villages",e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -663,6 +680,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process Wards",e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -699,6 +717,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     Log.d("Tremap Sync ERR", "Link Facility "+ e.getMessage());
+                    Crashlytics.setString("Err: Process Link Facility",e.getMessage());
                 }
             }else{
                 Log.d("Tremap Sync", "Link Facility stream is null");
@@ -735,6 +754,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     Log.d("Tremap Sync ERR", "CHEW Referral "+ e.getMessage());
+                    Crashlytics.setString("Err: Process Chew Referral",e.getMessage());
                 }
             }else{
                 Log.d("Tremap Sync", "CHEW Referral stream is null");
@@ -770,6 +790,7 @@ public class HttpClient{
 
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process Exams",e.getMessage());
                 }
 
             }
@@ -804,6 +825,7 @@ public class HttpClient{
 
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process Registrations",e.getMessage());
                 }
 
             }
@@ -837,6 +859,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     Log.d("Tremap", "Processing error "+e.getMessage());
+                    Crashlytics.setString("Err: Process Recruitment",e.getMessage());
                 }
             }
             // Return the data from specified url
@@ -869,6 +892,7 @@ public class HttpClient{
                     }
                 }catch(JSONException e){
                     e.printStackTrace();
+                    Crashlytics.setString("Err: Process Interviews",e.getMessage());
                 }
 
             }
@@ -1080,6 +1104,7 @@ public class HttpClient{
         } catch (Exception e){
             Log.d("ERROR : Sync Inter", e.getMessage());
             postResults = null;
+            Crashlytics.setString("Err: Post Interviews",e.getMessage());
         }
         return postResults;
     }
@@ -1130,6 +1155,7 @@ public class HttpClient{
         } catch (Exception e){
             Log.d("ERR: Sync LinkFacility", e.getMessage());
             postResults = null;
+            Crashlytics.setString("Err: post link facilities",e.getMessage());
         }
         return postResults;
     }
@@ -1145,6 +1171,7 @@ public class HttpClient{
         } catch (Exception e){
             Log.d("ERR: Sync chews", e.getMessage());
             postResults = null;
+            Crashlytics.setString("Err: post chews referral",e.getMessage());
         }
         return postResults;
     }
@@ -1160,6 +1187,7 @@ public class HttpClient{
         } catch (Exception e){
             Log.d("ERR: Sync CUs", e.getMessage());
             postResults = null;
+            Crashlytics.setString("Err: post community unit",e.getMessage());
         }
         return postResults;
     }
@@ -1173,8 +1201,9 @@ public class HttpClient{
                     EducationTable.JSON_ROOT, HttpServer.EDUCATION_URL);
             Log.d("Tremap Sync", "Education records posted");
         } catch (Exception e){
-            Log.d("ERR: Sync Educationss", e.getMessage());
+            Log.d("ERR: Sync Educations", e.getMessage());
             postResults = null;
+            Crashlytics.setString("Err: post Education",e.getMessage());
         }
         return postResults;
     }
@@ -1189,6 +1218,7 @@ public class HttpClient{
             Log.d("SYNC ERROR", e.getMessage());
             e.printStackTrace();
             postResults = null;
+            Crashlytics.setString("Err: post Iccm Components",e.getMessage());
         }
         return postResults;
     }
@@ -1203,6 +1233,7 @@ public class HttpClient{
             Log.d("SYNC ERROR", e.getMessage());
             e.printStackTrace();
             postResults = null;
+            Crashlytics.setString("Err: post Mapping",e.getMessage());
         }
         return postResults;
     }
@@ -1217,6 +1248,7 @@ public class HttpClient{
             Log.d("SYNC ERROR", e.getMessage());
             e.printStackTrace();
             postResults = null;
+            Crashlytics.setString("Err: post Mobilization",e.getMessage());
         }
         return postResults;
     }
@@ -1231,6 +1263,7 @@ public class HttpClient{
             Log.d("SYNC ERROR", e.getMessage());
             e.printStackTrace();
             postResults = null;
+            Crashlytics.setString("Err: post Parish",e.getMessage());
         }
         return postResults;
     }
@@ -1245,6 +1278,7 @@ public class HttpClient{
             Log.d("SYNC ERROR", e.getMessage());
             e.printStackTrace();
             postResults = null;
+            Crashlytics.setString("Err: post PartnerActivity",e.getMessage());
         }
         return postResults;
     }
@@ -1259,6 +1293,7 @@ public class HttpClient{
             Log.d("SYNC ERROR", e.getMessage());
             e.printStackTrace();
             postResults = null;
+            Crashlytics.setString("Err: post Partners",e.getMessage());
         }
         return postResults;
     }
@@ -1273,6 +1308,7 @@ public class HttpClient{
             Log.d("SYNC ERROR", e.getMessage());
             e.printStackTrace();
             postResults = null;
+            Crashlytics.setString("Err: post SubCounty",e.getMessage());
         }
         return postResults;
     }
@@ -1287,6 +1323,7 @@ public class HttpClient{
             Log.d("SYNC ERROR", e.getMessage());
             e.printStackTrace();
             postResults = null;
+            Crashlytics.setString("Err: post Training",e.getMessage());
         }
         return postResults;
     }
@@ -1301,6 +1338,7 @@ public class HttpClient{
             Log.d("SYNC ERROR", e.getMessage());
             e.printStackTrace();
             postResults = null;
+            Crashlytics.setString("Err: post Training Roles",e.getMessage());
         }
         return postResults;
     }
@@ -1315,6 +1353,7 @@ public class HttpClient{
             Log.d("SYNC ERROR", e.getMessage());
             e.printStackTrace();
             postResults = null;
+            Crashlytics.setString("Err: post Trainings",e.getMessage());
         }
         return postResults;
     }
@@ -1329,6 +1368,7 @@ public class HttpClient{
             Log.d("SYNC ERROR", e.getMessage());
             e.printStackTrace();
             postResults = null;
+            Crashlytics.setString("Err: post Training Trainees",e.getMessage());
         }
         return postResults;
     }
@@ -1343,6 +1383,7 @@ public class HttpClient{
             Log.d("SYNC ERROR", e.getMessage());
             e.printStackTrace();
             postResults = null;
+            Crashlytics.setString("Err: post Training Trainers",e.getMessage());
         }
         return postResults;
     }
@@ -1357,6 +1398,7 @@ public class HttpClient{
             Log.d("SYNC ERROR", e.getMessage());
             e.printStackTrace();
             postResults = null;
+            Crashlytics.setString("Err: post Villages",e.getMessage());
         }
         return postResults;
     }
@@ -1371,6 +1413,7 @@ public class HttpClient{
             Log.d("SYNC ERROR", e.getMessage());
             e.printStackTrace();
             postResults = null;
+            Crashlytics.setString("Err: post Wards",e.getMessage());
         }
         return postResults;
     }
@@ -1430,6 +1473,7 @@ public class HttpClient{
             } catch (Exception e) {
                 e.printStackTrace();
                 errors++;
+                Crashlytics.setString("Err: Sync Recruitments",e.getMessage());
             }
         }
     }
@@ -1465,6 +1509,7 @@ public class HttpClient{
             } catch (Exception e){
                 e.printStackTrace();
                 errors++;
+                Crashlytics.setString("Err: Sync Registrations",e.getMessage());
             }
         }
     }
@@ -1500,6 +1545,7 @@ public class HttpClient{
             } catch (Exception e){
                 e.printStackTrace();
                 errors++;
+                Crashlytics.setString("Err: Sync Interviews",e.getMessage());
             }
         }
     }
@@ -1538,6 +1584,7 @@ public class HttpClient{
             } catch (Exception e){
                 e.printStackTrace();
                 errors++;
+                Crashlytics.setString("Err: Sync Exams",e.getMessage());
             }
         }
     }
@@ -1572,6 +1619,7 @@ public class HttpClient{
             } catch (Exception e){
                 e.printStackTrace();
                 errors++;
+                Crashlytics.setString("Err: Sync Community Units",e.getMessage());
             }
         }
     }
@@ -1606,6 +1654,7 @@ public class HttpClient{
             } catch (Exception e){
                 e.printStackTrace();
                 errors++;
+                Crashlytics.setString("Err: Sync Referrals",e.getMessage());
             }
 
         }
@@ -1642,7 +1691,9 @@ public class HttpClient{
             } catch (Exception e){
                 e.printStackTrace();
                 errors++;
+                Crashlytics.setString("Err: Sync Parishes",e.getMessage());
             }
+
         }
     }
 
@@ -1677,6 +1728,7 @@ public class HttpClient{
             } catch (Exception e){
                 e.printStackTrace();
                 errors++;
+                Crashlytics.setString("Err: Sync Partners",e.getMessage());
             }
         }
     }
@@ -1710,6 +1762,7 @@ public class HttpClient{
             } catch (Exception e){
                 e.printStackTrace();
                 errors++;
+                Crashlytics.setString("Err: Sync Partners Activity",e.getMessage());
             }
         }
     }
@@ -1743,6 +1796,7 @@ public class HttpClient{
             } catch (Exception e){
                 e.printStackTrace();
                 errors++;
+                Crashlytics.setString("Err: Sync Mapping",e.getMessage());
             }
         }
     }
@@ -1777,6 +1831,7 @@ public class HttpClient{
             } catch (Exception e){
                 e.printStackTrace();
                 errors++;
+                Crashlytics.setString("Err: Sync Villages",e.getMessage());
             }
         }
     }
@@ -1809,6 +1864,7 @@ public class HttpClient{
                     }
                 }
             } catch (Exception e){
+                Crashlytics.setString("Err: Sync Link Facilities",e.getMessage());
                 e.printStackTrace();
                 errors++;
             }

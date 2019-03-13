@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
@@ -40,6 +41,8 @@ import com.poliveira.parallaxrecycleradapter.ParallaxRecyclerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.fabric.sdk.android.Fabric;
+
 /**
  * Created by kimaru on 3/30/17.
  */
@@ -56,6 +59,7 @@ public class RegistrationViewFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Fabric.with(getContext(), new Crashlytics());
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
     }

@@ -36,6 +36,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.AlertDialogManager;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
@@ -50,6 +51,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
+
+import io.fabric.sdk.android.Fabric;
 
 
 /**
@@ -152,6 +155,7 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(getContext(), new Crashlytics());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -273,7 +277,9 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
 
             }
 
-        } catch (Exception e){}
+        } catch (Exception e){
+            Crashlytics.log(e.toString());
+        }
 
 
 
@@ -371,7 +377,9 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
             }else{
                 proceedAfterPermission();
             }
-        }catch (Exception e){}
+        }catch (Exception e){
+            Crashlytics.log(e.toString());
+        }
 
         return v;
     }
@@ -412,7 +420,9 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
                 alertDialog.show();
 
             }
-        } catch (Exception e){}
+        } catch (Exception e){
+            Crashlytics.log(e.toString());
+        }
     }
 
     public void getLocation(){
@@ -592,6 +602,7 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
                     subCountySupport = subCountySRate.getText().toString();
                 }catch ( Exception e){
                     subCountySupport = "0";
+                    Crashlytics.log(e.toString());
                 }
 
                 boolean isRecommended;
@@ -602,6 +613,7 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
                     isRecommended = recommend.getText().toString() == "yes";
                 } catch (Exception e){
                     isRecommended = false;
+                    Crashlytics.log(e.toString());
                 }
 
 
@@ -728,7 +740,9 @@ public class NewSubCountyFragment extends Fragment implements OnClickListener, L
         if(locationManager != null){
             try {
                 locationManager.removeUpdates(this);
-            }catch (SecurityException se){}
+            }catch (SecurityException se){
+                Crashlytics.log(se.toString());
+            }
         }
     }
 

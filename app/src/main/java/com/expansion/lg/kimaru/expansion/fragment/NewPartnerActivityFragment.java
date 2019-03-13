@@ -31,6 +31,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
@@ -57,6 +58,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import io.fabric.sdk.android.Fabric;
 import okhttp3.internal.Util;
 
 
@@ -137,6 +139,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(getContext(), new Crashlytics());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -147,6 +150,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
             jsonArray = new JSONArray(jsonStr);
         } catch (JSONException ex) {
             ex.printStackTrace();
+            Crashlytics.log(ex.toString());
         }
     }
 
@@ -471,6 +475,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    Crashlytics.log(e.toString());
                     return;
                 }
 
@@ -604,6 +609,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
 
             } catch (JSONException ex) {
                 ex.printStackTrace();
+                Crashlytics.log(ex.toString());
             }
         }
     }
@@ -625,6 +631,7 @@ public class NewPartnerActivityFragment extends Fragment implements OnClickListe
 
         } catch (JSONException e) {
             e.printStackTrace();
+            Crashlytics.log(e.toString());
         }
 
     }

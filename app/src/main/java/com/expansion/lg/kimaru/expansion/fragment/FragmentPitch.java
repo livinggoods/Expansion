@@ -10,9 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by kimaru on 3/22/18 using Android Studio.
@@ -34,6 +37,7 @@ public class FragmentPitch extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
+        Fabric.with(getContext(), new Crashlytics());
         View v = inflater.inflate(R.layout.fragment_pitch, container, false);
         MainActivity.backFragment = new RecruitmentViewFragment();
         sessionManagement = new SessionManagement(getContext());

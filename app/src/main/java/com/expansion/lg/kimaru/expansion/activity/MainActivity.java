@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.fragment.ExamsFragment;
 import com.expansion.lg.kimaru.expansion.fragment.HomeFragment;
@@ -86,6 +87,9 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.List;
+
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -172,6 +176,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Fabric.with(this, new Crashlytics());
+
         sqlScoutServer = SqlScoutServer.create(this, getPackageName());
 
         session = new SessionManagement(getBaseContext());
@@ -193,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
             setUpApp.setUpEducation();
         } catch (Exception e) {
             new EducationTable(getBaseContext()).createEducationLevels();
+            Crashlytics.logException(e);
         }
 
         locationDataSync = new LocationDataSync(getBaseContext());
@@ -228,22 +235,23 @@ public class MainActivity extends AppCompatActivity {
 //            }).start();
         }
 
-
         //we can now extract User details
         HashMap<String, String> user = session.getUserDetails();
 
         //name
         name = user.get(SessionManagement.KEY_NAME);
+        Crashlytics.setUserName(name);
 
         //Emails
         email = user.get(SessionManagement.KEY_EMAIL);
+        Crashlytics.setUserEmail(email);
         country = user.get(SessionManagement.KEY_USER_COUNTRY);
+        Crashlytics.setString("Country",country);
 
         if (country.equalsIgnoreCase("UG")) {
             CountyLocationTable countyLocationTable = new CountyLocationTable(getBaseContext());
             countyLocationTable.createLocations();
         }
-
 
         setSupportActionBar(toolbar);
 
@@ -1190,4 +1198,7 @@ public class MainActivity extends AppCompatActivity {
         sqlScoutServer.destroy();
         super.onDestroy();
     }
+
+
 }
+

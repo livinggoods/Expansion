@@ -56,6 +56,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
+
 // to show list in Gmail Mode
 public class CommunityUnitViewFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
@@ -119,6 +123,7 @@ public class CommunityUnitViewFragment extends Fragment implements View.OnClickL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(getContext(), new Crashlytics());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -259,6 +264,7 @@ public class CommunityUnitViewFragment extends Fragment implements View.OnClickL
 
             }
         }catch (Exception e){
+            Crashlytics.logException(e);
         }
     }
 

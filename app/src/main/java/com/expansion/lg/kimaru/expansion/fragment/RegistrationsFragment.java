@@ -42,6 +42,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
@@ -73,6 +74,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -144,6 +147,8 @@ public class RegistrationsFragment extends Fragment  {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Fabric.with(getContext(), new Crashlytics());
+
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -448,6 +453,7 @@ public class RegistrationsFragment extends Fragment  {
             swipeRefreshLayout.setRefreshing(false);
         } catch (Exception error){
             Toast.makeText(getContext(), "No Registrations", Toast.LENGTH_SHORT).show();
+            Crashlytics.log(error.toString());
 
             textshow.setText(" No registration recorded");
         }
@@ -483,7 +489,7 @@ public class RegistrationsFragment extends Fragment  {
             swipeRefreshLayout.setRefreshing(false);
         } catch (Exception error){
             Toast.makeText(getContext(), "No Registrations", Toast.LENGTH_SHORT).show();
-
+            Crashlytics.log(error.toString());
             textshow.setText(" No registration recorded");
         }
         swipeRefreshLayout.setRefreshing(false);
@@ -508,6 +514,7 @@ public class RegistrationsFragment extends Fragment  {
         } catch (Exception error){
             Toast.makeText(getContext(), "No Registrations", Toast.LENGTH_SHORT).show();
             textshow.setText(" No registration recorded");
+            Crashlytics.log(error.toString());
         }
         swipeRefreshLayout.setRefreshing(false);
     }
@@ -719,7 +726,9 @@ public class RegistrationsFragment extends Fragment  {
                         }
                         try {
                             userNames = new UserTable(getContext()).getUserById(interview.getAddedBy()).getName();
-                        }catch (Exception e){}
+                        }catch (Exception e){
+                            Crashlytics.log(e.toString());
+                        }
 
                         ChewReferral chewReferral = new ChewReferralTable(getContext()).getChewReferralById(registration.getChewUuid());
 
@@ -905,7 +914,9 @@ public class RegistrationsFragment extends Fragment  {
                     }
                 }
 
-            } catch (Exception e){}
+            } catch (Exception e){
+                Crashlytics.log(e.toString());
+            }
             finally {
                 if(printWriter != null) printWriter.close();
             }
@@ -970,7 +981,9 @@ public class RegistrationsFragment extends Fragment  {
             }else{
                 proceedAfterPermission();
             }
-        }catch (Exception e){}
+        }catch (Exception e){
+            Crashlytics.log(e.toString());
+        }
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
 import com.expansion.lg.kimaru.expansion.mzigos.CountyLocation;
 import com.expansion.lg.kimaru.expansion.other.Constants;
@@ -81,6 +82,7 @@ public class LocationDataSync {
                     }
                 }catch(JSONException e){
                     Log.d("TREMAP", "KE County Sync ERROR "+e.getMessage());
+                    Crashlytics.setString("Err: KE County Sync ERROR : LocationDataSync.java ",e.getMessage());
                 }
 
             }

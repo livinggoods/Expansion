@@ -15,7 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
+
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
+
+import io.fabric.sdk.android.Fabric;
 
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
@@ -36,6 +40,7 @@ public class DatePickerFragment extends DialogFragment
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Fabric.with(getContext(), new Crashlytics());
         // Use the current date as the default date in the picker
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);

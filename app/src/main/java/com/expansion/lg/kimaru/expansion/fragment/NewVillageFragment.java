@@ -36,6 +36,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
@@ -345,7 +346,9 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
 
             }
 
-        } catch (Exception e){}
+        } catch (Exception e){
+            Crashlytics.log(e.toString());
+        }
     }
     public void checkPermissions(){
         try{
@@ -406,7 +409,9 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
             }else{
                 proceedAfterPermission();
             }
-        }catch (Exception e){}
+        }catch (Exception e){
+            Crashlytics.log(e.toString());
+        }
     }
 
     @Override
@@ -708,7 +713,9 @@ public class NewVillageFragment extends Fragment implements OnClickListener, Loc
         if(locationManager != null){
             try{
                 locationManager.removeUpdates(this);
-            }catch (SecurityException se){}
+            }catch (SecurityException se){
+                Crashlytics.log(se.toString());
+            }
 
         }
     }

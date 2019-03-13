@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
@@ -36,6 +37,8 @@ import com.expansion.lg.kimaru.expansion.tables.MappingTable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 // to show list in Gmail Mode
 
@@ -105,6 +108,7 @@ public class MappingFragment extends Fragment  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(getContext(), new Crashlytics());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -366,6 +370,7 @@ public class MappingFragment extends Fragment  {
         } catch (Exception error){
             Toast.makeText(getContext(), "No Mappings", Toast.LENGTH_SHORT).show();
             textshow.setText("No mappings found");
+            Crashlytics.logException(error);
         }
         swipeRefreshLayout.setRefreshing(false);
     }

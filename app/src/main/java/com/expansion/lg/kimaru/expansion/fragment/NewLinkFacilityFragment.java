@@ -46,6 +46,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.AlertDialogManager;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
@@ -73,6 +74,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
+import io.fabric.sdk.android.Fabric;
 
 
 /**
@@ -174,6 +177,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(getContext(), new Crashlytics());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -216,6 +220,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 jsonArray = new JSONArray(jsonStr);
             } catch (JSONException ex) {
                 ex.printStackTrace();
+                Crashlytics.log(ex.toString());
             }
         }
 
@@ -262,6 +267,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
         } catch (JSONException e) {
             e.printStackTrace();
+            Crashlytics.log(e.toString());
         }
 
     }
@@ -500,6 +506,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
             }
 
         } catch (Exception e) {
+            Crashlytics.log(e.toString());
         }
     }
 
@@ -564,6 +571,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Crashlytics.log(e.toString());
         }
     }
 
@@ -719,6 +727,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    Crashlytics.log(e.toString());
                     return;
                 }
 
@@ -824,6 +833,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
             try {
                 locationManager.removeUpdates(this);
             } catch (SecurityException se) {
+                Crashlytics.log(se.toString());
             }
         }
     }
@@ -893,6 +903,7 @@ public class NewLinkFacilityFragment extends Fragment implements OnClickListener
 
             } catch (JSONException ex) {
                 ex.printStackTrace();
+                Crashlytics.log(ex.toString());
             }
         }
     }

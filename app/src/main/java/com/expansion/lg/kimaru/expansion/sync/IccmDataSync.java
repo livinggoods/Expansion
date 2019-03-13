@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.mzigos.IccmComponent;
 import com.expansion.lg.kimaru.expansion.mzigos.User;
 import com.expansion.lg.kimaru.expansion.other.Constants;
@@ -70,6 +71,7 @@ public class IccmDataSync {
                         iccmComponentTable.fromJson(recs.getJSONObject(x));
                     }
                 }catch(JSONException e){
+                    Crashlytics.setString("Err: Iccm - process_data_sync.java  ",e.getMessage());
                 }
             }
             return stream;

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
 import com.expansion.lg.kimaru.expansion.mzigos.Interview;
 import com.expansion.lg.kimaru.expansion.mzigos.Mobilization;
@@ -304,6 +305,7 @@ public class HttpServer {
                     // response.send(typeReceived);
                 } catch (Exception e) {
                     response.send(e.getMessage());
+
                 }
             }
         });
@@ -642,6 +644,7 @@ public class HttpServer {
 
                 } catch (Exception e) {
                     response.send(e.getMessage());
+
                 }
             }
         });
@@ -698,6 +701,7 @@ public class HttpServer {
             }
         } catch (JSONException e) {
             Log.d("Tremap Server", "ERR CUs " + e.getMessage());
+            Crashlytics.setString("Err: Http Server - process Cu ",e.getMessage());
         }
     }
 
@@ -711,6 +715,7 @@ public class HttpServer {
             }
         } catch (JSONException e) {
             Log.d("Tremap Server", "ERR SUBCOUNTY " + e.getMessage());
+            Crashlytics.setString("Err: Http Server - process subcounty ",e.getMessage());
         }
     }
 
@@ -724,6 +729,7 @@ public class HttpServer {
             }
         } catch (JSONException e) {
             Log.d("Tremap Server", "ERR Link Facility " + e.getMessage());
+            Crashlytics.setString("Err: Http Server - process link facility  ",e.getMessage());
         }
     }
 
@@ -739,6 +745,7 @@ public class HttpServer {
             }
         } catch (JSONException e) {
             Log.d("Tremap Server CHEW", "ERROR " + e.getMessage());
+            Crashlytics.setString("Err: Http Server - process chew referral",e.getMessage());
         }
     }
 
@@ -755,6 +762,7 @@ public class HttpServer {
         } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process recruitments ",e.getMessage());
         }
     }
 
@@ -767,6 +775,7 @@ public class HttpServer {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process registrations ",e.getMessage());
         }
     }
 
@@ -783,6 +792,7 @@ public class HttpServer {
         } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process interviews ",e.getMessage());
         }
     }
 
@@ -813,6 +823,7 @@ public class HttpServer {
         } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process education ",e.getMessage());
         }
     }
 
@@ -828,6 +839,7 @@ public class HttpServer {
         } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process iccm component ",e.getMessage());
         }
     }
 
@@ -843,6 +855,7 @@ public class HttpServer {
         } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process mapping",e.getMessage());
         }
     }
 
@@ -858,6 +871,7 @@ public class HttpServer {
         } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process mobilzation ",e.getMessage());
         }
     }
 
@@ -873,6 +887,7 @@ public class HttpServer {
         } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process partner activity ",e.getMessage());
         }
     }
 
@@ -888,6 +903,7 @@ public class HttpServer {
         } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process partners ",e.getMessage());
         }
     }
 
@@ -903,6 +919,7 @@ public class HttpServer {
         } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process trainings",e.getMessage());
         }
     }
 
@@ -918,6 +935,7 @@ public class HttpServer {
         } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process training classes  ",e.getMessage());
         }
     }
 
@@ -933,6 +951,7 @@ public class HttpServer {
         } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process training roles ",e.getMessage());
         }
     }
 
@@ -948,6 +967,7 @@ public class HttpServer {
         } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process training trainees ",e.toString());
         }
     }
 
@@ -963,6 +983,7 @@ public class HttpServer {
         } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process training trainers ",e.getMessage());
         }
     }
 
@@ -978,6 +999,7 @@ public class HttpServer {
         } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process villages ",e.getMessage());
         }
     }
 
@@ -993,6 +1015,7 @@ public class HttpServer {
         } catch (JSONException e) {
             // Toast.makeText(getBaseContext(), "ERROR :'( " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Crashlytics.setString("Err: Http Server - process wards ",e.getMessage());
         }
     }
 }

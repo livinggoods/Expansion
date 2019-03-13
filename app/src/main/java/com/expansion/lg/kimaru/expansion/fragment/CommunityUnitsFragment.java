@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
@@ -43,6 +44,9 @@ import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
+import com.crashlytics.android.Crashlytics;
 
 // to show list in Gmail Mode
 
@@ -114,6 +118,8 @@ public class CommunityUnitsFragment extends Fragment  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(getContext(), new Crashlytics());
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -324,6 +330,7 @@ public class CommunityUnitsFragment extends Fragment  {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
+            try{
             rAdapter.clearSelections();
             swipeRefreshLayout.setEnabled(true);
             actionMode = null;
@@ -334,11 +341,15 @@ public class CommunityUnitsFragment extends Fragment  {
                     // mAdapter.notifyDataSetChanged();
                 }
             });
+        }catch (Exception e){
+            Crashlytics.logException(e);
+            }
         }
     }
 
     // deleting the messages from recycler view
     private void deleteMessages() {
+        try{
         rAdapter.resetAnimationIndex();
         List<Integer> selectedItemPositions =
                 rAdapter.getSelectedItems();
@@ -346,7 +357,10 @@ public class CommunityUnitsFragment extends Fragment  {
             rAdapter.removeData(selectedItemPositions.get(i));
         }
         rAdapter.notifyDataSetChanged();
-    }
+    }catch (Exception e){
+            Crashlytics.logException(e);
+        }}
+
     private void getCommunityUnits() {
         swipeRefreshLayout.setRefreshing(true);
 
@@ -370,7 +384,7 @@ public class CommunityUnitsFragment extends Fragment  {
             swipeRefreshLayout.setRefreshing(false);
         } catch (Exception error){
             Toast.makeText(getContext(), "No Community unit  found", Toast.LENGTH_SHORT).show();
-
+            Crashlytics.logException(error);
             textshow.setText(" No Community unit recorded ");
         }
         swipeRefreshLayout.setRefreshing(false);

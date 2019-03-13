@@ -11,12 +11,16 @@ import android.widget.TextView;
 
 import com.expansion.lg.kimaru.expansion.R;
 
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 public class AboutUsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
+
         setContentView(R.layout.activity_about_us);
         ActionBar actionbar = getSupportActionBar();
         if (actionbar != null)

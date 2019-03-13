@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
@@ -22,6 +23,8 @@ import com.expansion.lg.kimaru.expansion.mzigos.SubCounty;
 import com.expansion.lg.kimaru.expansion.tables.CommunityUnitTable;
 import com.expansion.lg.kimaru.expansion.tables.KeCountyTable;
 import com.expansion.lg.kimaru.expansion.tables.LinkFacilityTable;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by kimaru on 3/30/17.
@@ -71,6 +74,7 @@ public class LinkFacilityViewFragment extends Fragment implements  View.OnClickL
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Fabric.with(getContext(), new Crashlytics());
         String county = mapping.getCounty();
         String subCountyName = subCounty.getSubCountyName();
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(linkFacility.getFacilityName());

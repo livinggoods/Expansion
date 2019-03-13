@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
@@ -38,6 +39,8 @@ import com.expansion.lg.kimaru.expansion.tables.SubCountyTable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 // to show list in Gmail Mode
 
@@ -106,6 +109,7 @@ public class SubCountiesFragment extends Fragment  {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Fabric.with(getContext(), new Crashlytics());
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -387,6 +391,7 @@ public class SubCountiesFragment extends Fragment  {
         } catch (Exception error){
             Toast.makeText(getContext(), "No Subcounties", Toast.LENGTH_SHORT).show();
             textshow.setText("No sub counties added. Please create one");
+            Crashlytics.log(error.toString());
         }
         swipeRefreshLayout.setRefreshing(false);
     }

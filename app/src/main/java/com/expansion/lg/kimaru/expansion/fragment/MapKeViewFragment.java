@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
@@ -37,6 +38,8 @@ import com.poliveira.parallaxrecycleradapter.ParallaxRecyclerAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 import static com.expansion.lg.kimaru.expansion.R.id.parishes;
 
@@ -105,11 +108,14 @@ public class MapKeViewFragment extends Fragment implements View.OnClickListener 
                 sb.setColor(getRandomMaterialColor("400"));
                 subCountyList.add(sb);
             }
-        }catch (Exception e){}
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Fabric.with(getContext(), new Crashlytics());
         SessionManagement s = new SessionManagement(getContext());
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(s.getSavedMapping()
                 .getMappingName() +" Mapping ");

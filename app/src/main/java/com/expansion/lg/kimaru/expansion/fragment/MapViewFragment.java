@@ -25,6 +25,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
@@ -44,6 +45,8 @@ import com.poliveira.parallaxrecycleradapter.ParallaxRecyclerAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by kimaru on 3/30/17.
@@ -76,6 +79,7 @@ public class MapViewFragment extends Fragment implements View.OnClickListener {
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Fabric.with(getContext(), new Crashlytics());
         super.onCreate(savedInstanceState);
     }
 
@@ -328,6 +332,7 @@ public class MapViewFragment extends Fragment implements View.OnClickListener {
             }
         }catch (Exception e){
             ivReferrals.setText("No recruitments added. Please create one");
+            Crashlytics.logException(e);
         }
     }
 
@@ -342,6 +347,7 @@ public class MapViewFragment extends Fragment implements View.OnClickListener {
                 mobilizationList.add(mob);
             }
         }catch (Exception e){
+            Crashlytics.logException(e);
         }
     }
     private int getRandomMaterialColor(String typeColor) {

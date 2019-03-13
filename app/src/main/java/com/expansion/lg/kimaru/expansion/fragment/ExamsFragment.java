@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
@@ -39,6 +40,8 @@ import com.expansion.lg.kimaru.expansion.tables.RegistrationTable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 // to show list in Gmail Mode
 
@@ -106,6 +109,7 @@ public class ExamsFragment extends Fragment  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(getContext(), new Crashlytics());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -365,6 +369,7 @@ public class ExamsFragment extends Fragment  {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
+
             rAdapter.clearSelections();
             swipeRefreshLayout.setEnabled(true);
             actionMode = null;
@@ -380,6 +385,7 @@ public class ExamsFragment extends Fragment  {
 
     // deleting the messages from recycler view
     private void deleteMessages() {
+        try{
         rAdapter.resetAnimationIndex();
         List<Integer> selectedItemPositions =
                 rAdapter.getSelectedItems();
@@ -387,7 +393,9 @@ public class ExamsFragment extends Fragment  {
             rAdapter.removeData(selectedItemPositions.get(i));
         }
         rAdapter.notifyDataSetChanged();
-    }
+    }catch(Exception e){
+            Crashlytics.logException(e);
+        }}
     private void getExams() {
         swipeRefreshLayout.setRefreshing(true);
 
@@ -410,6 +418,7 @@ public class ExamsFragment extends Fragment  {
         } catch (Exception error){
             Toast.makeText(getContext(), "No Exams", Toast.LENGTH_SHORT).show();
             textshow.setText("No Exams added. Please create one");
+            Crashlytics.logException(error);
         }
         swipeRefreshLayout.setRefreshing(false);
     }

@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.util.Base64;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.mzigos.User;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.tables.UserTable;
@@ -86,6 +87,7 @@ public class UserDataSync {
                     // process other data as this way..............
 
                 }catch(JSONException e){
+                    Crashlytics.setString("Err: UserDataSync ",e.getMessage());
                 }
             }
             return stream;

@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.app.DialogFragment;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
@@ -56,6 +57,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
+import io.fabric.sdk.android.Fabric;
 
 
 /**
@@ -168,6 +171,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(getContext(), new Crashlytics());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -192,6 +196,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
         userName = user.get(SessionManagement.KEY_NAME);
         //Emails
         userEmail = user.get(SessionManagement.KEY_EMAIL);
+        Crashlytics.setUserEmail(userEmail);
         userId = Integer.parseInt(user.get(SessionManagement.KEY_USERID));
         Recruitment recruitment = session.getSavedRecruitment();
         recruitmentId = recruitment.getId();
@@ -541,6 +546,7 @@ public class NewRegistrationFragment extends Fragment implements View.OnClickLis
 
 
             case R.id.buttonSaveRegistration:
+                
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                 Long currentDate =  new Date().getTime();
 

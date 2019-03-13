@@ -1,6 +1,8 @@
 package com.expansion.lg.kimaru.expansion.sync;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.net.HttpURLConnection;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
@@ -63,11 +65,13 @@ public class ApiClient {
                 Log.d("Tremap", "==============================");
             }
         }catch (MalformedURLException e){
+            Crashlytics.logException(e);
             e.printStackTrace();
             Log.d("Tremap", "==============================");
             Log.d("Tremap", "MALFORMED -- : "+e.getMessage());
             Log.d("Tremap", "==============================");
         }catch(IOException e){
+            Crashlytics.logException(e);
             e.printStackTrace();
             Log.d("Tremap", "==============================");
             Log.d("Tremap", "IO ERROR -- : "+ e.getMessage());

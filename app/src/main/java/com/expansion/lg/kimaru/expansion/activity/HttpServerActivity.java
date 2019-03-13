@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.BuildConfig;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.mzigos.Exam;
@@ -66,6 +67,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import io.fabric.sdk.android.Fabric;
+
 
 public class HttpServerActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -86,6 +89,8 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
+
         setContentView(R.layout.activity_http_server);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         context = this;
@@ -259,6 +264,7 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
                     }
                 }catch(JSONException e){
                     Log.d("TREMAP", "KE County Sync ERROR "+e.getMessage());
+                    Crashlytics.logException(e);
                 }
 
             }
@@ -313,6 +319,7 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
                         publishProgress(progress);
                     }
                 }catch(JSONException e){
+                    Crashlytics.logException(e);
                 }
             }
             recordType= "Parish";
@@ -346,6 +353,7 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
                     }
                 }catch(JSONException e){
                     Log.d("TREMAP", "ERROR Creating parish:\n "+e.getMessage());
+                    Crashlytics.logException(e);
                 }
             }
             return stream;
@@ -430,7 +438,9 @@ public class HttpServerActivity extends AppCompatActivity implements View.OnClic
 
 
 
-            } catch (Exception e){}
+            } catch (Exception e){
+                Crashlytics.logException(e);
+            }
             finally {
                 if(printWriter != null) printWriter.close();
             }

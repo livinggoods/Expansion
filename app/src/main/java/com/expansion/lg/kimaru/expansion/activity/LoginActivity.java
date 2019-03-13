@@ -15,6 +15,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.LoginEvent;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.other.Constants;
 import com.expansion.lg.kimaru.expansion.sync.ApiClient;
@@ -33,6 +36,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import io.fabric.sdk.android.Fabric;
 import okhttp3.Headers;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -53,6 +57,8 @@ public class LoginActivity extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
+
         setContentView(R.layout.activity_login);
         MainActivity.backFragment = null;
 
@@ -102,7 +108,7 @@ public class LoginActivity extends Activity {
      * @param email User's email
      * @param password User's password
      */
-    public void loginUserApi(String email, String password) {
+    public void loginUserApi(final String email, String password) {
 
         TremapApi api = TremapApiClient.getClient(LoginActivity.this).create(TremapApi.class);
 
@@ -125,6 +131,12 @@ public class LoginActivity extends Activity {
 
                     if (code >= 200 && code < 300) {
 
+                        Answers.getInstance().logLogin(new LoginEvent()
+                                .putMethod("LoginUserApi")
+                                .putSuccess(true)
+                                .putCustomAttribute("User ", txtUsername.toString()));
+
+
                         String body = response.body().string();
                         performPostLogin(body);
 
@@ -139,7 +151,7 @@ public class LoginActivity extends Activity {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     onFailure(call, ex.getCause());
-                }
+                    Crashlytics.logException(ex);}
             }
 
             @Override
@@ -156,6 +168,8 @@ public class LoginActivity extends Activity {
 
                 if (t != null) message = t.getMessage();
 
+                Crashlytics.setUserEmail(email);
+                Crashlytics.setString("message",message);
                 alert.showAlertDialog(LoginActivity.this, "Error", message, true, null, null);
             }
         });
@@ -250,6 +264,7 @@ public class LoginActivity extends Activity {
                         countyLocationTable.fromJson(recs.getJSONObject(x));
                     }
                 } catch (JSONException e) {
+                    Crashlytics.logException(e);
                 }
 
             }

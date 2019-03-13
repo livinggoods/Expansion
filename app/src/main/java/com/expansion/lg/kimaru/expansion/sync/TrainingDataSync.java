@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.mzigos.IccmComponent;
 import com.expansion.lg.kimaru.expansion.mzigos.Training;
 import com.expansion.lg.kimaru.expansion.other.Constants;
@@ -82,6 +83,7 @@ public class TrainingDataSync {
                     }
                 }catch(JSONException e){
                     Log.d("TREMAP", "TRAINING ERROR "+ e.getMessage());
+                    Crashlytics.setString("Err: Training error : training data sync ",e.getMessage());
                 }
             }else {
                 Log.d("Tremap", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");

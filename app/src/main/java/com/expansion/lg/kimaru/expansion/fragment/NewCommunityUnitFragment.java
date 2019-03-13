@@ -28,6 +28,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.expansion.lg.kimaru.expansion.R;
 import com.expansion.lg.kimaru.expansion.activity.MainActivity;
 import com.expansion.lg.kimaru.expansion.activity.SessionManagement;
@@ -50,6 +51,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
+import io.fabric.sdk.android.Fabric;
 
 
 /**
@@ -136,6 +139,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Fabric.with(getContext(), new Crashlytics());
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -517,6 +521,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        Crashlytics.logException(e);
                         return;
                     }
 
@@ -627,6 +632,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
             try {
                 editEconomicStatus.setSelection(Integer.valueOf(editingCommunityUnit.getEconomicStatus()));
             } catch (Exception e) {
+                Crashlytics.log(e.toString());
             }
 
 
@@ -649,6 +655,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
 
             } catch (JSONException ex) {
                 ex.printStackTrace();
+                Crashlytics.log(ex.toString());
             }
         }
     }
@@ -704,6 +711,7 @@ public class NewCommunityUnitFragment extends Fragment implements OnClickListene
 
         } catch (JSONException e) {
             e.printStackTrace();
+            Crashlytics.log(e.toString());
         }
 
     }

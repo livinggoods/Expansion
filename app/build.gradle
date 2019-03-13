@@ -1,11 +1,16 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
 
 android {
     signingConfigs {
         config {
             keyAlias 'Expansion'
             keyPassword 'davgakimarudg'
-            storeFile file('/Users/mwongela/Development/keystore/tremap')
+            storeFile file('/Users/kennethatria/Development/keystore/keystores')
             storePassword 'davgakimarudg'
         }
     }
@@ -41,6 +46,23 @@ repositories {
     }
 }
 
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        // These docs use an open ended version so that our plugin
+        // can be updated quickly in response to Android tooling updates
+
+        // We recommend changing it to the latest version from our changelog:
+        // https://docs.fabric.io/android/changelog.html#fabric-gradle-plugin
+        classpath 'io.fabric.tools:gradle:1.+'
+
+    }
+}
+
 dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -71,5 +93,11 @@ dependencies {
     implementation 'com.karumi:dexter:4.2.0'
     debugImplementation 'com.idescout.sql:sqlscout-server:4.1'
     releaseImplementation 'com.idescout.sql:sqlscout-server-noop:4.1'
+    compile('com.crashlytics.sdk.android:crashlytics:2.9.9@aar') {
+        transitive = true;
+    }
+    compile('com.crashlytics.sdk.android:answers:1.4.7@aar') {
+        transitive = true;
+    }
 
 }

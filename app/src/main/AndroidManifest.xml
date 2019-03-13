@@ -96,6 +96,10 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/mappingsssyncadapter" />
         </service>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="40e6a6229606f4cb54a83aabfd84433abfd902b6"
+            />
 
     </application>
 
